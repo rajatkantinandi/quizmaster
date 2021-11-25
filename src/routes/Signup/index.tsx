@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Button, Container, Form, Input } from 'semantic-ui-react';
 import { getHashedPassword } from '../../helpers/crypto';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheck } from '../../hooks/useLoginCheck';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
-  const navigate = useNavigate();
   useLoginCheck();
 
   async function handleSignUp(ev: React.FormEvent<HTMLFormElement>) {
@@ -36,7 +35,7 @@ export default function Login() {
         domain: window.location.hostname,
         sameSite: 'Strict',
       });
-      navigate(`/quizzes/${userName}`);
+      window.location.href = `/quizzes/${userName}`;
     }
   }
 
@@ -55,35 +54,38 @@ export default function Login() {
 
   return (
     <Container>
-      <Form className="flexCol flex" onSubmit={handleSignUp}>
-        <Input
-          type="text"
-          label="Username (min 6 chars)"
-          labelPosition="left"
-          name="username"
-          value={userName}
-          onChange={handleChange}
-        />
-        <Input
-          type="password"
-          label="Password (min 8 chars)"
-          labelPosition="left"
-          name="password"
-          value={password}
-          onChange={handleChange}
-        />
-        <Input
-          type="password"
-          label="Repeat Password"
-          labelPosition="left"
-          name="repeat-password"
-          value={passwordRepeat}
-          onChange={handleChange}
-        />
-        <Button color="blue" className="alignCenter">
-          Login
-        </Button>
-      </Form>
+      <div className="flexCol flex">
+        <Form className="flexCol flex" onSubmit={handleSignUp}>
+          <Input
+            type="text"
+            label="Username (min 6 chars)"
+            labelPosition="left"
+            name="username"
+            value={userName}
+            onChange={handleChange}
+          />
+          <Input
+            type="password"
+            label="Password (min 8 chars)"
+            labelPosition="left"
+            name="password"
+            value={password}
+            onChange={handleChange}
+          />
+          <Input
+            type="password"
+            label="Repeat Password"
+            labelPosition="left"
+            name="repeat-password"
+            value={passwordRepeat}
+            onChange={handleChange}
+          />
+          <Button color="blue">Sign up</Button>
+        </Form>
+        <div>
+          Already have an account? <Link to="/login">Sign in</Link>
+        </div>
+      </div>
     </Container>
   );
 }

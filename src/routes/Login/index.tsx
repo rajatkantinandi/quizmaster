@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Button, Container, Form, Input } from 'semantic-ui-react';
 import { getHashedPassword } from '../../helpers/crypto';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheck } from '../../hooks/useLoginCheck';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
   useLoginCheck();
 
   async function handleLogin(ev: React.FormEvent<HTMLFormElement>) {
@@ -29,7 +28,7 @@ export default function Login() {
           domain: window.location.hostname,
           sameSite: 'Strict',
         });
-        navigate(`/quizzes/${userName}`);
+        window.location.href = `/quizzes/${userName}`;
         return;
       }
     }
@@ -49,27 +48,32 @@ export default function Login() {
 
   return (
     <Container>
-      <Form className="flexCol flex" onSubmit={handleLogin}>
-        <Input
-          type="text"
-          label="Username"
-          labelPosition="left"
-          name="username"
-          value={userName}
-          onChange={handleChange}
-        />
-        <Input
-          type="password"
-          label="Password"
-          labelPosition="left"
-          name="password"
-          value={password}
-          onChange={handleChange}
-        />
-        <Button color="blue" className="alignCenter">
-          Login
-        </Button>
-      </Form>
+      <div className="flex flexCol">
+        <Form className="flex flexCol" onSubmit={handleLogin}>
+          <Input
+            type="text"
+            label="Username"
+            labelPosition="left"
+            name="username"
+            value={userName}
+            onChange={handleChange}
+          />
+          <Input
+            type="password"
+            label="Password"
+            labelPosition="left"
+            name="password"
+            value={password}
+            onChange={handleChange}
+          />
+          <Button color="blue" className="alignCenter">
+            Login
+          </Button>
+        </Form>
+        <div>
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </div>
+      </div>
     </Container>
   );
 }

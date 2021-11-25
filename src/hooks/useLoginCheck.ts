@@ -11,7 +11,7 @@ export function useLoginCheck() {
     if (userName) {
       navigate(`/quizzes/${userName}`, { replace: true });
     }
-    else if (!window.location.href.endsWith('/login')) {
+    else if (!window.location.href.match(/\/login|\/signup/)) {
       navigate('/login');
     }
   }, []);
