@@ -7,15 +7,28 @@ import HomePage from './routes/HomePage';
 import Login from './routes/Login';
 import Signup from './routes/Signup';
 import Quizzes from './routes/Quizzes';
-import { Container, Header } from 'semantic-ui-react';
+import { Button, Container, Header } from 'semantic-ui-react';
+import { getSignedInUserName } from './helpers/user';
+import Cookies from 'js-cookie';
 
 function App() {
   return (
     <Container className="App">
-      <Header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-      </Header>
       <BrowserRouter>
+        <Header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          {!!getSignedInUserName() && (
+            <Button
+              color="brown"
+              onClick={() => {
+                Cookies.set('sessionId', '');
+                Cookies.set('userName', '');
+                window.location.href = '/login';
+              }}>
+              Logout
+            </Button>
+          )}
+        </Header>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
