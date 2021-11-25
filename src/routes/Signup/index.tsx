@@ -9,32 +9,35 @@ import { useLoginCheck } from '../../hooks/useLoginCheck';
 export default function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordRepeat, setPasswordRepeat] = useState('');
   const navigate = useNavigate();
   useLoginCheck();
 
-  async function handleLogin(ev: React.FormEvent<HTMLFormElement>) {
+  async function handleSignUp(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
-    if (password && userName) {
-      const salt = localStorage.getItem('salt:' + userName);
-      const hash = localStorage.getItem('passwordHash:' + userName);
+    if (!userName || userName.length < 6) {
+      alert('Username must be min 6 chars');
+    } else if (!password || password.length < 8) {
+      alert('Password must be min 8 chars');
+    } else if (passwordRepeat !== password) {
+      alert('Passwords do not match');
+    } else {
+      const salt = nanoid(8);
       const hashedPassword = salt && (await getHashedPassword(password, salt));
+      localStorage.setItem('salt:' + userName, salt);
+      localStorage.setItem('passwordHash:' + userName, hashedPassword);
 
-      if (hashedPassword === hash) {
-        cookie.set('sessionId', nanoid(16), {
-          domain: window.location.hostname,
-          sameSite: 'Strict',
-        });
-        cookie.set('userName', btoa(userName), {
-          domain: window.location.hostname,
-          sameSite: 'Strict',
-        });
-        navigate(`/quizzes/${userName}`);
-        return;
-      }
+      cookie.set('sessionId', nanoid(16), {
+        domain: window.location.hostname,
+        sameSite: 'Strict',
+      });
+      cookie.set('userName', btoa(userName), {
+        domain: window.location.hostname,
+        sameSite: 'Strict',
+      });
+      navigate(`/quizzes/${userName}`);
     }
-
-    alert('Invalid username & password');
   }
 
   function handleChange(ev: React.ChangeEvent<HTMLInputElement>) {
@@ -44,15 +47,18 @@ export default function Login() {
         break;
       case 'password':
         setPassword(ev.target.value);
+        break;
+      case 'repeat-password':
+        setPasswordRepeat(ev.target.value);
     }
   }
 
   return (
     <Container>
-      <Form className="flexCol flex" onSubmit={handleLogin}>
+      <Form className="flexCol flex" onSubmit={handleSignUp}>
         <Input
           type="text"
-          label="Username"
+          label="Username (min 6 chars)"
           labelPosition="left"
           name="username"
           value={userName}
@@ -60,10 +66,18 @@ export default function Login() {
         />
         <Input
           type="password"
-          label="Password"
+          label="Password (min 8 chars)"
           labelPosition="left"
           name="password"
           value={password}
+          onChange={handleChange}
+        />
+        <Input
+          type="password"
+          label="Repeat Password"
+          labelPosition="left"
+          name="repeat-password"
+          value={passwordRepeat}
           onChange={handleChange}
         />
         <Button color="blue" className="alignCenter">
