@@ -7,7 +7,7 @@ export default function Login() {
   const { userName } = useParams();
   const [quizzes, setQuizzes] = useState([]);
   const navigate = useNavigate();
-  useLoginCheck(userName);
+  useLoginCheck();
 
   useEffect(() => {
     const quizzes = localStorage.getItem(`quizzes:${userName}`);
@@ -28,7 +28,7 @@ export default function Login() {
           </Card>
         ))}
       </section>
-      <Button onClick={() => navigate('/create-quiz')} color="green">
+      <Button onClick={() => navigate(`/create-quiz/${userName}`)} color="green">
         Create Quiz
       </Button>
     </>

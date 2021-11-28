@@ -1,0 +1,256 @@
+/*
+  In the following classes
+    mx/px represent the left and right margin/padding
+    my/py represent the top and bottom margin/padding
+    mt/pt represent only top margin/padding
+    mb/pb represent only bottom margin/padding
+    ml/pl represent only left margin/padding
+    mr/pr represent only right margin/padding
+    null represent 0px spacing (margin/padding)
+    sm represent 2px spacing (margin/padding)
+    md represent 5px spacing (margin/padding)
+    lg represent 10px spacing (margin/padding)
+*/
+
+.mx-null {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.my-null {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.mt-null {
+  margin-top: 0 !important;
+}
+
+.mb-null {
+  margin-bottom: 0 !important;
+}
+
+.ml-null {
+  margin-left: 0 !important;
+}
+
+.mr-null {
+  margin-right: 0 !important;
+}
+
+.px-null {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.py-null {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.pt-null {
+  padding-top: 0 !important;
+}
+
+.pb-null {
+  padding-bottom: 0 !important;
+}
+
+.pl-null {
+  padding-left: 0 !important;
+}
+
+.pr-null {
+  padding-right: 0 !important;
+}
+
+.mx-sm {
+  margin-left: 2px !important;
+  margin-right: 2px !important;
+}
+
+.my-sm {
+  margin-top: 2px !important;
+  margin-bottom: 2px !important;
+}
+
+.mt-sm {
+  margin-top: 2px !important;
+}
+
+.mb-sm {
+  margin-bottom: 2px !important;
+}
+
+.ml-sm {
+  margin-left: 2px !important;
+}
+
+.mr-sm {
+  margin-right: 2px !important;
+}
+
+.px-sm {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+.py-sm {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+.pt-sm {
+  padding-top: 2px !important;
+}
+
+.pb-sm {
+  padding-bottom: 2px !important;
+}
+
+.pl-sm {
+  padding-left: 2px !important;
+}
+
+.pr-sm {
+  padding-right: 2px !important;
+}
+
+.mx-md {
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+}
+
+.my-md {
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+}
+
+.mt-md {
+  margin-top: 5px !important;
+}
+
+.mb-md {
+  margin-bottom: 5px !important;
+}
+
+.ml-md {
+  margin-left: 5px !important;
+}
+
+.mr-md {
+  margin-right: 5px !important;
+}
+
+.px-md {
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+.py-md {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+.pt-md {
+  padding-top: 5px !important;
+}
+
+.pb-md {
+  padding-bottom: 5px !important;
+}
+
+.pl-md {
+  padding-left: 5px !important;
+}
+
+.pr-md {
+  padding-right: 5px !important;
+}
+
+.mx-lg {
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+}
+
+.my-lg {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.mt-lg {
+  margin-top: 10px !important;
+}
+
+.mb-lg {
+  margin-bottom: 10px !important;
+}
+
+.ml-lg {
+  margin-left: 10px !important;
+}
+
+.mr-lg {
+  margin-right: 10px !important;
+}
+
+.px-lg {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.py-lg {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.px-xl {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+.py-xl {
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+}
+
+.pt-lg {
+  padding-top: 10px !important;
+}
+
+.pb-lg {
+  padding-bottom: 10px !important;
+}
+
+.pl-lg {
+  padding-left: 10px !important;
+}
+
+.pr-lg {
+  padding-right: 10px !important;
+}
+
+.pl-xl {
+  padding-left: 20px !important;
+}
+
+.mt-xl {
+  margin-top: 20px !important;
+}
+
+.mb-xl {
+  margin-bottom: 20px !important;
+}
+
+.ml-xl {
+  margin-left: 20px !important;
+}
+
+.mr-xl {
+  margin-right: 20px !important;
+}
+
+.my-xl {
+  margin-top: 20px !important;
+  margin-bottom: 20px !important;
+}

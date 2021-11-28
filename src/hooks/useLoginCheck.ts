@@ -1,8 +1,9 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { getSignedInUserName } from "../helpers/user";
 
-export function useLoginCheck(userName?: string) {
+export function useLoginCheck() {
+  const { userName } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -7,26 +7,32 @@ import HomePage from './routes/HomePage';
 import Login from './routes/Login';
 import Signup from './routes/Signup';
 import Quizzes from './routes/Quizzes';
+import CreateQuiz from './routes/CreateQuiz';
 import { Button, Container, Header } from 'semantic-ui-react';
 import { getSignedInUserName } from './helpers/user';
 import Cookies from 'js-cookie';
 
 function App() {
+  const userName = getSignedInUserName();
+
   return (
     <Container className="App">
       <BrowserRouter>
         <Header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          {!!getSignedInUserName() && (
-            <Button
-              color="brown"
-              onClick={() => {
-                Cookies.set('sessionId', '');
-                Cookies.set('userName', '');
-                window.location.href = '/login';
-              }}>
-              Logout
-            </Button>
+          {!!userName && (
+            <div className="flex">
+              <img src={logo} className="App-logo" alt="logo" />
+              <div className="mx-lg">{userName}</div>
+              <Button
+                color="brown"
+                onClick={() => {
+                  Cookies.set('sessionId', '');
+                  Cookies.set('userName', '');
+                  window.location.href = '/login';
+                }}>
+                Logout
+              </Button>
+            </div>
           )}
         </Header>
         <Routes>
@@ -34,6 +40,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/quizzes/:userName" element={<Quizzes />} />
+          <Route path="/create-quiz/:userName" element={<CreateQuiz />} />
         </Routes>
       </BrowserRouter>
     </Container>

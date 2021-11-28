@@ -13,7 +13,7 @@ code {
 
 .flex {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .justifyCenter {
@@ -30,4 +30,22 @@ code {
 
 .alignEnd {
   align-self: flex-end;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+h4 {
+  margin: 10px 0 !important;
+}
+
+.ui.input {
+  margin: 10px 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.ui.input input {
+  width: auto !important;
 }

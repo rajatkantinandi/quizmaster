@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Divider } from 'semantic-ui-react';
+import { Option as IOption } from '../../types';
 import Option from './Option';
 import styles from './styles.module.css';
 
 interface Props {
   text: string;
-  options: {
-    id: number;
-    optionText: string;
-    isCorrect: boolean;
-  }[];
+  options: IOption[];
 }
 
 export default function Question({ text, options }: Props) {
