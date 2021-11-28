@@ -7,7 +7,7 @@ export default function Login() {
   const { userName } = useParams();
   const [quizzes, setQuizzes] = useState([]);
   const navigate = useNavigate();
-  useLoginCheck();
+  useLoginCheck(userName);
 
   useEffect(() => {
     const quizzes = localStorage.getItem(`quizzes:${userName}`);
@@ -15,6 +15,7 @@ export default function Login() {
     if (quizzes) {
       setQuizzes(JSON.parse(quizzes));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -2,17 +2,22 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { getSignedInUserName } from "../helpers/user";
 
-export function useLoginCheck() {
+export function useLoginCheck(userName?: string) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userName = getSignedInUserName();
+    const signedInUserName = getSignedInUserName();
+    const isSignedInButIncorrectUserUrl = (userName && userName !== signedInUserName);
+    const shouldRedirectQuizzesPage = window.location.pathname.match(/\/login|\/signup/) || window.location.pathname.trim() === '/';
 
-    if (userName) {
-      navigate(`/quizzes/${userName}`, { replace: true });
+    if (signedInUserName) {
+      if (shouldRedirectQuizzesPage || isSignedInButIncorrectUserUrl) {
+        navigate(`/quizzes/${signedInUserName}`, { replace: true });
+      }
     }
-    else if (!window.location.href.match(/\/login|\/signup/)) {
+    else if (!shouldRedirectQuizzesPage) {
       navigate('/login');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
