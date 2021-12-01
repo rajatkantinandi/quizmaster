@@ -6,5 +6,6 @@ export const generateEmptyQuestions = (numOfQuestions: number, startIndex = 0) =
     text: '',
     options: [],
     point: 200 * (idx + 1 + startIndex),
+    correctOptionHash: '',
   }));
 };

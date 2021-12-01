@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
-import { Button, Card, Divider } from 'semantic-ui-react';
 import Question from '../../components/Question';
 import QuizGrid from '../../components/QuizGrid';
 import { generateEmptyQuestions } from '../../helpers/question';

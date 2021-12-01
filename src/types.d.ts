@@ -4,16 +4,22 @@ export interface Question {
   options: Option[];
   point: number;
   isAttempted?: boolean;
+  correctOptionHash: string;
 }
 
 export interface Option {
   id: number;
   optionText: string;
-  correctOptionHash: string;
 }
 
 export interface Category {
   name: string;
   id: string;
   questions: Question[];
+}
+
+export interface User {
+  userName: string;
+  passwordHash: string;
+  salt: string;
 }

@@ -5,6 +5,7 @@ import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheck } from '../../hooks/useLoginCheck';
 import { Link } from 'react-router-dom';
+import { isValidCredentials } from '../../helpers/user';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
@@ -14,26 +15,22 @@ export default function Login() {
   async function handleLogin(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
-    if (password && userName) {
-      const salt = localStorage.getItem('salt:' + userName);
-      const hash = localStorage.getItem('passwordHash:' + userName);
-      const hashedPassword = salt && (await getHashedPassword(password, salt));
+    const isValid = await isValidCredentials({ userName, password });
 
-      if (hashedPassword === hash) {
-        cookie.set('sessionId', nanoid(16), {
-          domain: window.location.hostname,
-          sameSite: 'Strict',
-        });
-        cookie.set('userName', btoa(userName), {
-          domain: window.location.hostname,
-          sameSite: 'Strict',
-        });
-        window.location.href = `/quizzes/${userName}`;
-        return;
-      }
+    if (isValid) {
+      cookie.set('sessionId', nanoid(16), {
+        domain: window.location.hostname,
+        sameSite: 'Strict',
+      });
+      cookie.set('userName', btoa(userName), {
+        domain: window.location.hostname,
+        sameSite: 'Strict',
+      });
+      window.location.href = `/quizzes/${userName}`;
+      return;
     }
 
-    alert('Invalid username & password');
+    alert('Invalid username or password');
   }
 
   function handleChange(ev: React.ChangeEvent<HTMLInputElement>) {

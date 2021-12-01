@@ -5,6 +5,7 @@ import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheck } from '../../hooks/useLoginCheck';
 import { Link } from 'react-router-dom';
+import { signUpUser } from '../../helpers/user';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
@@ -23,9 +24,8 @@ export default function Login() {
       alert('Passwords do not match');
     } else {
       const salt = nanoid(8);
-      const hashedPassword = salt && (await getHashedPassword(password, salt));
-      localStorage.setItem('salt:' + userName, salt);
-      localStorage.setItem('passwordHash:' + userName, hashedPassword);
+      const passwordHash = salt && (await getHashedPassword(password, salt));
+      await signUpUser({ userName, salt, passwordHash });
 
       cookie.set('sessionId', nanoid(16), {
         domain: window.location.hostname,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Divider, Icon } from 'semantic-ui-react';
 import { Category } from '../../types';
 import classNames from 'classnames';
