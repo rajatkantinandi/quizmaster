@@ -2,12 +2,12 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, BrowserRouter, Link } from 'react-router-dom';
 import HomePage from './routes/HomePage';
 import Login from './routes/Login';
 import Signup from './routes/Signup';
 import Quizzes from './routes/Quizzes';
-import CreateQuiz from './routes/CreateQuiz';
+import AddEditQuiz from './routes/AddEditQuiz';
 import { Button, Container, Header } from 'semantic-ui-react';
 import { getSignedInUserName } from './helpers/user';
 import Cookies from 'js-cookie';
@@ -20,8 +20,10 @@ function App() {
       <BrowserRouter>
         <Header className="App-header">
           {!!userName && (
-            <div className="flex">
-              <img src={logo} className="App-logo" alt="logo" />
+            <div className="flex alignCenter">
+              <Link to="/">
+                <img src={logo} className="App-logo" alt="logo" />
+              </Link>
               <div className="mx-lg">{userName}</div>
               <Button
                 color="brown"
@@ -40,7 +42,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/quizzes/:userName" element={<Quizzes />} />
-          <Route path="/create-quiz/:userName" element={<CreateQuiz />} />
+          <Route path="/create-quiz/:userName" element={<AddEditQuiz />} />
+          <Route path="/edit-quiz/:userName/:id" element={<AddEditQuiz />} />
         </Routes>
       </BrowserRouter>
     </Container>

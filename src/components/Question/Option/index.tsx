@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 interface Props {
   optionText: string;
-  id: number;
+  id: string;
   onChange: Function;
   checked: boolean;
 }

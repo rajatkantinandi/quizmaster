@@ -1,15 +1,19 @@
 import { nanoid } from 'nanoid';
-import React, { useState } from 'react';
-import Question from '../../components/Question';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
+import QuestionEdit from '../../components/QuestionEdit';
 import QuizGrid from '../../components/QuizGrid';
 import { generateEmptyQuestions } from '../../helpers/question';
+import { getQuiz, saveQuizDraft } from '../../helpers/quiz';
 import { useLoginCheck } from '../../hooks/useLoginCheck';
 import { Question as IQuestion } from '../../types';
 import ConfigureQuiz from './ConfigureQuiz';
 
-export default function CreateQuiz() {
+export default function AddEditQuiz() {
+  const { id } = useParams();
   useLoginCheck();
   const [name, setName] = useState('');
+  const [quizId] = useState(id || nanoid());
   const [numberOfQuestionsPerCategory, setNumberOfQuestionsPerCategory] = useState(5);
   const [categoriesInfo, setCategoriesInfo] = useState([
     { name: '', id: nanoid(), questions: generateEmptyQuestions(numberOfQuestionsPerCategory) },
@@ -19,6 +23,51 @@ export default function CreateQuiz() {
   const [isConfigured, setIsConfigured] = useState(false);
   const [isQuestionGridExpanded, setIsQuestionGridExpanded] = useState(true);
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      getQuiz(id).then((quiz: any) => {
+        setName(quiz.name);
+
+        if (quiz.categories && quiz.categories.length > 0) {
+          setCategoriesInfo(quiz.categories);
+          setNumberOfQuestionsPerCategory(quiz.categories[0].questions.length);
+        }
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (name && categoriesInfo.length >= 2 && quizId) {
+      saveQuizDraft({ name, categories: categoriesInfo, id: quizId });
+    }
+  }, [categoriesInfo, name, quizId]);
+
+  function saveQuestion(questionId: string, { text, options, correctOptionId }: any) {
+    const correctOption = options.find((o: any) => o.id === correctOptionId);
+
+    if (correctOption) {
+      const correctOptionHash = btoa(correctOption.optionText);
+      setCategoriesInfo(
+        categoriesInfo.map((category) => {
+          if (category.questions.some((q) => q.id === questionId)) {
+            return {
+              ...category,
+              questions: category.questions.map((q) => {
+                if (q.id === questionId) {
+                  return { text, id: questionId, correctOptionHash, options, point: q.point };
+                } else {
+                  return q;
+                }
+              }),
+            };
+          } else {
+            return category;
+          }
+        }),
+      );
+    }
+  }
 
   return (
     <>
@@ -53,7 +102,15 @@ export default function CreateQuiz() {
             selectedQuestionId={selectedQuestion?.id || ''}
           />
           {!isQuestionGridExpanded && !!selectedQuestion && (
-            <Question text={selectedQuestion.text} options={selectedQuestion.options} />
+            <QuestionEdit
+              key={selectedQuestion.id}
+              saveQuestion={(data: any) => saveQuestion(selectedQuestion.id, data)}
+              text={selectedQuestion.text}
+              options={selectedQuestion.options}
+              correctOptionId={
+                selectedQuestion.options.find((o) => o.optionText === atob(selectedQuestion.correctOptionHash))?.id
+              }
+            />
           )}
         </div>
       )}

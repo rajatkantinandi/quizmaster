@@ -76,7 +76,6 @@ export default function ConfigureQuiz({
   };
 
   const addCategory = () => {
-    console.log(numberOfQuestionsPerCategory);
     setCategoriesInfo(
       categoriesInfo.concat({
         name: '',
@@ -89,7 +88,7 @@ export default function ConfigureQuiz({
   return (
     <Form
       className="flex flexCol"
-      onSubmit={(ev) => {
+      onSubmit={async (ev) => {
         ev.preventDefault();
         setIsConfigured(true);
       }}>

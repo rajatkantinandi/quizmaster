@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function Question({ text, options }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState(0);
+  const [selectedChoice, setSelectedChoice] = useState('');
 
   return (
     <form className={styles.container}>
@@ -20,13 +20,13 @@ export default function Question({ text, options }: Props) {
         <Option
           id={option.id}
           checked={selectedChoice === option.id}
-          onChange={(value: number) => setSelectedChoice(value)}
+          onChange={(value: string) => setSelectedChoice(value)}
           optionText={option.optionText}
           key={option.id}
         />
       ))}
       <Divider />
-      <Button type="submit" className="alignEnd">
+      <Button type="submit" className="alignSelfEnd">
         Submit
       </Button>
     </form>

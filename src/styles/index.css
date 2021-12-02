@@ -28,8 +28,16 @@ code {
   flex-wrap: wrap;
 }
 
-.alignEnd {
+.alignCenter {
+  align-items: center;
+}
+
+.alignSelfEnd {
   align-self: flex-end;
+}
+
+.alignSelfStart {
+  align-self: flex-start;
 }
 
 .fullWidth {

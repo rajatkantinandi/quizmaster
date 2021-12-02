@@ -1,11 +1,7 @@
 import Cookies from "js-cookie"
 import { getHashedPassword } from "./crypto";
-import zango from 'zangodb';
+import db from "./db";
 
-const db = new zango.Db('quizDB', 2, {
-  users: ['userId', 'passwordHash', 'salt'],
-  categories: ['name', 'id', 'questions'],
-});
 const users = db.collection('users');
 
 export const getSignedInUserName = () => {

@@ -1,0 +1,15 @@
+.questionText {
+  font-size: 22px;
+  font-family: cursive;
+}
+
+.container {
+  max-width: 300px;
+  padding: 10px;
+  margin: 10px;
+  background-color: #ccf;
+  border-radius: 10px;
+  box-shadow: 0 0 2px -1px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}

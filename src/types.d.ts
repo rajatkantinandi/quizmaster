@@ -8,7 +8,7 @@ export interface Question {
 }
 
 export interface Option {
-  id: number;
+  id: string;
   optionText: string;
 }
 
