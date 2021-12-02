@@ -1,5 +1,33 @@
 .option[class*='checkbox'] {
   display: block;
   margin: 10px 0;
-  font-size: 20px;
+  font-size: 18px;
+  width: 48%;
+}
+
+.option[class*='checkbox'] label {
+  background: #ededff;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-right: 10px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  transition: 0.5ms ease-in all;
+}
+
+.option[class*='checkbox'] label::before,
+.option[class*='checkbox'] label::after {
+  display: none;
+}
+
+.option[class*='checkbox'] input:checked ~ label {
+  background-color: #ffa;
+}
+
+.option[class*='checkbox'].correct label {
+  background-color: #afa !important;
+}
+
+.option[class*='checkbox'].inCorrect label {
+  background-color: #faa !important;
 }

@@ -13,7 +13,20 @@ interface Props {
 
 export default function QuestionEdit({ text, options, saveQuestion, correctOptionId = '' }: Props) {
   const [questionText, setQuestionText] = useState(text || '');
-  const [questionOptions, setQuestionOptions] = useState(options || []);
+  const [questionOptions, setQuestionOptions] = useState(
+    options.length > 0
+      ? options
+      : [
+          {
+            id: nanoid(),
+            optionText: '',
+          },
+          {
+            id: nanoid(),
+            optionText: '',
+          },
+        ],
+  );
   const [questionCorrectOptionId, setQuestionCorrectOptionId] = useState(correctOptionId || '');
 
   function handleSubmit(ev: any) {

@@ -11,6 +11,7 @@ interface Props {
   quizName: string;
   setIsExpanded: Function;
   selectedQuestionId: string;
+  attemptedQuestionIds?: string[];
 }
 
 export default function QuizGrid({
@@ -20,6 +21,7 @@ export default function QuizGrid({
   showQuestion,
   categoriesInfo,
   quizName,
+  attemptedQuestionIds = [],
 }: Props) {
   return (
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
@@ -42,8 +44,8 @@ export default function QuizGrid({
               <Button
                 key={q.id}
                 onClick={() => showQuestion(q.id, category.id)}
-                color={q.isAttempted ? 'blue' : selectedQuestionId === q.id ? 'black' : undefined}
-                disabled={!!q.isAttempted}>
+                color={attemptedQuestionIds.includes(q.id) ? 'blue' : selectedQuestionId === q.id ? 'black' : undefined}
+                disabled={attemptedQuestionIds.includes(q.id)}>
                 {q.point}
               </Button>
             ))}

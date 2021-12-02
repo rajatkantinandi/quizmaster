@@ -73,3 +73,11 @@
   width: fit-content;
   margin-top: 10px;
 }
+
+.container-md {
+  width: 40%;
+}
+
+.container-md .input {
+  width: 100%;
+}

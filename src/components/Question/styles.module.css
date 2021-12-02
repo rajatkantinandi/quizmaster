@@ -1,15 +1,28 @@
 .questionText {
   font-size: 22px;
   font-family: cursive;
+  font-weight: bold;
+  color: #566;
+  margin: 10px 5px;
 }
 
 .container {
-  max-width: 300px;
+  width: 450px;
   padding: 10px;
   margin: 10px;
-  background-color: #ccf;
+  background-color: #cef;
   border-radius: 10px;
   box-shadow: 0 0 2px -1px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
+}
+
+.isAttempted[class*='checkbox'].correct label {
+  background-color: #afa !important;
+  opacity: 1 !important;
+}
+
+.isAttempted[class*='checkbox'].inCorrect label {
+  background-color: #faa !important;
+  opacity: 1 !important;
 }

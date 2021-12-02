@@ -92,21 +92,23 @@ export default function ConfigureQuiz({
         ev.preventDefault();
         setIsConfigured(true);
       }}>
-      <Input
-        className="fullWidth"
-        type="text"
-        label="Quiz name"
-        value={name}
-        onChange={(ev) => setName(ev.target.value)}
-      />
-      <Input
-        type="number"
-        className="fullWidth"
-        label="Number of questions per category"
-        value={numberOfQuestionsPerCategory}
-        onChange={(ev) => setNumberOfQuestionsPerCategory(parseInt(ev.target.value, 10))}
-        min={2}
-      />
+      <div className="container-md">
+        <Input
+          className="fullWidth"
+          type="text"
+          label="Quiz name"
+          value={name}
+          onChange={(ev) => setName(ev.target.value)}
+        />
+        <Input
+          type="number"
+          className="fullWidth"
+          label="Number of questions per category"
+          value={numberOfQuestionsPerCategory}
+          onChange={(ev) => setNumberOfQuestionsPerCategory(parseInt(ev.target.value, 10))}
+          min={2}
+        />
+      </div>
       <hr />
       <div className="flex">
         <Button type="button" color="blue" onClick={addCategory} className="mr-lg">

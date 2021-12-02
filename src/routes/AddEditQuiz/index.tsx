@@ -1,17 +1,19 @@
 import { nanoid } from 'nanoid';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import { Button, Divider } from 'semantic-ui-react';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuizGrid from '../../components/QuizGrid';
 import { generateEmptyQuestions } from '../../helpers/question';
-import { getQuiz, saveQuizDraft } from '../../helpers/quiz';
+import { getQuiz, saveQuiz } from '../../helpers/quiz';
 import { useLoginCheck } from '../../hooks/useLoginCheck';
 import { Question as IQuestion } from '../../types';
 import ConfigureQuiz from './ConfigureQuiz';
 
 export default function AddEditQuiz() {
-  const { id } = useParams();
+  const { id, userName } = useParams();
   useLoginCheck();
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [quizId] = useState(id || nanoid());
   const [numberOfQuestionsPerCategory, setNumberOfQuestionsPerCategory] = useState(5);
@@ -39,9 +41,17 @@ export default function AddEditQuiz() {
 
   useEffect(() => {
     if (name && categoriesInfo.length >= 2 && quizId) {
-      saveQuizDraft({ name, categories: categoriesInfo, id: quizId });
+      saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: true });
     }
   }, [categoriesInfo, name, quizId]);
+
+  async function finishQuiz() {
+    if (name && categoriesInfo.length >= 2 && quizId) {
+      await saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: false });
+      alert('Quiz save. Lets play now!');
+      navigate(`/quizzes/${userName}`);
+    }
+  }
 
   function saveQuestion(questionId: string, { text, options, correctOptionId }: any) {
     const correctOption = options.find((o: any) => o.id === correctOptionId);
@@ -113,6 +123,19 @@ export default function AddEditQuiz() {
             />
           )}
         </div>
+      )}
+      {!isQuestionGridExpanded && isConfigured && (
+        <>
+          <Divider />
+          <div className="flex">
+            <Button color="blue" className="mr-xl" size="large" onClick={() => setIsConfigured(false)}>
+              Configure Quiz
+            </Button>
+            <Button color="youtube" size="large" onClick={finishQuiz}>
+              Finish Quiz
+            </Button>
+          </div>
+        </>
       )}
     </>
   );

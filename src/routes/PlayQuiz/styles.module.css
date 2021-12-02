@@ -1,0 +1,39 @@
+.scoreContainer th:first-of-type {
+  width: 120px;
+  text-align: left;
+}
+
+.scoreContainer th:last-of-type {
+  width: 50px;
+  text-align: right;
+}
+
+.scoreContainer th,
+.scoreContainer td {
+  padding: 5px 10px;
+}
+
+.scoreContainer td:last-of-type {
+  text-align: right;
+}
+
+.scoreContainer table {
+  background-color: #eef;
+  border-spacing: 0;
+  border-collapse: collapse;
+  font-size: 18px;
+}
+
+.scoreContainer tr:first-of-type {
+  background-color: #77f;
+  color: white;
+  font-weight: bold;
+}
+
+.scoreContainer tr {
+  border-bottom: 1px solid #aaf;
+}
+
+.scoreContainer tr.active {
+  background-color: #cfc;
+}

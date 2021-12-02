@@ -11,6 +11,7 @@ import AddEditQuiz from './routes/AddEditQuiz';
 import { Button, Container, Header } from 'semantic-ui-react';
 import { getSignedInUserName } from './helpers/user';
 import Cookies from 'js-cookie';
+import PlayQuiz from './routes/PlayQuiz';
 
 function App() {
   const userName = getSignedInUserName();
@@ -44,6 +45,7 @@ function App() {
           <Route path="/quizzes/:userName" element={<Quizzes />} />
           <Route path="/create-quiz/:userName" element={<AddEditQuiz />} />
           <Route path="/edit-quiz/:userName/:id" element={<AddEditQuiz />} />
+          <Route path="/play-quiz/:userName/:id" element={<PlayQuiz />} />
         </Routes>
       </BrowserRouter>
     </Container>

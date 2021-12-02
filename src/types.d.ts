@@ -3,7 +3,6 @@ export interface Question {
   text: string;
   options: Option[];
   point: number;
-  isAttempted?: boolean;
   correctOptionHash: string;
 }
 
