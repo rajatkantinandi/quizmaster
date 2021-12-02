@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Container, Form, Input } from 'semantic-ui-react';
-import { getHashedPassword } from '../../helpers/crypto';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheck } from '../../hooks/useLoginCheck';

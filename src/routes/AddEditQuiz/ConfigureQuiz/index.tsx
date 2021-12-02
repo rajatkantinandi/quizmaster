@@ -44,6 +44,7 @@ export default function ConfigureQuiz({
         })),
       );
     }
+    // eslint-disable-next-line
   }, [numberOfQuestionsPerCategory]);
 
   const handleCategoryNameChange = (ev: React.ChangeEvent<HTMLInputElement>, id: string) => {
