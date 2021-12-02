@@ -63,11 +63,11 @@ export default function Login() {
             value={password}
             onChange={handleChange}
           />
-          <Button color="blue" className="alignCenter">
+          <Button color="blue" className="alignCenter" size="large">
             Login
           </Button>
         </Form>
-        <div>
+        <div className="mt-lg">
           Don't have an account? <Link to="/signup">Sign up</Link>
         </div>
       </div>
