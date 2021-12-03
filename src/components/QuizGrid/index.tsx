@@ -36,7 +36,7 @@ export default function QuizGrid({
       </h2>
       <Divider />
       <h3>Categories</h3>
-      <div className={classNames('flex flexWrap', styles.gridButtons)}>
+      <div className={classNames('flex flexWrap justifyCenter', styles.gridButtons)}>
         {categoriesInfo.map((category, idx) => (
           <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={category.id}>
             <h4>{category.name}</h4>

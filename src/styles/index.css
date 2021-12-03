@@ -40,6 +40,10 @@ code {
   align-self: flex-start;
 }
 
+.justifyCenter {
+  justify-content: center;
+}
+
 .fullWidth {
   width: 100%;
 }
