@@ -225,6 +225,7 @@ export default function PlayQuiz() {
             <Question
               isAttempted={attemptedQuestions.some((q: any) => q.id === selectedQuestion.id)}
               isCorrect={attemptedQuestions.some((q: any) => q.id === selectedQuestion.id && q.isCorrect)}
+              correctOptionHash={selectedQuestion.correctOptionHash}
               submitResponse={(optionId: string) => handleSubmitResponse(selectedQuestion.id, optionId)}
               key={selectedQuestion.id}
               text={selectedQuestion.text}

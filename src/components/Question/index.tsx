@@ -11,9 +11,10 @@ interface Props {
   submitResponse: Function;
   isAttempted: boolean;
   isCorrect: boolean;
+  correctOptionHash: string;
 }
 
-export default function Question({ text, options, submitResponse, isAttempted, isCorrect }: Props) {
+export default function Question({ text, options, submitResponse, isAttempted, isCorrect, correctOptionHash }: Props) {
   const [selectedChoice, setSelectedChoice] = useState('');
 
   function handleSubmit(ev: any) {
@@ -34,9 +35,10 @@ export default function Question({ text, options, submitResponse, isAttempted, i
             optionText={option.optionText}
             key={option.id}
             className={classNames({
-              [styles.isAttempted]: selectedChoice === option.id,
-              [styles.correct]: isAttempted && isCorrect,
-              [styles.inCorrect]: isAttempted && !isCorrect,
+              [styles.isAttempted]: isAttempted,
+              [styles.correct]:
+                (isCorrect && selectedChoice === option.id) || correctOptionHash === btoa(option.optionText),
+              [styles.inCorrect]: selectedChoice === option.id && !isCorrect,
             })}
             disabled={isAttempted}
           />
