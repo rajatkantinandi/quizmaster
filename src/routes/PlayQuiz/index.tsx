@@ -8,6 +8,7 @@ import QuizGrid from '../../components/QuizGrid';
 import { getQuiz, getQuizRun, saveGame } from '../../helpers/quiz';
 import { useLoginCheck } from '../../hooks/useLoginCheck';
 import { Category, Question as IQuestion } from '../../types';
+import ConfigureGame from './ConfigureGame';
 import styles from './styles.module.css';
 
 export default function PlayQuiz() {
@@ -157,52 +158,15 @@ export default function PlayQuiz() {
         </Button>
       </div>
       {!isConfigured && (
-        <div className="flex flexCol container-md">
-          {teams.map((team, idx) => (
-            <Input
-              label={`Team ${idx + 1} name`}
-              value={team.name}
-              key={team.id}
-              onChange={(ev) =>
-                setTeams(
-                  teams.map((p) => {
-                    if (p.id === team.id) {
-                      return { ...p, name: ev.target.value };
-                    } else {
-                      return p;
-                    }
-                  }),
-                )
-              }
-            />
-          ))}
-          <div className="flex mb-lg">
-            <Button
-              onClick={() => setTeams(teams.concat({ id: nanoid(), name: '', score: 0 }))}
-              color="blue"
-              className="mr-lg">
-              Add team
-            </Button>
-            {teams.length > 2 && (
-              <Button onClick={() => setTeams(teams.slice(0, -1))} color="red">
-                Remove last team
-              </Button>
-            )}
-          </div>
-          <Divider />
-          <Button
-            color="orange"
-            className="mb-lg alignSelfEnd"
-            onClick={() => {
-              setIsConfigured(true);
-              setCurrentTeamId(teams[0].id);
-            }}>
-            Play
-          </Button>
-        </div>
+        <ConfigureGame
+          teams={teams}
+          setTeams={setTeams}
+          setIsConfigured={setIsConfigured}
+          setCurrentTeamId={setCurrentTeamId}
+        />
       )}
       {isConfigured && (
-        <div className="flex">
+        <div className="flex justifyCenter">
           <QuizGrid
             categoriesInfo={categoriesInfo}
             showQuestion={(id, categoryId) => {
@@ -215,7 +179,7 @@ export default function PlayQuiz() {
                 setIsQuestionGridExpanded(false);
               }
             }}
-            attemptedQuestionIds={attemptedQuestions.map((q) => q.id)}
+            attemptedQuestions={attemptedQuestions}
             isExpanded={isQuestionGridExpanded}
             quizName={name}
             setIsExpanded={setIsQuestionGridExpanded}

@@ -44,6 +44,10 @@ code {
   justify-content: center;
 }
 
+.justifyEnd {
+  justify-content: flex-end;
+}
+
 .fullWidth {
   width: 100%;
 }

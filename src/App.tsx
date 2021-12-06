@@ -8,7 +8,7 @@ import Login from './routes/Login';
 import Signup from './routes/Signup';
 import Quizzes from './routes/Quizzes';
 import AddEditQuiz from './routes/AddEditQuiz';
-import { Button, Container, Header } from 'semantic-ui-react';
+import { Button, Header } from 'semantic-ui-react';
 import { getSignedInUserName } from './helpers/user';
 import Cookies from 'js-cookie';
 import PlayQuiz from './routes/PlayQuiz';
@@ -17,7 +17,7 @@ function App() {
   const userName = getSignedInUserName();
 
   return (
-    <Container className="App">
+    <div className="App">
       <BrowserRouter>
         <Header className="App-header">
           {!!userName && (
@@ -48,7 +48,7 @@ function App() {
           <Route path="/play-quiz/:userName/:id" element={<PlayQuiz />} />
         </Routes>
       </BrowserRouter>
-    </Container>
+    </div>
   );
 }
 

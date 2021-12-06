@@ -9,7 +9,7 @@ export default function HomePage() {
 
   return (
     <section>
-      <h1>Welcome to quizmaster app</h1>
+      <h1>Welcome to quizmaster</h1>
       <nav>
         <Button onClick={() => navigate('/login')}>Login</Button>
         <Button onClick={() => navigate('/signup')}>Signup</Button>

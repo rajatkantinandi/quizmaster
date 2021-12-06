@@ -11,7 +11,11 @@ interface Props {
   quizName: string;
   setIsExpanded: Function;
   selectedQuestionId: string;
-  attemptedQuestionIds?: string[];
+  attemptedQuestions?: {
+    id: string;
+    isCorrect: boolean;
+  }[];
+  savedQuestionIds?: string[];
 }
 
 export default function QuizGrid({
@@ -21,7 +25,8 @@ export default function QuizGrid({
   showQuestion,
   categoriesInfo,
   quizName,
-  attemptedQuestionIds = [],
+  attemptedQuestions = [], // for play mode
+  savedQuestionIds = [], // for edit mode
 }: Props) {
   return (
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
@@ -37,18 +42,32 @@ export default function QuizGrid({
       <Divider />
       <h3>Categories</h3>
       <div className={classNames('flex flexWrap justifyCenter', styles.gridButtons)}>
-        {categoriesInfo.map((category, idx) => (
+        {categoriesInfo.map((category) => (
           <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={category.id}>
             <h4>{category.name}</h4>
-            {category.questions.map((q) => (
-              <Button
-                key={q.id}
-                onClick={() => showQuestion(q.id, category.id)}
-                color={attemptedQuestionIds.includes(q.id) ? 'blue' : selectedQuestionId === q.id ? 'black' : undefined}
-                disabled={attemptedQuestionIds.includes(q.id)}>
-                {q.point}
-              </Button>
-            ))}
+            {category.questions.map((q) => {
+              const attemptedQuestion = attemptedQuestions.find((ques) => ques.id === q.id);
+
+              return (
+                <Button
+                  key={q.id}
+                  onClick={() => showQuestion(q.id, category.id)}
+                  color={
+                    attemptedQuestion
+                      ? attemptedQuestion.isCorrect
+                        ? 'green'
+                        : 'red'
+                      : selectedQuestionId === q.id
+                      ? 'black'
+                      : savedQuestionIds.includes(q.id)
+                      ? 'blue'
+                      : undefined
+                  }
+                  disabled={!!attemptedQuestion}>
+                  {q.point}
+                </Button>
+              );
+            })}
           </div>
         ))}
       </div>

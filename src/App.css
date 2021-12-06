@@ -1,20 +1,34 @@
 .App-logo {
   height: 50px;
   text-align: center;
+  padding: 5px;
+}
+
+.App {
+  padding: 10px 5vw;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 5s ease-out;
   }
 }
 
 @keyframes App-logo-spin {
-  from {
+  0% {
     transform: rotate(0deg);
   }
-  to {
-    transform: rotate(360deg);
+  5% {
+    transform: rotate(40deg);
+  }
+  10% {
+    transform: rotate(20deg);
+  }
+  15% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(5deg);
   }
 }
 

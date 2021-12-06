@@ -71,7 +71,7 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
 
   return (
     <form className={styles.container} onSubmit={handleSubmit}>
-      <Label>
+      <Label as="label" className={styles.questionText}>
         <div className="mb-md">Question text</div>
         <TextArea className="fullWidth" value={questionText} onChange={(ev) => setQuestionText(ev.target.value)} />
       </Label>
@@ -88,7 +88,7 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
             label={`Option ${idx + 1}`}
             onChange={(ev) => handleOptionChange(ev, option.id)}
             value={option.optionText}
-            className="mr-lg"
+            className="mr-lg fullWidth"
           />
           <Button
             icon={<Icon name="trash" />}

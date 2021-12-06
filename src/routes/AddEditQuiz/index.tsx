@@ -7,7 +7,7 @@ import QuizGrid from '../../components/QuizGrid';
 import { generateEmptyQuestions } from '../../helpers/question';
 import { getQuiz, saveQuiz } from '../../helpers/quiz';
 import { useLoginCheck } from '../../hooks/useLoginCheck';
-import { Question as IQuestion } from '../../types';
+import { Question as IQuestion, Question } from '../../types';
 import ConfigureQuiz from './ConfigureQuiz';
 
 export default function AddEditQuiz() {
@@ -79,6 +79,12 @@ export default function AddEditQuiz() {
     }
   }
 
+  function getSavedQuestionIds() {
+    const allQuestions = categoriesInfo.reduce((acc, curr) => [...acc, ...curr.questions], [] as Question[]);
+
+    return allQuestions.filter((q) => !!q.correctOptionHash && q.options.length >= 2 && !!q.text).map((q) => q.id);
+  }
+
   return (
     <>
       {!isConfigured && (
@@ -93,7 +99,7 @@ export default function AddEditQuiz() {
         />
       )}
       {isConfigured && (
-        <div className="flex">
+        <div className="flex justifyCenter">
           <QuizGrid
             categoriesInfo={categoriesInfo}
             showQuestion={(id, categoryId) => {
@@ -110,6 +116,7 @@ export default function AddEditQuiz() {
             quizName={name}
             setIsExpanded={setIsQuestionGridExpanded}
             selectedQuestionId={selectedQuestion?.id || ''}
+            savedQuestionIds={getSavedQuestionIds()}
           />
           {!isQuestionGridExpanded && !!selectedQuestion && (
             <QuestionEdit
@@ -124,10 +131,10 @@ export default function AddEditQuiz() {
           )}
         </div>
       )}
-      {!isQuestionGridExpanded && isConfigured && (
+      {isConfigured && (
         <>
           <Divider />
-          <div className="flex">
+          <div className="flex justifyCenter">
             <Button color="blue" className="mr-xl" size="large" onClick={() => setIsConfigured(false)}>
               Configure Quiz
             </Button>
