@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { nanoid } from 'nanoid';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Divider, Input } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 import Question from '../../components/Question';
 import QuizGrid from '../../components/QuizGrid';
 import { getQuiz, getQuizRun, saveGame } from '../../helpers/quiz';
