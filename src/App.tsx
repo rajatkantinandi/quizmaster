@@ -29,8 +29,14 @@ function App() {
               <Button
                 color="brown"
                 onClick={() => {
-                  Cookies.set('sessionId', '');
-                  Cookies.set('userName', '');
+                  Cookies.set('sessionId', '', {
+                    domain: window.location.hostname,
+                    sameSite: 'Strict',
+                  });
+                  Cookies.set('userName', '', {
+                    domain: window.location.hostname,
+                    sameSite: 'Strict',
+                  });
                   window.location.href = '/login';
                 }}>
                 Logout
