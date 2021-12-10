@@ -6,16 +6,16 @@ import { Button } from 'semantic-ui-react';
 import Question from '../../components/Question';
 import QuizGrid from '../../components/QuizGrid';
 import { getQuiz, getQuizRun, saveGame } from '../../helpers/quiz';
-import { useLoginCheck } from '../../hooks/useLoginCheck';
+import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Category, Question as IQuestion } from '../../types';
 import ConfigureGame from './ConfigureGame';
 import styles from './styles.module.css';
 
 export default function PlayQuiz() {
   const { id, userName } = useParams();
-  useLoginCheck();
   const navigate = useNavigate();
   const [name, setName] = useState('');
+  useLoginCheckAndPageTitle(name);
   const [categoriesInfo, setCategoriesInfo] = useState<Category[]>([]);
   const [isConfigured, setIsConfigured] = useState(false);
   const [isQuestionGridExpanded, setIsQuestionGridExpanded] = useState(true);

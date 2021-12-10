@@ -1,0 +1,29 @@
+:root {
+  /* colors */
+  --border-gray: #ccc;
+  --option-background: #ededff;
+  --checked-color: #ffa;
+  --correct-color: #afa;
+  --incorrect-color: #faa;
+  --question-container-color: #cef;
+  --question-grid-background: #fee;
+  --dashed-border-color: #add8e6;
+  --shadow-color-light: rgba(0, 0, 0, 0.3);
+  --gray-dark: #455;
+  --divider-color: rgb(126, 125, 125, 0.5);
+  --score-header-bg: #77f;
+  --score-header-color: white;
+  --score-bg: #eef;
+  --score-border-color: #aaf;
+  --score-active-color: #cfc;
+  --card-background: #efe;
+  --info-text-color: rgba(0, 0, 0, 0.67);
+  --card-hover-bg: #557;
+  --card-hover-color: white;
+  --badge-color: #772;
+
+  /* fonts */
+  --comfortaa: 'Comfortaa';
+  --semi-bold: 600;
+  --body-font: 'Ubuntu';
+}

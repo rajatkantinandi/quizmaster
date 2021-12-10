@@ -6,7 +6,7 @@
 
 .gridContainer {
   padding: 20px;
-  background-color: #fee;
+  background-color: var(--question-grid-background);
   transition: all 300ms ease-out;
   max-width: 45%;
   display: flex;
@@ -17,7 +17,7 @@
 
 .gridButtons .gridCol {
   min-width: 100px;
-  border: 1px dashed lightblue;
+  border: 1px dashed var(--dashed-border-color);
   padding: 5px;
 }
 
@@ -29,6 +29,6 @@
 .gridCol h4 {
   text-align: center;
   width: 100%;
-  border-bottom: 1px dashed lightslategray;
+  border-bottom: 1px dashed var(--divider-color);
   padding-bottom: 5px;
 }

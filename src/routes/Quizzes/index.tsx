@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Card } from 'semantic-ui-react';
 import { getQuizzes } from '../../helpers/quiz';
-import { useLoginCheck } from '../../hooks/useLoginCheck';
+import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 
 export default function Login() {
   const { userName } = useParams();
   const [quizzes, setQuizzes] = useState<any>([]);
   const navigate = useNavigate();
-  useLoginCheck();
+  useLoginCheckAndPageTitle();
 
   useEffect(() => {
     getQuizzes().then((quizzes) => {

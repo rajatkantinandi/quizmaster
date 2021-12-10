@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Container, Form, Input } from 'semantic-ui-react';
+import { Button, Form, Input } from 'semantic-ui-react';
 import { getHashedPassword } from '../../helpers/crypto';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
-import { useLoginCheck } from '../../hooks/useLoginCheck';
+import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Link } from 'react-router-dom';
 import { signUpUser } from '../../helpers/user';
 
@@ -11,7 +11,7 @@ export default function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
-  useLoginCheck();
+  useLoginCheckAndPageTitle();
 
   async function handleSignUp(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
@@ -53,39 +53,40 @@ export default function Login() {
   }
 
   return (
-    <Container>
-      <div className="flexCol flex">
-        <Form className="flexCol flex" onSubmit={handleSignUp}>
-          <Input
-            type="text"
-            label="Username (min 6 chars)"
-            labelPosition="left"
-            name="username"
-            value={userName}
-            onChange={handleChange}
-          />
-          <Input
-            type="password"
-            label="Password (min 8 chars)"
-            labelPosition="left"
-            name="password"
-            value={password}
-            onChange={handleChange}
-          />
-          <Input
-            type="password"
-            label="Repeat Password"
-            labelPosition="left"
-            name="repeat-password"
-            value={passwordRepeat}
-            onChange={handleChange}
-          />
-          <Button color="blue">Sign up</Button>
-        </Form>
-        <div>
-          Already have an account? <Link to="/login">Sign in</Link>
-        </div>
+    <div className="flexCol flex">
+      <Form className="flexCol flex container-md" onSubmit={handleSignUp}>
+        <Input
+          type="text"
+          label="Username (min 6 chars)"
+          labelPosition="left"
+          name="username"
+          value={userName}
+          onChange={handleChange}
+          autoFocus
+        />
+        <Input
+          type="password"
+          label="Password (min 8 chars)"
+          labelPosition="left"
+          name="password"
+          value={password}
+          onChange={handleChange}
+        />
+        <Input
+          type="password"
+          label="Repeat Password"
+          labelPosition="left"
+          name="repeat-password"
+          value={passwordRepeat}
+          onChange={handleChange}
+        />
+        <Button color="blue" size="large" className="mt-lg">
+          Sign up
+        </Button>
+      </Form>
+      <div className="mt-xl">
+        Already have an account? <Link to="/login">Sign in</Link>
       </div>
-    </Container>
+    </div>
   );
 }

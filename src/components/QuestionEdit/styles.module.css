@@ -13,9 +13,9 @@ label.questionText {
   width: 450px;
   padding: 20px 25px;
   margin: 10px;
-  background-color: #ccf;
+  background-color: var(--question-container-color);
   border-radius: 10px;
-  box-shadow: 0 0 2px -1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 2px -1px var(--shadow-color-light);
   display: flex;
   flex-direction: column;
 }

@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'semantic-ui-css/semantic.min.css';
+import './styles/variables.css';
 import './styles/index.css';
 import './styles/spacing.css';
+import './styles/card.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 

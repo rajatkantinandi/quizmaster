@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Button, Container, Form, Input } from 'semantic-ui-react';
+import { Button, Form, Input } from 'semantic-ui-react';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
-import { useLoginCheck } from '../../hooks/useLoginCheck';
+import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Link } from 'react-router-dom';
 import { isValidCredentials } from '../../helpers/user';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  useLoginCheck();
+  useLoginCheckAndPageTitle();
 
   async function handleLogin(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
@@ -43,33 +43,32 @@ export default function Login() {
   }
 
   return (
-    <Container>
-      <div className="flex flexCol">
-        <Form className="flex flexCol" onSubmit={handleLogin}>
-          <Input
-            type="text"
-            label="Username"
-            labelPosition="left"
-            name="username"
-            value={userName}
-            onChange={handleChange}
-          />
-          <Input
-            type="password"
-            label="Password"
-            labelPosition="left"
-            name="password"
-            value={password}
-            onChange={handleChange}
-          />
-          <Button color="blue" className="alignCenter" size="large">
-            Login
-          </Button>
-        </Form>
-        <div className="mt-lg">
-          Don't have an account? <Link to="/signup">Sign up</Link>
-        </div>
+    <div className="flex flexCol">
+      <Form className="flex flexCol container-md" onSubmit={handleLogin}>
+        <Input
+          type="text"
+          label="Username"
+          labelPosition="left"
+          name="username"
+          value={userName}
+          onChange={handleChange}
+          autoFocus
+        />
+        <Input
+          type="password"
+          label="Password"
+          labelPosition="left"
+          name="password"
+          value={password}
+          onChange={handleChange}
+        />
+        <Button color="blue" className="alignCenter" size="large">
+          Login
+        </Button>
+      </Form>
+      <div className="mt-lg">
+        Don't have an account? <Link to="/signup">Sign up</Link>
       </div>
-    </Container>
+    </div>
   );
 }

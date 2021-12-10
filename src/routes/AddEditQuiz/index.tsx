@@ -6,15 +6,15 @@ import QuestionEdit from '../../components/QuestionEdit';
 import QuizGrid from '../../components/QuizGrid';
 import { generateEmptyQuestions } from '../../helpers/question';
 import { getQuiz, saveQuiz } from '../../helpers/quiz';
-import { useLoginCheck } from '../../hooks/useLoginCheck';
+import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Question as IQuestion, Question } from '../../types';
 import ConfigureQuiz from './ConfigureQuiz';
 
 export default function AddEditQuiz() {
   const { id, userName } = useParams();
-  useLoginCheck();
   const navigate = useNavigate();
   const [name, setName] = useState('');
+  useLoginCheckAndPageTitle(name);
   const [quizId] = useState(id || nanoid());
   const [numberOfQuestionsPerCategory, setNumberOfQuestionsPerCategory] = useState(5);
   const [categoriesInfo, setCategoriesInfo] = useState([

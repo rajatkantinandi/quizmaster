@@ -1,8 +1,8 @@
 .questionText {
   font-size: 22px;
-  font-family: cursive;
-  font-weight: bold;
-  color: #566;
+  font-family: var(--comfortaa);
+  font-weight: var(--semi-bold);
+  color: var(--gray-dark);
   margin: 10px 5px;
 }
 
@@ -10,19 +10,19 @@
   width: 450px;
   padding: 10px;
   margin: 10px;
-  background-color: #cef;
+  background-color: var(--question-container-color);
   border-radius: 10px;
-  box-shadow: 0 0 2px -1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 2px -1px var(--shadow-color-light);
   display: flex;
   flex-direction: column;
 }
 
 .isAttempted[class*='checkbox'].correct label {
-  background-color: #afa !important;
+  background-color: var(--correct-color) !important;
   opacity: 1 !important;
 }
 
 .isAttempted[class*='checkbox'].inCorrect label {
-  background-color: #faa !important;
+  background-color: var(--incorrect-color) !important;
   opacity: 1 !important;
 }

@@ -6,12 +6,12 @@
 }
 
 .option[class*='checkbox'] label {
-  background: #ededff;
+  background: var(--option-background);
   padding: 10px;
   box-sizing: border-box;
   margin-right: 10px;
   border-radius: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-gray);
   transition: 0.5ms ease-in all;
 }
 
@@ -21,13 +21,13 @@
 }
 
 .option[class*='checkbox'] input:checked ~ label {
-  background-color: #ffa;
+  background-color: var(--checked-color);
 }
 
 .option[class*='checkbox'].correct label {
-  background-color: #afa !important;
+  background-color: var(--correct-color) !important;
 }
 
 .option[class*='checkbox'].inCorrect label {
-  background-color: #faa !important;
+  background-color: var(--incorrect-color) !important;
 }

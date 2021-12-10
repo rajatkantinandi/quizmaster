@@ -1,7 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
-import 'semantic-ui-css/semantic.min.css';
+import './styles/app.css';
 import { Route, Routes, BrowserRouter, Link } from 'react-router-dom';
 import HomePage from './routes/HomePage';
 import Login from './routes/Login';
@@ -20,29 +19,33 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Header className="App-header">
-          {!!userName && (
-            <div className="flex alignCenter">
-              <Link to="/">
-                <img src={logo} className="App-logo" alt="logo" />
-              </Link>
-              <div className="mx-lg">{userName}</div>
-              <Button
-                color="brown"
-                onClick={() => {
-                  Cookies.set('sessionId', '', {
-                    domain: window.location.hostname,
-                    sameSite: 'Strict',
-                  });
-                  Cookies.set('userName', '', {
-                    domain: window.location.hostname,
-                    sameSite: 'Strict',
-                  });
-                  window.location.href = '/login';
-                }}>
-                Logout
-              </Button>
-            </div>
-          )}
+          <div className="flex alignCenter">
+            <Link to="/">
+              <img src={logo} className="App-logo" alt="logo" />
+            </Link>
+            {userName ? (
+              <>
+                <div className="mx-lg">{userName}</div>
+                <Button
+                  color="brown"
+                  onClick={() => {
+                    Cookies.set('sessionId', '', {
+                      domain: window.location.hostname,
+                      sameSite: 'Strict',
+                    });
+                    Cookies.set('userName', '', {
+                      domain: window.location.hostname,
+                      sameSite: 'Strict',
+                    });
+                    window.location.href = '/login';
+                  }}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <div className="mx-lg">Quizmaster</div>
+            )}
+          </div>
         </Header>
         <Routes>
           <Route path="/" element={<HomePage />} />
