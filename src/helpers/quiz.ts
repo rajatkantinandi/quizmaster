@@ -35,6 +35,8 @@ export const saveGame = async (_id: string, {
   isComplete,
   currentTeamId,
   teams,
+  questionTimer,
+  questionSelectionTimer,
 }: {
   attemptedQuestions: {
     id: string;
@@ -48,7 +50,9 @@ export const saveGame = async (_id: string, {
     name: string;
     id: string;
     score: number;
-  }[]
+  }[];
+  questionTimer: number;
+  questionSelectionTimer: number;
 }) => {
   const existing = await quizRun.findOne({ _id });
 
@@ -59,7 +63,9 @@ export const saveGame = async (_id: string, {
       quizName,
       isComplete,
       currentTeamId,
-      teams
+      teams,
+      questionTimer,
+      questionSelectionTimer,
     });
   }
   else {
@@ -69,7 +75,10 @@ export const saveGame = async (_id: string, {
       quizName,
       isComplete,
       currentTeamId,
-      teams, _id
+      teams,
+      questionTimer,
+      questionSelectionTimer,
+      _id,
     });
   }
 }
