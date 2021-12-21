@@ -10,6 +10,7 @@ import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle
 import { Category, Question as IQuestion } from '../../types';
 import ConfigureGame from './ConfigureGame';
 import styles from './styles.module.css';
+import Timer from '../../components/Timer';
 
 export default function PlayQuiz() {
   const { id, userName } = useParams();
@@ -40,6 +41,12 @@ export default function PlayQuiz() {
   >([]);
   const [currentTeamId, setCurrentTeamId] = useState('');
   const [gameId, setGameId] = useState('');
+  const [questionTimer, setQuestionTimer] = useState(0);
+  const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [winner, setWinner] = useState<string | null>(null);
+  const isQuestionAttempted = !!selectedQuestion && attemptedQuestions.some((q: any) => q.id === selectedQuestion.id);
+  const showQuestionTimer = !!questionTimer && !!selectedQuestion && !isQuestionAttempted;
 
   useEffect(() => {
     if (id) {
@@ -60,6 +67,8 @@ export default function PlayQuiz() {
           setTeams(quizRun.teams);
           setAttemptedQuestions(quizRun.attemptedQuestions);
           setCurrentTeamId(quizRun.currentTeamId);
+          setQuestionTimer(quizRun.questionTimer || 0);
+          setQuestionSelectionTimer(quizRun.questionSelectionTimer || 0);
 
           if (quizRun.isComplete) {
             showWinner(quizRun.teams);
@@ -91,15 +100,12 @@ export default function PlayQuiz() {
 
     if (isDraw) {
       alert('Well played! It is a draw!');
+      setWinner('draw');
     } else {
+      setWinner(winner.id);
       alert(`Winner ${winner.name} with ${winner.score} points. Congrats!`);
     }
   }
-
-  useEffect(() => {
-    if (teams.length >= 2 && attemptedQuestions.length > 0 && currentTeamId) {
-    }
-  }, [teams, attemptedQuestions, currentTeamId]);
 
   async function handleSubmitResponse(questionId: string, optionId: string) {
     const allQuestions = categoriesInfo.reduce((acc, curr) => acc.concat(curr.questions), [] as IQuestion[]);
@@ -126,6 +132,7 @@ export default function PlayQuiz() {
         currentTeamIdToSet = teamsToSet[nextTeamIndex]?.id;
         setCurrentTeamId(currentTeamIdToSet);
       }
+      setIsPlaying(false);
 
       const isComplete = nextTeamIndex === 0 && allQuestions.length - attemptedQuestionsToSet.length < teams.length;
 
@@ -136,11 +143,25 @@ export default function PlayQuiz() {
         isComplete,
         currentTeamId: currentTeamIdToSet,
         teams: teamsToSet,
+        questionTimer,
+        questionSelectionTimer,
       });
 
       if (isComplete) {
         showWinner(teamsToSet);
       }
+    }
+  }
+
+  function selectRandomQuestion() {
+    const allUnattemptedQuestions = categoriesInfo
+      .reduce((acc, curr) => acc.concat(curr.questions), [] as IQuestion[])
+      .filter((q) => !attemptedQuestions.some((aq) => aq.id === q.id));
+
+    if (allUnattemptedQuestions.length > 0) {
+      setSelectedQuestion(allUnattemptedQuestions[Math.floor(Math.random() * allUnattemptedQuestions.length)]);
+      setIsQuestionGridExpanded(false);
+      setIsPlaying(true);
     }
   }
 
@@ -163,10 +184,14 @@ export default function PlayQuiz() {
           setTeams={setTeams}
           setIsConfigured={setIsConfigured}
           setCurrentTeamId={setCurrentTeamId}
+          questionTimer={questionTimer}
+          setQuestionTimer={setQuestionTimer}
+          questionSelectionTimer={questionSelectionTimer}
+          setQuestionSelectionTimer={setQuestionSelectionTimer}
         />
       )}
       {isConfigured && (
-        <div className="flex">
+        <div className="flex justifyCenter">
           <QuizGrid
             categoriesInfo={categoriesInfo}
             showQuestion={(id, categoryId) => {
@@ -177,26 +202,56 @@ export default function PlayQuiz() {
 
                 setSelectedQuestion(question || null);
                 setIsQuestionGridExpanded(false);
+                setIsPlaying(true);
               }
             }}
             attemptedQuestions={attemptedQuestions}
             isExpanded={isQuestionGridExpanded}
             quizName={name}
-            setIsExpanded={setIsQuestionGridExpanded}
+            setIsExpanded={(expanded: boolean) => {
+              setIsQuestionGridExpanded(expanded);
+
+              // Upon expanding grid deselect question & resume play
+              if (expanded) {
+                setSelectedQuestion(null);
+                setIsPlaying(!winner);
+              }
+            }}
             selectedQuestionId={selectedQuestion?.id || ''}
           />
           {!isQuestionGridExpanded && !!selectedQuestion && (
             <Question
-              isAttempted={attemptedQuestions.some((q: any) => q.id === selectedQuestion.id)}
+              isAttempted={isQuestionAttempted}
               isCorrect={attemptedQuestions.some((q: any) => q.id === selectedQuestion.id && q.isCorrect)}
               correctOptionHash={selectedQuestion.correctOptionHash}
               submitResponse={(optionId: string) => handleSubmitResponse(selectedQuestion.id, optionId)}
               key={selectedQuestion.id}
               text={selectedQuestion.text}
               options={selectedQuestion.options}
+              onClose={() => {
+                setIsPlaying(!winner);
+                setSelectedQuestion(null);
+                setIsQuestionGridExpanded(true);
+              }}
             />
           )}
           <div className={classNames(styles.scoreContainer, 'ml-lg')}>
+            {(showQuestionTimer || !!questionSelectionTimer) && !winner && (
+              <Timer
+                duration={showQuestionTimer ? questionTimer : questionSelectionTimer}
+                title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
+                handleTimeUp={() => {
+                  if (showQuestionTimer) {
+                    handleSubmitResponse(selectedQuestion.id, '');
+                  } else if (questionSelectionTimer) {
+                    selectRandomQuestion();
+                  }
+                }}
+                key={showQuestionTimer ? selectedQuestion.id : 'questionSelection'}
+                running={isPlaying}
+                setIsRunning={setIsPlaying}
+              />
+            )}
             <table className="mt-lg">
               <tbody>
                 <tr>
@@ -205,7 +260,10 @@ export default function PlayQuiz() {
                 </tr>
                 {teams.map((t) => (
                   <tr key={t.id} className={classNames({ [styles.active]: t.id === currentTeamId })}>
-                    <td>{t.name}</td>
+                    <td>
+                      {t.name}
+                      {winner === t.id && <span title="winner"> 👑</span>}
+                    </td>
                     <td>{t.score}</td>
                   </tr>
                 ))}
@@ -222,6 +280,8 @@ export default function PlayQuiz() {
                   teams,
                   quizName: name,
                   currentTeamId,
+                  questionTimer,
+                  questionSelectionTimer,
                 });
                 showWinner(teams);
                 window.location.reload();

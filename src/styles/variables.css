@@ -21,6 +21,9 @@
   --card-hover-bg: #557;
   --card-hover-color: white;
   --badge-color: #772;
+  --legend-bg: #65e;
+  --legend-color: #fef;
+  --shadow-color-dark: rgba(0, 0, 0, 0.5);
 
   /* fonts */
   --comfortaa: 'Comfortaa';

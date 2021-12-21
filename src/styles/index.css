@@ -62,3 +62,31 @@ h4 {
 .ui.input input {
   width: auto !important;
 }
+
+fieldset {
+  border: 1px solid var(--border-gray);
+  padding: 15px 20px;
+  border-radius: 10px;
+}
+
+legend {
+  background-color: var(--legend-bg);
+  color: var(--legend-color);
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 5px;
+  letter-spacing: 1.2px;
+  font-size: 15px;
+}
+
+.absolute {
+  position: absolute !important;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.textAlignCenter {
+  text-align: center;
+}
