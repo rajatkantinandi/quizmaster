@@ -12,9 +12,18 @@ interface Props {
   isAttempted: boolean;
   isCorrect: boolean;
   correctOptionHash: string;
+  onClose: Function;
 }
 
-export default function Question({ text, options, submitResponse, isAttempted, isCorrect, correctOptionHash }: Props) {
+export default function Question({
+  text,
+  options,
+  submitResponse,
+  isAttempted,
+  isCorrect,
+  correctOptionHash,
+  onClose,
+}: Props) {
   const [selectedChoice, setSelectedChoice] = useState('');
 
   function handleSubmit(ev: any) {
@@ -45,7 +54,11 @@ export default function Question({ text, options, submitResponse, isAttempted, i
         ))}
       </div>
       <Divider />
-      {!isAttempted && (
+      {isAttempted ? (
+        <Button onClick={() => onClose()} type="button" color="blue" className="alignSelfEnd">
+          Close
+        </Button>
+      ) : (
         <Button type="submit" color="green" className="alignSelfEnd">
           Submit
         </Button>

@@ -44,6 +44,7 @@ export default function PlayQuiz() {
   const [questionTimer, setQuestionTimer] = useState(0);
   const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const isQuestionAttempted = !!selectedQuestion && attemptedQuestions.some((q: any) => q.id === selectedQuestion.id);
 
   useEffect(() => {
     if (id) {
@@ -127,6 +128,7 @@ export default function PlayQuiz() {
         currentTeamIdToSet = teamsToSet[nextTeamIndex]?.id;
         setCurrentTeamId(currentTeamIdToSet);
       }
+      setIsPlaying(false);
 
       const isComplete = nextTeamIndex === 0 && allQuestions.length - attemptedQuestionsToSet.length < teams.length;
 
@@ -215,13 +217,18 @@ export default function PlayQuiz() {
           />
           {!isQuestionGridExpanded && !!selectedQuestion && (
             <Question
-              isAttempted={attemptedQuestions.some((q: any) => q.id === selectedQuestion.id)}
+              isAttempted={isQuestionAttempted}
               isCorrect={attemptedQuestions.some((q: any) => q.id === selectedQuestion.id && q.isCorrect)}
               correctOptionHash={selectedQuestion.correctOptionHash}
               submitResponse={(optionId: string) => handleSubmitResponse(selectedQuestion.id, optionId)}
               key={selectedQuestion.id}
               text={selectedQuestion.text}
               options={selectedQuestion.options}
+              onClose={() => {
+                setIsPlaying(true);
+                setSelectedQuestion(null);
+                setIsQuestionGridExpanded(true);
+              }}
             />
           )}
           <div className={classNames(styles.scoreContainer, 'ml-lg')}>
