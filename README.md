@@ -13,6 +13,7 @@ Hosted via [vercel](https://quizmaster.vercel.app/)
 - Editing quizzes are saved as `draft` automatically once you save a question.
 - While playing, progress is saved locally & next time loaded from there.
 - Grid - Question - Scorecard.
+- Optional Timer for answering & choosing questions
 
 ## Upcoming / Roadmap
 

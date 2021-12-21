@@ -23,7 +23,7 @@ export default function Login() {
     <>
       <h1>Welcome: {userName}</h1>
       <h2>Quizzes</h2>
-      <section className="mb-xl flex">
+      <section className="mb-xl flex flexWrap">
         {quizzes.map((quiz: any) => (
           <Card
             key={quiz.id}
@@ -46,8 +46,8 @@ export default function Login() {
           </Card>
         ))}
       </section>
-      <Button onClick={() => navigate(`/create-quiz/${userName}`)} color="green">
-        Create Quiz
+      <Button onClick={() => navigate(`/create-quiz/${userName}`)} size="large" color="green">
+        + Create Quiz
       </Button>
     </>
   );
