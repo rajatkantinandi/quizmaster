@@ -46,6 +46,7 @@ export default function PlayQuiz() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestions.some((q: any) => q.id === selectedQuestion.id);
+  const showQuestionTimer = !!questionTimer && !!selectedQuestion && !isQuestionAttempted;
 
   useEffect(() => {
     if (id) {
@@ -235,18 +236,18 @@ export default function PlayQuiz() {
             />
           )}
           <div className={classNames(styles.scoreContainer, 'ml-lg')}>
-            {((!!selectedQuestion && !!questionTimer) || !!questionSelectionTimer) && !winner && (
+            {(showQuestionTimer || !!questionSelectionTimer) && !winner && (
               <Timer
-                duration={selectedQuestion ? questionTimer : questionSelectionTimer}
-                title={selectedQuestion ? 'Timer' : 'Selection Timer'}
+                duration={showQuestionTimer ? questionTimer : questionSelectionTimer}
+                title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
                 handleTimeUp={() => {
-                  if (selectedQuestion && questionTimer) {
+                  if (showQuestionTimer) {
                     handleSubmitResponse(selectedQuestion.id, '');
                   } else if (questionSelectionTimer) {
                     selectRandomQuestion();
                   }
                 }}
-                key={selectedQuestion?.id || 'questionSelection'}
+                key={showQuestionTimer ? selectedQuestion.id : 'questionSelection'}
                 running={isPlaying}
                 setIsRunning={setIsPlaying}
               />
