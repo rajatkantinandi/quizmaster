@@ -187,7 +187,7 @@ export default function PlayQuiz() {
         />
       )}
       {isConfigured && (
-        <div className="flex">
+        <div className="flex justifyCenter">
           <QuizGrid
             categoriesInfo={categoriesInfo}
             showQuestion={(id, categoryId) => {
