@@ -44,6 +44,7 @@ export default function PlayQuiz() {
   const [questionTimer, setQuestionTimer] = useState(0);
   const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [winner, setWinner] = useState<string | null>(null);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestions.some((q: any) => q.id === selectedQuestion.id);
 
   useEffect(() => {
@@ -98,7 +99,9 @@ export default function PlayQuiz() {
 
     if (isDraw) {
       alert('Well played! It is a draw!');
+      setWinner('draw');
     } else {
+      setWinner(winner.id);
       alert(`Winner ${winner.name} with ${winner.score} points. Congrats!`);
     }
   }
@@ -210,7 +213,7 @@ export default function PlayQuiz() {
               // Upon expanding grid deselect question & resume play
               if (expanded) {
                 setSelectedQuestion(null);
-                setIsPlaying(true);
+                setIsPlaying(!winner);
               }
             }}
             selectedQuestionId={selectedQuestion?.id || ''}
@@ -225,14 +228,14 @@ export default function PlayQuiz() {
               text={selectedQuestion.text}
               options={selectedQuestion.options}
               onClose={() => {
-                setIsPlaying(true);
+                setIsPlaying(!winner);
                 setSelectedQuestion(null);
                 setIsQuestionGridExpanded(true);
               }}
             />
           )}
           <div className={classNames(styles.scoreContainer, 'ml-lg')}>
-            {((!!selectedQuestion && !!questionTimer) || !!questionSelectionTimer) && (
+            {((!!selectedQuestion && !!questionTimer) || !!questionSelectionTimer) && !winner && (
               <Timer
                 duration={selectedQuestion ? questionTimer : questionSelectionTimer}
                 title={selectedQuestion ? 'Timer' : 'Selection Timer'}
@@ -256,7 +259,10 @@ export default function PlayQuiz() {
                 </tr>
                 {teams.map((t) => (
                   <tr key={t.id} className={classNames({ [styles.active]: t.id === currentTeamId })}>
-                    <td>{t.name}</td>
+                    <td>
+                      {t.name}
+                      {winner === t.id && <span title="winner"> 👑</span>}
+                    </td>
                     <td>{t.score}</td>
                   </tr>
                 ))}
