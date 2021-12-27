@@ -1,9 +1,10 @@
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Divider } from 'semantic-ui-react';
 import { Option as IOption } from '../../types';
 import Option from './Option';
 import styles from './styles.module.css';
+import Markdown from 'markdown-to-jsx';
 
 interface Props {
   text: string;
@@ -11,8 +12,10 @@ interface Props {
   submitResponse: Function;
   isAttempted: boolean;
   isCorrect: boolean;
-  correctOptionHash: string;
+  correctOptionHash?: string;
   onClose: Function;
+  preSelectedChoice?: string;
+  isPreview?: boolean;
 }
 
 export default function Question({
@@ -21,19 +24,28 @@ export default function Question({
   submitResponse,
   isAttempted,
   isCorrect,
-  correctOptionHash,
+  correctOptionHash = '',
   onClose,
+  preSelectedChoice = '',
+  isPreview = false,
 }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState('');
+  const [selectedChoice, setSelectedChoice] = useState(preSelectedChoice);
+
+  useEffect(() => {
+    setSelectedChoice(preSelectedChoice);
+  }, [preSelectedChoice]);
 
   function handleSubmit(ev: any) {
     ev.preventDefault();
+
     submitResponse(selectedChoice);
   }
 
   return (
     <form className={styles.container} onSubmit={handleSubmit}>
-      <div className={styles.questionText}>{text}</div>
+      <div className={styles.questionText}>
+        <Markdown>{text}</Markdown>
+      </div>
       <Divider />
       <div className="flex flexWrap">
         {options.map((option) => (
@@ -48,19 +60,20 @@ export default function Question({
               [styles.correct]:
                 (isCorrect && selectedChoice === option.id) || correctOptionHash === btoa(option.optionText),
               [styles.inCorrect]: selectedChoice === option.id && !isCorrect,
+              [styles.isPreview]: isPreview,
             })}
             disabled={isAttempted}
           />
         ))}
       </div>
       <Divider />
-      {isAttempted ? (
-        <Button onClick={() => onClose()} type="button" color="blue" className="alignSelfEnd">
+      {isAttempted && !isPreview ? (
+        <Button onClick={() => onClose()} type="button" color="blue">
           Close
         </Button>
       ) : (
-        <Button type="submit" color="green" className="alignSelfEnd">
-          Submit
+        <Button type="submit" size="large" color="green">
+          {isPreview ? 'Save' : 'Submit'}
         </Button>
       )}
     </form>

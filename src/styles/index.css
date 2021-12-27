@@ -29,6 +29,10 @@ body {
   align-items: center;
 }
 
+.alignEnd {
+  align-items: flex-end;
+}
+
 .alignSelfEnd {
   align-self: flex-end;
 }

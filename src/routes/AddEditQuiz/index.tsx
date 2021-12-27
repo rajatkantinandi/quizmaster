@@ -53,7 +53,7 @@ export default function AddEditQuiz() {
     }
   }
 
-  function saveQuestion(questionId: string, { text, options, correctOptionId }: any) {
+  function saveQuestion(questionId: string, { text, options, correctOptionId, point }: any) {
     const correctOption = options.find((o: any) => o.id === correctOptionId);
 
     if (correctOption) {
@@ -65,7 +65,7 @@ export default function AddEditQuiz() {
               ...category,
               questions: category.questions.map((q) => {
                 if (q.id === questionId) {
-                  return { text, id: questionId, correctOptionHash, options, point: q.point };
+                  return { text, id: questionId, correctOptionHash, options, point: point || q.point };
                 } else {
                   return q;
                 }
@@ -127,6 +127,7 @@ export default function AddEditQuiz() {
               correctOptionId={
                 selectedQuestion.options.find((o) => o.optionText === atob(selectedQuestion.correctOptionHash))?.id
               }
+              point={selectedQuestion.point}
             />
           )}
         </div>
