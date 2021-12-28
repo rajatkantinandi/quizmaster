@@ -96,3 +96,9 @@ label.questionText {
   color: white;
   opacity: 1;
 }
+
+.markdownImg {
+  background-color: var(--card-background);
+  height: 14px;
+  margin-left: 5px;
+}

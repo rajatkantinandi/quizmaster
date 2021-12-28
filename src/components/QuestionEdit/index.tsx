@@ -5,6 +5,7 @@ import { Button, Checkbox, Divider, Icon, Input, Label, TextArea } from 'semanti
 import { Option as IOption } from '../../types';
 import Question from '../Question';
 import styles from './styles.module.css';
+import markdownLogo from '../../img/markdown.svg';
 
 interface Props {
   text: string;
@@ -96,7 +97,9 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
         onSubmit={handleSubmit}>
         <div className={styles.editFormBody}>
           <Label as="label" className={styles.questionText}>
-            <div className="mb-md">Question text</div>
+            <div className="mb-md">
+              Question text <MarkDownLogo />
+            </div>
             <TextArea rows={4} value={questionText} onChange={(ev) => setQuestionText(ev.target.value)} />
           </Label>
           <Divider />
@@ -109,7 +112,9 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
                 onChange={(ev, data) => setQuestionCorrectOptionId(data.value as string)}
               />
               <Label as="label" className={styles.optionText}>
-                <div className="mb-md">Option {idx + 1}</div>
+                <div className="mb-md">
+                  Option {idx + 1} <MarkDownLogo />
+                </div>
                 <TextArea rows={1} value={option.optionText} onChange={(ev) => handleOptionChange(ev, option.id)} />
               </Label>
               <Button
@@ -157,3 +162,5 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
     </div>
   );
 }
+
+const MarkDownLogo = () => <img title="markdown" src={markdownLogo} alt="" className={styles.markdownImg} />;
