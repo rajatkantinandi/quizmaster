@@ -106,6 +106,25 @@ ul.contains-task-list {
 .react-markdown td,
 .react-markdown th {
   border: 1px solid var(--gray-dark);
+  padding: 2px 8px;
+}
+
+.react-markdown th {
+  background-color: var(--gray-dark);
+  color: white;
+  border: 1px solid var(--border-gray);
+}
+
+.react-markdown tr:nth-last-of-type(2n) {
+  background-color: var(--option-background);
+}
+
+.react-markdown tr:nth-last-of-type(2n + 1) {
+  background-color: white;
+}
+
+.react-markdown tr {
+  color: black;
 }
 
 .react-markdown table {
