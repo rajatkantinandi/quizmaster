@@ -1,7 +1,6 @@
 .questionText {
   font-size: 22px;
   font-family: var(--comfortaa);
-  font-weight: var(--semi-bold);
   color: var(--gray-dark);
   margin: 10px 5px;
 }
@@ -19,10 +18,14 @@
 
 .isAttempted[class*='checkbox'].correct label {
   background-color: var(--correct-color) !important;
-  opacity: 1 !important;
 }
 
 .isAttempted[class*='checkbox'].inCorrect label {
   background-color: var(--incorrect-color) !important;
+}
+
+.isPreview[class*='checkbox'] label,
+.isAttempted[class*='checkbox'].correct label,
+.isAttempted[class*='checkbox'].inCorrect label {
   opacity: 1 !important;
 }

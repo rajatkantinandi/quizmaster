@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import { Checkbox } from 'semantic-ui-react';
+import Markdown from '../../Markdown';
 import styles from './styles.module.css';
 
 interface Props {
@@ -16,7 +17,11 @@ export default function Option({ optionText, onChange, id, checked, className = 
   return (
     <Checkbox
       className={classNames(styles.option, className)}
-      label={optionText}
+      label={
+        <label>
+          <Markdown>{optionText}</Markdown>
+        </label>
+      }
       onChange={(ev, data) => {
         onChange(data.value);
       }}

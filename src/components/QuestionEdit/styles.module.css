@@ -1,21 +1,104 @@
-label.questionText {
+label.questionText,
+label.optionText {
   font-size: 16px !important;
 }
 
-.questionText textarea {
+label.questionText {
+  width: 100%;
+}
+
+.questionText textarea,
+.optionText textarea {
   font-size: 18px;
   padding: 10px;
   width: 100%;
+  max-width: 100%;
   min-height: 80px;
 }
 
+.optionText {
+  max-width: 100%;
+  width: calc(100% - 70px);
+  margin-right: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.optionCheckbox label::before {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.optionCheckbox label::after {
+  top: 4px !important;
+  left: 4px !important;
+}
+
+.optionText textarea {
+  min-height: 30px;
+}
+
 .container {
-  width: 450px;
-  padding: 20px 25px;
+  max-width: 550px;
+  width: 90vw;
+  padding: 20px 15px 20px 25px;
   margin: 10px;
+  margin-top: 0;
   background-color: var(--question-container-color);
-  border-radius: 10px;
+  border-radius: 0 10px 10px 10px;
   box-shadow: 0 0 2px -1px var(--shadow-color-light);
-  display: flex;
-  flex-direction: column;
+  box-sizing: border-box;
+  transition: all 0.3s linear;
+}
+
+.editFormBody {
+  max-height: calc(100vh - 300px);
+  overflow: auto;
+  padding-right: 10px;
+}
+
+.toggledOff {
+  transform: scaleY(0);
+  transform-origin: 100% -10%;
+  position: absolute;
+  top: 200px;
+  opacity: 0;
+}
+
+.toggledOff .editFormBody {
+  overflow: hidden;
+}
+
+.previewSlider .edit,
+.previewSlider .preview {
+  width: 90px;
+  text-align: center;
+  padding: 2px 5px;
+  cursor: pointer;
+  background-color: var(--option-background);
+  color: var(--gray-dark);
+}
+
+.previewSlider input {
+  display: none;
+}
+
+.previewSlider {
+  width: fit-content;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  border: 1px solid var(--border-gray);
+  margin-left: 10px;
+}
+
+.previewSlider input:checked ~ .preview,
+.previewSlider input:not(:checked) ~ .edit {
+  background-color: var(--gray-dark);
+  color: white;
+  opacity: 1;
+}
+
+.markdownImg {
+  background-color: var(--card-background);
+  height: 14px;
+  margin-left: 5px;
 }
