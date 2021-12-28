@@ -13,6 +13,8 @@
   border-radius: 15px;
   border: 1px solid var(--border-gray);
   transition: 0.5ms ease-in all;
+  word-wrap: break-word;
+  overflow: hidden;
 }
 
 .option[class*='checkbox'] label::before,
