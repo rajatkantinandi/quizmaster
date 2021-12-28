@@ -1,7 +1,6 @@
 .questionText {
   font-size: 22px;
   font-family: var(--comfortaa);
-  font-weight: var(--semi-bold);
   color: var(--gray-dark);
   margin: 10px 5px;
 }

@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 import { Checkbox } from 'semantic-ui-react';
+import Markdown from '../../Markdown';
 import styles from './styles.module.css';
-import Markdown from 'markdown-to-jsx';
 
 interface Props {
   optionText: string;

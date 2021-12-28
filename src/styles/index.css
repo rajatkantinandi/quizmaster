@@ -94,3 +94,20 @@ legend {
 .textAlignCenter {
   text-align: center;
 }
+
+li.task-list-item {
+  list-style-type: none;
+}
+
+ul.contains-task-list {
+  padding-left: 15px;
+}
+
+.react-markdown td,
+.react-markdown th {
+  border: 1px solid var(--gray-dark);
+}
+
+.react-markdown table {
+  border-collapse: collapse;
+}

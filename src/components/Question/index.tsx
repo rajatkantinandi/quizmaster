@@ -2,9 +2,9 @@ import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { Button, Divider } from 'semantic-ui-react';
 import { Option as IOption } from '../../types';
+import Markdown from '../Markdown';
 import Option from './Option';
 import styles from './styles.module.css';
-import Markdown from 'markdown-to-jsx';
 
 interface Props {
   text: string;
@@ -43,9 +43,7 @@ export default function Question({
 
   return (
     <form className={styles.container} onSubmit={handleSubmit}>
-      <div className={styles.questionText}>
-        <Markdown>{text}</Markdown>
-      </div>
+      <Markdown>{text}</Markdown>
       <Divider />
       <div className="flex flexWrap">
         {options.map((option) => (
