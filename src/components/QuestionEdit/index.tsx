@@ -166,7 +166,7 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
 const MarkDownLogo = () => (
   <a
     title="Input supports markdown format, click learn more..."
-    href="https://www.markdownguide.org/basic-syntax/"
+    href="https://commonmark.org/help/"
     target="_blank"
     rel="noreferrer">
     <img src={markdownLogo} alt="" className={styles.markdownImg} />
