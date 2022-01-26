@@ -11,6 +11,7 @@ Hosted via [vercel](https://quizmaster.vercel.app/)
 - One user can create multiple quizzes.
 - Can play the same quiz multiple times.
 - Editing quizzes are saved as `draft` automatically once you save a question.
+- The quiz editor supports github style `markdown` format
 - While playing, progress is saved locally & next time loaded from there.
 - Grid - Question - Scorecard.
 - Optional Timer for answering & choosing questions
