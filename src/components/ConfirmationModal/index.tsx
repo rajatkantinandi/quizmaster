@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button, Modal } from 'semantic-ui-react';
 import { ConfirmationModalState, useAppStore } from '../../useAppStore';
 
@@ -15,10 +15,17 @@ function ConfirmationModal({
   isAlert = false,
 }: Props) {
   const { setConfirmationModal } = useAppStore();
+  const okRef = useRef<any>();
 
   function hideModal() {
     setConfirmationModal(null);
   }
+
+  useEffect(() => {
+    if (okRef.current && isAlert) {
+      okRef.current.focus();
+    }
+  }, [isAlert, okRef]);
 
   return (
     <Modal
@@ -40,6 +47,7 @@ function ConfirmationModal({
         {!!okText && (
           <Button
             basic
+            ref={okRef}
             onClick={() => {
               if (okCallback) {
                 okCallback();

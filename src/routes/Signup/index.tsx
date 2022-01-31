@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Form, Input } from 'semantic-ui-react';
-import { getHashedPassword } from '../../helpers/crypto';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
@@ -25,19 +24,21 @@ export default function Login() {
     } else if (passwordRepeat !== password) {
       showErrorModal({ message: 'Passwords do not match' });
     } else {
-      const salt = nanoid(8);
-      const passwordHash = salt && (await getHashedPassword(password, salt));
-      await signUpUser({ userName, salt, passwordHash });
+      const errorMessage = await signUpUser({ userName, password });
 
-      cookie.set('sessionId', nanoid(16), {
-        domain: window.location.hostname,
-        sameSite: 'Strict',
-      });
-      cookie.set('userName', btoa(userName), {
-        domain: window.location.hostname,
-        sameSite: 'Strict',
-      });
-      window.location.href = `/quizzes/${userName}`;
+      if (errorMessage) {
+        showErrorModal({ message: errorMessage });
+      } else {
+        cookie.set('sessionId', nanoid(16), {
+          domain: window.location.hostname,
+          sameSite: 'Strict',
+        });
+        cookie.set('userName', btoa(userName), {
+          domain: window.location.hostname,
+          sameSite: 'Strict',
+        });
+        window.location.href = `/quizzes/${userName}`;
+      }
     }
   }
 
