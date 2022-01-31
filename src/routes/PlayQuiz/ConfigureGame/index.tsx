@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { nanoid } from 'nanoid';
 import { Button, Checkbox, Input } from 'semantic-ui-react';
+import { useAppStore } from '../../../useAppStore';
 import styles from './styles.module.css';
 
 interface Props {
@@ -28,6 +29,17 @@ export default function ConfigureGame({
   setQuestionTimer,
   setQuestionSelectionTimer,
 }: Props) {
+  const { showErrorModal } = useAppStore();
+
+  function validateTeamNames(): boolean {
+    if (teams.some((team) => team.name.trim().length === 0)) {
+      showErrorModal({ message: 'Team names cannot be empty!' });
+      return false;
+    }
+
+    return true;
+  }
+
   return (
     <div className="flex flexCol">
       <div className="flex flexWrap">
@@ -106,6 +118,10 @@ export default function ConfigureGame({
         className="mb-lg mt-xl ml-lg"
         size="huge"
         onClick={() => {
+          if (!validateTeamNames()) {
+            return;
+          }
+
           setIsConfigured(true);
           setCurrentTeamId(teams[0].id);
         }}>

@@ -6,22 +6,24 @@ import { nanoid } from 'nanoid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Link } from 'react-router-dom';
 import { signUpUser } from '../../helpers/user';
+import { useAppStore } from '../../useAppStore';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
   useLoginCheckAndPageTitle();
+  const { showErrorModal } = useAppStore();
 
   async function handleSignUp(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
     if (!userName || userName.length < 6) {
-      alert('Username must be min 6 chars');
+      showErrorModal({ message: 'Username must be min 6 chars' });
     } else if (!password || password.length < 8) {
-      alert('Password must be min 8 chars');
+      showErrorModal({ message: 'Password must be min 8 chars' });
     } else if (passwordRepeat !== password) {
-      alert('Passwords do not match');
+      showErrorModal({ message: 'Passwords do not match' });
     } else {
       const salt = nanoid(8);
       const passwordHash = salt && (await getHashedPassword(password, salt));

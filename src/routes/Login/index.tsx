@@ -5,11 +5,13 @@ import { nanoid } from 'nanoid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Link } from 'react-router-dom';
 import { isValidCredentials } from '../../helpers/user';
+import { useAppStore } from '../../useAppStore';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   useLoginCheckAndPageTitle();
+  const { showErrorModal } = useAppStore();
 
   async function handleLogin(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
@@ -29,7 +31,7 @@ export default function Login() {
       return;
     }
 
-    alert('Invalid username or password');
+    showErrorModal({ message: 'Invalid username or password! Please try again.' });
   }
 
   function handleChange(ev: React.ChangeEvent<HTMLInputElement>) {

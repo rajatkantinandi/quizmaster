@@ -6,6 +6,7 @@ import { Option as IOption } from '../../types';
 import Question from '../Question';
 import styles from './styles.module.css';
 import markdownLogo from '../../img/markdown.svg';
+import { useAppStore } from '../../useAppStore';
 
 interface Props {
   text: string;
@@ -34,6 +35,7 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
   const [questionCorrectOptionId, setQuestionCorrectOptionId] = useState(correctOptionId || '');
   const [questionPoint, setQuestionPoint] = useState(point);
   const [isPreview, setIsPreview] = useState(false);
+  const { showErrorModal } = useAppStore();
 
   function handleSubmit(ev?: any) {
     if (ev) {
@@ -43,7 +45,7 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
     const validationError = getValidationError();
 
     if (validationError) {
-      alert(validationError);
+      showErrorModal({ message: validationError });
     } else {
       saveQuestion({
         text: questionText,
