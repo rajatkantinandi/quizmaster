@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Button, Form, Input } from 'semantic-ui-react';
 import { generateEmptyQuestions } from '../../../helpers/question';
 import { Category } from '../../../types';
+import { useAppStore } from '../../../useAppStore';
 
 interface Props {
   categoriesInfo: Category[];
@@ -23,6 +24,8 @@ export default function ConfigureQuiz({
   numberOfQuestionsPerCategory,
   setNumberOfQuestionsPerCategory,
 }: Props) {
+  const { showErrorModal } = useAppStore();
+
   // When numberOfQuestionsPerCategory is changed then update categories array
   useEffect(() => {
     const currentQuestionsCount = categoriesInfo[0].questions.length;
@@ -86,11 +89,32 @@ export default function ConfigureQuiz({
     );
   };
 
+  function getValidationError(): string {
+    if (name.trim().length === 0) {
+      return 'Quiz name should not be empty!';
+    } else if (!numberOfQuestionsPerCategory || numberOfQuestionsPerCategory < 2) {
+      return 'Number of questions per category should be two or more!';
+    } else if (categoriesInfo.length < 2) {
+      return 'Number of categories should be two or more!';
+    } else if (categoriesInfo.some((category) => category.name.trim().length === 0)) {
+      return 'Category name should not be empty!';
+    }
+
+    return '';
+  }
+
   return (
     <Form
       className="flex flexCol"
       onSubmit={async (ev) => {
         ev.preventDefault();
+        const validationError = getValidationError();
+
+        if (validationError) {
+          showErrorModal({ message: validationError });
+          return;
+        }
+
         setIsConfigured(true);
       }}>
       <div className="container-md">

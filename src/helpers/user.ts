@@ -1,4 +1,5 @@
 import Cookies from "js-cookie"
+import { nanoid } from "nanoid";
 import { getHashedPassword } from "./crypto";
 import db from "./db";
 
@@ -16,16 +17,35 @@ export const getSignedInUserName = () => {
   }
 }
 
-export const signUpUser = async ({ userName, salt, passwordHash }: {
+export const signUpUser = async ({ userName, password }: {
   userName: string;
-  salt: string;
-  passwordHash: string;
-}) => {
-  await users.insert({
+  password: string;
+}): Promise<string> => {
+  const existingUser = await users.findOne({
     userName,
-    salt,
-    passwordHash,
   });
+
+  if (existingUser) {
+    const isValid = await isValidCredentials({ userName, password });
+
+    if (isValid) {
+      return '';
+    }
+    else {
+      return 'User already exists! Please use proper username & password to sign in.';
+    }
+  }
+  else {
+    const salt = nanoid(8);
+    const passwordHash = salt && (await getHashedPassword(password, salt));
+
+    await users.insert({
+      userName,
+      salt,
+      passwordHash,
+    });
+    return '';
+  }
 }
 
 export const isValidCredentials = async ({ userName, password }: { userName: string; password: string; }) => {

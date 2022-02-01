@@ -8,6 +8,7 @@ import { generateEmptyQuestions } from '../../helpers/question';
 import { getQuiz, saveQuiz } from '../../helpers/quiz';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Question as IQuestion, Question } from '../../types';
+import { useAppStore } from '../../useAppStore';
 import ConfigureQuiz from './ConfigureQuiz';
 
 export default function AddEditQuiz() {
@@ -25,6 +26,7 @@ export default function AddEditQuiz() {
   const [isConfigured, setIsConfigured] = useState(false);
   const [isQuestionGridExpanded, setIsQuestionGridExpanded] = useState(true);
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
+  const { showAlertModal } = useAppStore();
 
   useEffect(() => {
     if (id) {
@@ -48,7 +50,7 @@ export default function AddEditQuiz() {
   async function finishQuiz() {
     if (name && categoriesInfo.length >= 2 && quizId) {
       await saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: false });
-      alert('Quiz save. Lets play now!');
+      showAlertModal({ title: 'Quiz saved!', message: 'Lets play now!' });
       navigate(`/quizzes/${userName}`);
     }
   }
@@ -136,7 +138,15 @@ export default function AddEditQuiz() {
         <>
           <Divider />
           <div className="flex justifyCenter">
-            <Button color="blue" className="mr-xl" size="large" onClick={() => setIsConfigured(false)}>
+            <Button
+              color="blue"
+              className="mr-xl"
+              size="large"
+              onClick={() => {
+                setIsConfigured(false);
+                setSelectedQuestion(null);
+                setIsQuestionGridExpanded(true);
+              }}>
               Configure Quiz
             </Button>
             <Button color="youtube" size="large" onClick={finishQuiz}>

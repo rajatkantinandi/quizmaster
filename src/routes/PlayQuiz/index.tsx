@@ -11,6 +11,7 @@ import { Category, Question as IQuestion } from '../../types';
 import ConfigureGame from './ConfigureGame';
 import styles from './styles.module.css';
 import Timer from '../../components/Timer';
+import { useAppStore } from '../../useAppStore';
 
 export default function PlayQuiz() {
   const { id, userName } = useParams();
@@ -47,6 +48,7 @@ export default function PlayQuiz() {
   const [winner, setWinner] = useState<string | null>(null);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestions.some((q: any) => q.id === selectedQuestion.id);
   const showQuestionTimer = !!questionTimer && !!selectedQuestion && !isQuestionAttempted;
+  const { showAlertModal } = useAppStore();
 
   useEffect(() => {
     if (id) {
@@ -80,6 +82,7 @@ export default function PlayQuiz() {
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, id]);
 
   function showWinner(teams: any[]) {
@@ -99,11 +102,14 @@ export default function PlayQuiz() {
     });
 
     if (isDraw) {
-      alert('Well played! It is a draw!');
+      showAlertModal({ title: 'Match drawn!', message: 'Well played! It is a draw!' });
       setWinner('draw');
     } else {
       setWinner(winner.id);
-      alert(`Winner ${winner.name} with ${winner.score} points. Congrats!`);
+      showAlertModal({
+        title: `Congrats ${winner.name}!`,
+        message: `Team '${winner.name}' has won the game with ${winner.score} points.`,
+      });
     }
   }
 

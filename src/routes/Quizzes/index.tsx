@@ -46,7 +46,7 @@ export default function Login() {
           </Card>
         ))}
       </section>
-      <Button onClick={() => navigate(`/create-quiz/${userName}`)} size="large" color="green">
+      <Button onClick={() => navigate(`/edit-quiz/${userName}`)} size="large" color="green">
         + Create Quiz
       </Button>
     </>
