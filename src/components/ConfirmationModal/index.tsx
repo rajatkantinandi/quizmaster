@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Button, Modal } from 'semantic-ui-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Checkbox, Modal } from 'semantic-ui-react';
 import { ConfirmationModalState, useAppStore } from '../../useAppStore';
 
 interface Props extends ConfirmationModalState {}
@@ -13,9 +13,11 @@ function ConfirmationModal({
   okCallback,
   size = 'tiny',
   isAlert = false,
+  doNotShowAgainKey,
 }: Props) {
   const { setConfirmationModal } = useAppStore();
   const okRef = useRef<any>();
+  const [shouldNotShowAgain, setShouldNotShowAgain] = useState(false);
 
   function hideModal() {
     setConfirmationModal(null);
@@ -37,7 +39,17 @@ function ConfirmationModal({
       dimmer="blurring"
       size={size}>
       <Modal.Header>{title}</Modal.Header>
-      <Modal.Content>{body}</Modal.Content>
+      <Modal.Content>
+        {body}
+        {!!doNotShowAgainKey && (
+          <Checkbox
+            className="mt-xl"
+            label="Do not show this message again"
+            checked={shouldNotShowAgain}
+            onChange={() => setShouldNotShowAgain(!shouldNotShowAgain)}
+          />
+        )}
+      </Modal.Content>
       <Modal.Actions>
         {!!cancelText && (
           <Button basic onClick={hideModal}>
@@ -46,11 +58,14 @@ function ConfirmationModal({
         )}
         {!!okText && (
           <Button
-            basic
             ref={okRef}
+            color="blue"
             onClick={() => {
               if (okCallback) {
                 okCallback();
+              }
+              if (doNotShowAgainKey && shouldNotShowAgain) {
+                localStorage.setItem('DoNotShow' + doNotShowAgainKey, 'true');
               }
 
               hideModal();

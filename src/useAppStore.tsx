@@ -41,4 +41,5 @@ export interface ConfirmationModalState {
   cancelText?: string;
   size?: 'mini' | 'tiny' | 'small' | 'large' | 'fullscreen';
   isAlert?: boolean;
+  doNotShowAgainKey?: string;
 }

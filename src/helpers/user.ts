@@ -21,6 +21,10 @@ export const signUpUser = async ({ userName, password }: {
   userName: string;
   password: string;
 }): Promise<string> => {
+  if (userName === 'guest') {
+    return 'Can\'t use "guest" as username, to login as guest, go to homepage and click "continue as guest"';
+  }
+
   const existingUser = await users.findOne({
     userName,
   });
