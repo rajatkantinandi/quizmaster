@@ -49,6 +49,7 @@ export default function PlayQuiz() {
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestions.some((q: any) => q.id === selectedQuestion.id);
   const showQuestionTimer = !!questionTimer && !!selectedQuestion && !isQuestionAttempted;
   const { showAlertModal } = useAppStore();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -80,12 +81,14 @@ export default function PlayQuiz() {
         } else {
           setGameId(nanoid());
         }
+
+        setIsLoading(false);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, id]);
 
-  function showWinner(teams: any[]) {
+  function showWinner(teams: any[], callback?: Function) {
     let winner = teams[0];
     let isDraw = false;
 
@@ -102,13 +105,14 @@ export default function PlayQuiz() {
     });
 
     if (isDraw) {
-      showAlertModal({ title: 'Match drawn!', message: 'Well played! It is a draw!' });
+      showAlertModal({ title: 'Match drawn!', message: 'Well played! It is a draw!', okCallback: callback });
       setWinner('draw');
     } else {
       setWinner(winner.id);
       showAlertModal({
         title: `Congrats ${winner.name}!`,
         message: `Team '${winner.name}' has won the game with ${winner.score} points.`,
+        okCallback: callback,
       });
     }
   }
@@ -171,7 +175,9 @@ export default function PlayQuiz() {
     }
   }
 
-  return (
+  return isLoading ? (
+    <></>
+  ) : (
     <>
       <div className="flex alignCenter">
         <h1>{name}</h1>
@@ -289,8 +295,7 @@ export default function PlayQuiz() {
                   questionTimer,
                   questionSelectionTimer,
                 });
-                showWinner(teams);
-                window.location.reload();
+                showWinner(teams, () => window.location.reload());
               }}>
               Start a new Game
             </Button>

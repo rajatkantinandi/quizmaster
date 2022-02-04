@@ -7,7 +7,7 @@ import QuizGrid from '../../components/QuizGrid';
 import { generateEmptyQuestions } from '../../helpers/question';
 import { getQuiz, saveQuiz } from '../../helpers/quiz';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
-import { Question as IQuestion, Question } from '../../types';
+import { Category, Question as IQuestion, Question } from '../../types';
 import { useAppStore } from '../../useAppStore';
 import ConfigureQuiz from './ConfigureQuiz';
 
@@ -27,6 +27,7 @@ export default function AddEditQuiz() {
   const [isQuestionGridExpanded, setIsQuestionGridExpanded] = useState(true);
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
   const { showAlertModal } = useAppStore();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -36,7 +37,12 @@ export default function AddEditQuiz() {
         if (quiz.categories && quiz.categories.length > 0) {
           setCategoriesInfo(quiz.categories);
           setNumberOfQuestionsPerCategory(quiz.categories[0].questions.length);
+          const isAnyQuestionSaved = quiz.categories.some((category: Category) =>
+            category.questions.some((q) => q.text.trim().length > 0),
+          );
+          setIsConfigured(isAnyQuestionSaved);
         }
+        setIsLoading(false);
       });
     }
   }, [id]);
@@ -87,7 +93,9 @@ export default function AddEditQuiz() {
     return allQuestions.filter((q) => !!q.correctOptionHash && q.options.length >= 2 && !!q.text).map((q) => q.id);
   }
 
-  return (
+  return isLoading ? (
+    <></>
+  ) : (
     <>
       {!isConfigured && (
         <ConfigureQuiz
