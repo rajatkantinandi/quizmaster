@@ -11,7 +11,7 @@ export default function Login() {
   useLoginCheckAndPageTitle();
 
   useEffect(() => {
-    getQuizzes().then((quizzes) => {
+    getQuizzes(userName || '').then((quizzes) => {
       if (quizzes) {
         setQuizzes(quizzes);
       }

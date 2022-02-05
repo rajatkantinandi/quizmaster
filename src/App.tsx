@@ -40,7 +40,7 @@ function App() {
                       domain: window.location.hostname,
                       sameSite: 'Strict',
                     });
-                    window.location.href = '/login';
+                    window.location.href = '/';
                   }}>
                   Logout
                 </Button>

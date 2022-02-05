@@ -1,0 +1,26 @@
+.or {
+  display: flex;
+  align-items: center;
+  font-size: 1.25em;
+  font-weight: var(--semi-bold);
+}
+
+.or::before,
+.or::after {
+  content: '';
+  width: 200px;
+  height: 1px;
+  display: block;
+  margin: 0 15px;
+  background-color: var(--divider-color);
+}
+
+.nav {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  overflow: hidden;
+  grid-auto-columns: 300px;
+  justify-items: center;
+  width: 300px;
+  gap: 20px;
+}
