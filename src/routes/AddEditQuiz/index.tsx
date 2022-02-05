@@ -12,7 +12,7 @@ import { useAppStore } from '../../useAppStore';
 import ConfigureQuiz from './ConfigureQuiz';
 
 export default function AddEditQuiz() {
-  const { id, userName } = useParams();
+  const { id, userName = 'guest' } = useParams();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   useLoginCheckAndPageTitle(name);
@@ -49,13 +49,13 @@ export default function AddEditQuiz() {
 
   useEffect(() => {
     if (name && categoriesInfo.length >= 2 && quizId) {
-      saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: true });
+      saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: true, userName });
     }
   }, [categoriesInfo, name, quizId]);
 
   async function finishQuiz() {
     if (name && categoriesInfo.length >= 2 && quizId) {
-      await saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: false });
+      await saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: false, userName });
       showAlertModal({ title: 'Quiz saved!', message: 'Lets play now!' });
       navigate(`/quizzes/${userName}`);
     }

@@ -22,3 +22,11 @@ export interface User {
   passwordHash: string;
   salt: string;
 }
+
+export interface Quiz {
+  name: string;
+  categories: Category[];
+  isDraft: boolean;
+  userName: string;
+  id: string;
+}
