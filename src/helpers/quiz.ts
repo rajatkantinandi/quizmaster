@@ -1,4 +1,4 @@
-import { Category, Quiz } from "../types";
+import { Quiz } from "../types";
 import db from "./db"
 
 const quizzesC = db.collection('quizzes');

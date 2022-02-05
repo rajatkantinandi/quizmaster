@@ -51,7 +51,7 @@ export default function AddEditQuiz() {
     if (name && categoriesInfo.length >= 2 && quizId) {
       saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: true, userName });
     }
-  }, [categoriesInfo, name, quizId]);
+  }, [categoriesInfo, name, quizId, userName]);
 
   async function finishQuiz() {
     if (name && categoriesInfo.length >= 2 && quizId) {
