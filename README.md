@@ -7,7 +7,7 @@ Hosted via [vercel](https://quizmaster.vercel.app/)
 ## Features
 
 - All data is stored offline in indexedDB.
-- Multiple local users can signup & create quizzes.
+- Multiple local users can signup & create quizzes or play as a guest.
 - One user can create multiple quizzes.
 - Can play the same quiz multiple times.
 - Editing quizzes are saved as `draft` automatically once you save a question.
