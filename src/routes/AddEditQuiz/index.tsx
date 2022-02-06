@@ -31,19 +31,24 @@ export default function AddEditQuiz() {
 
   useEffect(() => {
     if (id) {
-      getQuiz(id).then((quiz: any) => {
-        setName(quiz.name);
+      if (isLoading) {
+        getQuiz(id).then((quiz: any) => {
+          setName(quiz.name);
 
-        if (quiz.categories && quiz.categories.length > 0) {
-          setCategoriesInfo(quiz.categories);
-          setNumberOfQuestionsPerCategory(quiz.categories[0].questions.length);
-          const isAnyQuestionSaved = quiz.categories.some((category: Category) =>
-            category.questions.some((q) => q.text.trim().length > 0),
-          );
-          setIsConfigured(isAnyQuestionSaved);
-        }
-        setIsLoading(false);
-      });
+          if (quiz.categories && quiz.categories.length > 0) {
+            setCategoriesInfo(quiz.categories);
+            setNumberOfQuestionsPerCategory(quiz.categories[0].questions.length);
+            const isAnyQuestionSaved = quiz.categories.some((category: Category) =>
+              category.questions.some((q) => q.text.trim().length > 0),
+            );
+            setIsConfigured(isAnyQuestionSaved);
+          }
+          setIsLoading(false);
+        });
+      }
+    } else {
+      setIsLoading(false);
+      navigate(window.location.pathname + `/${quizId}`);
     }
   }, [id]);
 
