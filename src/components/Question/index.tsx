@@ -16,6 +16,7 @@ interface Props {
   onClose: Function;
   preSelectedChoice?: string;
   isPreview?: boolean;
+  isQuestionSaved?: boolean;
 }
 
 export default function Question({
@@ -28,6 +29,7 @@ export default function Question({
   onClose,
   preSelectedChoice = '',
   isPreview = false,
+  isQuestionSaved = true,
 }: Props) {
   const [selectedChoice, setSelectedChoice] = useState(preSelectedChoice);
 
@@ -65,7 +67,7 @@ export default function Question({
         ))}
       </div>
       <Divider />
-      {isAttempted && !isPreview ? (
+      {isAttempted && (!isPreview || isQuestionSaved) ? (
         <Button onClick={() => onClose()} type="button" color="blue">
           Close
         </Button>

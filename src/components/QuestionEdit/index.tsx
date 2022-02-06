@@ -14,9 +14,10 @@ interface Props {
   saveQuestion: Function;
   correctOptionId?: string;
   point: number;
+  onClose: Function;
 }
 
-export default function QuestionEdit({ text, options, saveQuestion, correctOptionId = '', point }: Props) {
+export default function QuestionEdit({ text, options, saveQuestion, correctOptionId = '', point, onClose }: Props) {
   const [questionText, setQuestionText] = useState(text || '');
   const [questionOptions, setQuestionOptions] = useState(
     options.length > 0
@@ -35,6 +36,7 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
   const [questionCorrectOptionId, setQuestionCorrectOptionId] = useState(correctOptionId || '');
   const [questionPoint, setQuestionPoint] = useState(point);
   const [isPreview, setIsPreview] = useState(false);
+  const [isQuestionSaved, setIsQuestionSaved] = useState(false);
   const { showErrorModal } = useAppStore();
 
   function handleSubmit(ev?: any) {
@@ -53,6 +55,8 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
         correctOptionId: questionCorrectOptionId,
         point: questionPoint,
       });
+      setIsPreview(true);
+      setIsQuestionSaved(true);
     }
   }
 
@@ -86,10 +90,18 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
     return errorText;
   }
 
+  function togglePreview() {
+    if (isPreview && isQuestionSaved) {
+      setIsQuestionSaved(false);
+    }
+
+    setIsPreview(!isPreview);
+  }
+
   return (
     <div>
       <label className={classNames('flex alignCenter', styles.previewSlider)}>
-        <input type="checkbox" aria-label="Preview" checked={isPreview} onChange={() => setIsPreview(!isPreview)} />
+        <input type="checkbox" aria-label="Preview" checked={isPreview} onChange={togglePreview} />
         <div className={styles.edit}>Edit</div>
         <div className={styles.preview}>Preview</div>
       </label>
@@ -154,10 +166,11 @@ export default function QuestionEdit({ text, options, saveQuestion, correctOptio
           text={questionText}
           options={questionOptions}
           preSelectedChoice={questionCorrectOptionId}
-          onClose={() => setIsPreview(false)}
+          onClose={onClose}
           isAttempted
           isCorrect
           isPreview
+          isQuestionSaved={isQuestionSaved}
           submitResponse={() => handleSubmit()}
         />
       </div>

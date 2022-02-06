@@ -26,7 +26,7 @@ export default function AddEditQuiz() {
   const [isConfigured, setIsConfigured] = useState(false);
   const [isQuestionGridExpanded, setIsQuestionGridExpanded] = useState(true);
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
-  const { showAlertModal } = useAppStore();
+  const { showAlertModal, setConfirmationModal } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -52,6 +52,27 @@ export default function AddEditQuiz() {
       saveQuiz({ name, categories: categoriesInfo, id: quizId, isDraft: true, userName });
     }
   }, [categoriesInfo, name, quizId, userName]);
+
+  function handleFinishQuiz() {
+    const totalQuestions = numberOfQuestionsPerCategory * categoriesInfo.length;
+    const savedQuestionsCount = getSavedQuestionIds().length;
+    const unSavedQuestionsCount = totalQuestions - savedQuestionsCount;
+
+    if (unSavedQuestionsCount > 0) {
+      setConfirmationModal({
+        title: 'Finish incomplete quiz!',
+        body: `There ${
+          unSavedQuestionsCount > 1 ? `are ${unSavedQuestionsCount} empty questions` : 'is an empty question'
+        }. 
+        Do you want to finish the quiz with empty questions or cancel and and complete those questions first?`,
+        okCallback: finishQuiz,
+        okText: 'Finish quiz',
+        cancelText: 'Cancel and complete questions',
+      });
+    } else {
+      finishQuiz();
+    }
+  }
 
   async function finishQuiz() {
     if (name && categoriesInfo.length >= 2 && quizId) {
@@ -138,6 +159,10 @@ export default function AddEditQuiz() {
                 selectedQuestion.options.find((o) => o.optionText === atob(selectedQuestion.correctOptionHash))?.id
               }
               point={selectedQuestion.point}
+              onClose={() => {
+                setIsQuestionGridExpanded(true);
+                setSelectedQuestion(null);
+              }}
             />
           )}
         </div>
@@ -157,7 +182,7 @@ export default function AddEditQuiz() {
               }}>
               Configure Quiz
             </Button>
-            <Button color="youtube" size="large" onClick={finishQuiz}>
+            <Button color="youtube" size="large" onClick={handleFinishQuiz}>
               Finish Quiz
             </Button>
           </div>
