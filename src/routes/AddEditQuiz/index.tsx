@@ -30,8 +30,8 @@ export default function AddEditQuiz() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (id) {
-      if (isLoading) {
+    if (isLoading) {
+      if (id) {
         getQuiz(id).then((quiz: any) => {
           setName(quiz.name);
 
@@ -45,12 +45,13 @@ export default function AddEditQuiz() {
           }
           setIsLoading(false);
         });
+      } else {
+        setIsLoading(false);
+        navigate(window.location.pathname + `/${quizId}`);
       }
-    } else {
-      setIsLoading(false);
-      navigate(window.location.pathname + `/${quizId}`);
     }
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, quizId, isLoading]);
 
   useEffect(() => {
     if (name && categoriesInfo.length >= 2 && quizId) {
