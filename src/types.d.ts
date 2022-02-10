@@ -4,6 +4,7 @@ export interface Question {
   options: Option[];
   point: number;
   correctOptionHash: string;
+  isWithoutOptions?: boolean;
 }
 
 export interface Option {

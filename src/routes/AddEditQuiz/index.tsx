@@ -88,7 +88,7 @@ export default function AddEditQuiz() {
     }
   }
 
-  function saveQuestion(questionId: string, { text, options, correctOptionId, point }: any) {
+  function saveQuestion(questionId: string, { text, options, correctOptionId, point, isWithoutOptions }: any) {
     const correctOption = options.find((o: any) => o.id === correctOptionId);
 
     if (correctOption) {
@@ -100,7 +100,14 @@ export default function AddEditQuiz() {
               ...category,
               questions: category.questions.map((q) => {
                 if (q.id === questionId) {
-                  return { text, id: questionId, correctOptionHash, options, point: point || q.point };
+                  return {
+                    text,
+                    id: questionId,
+                    correctOptionHash,
+                    options,
+                    point: point || q.point,
+                    isWithoutOptions,
+                  };
                 } else {
                   return q;
                 }
@@ -117,7 +124,7 @@ export default function AddEditQuiz() {
   function getSavedQuestionIds() {
     const allQuestions = categoriesInfo.reduce((acc, curr) => [...acc, ...curr.questions], [] as Question[]);
 
-    return allQuestions.filter((q) => !!q.correctOptionHash && q.options.length >= 2 && !!q.text).map((q) => q.id);
+    return allQuestions.filter((q) => !!q.correctOptionHash && q.options.length >= 1 && !!q.text).map((q) => q.id);
   }
 
   return isLoading ? (
@@ -169,6 +176,7 @@ export default function AddEditQuiz() {
                 setIsQuestionGridExpanded(true);
                 setSelectedQuestion(null);
               }}
+              withoutOptions={selectedQuestion.isWithoutOptions}
             />
           )}
         </div>

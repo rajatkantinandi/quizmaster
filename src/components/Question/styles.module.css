@@ -7,7 +7,7 @@
 
 .container {
   width: 450px;
-  padding: 10px;
+  padding: 20px 15px;
   margin: 10px;
   background-color: var(--question-container-color);
   border-radius: 10px;
@@ -28,4 +28,19 @@
 .isAttempted[class*='checkbox'].correct label,
 .isAttempted[class*='checkbox'].inCorrect label {
   opacity: 1 !important;
+}
+
+.correctAns {
+  padding: 10px;
+  background: var(--score-active-color);
+  border-radius: 10px;
+  width: 100%;
+}
+
+.correctAns .heading {
+  font-weight: bolder;
+  text-transform: uppercase;
+  font-size: 15px;
+  border-bottom: 1px solid var(--border-gray);
+  margin-bottom: 5px;
 }

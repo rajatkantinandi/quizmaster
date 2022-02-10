@@ -240,6 +240,7 @@ export default function PlayQuiz() {
               key={selectedQuestion.id}
               text={selectedQuestion.text}
               options={selectedQuestion.options}
+              isWithoutOptions={selectedQuestion.isWithoutOptions}
               onClose={() => {
                 setIsPlaying(!winner);
                 setSelectedQuestion(null);
