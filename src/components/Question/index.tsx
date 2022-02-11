@@ -39,11 +39,13 @@ export default function Question({
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
 
   useEffect(() => {
+    // sync selected choice from props with state when changed from the edit component
     setSelectedChoice(preSelectedChoice);
   }, [preSelectedChoice]);
 
   useEffect(() => {
     if (isAttempted && !isPreview) {
+      // reveal answer when question is attempted due to timeout
       setIsAnswerRevealed(true);
     }
   }, [isAttempted, isPreview]);
@@ -51,6 +53,7 @@ export default function Question({
   function handleSubmit(ev: any) {
     ev.preventDefault();
 
+    // submit response or save question on clicking submit or save button
     submitResponse(selectedChoice);
   }
 
@@ -60,6 +63,7 @@ export default function Question({
       <Divider />
       <div className="flex flexWrap">
         {isWithoutOptions ? (
+          // Show correct answer for question without options when answer is revealed
           isAnswerRevealed && (
             <div className={styles.correctAns}>
               <div className={styles.heading}>Correct answer</div>
@@ -88,6 +92,7 @@ export default function Question({
           </>
         )}
       </div>
+      {/* show reveal answer button for question without options in non preview mode when playing */}
       {isWithoutOptions && !isPreview && !isAnswerRevealed && (
         <Button
           type="button"
@@ -109,6 +114,8 @@ export default function Question({
           Close
         </Button>
       ) : isWithoutOptions && !isPreview ? (
+        // Show correct & incorrect button in non preview mode when playing
+        // When answer is revealed show correct or incorrect button for the quiz host, clicking on which will add points accordingly
         isAnswerRevealed && (
           <div className="flex">
             <Button type="button" size="large" className="fullWidth" color="red" onClick={() => submitResponse(null)}>
@@ -125,6 +132,7 @@ export default function Question({
           </div>
         )
       ) : (
+        // for preview mode show save button & while playing show submit button for mcq
         <Button type="submit" size="large" color="green">
           {isPreview ? 'Save' : 'Submit'}
         </Button>
