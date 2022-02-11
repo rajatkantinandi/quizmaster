@@ -18,6 +18,7 @@ interface Props {
   isPreview?: boolean;
   isQuestionSaved?: boolean;
   isWithoutOptions?: boolean;
+  pauseTimer?: Function;
 }
 
 export default function Question({
@@ -32,6 +33,7 @@ export default function Question({
   isPreview = false,
   isQuestionSaved = true,
   isWithoutOptions = false,
+  pauseTimer,
 }: Props) {
   const [selectedChoice, setSelectedChoice] = useState(preSelectedChoice);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
@@ -81,7 +83,17 @@ export default function Question({
         )}
       </div>
       {isWithoutOptions && !isPreview && !isAnswerRevealed && (
-        <Button type="button" color="blue" onClick={() => setIsAnswerRevealed(true)}>
+        <Button
+          type="button"
+          color="blue"
+          onClick={() => {
+            setIsAnswerRevealed(true);
+
+            // pause timer when the answer is revealed
+            if (pauseTimer) {
+              pauseTimer();
+            }
+          }}>
           Reveal answer
         </Button>
       )}

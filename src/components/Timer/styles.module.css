@@ -1,5 +1,5 @@
 .timer {
-  width: 150px;
+  width: 200px;
   border-radius: 10px;
   border: 1px solid var(--border-gray);
   background-color: var(--score-bg);

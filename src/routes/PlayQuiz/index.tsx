@@ -246,6 +246,7 @@ export default function PlayQuiz() {
                 setSelectedQuestion(null);
                 setIsQuestionGridExpanded(true);
               }}
+              pauseTimer={() => setIsPlaying(false)}
             />
           )}
           <div className={classNames(styles.scoreContainer, 'ml-lg')}>
