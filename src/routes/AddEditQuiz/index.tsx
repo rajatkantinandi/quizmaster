@@ -19,9 +19,9 @@ export default function AddEditQuiz() {
   const [quizId] = useState(id || nanoid());
   const [numberOfQuestionsPerCategory, setNumberOfQuestionsPerCategory] = useState(5);
   const [categoriesInfo, setCategoriesInfo] = useState([
-    { name: '', id: nanoid(), questions: generateEmptyQuestions(numberOfQuestionsPerCategory) },
-    { name: '', id: nanoid(), questions: generateEmptyQuestions(numberOfQuestionsPerCategory) },
-    { name: '', id: nanoid(), questions: generateEmptyQuestions(numberOfQuestionsPerCategory) },
+    { name: '', id: nanoid(), questions: generateEmptyQuestions(5) },
+    { name: '', id: nanoid(), questions: generateEmptyQuestions(5) },
+    { name: '', id: nanoid(), questions: generateEmptyQuestions(5) },
   ]);
   const [isConfigured, setIsConfigured] = useState(false);
   const [isQuestionGridExpanded, setIsQuestionGridExpanded] = useState(true);

@@ -28,24 +28,26 @@ export default function ConfigureQuiz({
 
   // When numberOfQuestionsPerCategory is changed then update categories array
   useEffect(() => {
-    const currentQuestionsCount = categoriesInfo[0].questions.length;
+    if (numberOfQuestionsPerCategory) {
+      const currentQuestionsCount = categoriesInfo[0].questions.length;
 
-    if (currentQuestionsCount > numberOfQuestionsPerCategory) {
-      setCategoriesInfo(
-        categoriesInfo.map((category) => ({
-          ...category,
-          questions: category.questions.slice(0, numberOfQuestionsPerCategory - currentQuestionsCount),
-        })),
-      );
-    } else if (numberOfQuestionsPerCategory > currentQuestionsCount) {
-      setCategoriesInfo(
-        categoriesInfo.map((category) => ({
-          ...category,
-          questions: category.questions.concat(
-            generateEmptyQuestions(numberOfQuestionsPerCategory - currentQuestionsCount, currentQuestionsCount),
-          ),
-        })),
-      );
+      if (currentQuestionsCount > numberOfQuestionsPerCategory) {
+        setCategoriesInfo(
+          categoriesInfo.map((category) => ({
+            ...category,
+            questions: category.questions.slice(0, numberOfQuestionsPerCategory - currentQuestionsCount),
+          })),
+        );
+      } else if (numberOfQuestionsPerCategory > currentQuestionsCount) {
+        setCategoriesInfo(
+          categoriesInfo.map((category) => ({
+            ...category,
+            questions: category.questions.concat(
+              generateEmptyQuestions(numberOfQuestionsPerCategory - currentQuestionsCount, currentQuestionsCount),
+            ),
+          })),
+        );
+      }
     }
     // eslint-disable-next-line
   }, [numberOfQuestionsPerCategory]);
