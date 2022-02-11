@@ -42,6 +42,12 @@ export default function Question({
     setSelectedChoice(preSelectedChoice);
   }, [preSelectedChoice]);
 
+  useEffect(() => {
+    if (isAttempted && !isPreview) {
+      setIsAnswerRevealed(true);
+    }
+  }, [isAttempted, isPreview]);
+
   function handleSubmit(ev: any) {
     ev.preventDefault();
 
