@@ -17,13 +17,15 @@ export default function Question({ duration, running = false, title, handleTimeU
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
-    if (running && remainingTime > 0) {
+    if (running) {
       timer = setTimeout(() => {
-        if (remainingTime <= 1) {
+        // allow 3s grace time to click the submit button by host
+        if (remainingTime <= -3) {
           setIsRunning(false);
           handleTimeUp();
+        } else {
+          setRemainingTime(remainingTime - 1);
         }
-        setRemainingTime(remainingTime - 1);
       }, 1000);
     }
 
@@ -45,8 +47,15 @@ export default function Question({ duration, running = false, title, handleTimeU
           basic
         />
       )}
-      <div className="bold">{title}</div>
-      {remainingTime ? (
+      {!!remainingTime && remainingTime > 0 ? (
+        <div className="bold">{title}</div>
+      ) : (
+        <div>
+          <div className="bold">Time is up</div>
+          <div>Submitting in {remainingTime + 3}s</div>
+        </div>
+      )}
+      {!!remainingTime && remainingTime > 0 && (
         <div className="time flex mt-md justifyCenter">
           <div className="min">
             {remainingTime / 60 < 10 ? '0' : ''}
@@ -58,8 +67,6 @@ export default function Question({ duration, running = false, title, handleTimeU
             {remainingTime % 60}
           </div>
         </div>
-      ) : (
-        <div>Time up</div>
       )}
       {!!remainingTime && (
         <div

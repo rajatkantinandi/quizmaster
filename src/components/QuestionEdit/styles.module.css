@@ -1,14 +1,17 @@
 label.questionText,
-label.optionText {
+label.optionText,
+label.correctAns {
   font-size: 16px !important;
 }
 
-label.questionText {
+label.questionText,
+label.correctAns {
   width: 100%;
 }
 
 .questionText textarea,
-.optionText textarea {
+.optionText textarea,
+.correctAns textarea {
   font-size: 18px;
   padding: 10px;
   width: 100%;
@@ -16,7 +19,8 @@ label.questionText {
   min-height: 80px;
 }
 
-.optionText {
+.optionText,
+.correctAns {
   max-width: 100%;
   width: calc(100% - 70px);
   margin-right: 10px !important;

@@ -17,6 +17,10 @@ body {
   justify-content: center;
 }
 
+.spaceBetween {
+  justify-content: space-between;
+}
+
 .flexCol {
   flex-direction: column;
 }
