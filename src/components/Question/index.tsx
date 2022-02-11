@@ -90,7 +90,7 @@ export default function Question({
         <Button size="large" onClick={() => onClose()} type="button" color="blue">
           Close
         </Button>
-      ) : isWithoutOptions ? (
+      ) : isWithoutOptions && !isPreview ? (
         isAnswerRevealed && (
           <div className="flex">
             <Button type="button" size="large" className="fullWidth" color="red" onClick={() => submitResponse(null)}>
