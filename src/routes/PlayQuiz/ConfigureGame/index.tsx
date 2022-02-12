@@ -1,6 +1,8 @@
 import classNames from 'classnames';
 import { nanoid } from 'nanoid';
+import { useState } from 'react';
 import { Button, Checkbox, Input } from 'semantic-ui-react';
+import TeamGenerator from '../../../components/TeamGenerator';
 import { useAppStore } from '../../../useAppStore';
 import styles from './styles.module.css';
 
@@ -30,6 +32,7 @@ export default function ConfigureGame({
   setQuestionSelectionTimer,
 }: Props) {
   const { showErrorModal } = useAppStore();
+  const [showTeamGenerator, setShowTeamGenerator] = useState(false);
 
   function validateTeamNames(): boolean {
     if (teams.some((team) => team.name.trim().length === 0)) {
@@ -76,6 +79,9 @@ export default function ConfigureGame({
               </Button>
             )}
           </div>
+          <Button onClick={() => setShowTeamGenerator(true)} color="green">
+            Team generator
+          </Button>
         </fieldset>
         <fieldset className={classNames('container-md', styles.timing)}>
           <legend>Timing</legend>
@@ -127,6 +133,13 @@ export default function ConfigureGame({
         }}>
         Play
       </Button>
+      {showTeamGenerator && (
+        <TeamGenerator
+          okCallback={(teams: any) => setTeams(teams)}
+          numOfTeams={teams.length}
+          hideModal={() => setShowTeamGenerator(false)}
+        />
+      )}
     </div>
   );
 }
