@@ -20,7 +20,6 @@ export default function PlayQuiz() {
   useLoginCheckAndPageTitle(name);
   const [categoriesInfo, setCategoriesInfo] = useState<Category[]>([]);
   const [isConfigured, setIsConfigured] = useState(false);
-  const [isQuestionGridExpanded, setIsQuestionGridExpanded] = useState(true);
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
   const [teams, setTeams] = useState([
     {
@@ -170,7 +169,6 @@ export default function PlayQuiz() {
 
     if (allUnattemptedQuestions.length > 0) {
       setSelectedQuestion(allUnattemptedQuestions[Math.floor(Math.random() * allUnattemptedQuestions.length)]);
-      setIsQuestionGridExpanded(false);
       setIsPlaying(true);
     }
   }
@@ -213,16 +211,13 @@ export default function PlayQuiz() {
                 const question = category.questions.find((q) => q.id === id);
 
                 setSelectedQuestion(question || null);
-                setIsQuestionGridExpanded(false);
                 setIsPlaying(true);
               }
             }}
             attemptedQuestions={attemptedQuestions}
-            isExpanded={isQuestionGridExpanded}
+            isExpanded={!selectedQuestion}
             quizName={name}
             setIsExpanded={(expanded: boolean) => {
-              setIsQuestionGridExpanded(expanded);
-
               // Upon expanding grid deselect question & resume play
               if (expanded) {
                 setSelectedQuestion(null);
@@ -231,7 +226,7 @@ export default function PlayQuiz() {
             }}
             selectedQuestionId={selectedQuestion?.id || ''}
           />
-          {!isQuestionGridExpanded && !!selectedQuestion && (
+          {!!selectedQuestion && (
             <Question
               isAttempted={isQuestionAttempted}
               isCorrect={attemptedQuestions.some((q: any) => q.id === selectedQuestion.id && q.isCorrect)}
@@ -244,7 +239,6 @@ export default function PlayQuiz() {
               onClose={() => {
                 setIsPlaying(!winner);
                 setSelectedQuestion(null);
-                setIsQuestionGridExpanded(true);
               }}
               pauseTimer={() => setIsPlaying(false)}
             />

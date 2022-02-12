@@ -24,7 +24,6 @@ export default function AddEditQuiz() {
     { name: '', id: nanoid(), questions: generateEmptyQuestions(5) },
   ]);
   const [isConfigured, setIsConfigured] = useState(false);
-  const [isQuestionGridExpanded, setIsQuestionGridExpanded] = useState(true);
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
   const { showAlertModal, setConfirmationModal } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
@@ -153,16 +152,19 @@ export default function AddEditQuiz() {
                 const question = category.questions.find((q) => q.id === id);
 
                 setSelectedQuestion(question || null);
-                setIsQuestionGridExpanded(false);
               }
             }}
-            isExpanded={isQuestionGridExpanded}
+            isExpanded={!selectedQuestion}
             quizName={name}
-            setIsExpanded={setIsQuestionGridExpanded}
+            setIsExpanded={(expanded: boolean) => {
+              if (expanded) {
+                setSelectedQuestion(null);
+              }
+            }}
             selectedQuestionId={selectedQuestion?.id || ''}
             savedQuestionIds={getSavedQuestionIds()}
           />
-          {!isQuestionGridExpanded && !!selectedQuestion && (
+          {!!selectedQuestion && (
             <QuestionEdit
               key={selectedQuestion.id}
               saveQuestion={(data: any) => saveQuestion(selectedQuestion.id, data)}
@@ -173,7 +175,6 @@ export default function AddEditQuiz() {
               }
               point={selectedQuestion.point}
               onClose={() => {
-                setIsQuestionGridExpanded(true);
                 setSelectedQuestion(null);
               }}
               withoutOptions={selectedQuestion.isWithoutOptions}
@@ -192,7 +193,6 @@ export default function AddEditQuiz() {
               onClick={() => {
                 setIsConfigured(false);
                 setSelectedQuestion(null);
-                setIsQuestionGridExpanded(true);
               }}>
               Configure Quiz
             </Button>

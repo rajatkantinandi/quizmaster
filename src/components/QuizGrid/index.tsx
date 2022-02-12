@@ -32,12 +32,15 @@ export default function QuizGrid({
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
       <h2>
         {quizName}
-        <Button
-          icon={<Icon name={isExpanded ? 'close' : 'expand'} />}
-          basic
-          className="ml-lg"
-          onClick={() => setIsExpanded(!isExpanded)}
-        />
+        {!isExpanded && (
+          <Button
+            icon={<Icon name="expand" />}
+            basic
+            className="ml-lg"
+            title="Expand"
+            onClick={() => setIsExpanded(!isExpanded)}
+          />
+        )}
       </h2>
       <Divider />
       <h3>Categories</h3>

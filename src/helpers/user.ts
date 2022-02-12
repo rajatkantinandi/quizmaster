@@ -68,3 +68,15 @@ export const isValidCredentials = async ({ userName, password }: { userName: str
 
   return false;
 }
+
+export function signOut() {
+  Cookies.set('sessionId', '', {
+    domain: window.location.hostname,
+    sameSite: 'Strict',
+  });
+  Cookies.set('userName', '', {
+    domain: window.location.hostname,
+    sameSite: 'Strict',
+  });
+  window.location.href = '/';
+}

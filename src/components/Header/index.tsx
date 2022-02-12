@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Header as SemanticHeader, Icon } from 'semantic-ui-react';
-import { getSignedInUserName } from '../../helpers/user';
+import { getSignedInUserName, signOut } from '../../helpers/user';
 import logo from '../../img/logo.svg';
-import Cookies from 'js-cookie';
 
 export default function Header() {
   const userName = getSignedInUserName();
@@ -17,20 +16,8 @@ export default function Header() {
         {userName ? (
           <>
             <div className="mx-lg">{userName}</div>
-            <Button
-              color="brown"
-              onClick={() => {
-                Cookies.set('sessionId', '', {
-                  domain: window.location.hostname,
-                  sameSite: 'Strict',
-                });
-                Cookies.set('userName', '', {
-                  domain: window.location.hostname,
-                  sameSite: 'Strict',
-                });
-                window.location.href = '/';
-              }}>
-              Logout
+            <Button color="brown" onClick={signOut}>
+              Sign out
             </Button>
           </>
         ) : (
