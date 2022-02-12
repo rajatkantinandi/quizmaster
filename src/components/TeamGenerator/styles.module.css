@@ -1,0 +1,29 @@
+.playerNames {
+  width: 100%;
+  font-size: 14px !important;
+}
+
+.playerNames textarea {
+  font-size: 18px;
+}
+
+.teams {
+  font-size: 18px;
+}
+
+.teams h3 {
+  margin-bottom: 10px;
+}
+
+.teams ol {
+  margin: 0;
+  padding-left: 30px;
+}
+
+.teams li {
+  margin-bottom: 5px;
+}
+
+.info {
+  font-size: 16px;
+}

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button, Icon, Input, Label, Modal, TextArea } from 'semantic-ui-react';
 import { getCommaSeparatedStringWithAndBeforeTheLastItem } from '../../helpers/common';
 import { Team } from '../../types';
+import styles from './styles.module.css';
 
 interface Props {
   okCallback: Function;
@@ -50,21 +51,14 @@ export default function TeamGenerator({ okCallback, numOfTeams, hideModal }: Pro
   }
 
   return (
-    <Modal open size="small" centered={false} dimmer="blurring">
+    <Modal open size="tiny" centered={false} dimmer="blurring">
       <Modal.Header>Generate team with player names</Modal.Header>
       <Modal.Content className="flexCol flex">
         <div className="flex flexCol">
-          <Input
-            label="Number of teams"
-            value={teamCount}
-            type="number"
-            onChange={(ev) => setTeamCount(parseInt(ev.target.value) || '')}
-            min={2}
-          />
-          <p className="mt-lg">
-            Enter one name in each line or paste names from a spreadsheet column (Excel, Google sheet, etc.).
+          <p className={styles.info}>
+            Enter one player name in each line or paste names from a spreadsheet column (Excel, Google sheet, etc.).
           </p>
-          <Label as="label" className="fullWidth">
+          <Label as="label" className={styles.playerNames}>
             <div className="mb-md">Player names</div>
             <TextArea
               className="fullWidth"
@@ -73,12 +67,20 @@ export default function TeamGenerator({ okCallback, numOfTeams, hideModal }: Pro
               onChange={(ev) => setPlayerNames(ev.target.value)}
             />
           </Label>
+          <Input
+            label="Number of teams"
+            value={teamCount}
+            type="number"
+            className="fullWidth"
+            onChange={(ev) => setTeamCount(parseInt(ev.target.value) || '')}
+            min={2}
+          />
           <Button className="alignSelfEnd mt-lg" color="blue" onClick={() => generateTeams()}>
             <Icon name="refresh" /> {teams.length > 0 ? 'Regenerate' : 'Generate'} teams
           </Button>
           {teams.length > 0 && (
-            <div className="mt-xl">
-              <h3>Teams</h3>
+            <div className={styles.teams}>
+              <h3>Teams:</h3>
               <ol>
                 {teams.map((t) => (
                   <li key={t.id}>{t.name}</li>

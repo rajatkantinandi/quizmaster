@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { nanoid } from 'nanoid';
 import { useState } from 'react';
-import { Button, Checkbox, Input } from 'semantic-ui-react';
+import { Button, Checkbox, Icon, Input } from 'semantic-ui-react';
 import TeamGenerator from '../../../components/TeamGenerator';
 import { useAppStore } from '../../../useAppStore';
 import styles from './styles.module.css';
@@ -79,8 +79,8 @@ export default function ConfigureGame({
               </Button>
             )}
           </div>
-          <Button onClick={() => setShowTeamGenerator(true)} color="green">
-            Team generator
+          <Button className="mt-lg" size="large" onClick={() => setShowTeamGenerator(true)} color="facebook">
+            <Icon name="random" /> Random team generator
           </Button>
         </fieldset>
         <fieldset className={classNames('container-md', styles.timing)}>
