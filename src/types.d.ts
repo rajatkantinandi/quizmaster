@@ -31,3 +31,9 @@ export interface Quiz {
   userName: string;
   id: string;
 }
+
+export interface Team {
+  name: string;
+  id: string;
+  score: number;
+}
