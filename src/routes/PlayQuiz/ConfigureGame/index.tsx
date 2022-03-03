@@ -19,6 +19,8 @@ interface Props {
   questionTimer: number;
   setQuestionTimer: Function;
   setQuestionSelectionTimer: Function;
+  isQuestionPointsHidden: boolean;
+  setIsQuestionPointsHidden: Function;
 }
 
 export default function ConfigureGame({
@@ -30,6 +32,8 @@ export default function ConfigureGame({
   questionSelectionTimer,
   setQuestionTimer,
   setQuestionSelectionTimer,
+  isQuestionPointsHidden,
+  setIsQuestionPointsHidden,
 }: Props) {
   const { showErrorModal } = useAppStore();
   const [showTeamGenerator, setShowTeamGenerator] = useState(false);
@@ -83,41 +87,51 @@ export default function ConfigureGame({
             <Icon name="random" /> Random team generator
           </Button>
         </fieldset>
-        <fieldset className={classNames('container-md', styles.timing)}>
-          <legend>Timing</legend>
-          <div className="flex alignCenter">
+        <div>
+          <fieldset className={classNames('container-md', styles.settings)}>
+            <legend>Timing</legend>
+            <div className="flex alignCenter">
+              <Checkbox
+                label="Limited time per question (in seconds)"
+                checked={!!questionTimer}
+                onChange={() => setQuestionTimer(questionTimer ? 0 : 120)}
+              />
+              <Input
+                type="number"
+                value={questionTimer}
+                disabled={!questionTimer}
+                onChange={(ev) => setQuestionTimer(parseInt(ev.target.value, 10))}
+                size="mini"
+                className={classNames('ml-lg', styles.settingsInput)}
+              />
+            </div>
+            <div className="flex alignCenter">
+              <Checkbox
+                label="Limited for choosing a question (in seconds)"
+                checked={!!questionSelectionTimer}
+                onChange={(ev) => {
+                  setQuestionSelectionTimer(questionSelectionTimer ? 0 : 120);
+                }}
+              />
+              <Input
+                type="number"
+                value={questionSelectionTimer}
+                disabled={!questionSelectionTimer}
+                onChange={(ev) => setQuestionSelectionTimer(parseInt(ev.target.value, 10))}
+                size="mini"
+                className={classNames('ml-lg', styles.settingsInput)}
+              />
+            </div>
+          </fieldset>
+          <fieldset className={classNames('container-md mt-lg', styles.settings)}>
+            <legend>Points</legend>
             <Checkbox
-              label="Limited time per question (in seconds)"
-              checked={!!questionTimer}
-              onChange={() => setQuestionTimer(questionTimer ? 0 : 120)}
+              label="Hide question points until revealed"
+              checked={isQuestionPointsHidden}
+              onChange={() => setIsQuestionPointsHidden(!isQuestionPointsHidden)}
             />
-            <Input
-              type="number"
-              value={questionTimer}
-              disabled={!questionTimer}
-              onChange={(ev) => setQuestionTimer(parseInt(ev.target.value, 10))}
-              size="mini"
-              className={classNames('ml-lg', styles.timeInput)}
-            />
-          </div>
-          <div className="flex alignCenter">
-            <Checkbox
-              label="Limited for choosing a question (in seconds)"
-              checked={!!questionSelectionTimer}
-              onChange={(ev) => {
-                setQuestionSelectionTimer(questionSelectionTimer ? 0 : 120);
-              }}
-            />
-            <Input
-              type="number"
-              value={questionSelectionTimer}
-              disabled={!questionSelectionTimer}
-              onChange={(ev) => setQuestionSelectionTimer(parseInt(ev.target.value, 10))}
-              size="mini"
-              className={classNames('ml-lg', styles.timeInput)}
-            />
-          </div>
-        </fieldset>
+          </fieldset>
+        </div>
       </div>
       <Button
         color="orange"

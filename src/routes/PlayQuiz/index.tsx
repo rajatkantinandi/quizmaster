@@ -49,6 +49,7 @@ export default function PlayQuiz() {
   const showQuestionTimer = !!questionTimer && !!selectedQuestion && !isQuestionAttempted;
   const { showAlertModal } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [isQuestionPointsHidden, setIsQuestionPointsHidden] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -71,6 +72,7 @@ export default function PlayQuiz() {
           setCurrentTeamId(quizRun.currentTeamId);
           setQuestionTimer(quizRun.questionTimer || 0);
           setQuestionSelectionTimer(quizRun.questionSelectionTimer || 0);
+          setIsQuestionPointsHidden(quizRun.isQuestionPointsHidden || false);
 
           if (quizRun.isComplete) {
             showWinner(quizRun.teams);
@@ -154,6 +156,7 @@ export default function PlayQuiz() {
         teams: teamsToSet,
         questionTimer,
         questionSelectionTimer,
+        isQuestionPointsHidden,
       });
 
       if (isComplete) {
@@ -198,6 +201,8 @@ export default function PlayQuiz() {
           setQuestionTimer={setQuestionTimer}
           questionSelectionTimer={questionSelectionTimer}
           setQuestionSelectionTimer={setQuestionSelectionTimer}
+          isQuestionPointsHidden={isQuestionPointsHidden}
+          setIsQuestionPointsHidden={setIsQuestionPointsHidden}
         />
       )}
       {isConfigured && (
@@ -225,6 +230,7 @@ export default function PlayQuiz() {
               }
             }}
             selectedQuestionId={selectedQuestion?.id || ''}
+            isQuestionPointsHidden={isQuestionPointsHidden}
           />
           {!!selectedQuestion && (
             <Question
@@ -290,6 +296,7 @@ export default function PlayQuiz() {
                   currentTeamId,
                   questionTimer,
                   questionSelectionTimer,
+                  isQuestionPointsHidden,
                 });
                 showWinner(teams, () => window.location.reload());
               }}>

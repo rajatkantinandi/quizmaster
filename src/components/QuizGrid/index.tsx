@@ -16,6 +16,7 @@ interface Props {
     isCorrect: boolean;
   }[];
   savedQuestionIds?: string[];
+  isQuestionPointsHidden?: boolean;
 }
 
 export default function QuizGrid({
@@ -27,6 +28,7 @@ export default function QuizGrid({
   quizName,
   attemptedQuestions = [], // for play mode
   savedQuestionIds = [], // for edit mode
+  isQuestionPointsHidden = false,
 }: Props) {
   return (
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
@@ -48,7 +50,7 @@ export default function QuizGrid({
         {categoriesInfo.map((category) => (
           <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={category.id}>
             <h4>{category.name}</h4>
-            {category.questions.map((q) => {
+            {category.questions.map((q, idx) => {
               const attemptedQuestion = attemptedQuestions.find((ques) => ques.id === q.id);
 
               return (
@@ -67,7 +69,7 @@ export default function QuizGrid({
                       : undefined
                   }
                   disabled={!!attemptedQuestion}>
-                  {q.point}
+                  {isQuestionPointsHidden && selectedQuestionId !== q.id ? 'Q-' + (idx + 1) : q.point}
                 </Button>
               );
             })}
