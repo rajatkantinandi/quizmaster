@@ -1,5 +1,6 @@
 import React from 'react';
 import create from 'zustand';
+import { post } from './helpers/request';
 
 export const useAppStore = create((set: Function) => ({
   confirmationModal: null,
@@ -25,6 +26,26 @@ export const useAppStore = create((set: Function) => ({
       ...state,
       confirmationModal: { title, body: message, cancelText: '', isAlert: true, ...rest },
     }));
+  },
+  signUp: async (data: any) => {
+    const response = await post('user/signup', data);
+
+    if (response.userId) {
+      set((state: AppState) => ({
+        ...state,
+        userData: response,
+      }));
+    }
+  },
+  logIn: async (data: any) => {
+    const response = await post('user/login', data);
+
+    if (response.userId) {
+      set((state: AppState) => ({
+        ...state,
+        userData: response,
+      }));
+    }
   },
 }));
 
