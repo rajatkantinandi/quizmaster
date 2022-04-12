@@ -28,6 +28,7 @@ serviceWorkerRegistration.register({
     if (waitingServiceWorker) {
       waitingServiceWorker.addEventListener('statechange', (event: any) => {
         if (event.target.state === 'activated') {
+          alert('The app has been updated 🎉! It will reload now!');
           window.location.reload();
         }
       });
