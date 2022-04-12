@@ -46,7 +46,7 @@ export default function HomePage() {
 
   return (
     <section>
-      <h1>Welcome to quizmaster test</h1>
+      <h1>Welcome to quizmaster</h1>
       <nav className={styles.nav}>
         <div className="flex">
           <Button onClick={() => navigate('/login')} color="green" size="large">
