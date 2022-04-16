@@ -31,7 +31,8 @@ export default function HomePage() {
       domain: window.location.hostname,
       sameSite: 'Strict',
     });
-    window.location.href = `/quizzes/${userName}`;
+
+    navigate(`/quizzes/${userName}`);
   }
 
   function showGuestLoginWarning(okCallback: Function) {

@@ -1,96 +1,87 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { Button, Divider } from 'semantic-ui-react';
-import { Option as IOption } from '../../types';
+import { Option as IOption, Question as IQuestion } from '../../types';
 import Markdown from '../Markdown';
 import Option from './Option';
 import styles from './styles.module.css';
 
 interface Props {
-  text: string;
-  options: IOption[];
   submitResponse: Function;
-  isAttempted: boolean;
-  isCorrect: boolean;
-  correctOptionHash?: string;
   onClose: Function;
-  preSelectedChoice?: string;
   isPreview?: boolean;
   isQuestionSaved?: boolean;
-  isWithoutOptions?: boolean;
   pauseTimer?: Function;
+  selectedOptionsData?: any;
+  selectedQuestion: {
+    id?: string;
+    text: string;
+    options: IOption[];
+  };
+  isWithoutOptions: boolean;
 }
 
 export default function Question({
-  text,
-  options,
   submitResponse,
-  isAttempted,
-  isCorrect,
-  correctOptionHash = '',
   onClose,
-  preSelectedChoice = '',
   isPreview = false,
   isQuestionSaved = true,
-  isWithoutOptions = false,
   pauseTimer,
+  selectedOptionsData = {},
+  selectedQuestion,
+  isWithoutOptions,
 }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState(preSelectedChoice);
+  const [selectedChoice, setSelectedChoice] = useState(null);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
+  const { options } = selectedQuestion;
+  const selectedOptionId = selectedQuestion.id ? selectedOptionsData[selectedQuestion.id] : null;
 
   useEffect(() => {
-    // sync selected choice from props with state when changed from the edit component
-    setSelectedChoice(preSelectedChoice);
-  }, [preSelectedChoice]);
-
-  useEffect(() => {
-    if (isAttempted && !isPreview) {
+    if (selectedOptionId && !isPreview) {
       // reveal answer when question is attempted due to timeout
       setIsAnswerRevealed(true);
     }
-  }, [isAttempted, isPreview]);
+  }, [selectedOptionId, isPreview]);
 
   function handleSubmit(ev: any) {
     ev.preventDefault();
 
-    // submit response or save question on clicking submit or save button
-    submitResponse(selectedChoice);
+    if (isPreview) {
+      submitResponse(options.find((option) => option.isCorrect)?.optionId);
+    } else {
+      submitResponse(selectedChoice);
+    }
   }
 
   return (
     <form className={styles.container} onSubmit={handleSubmit}>
-      <Markdown>{text}</Markdown>
+      <Markdown>{selectedQuestion.text}</Markdown>
       <Divider />
       <div className="flex flexWrap">
-        {isWithoutOptions ? (
-          // Show correct answer for question without options when answer is revealed
-          isAnswerRevealed && (
-            <div className={styles.correctAns}>
-              <div className={styles.heading}>Correct answer</div>
-              <Markdown>{options[0].optionText}</Markdown>
-            </div>
-          )
-        ) : (
-          <>
-            {options.map((option) => (
+        {isWithoutOptions
+          ? // Show correct answer for question without options when answer is revealed
+            isAnswerRevealed && (
+              <div className={styles.correctAns}>
+                <div className={styles.heading}>Correct answer</div>
+                <Markdown>{options[0].text}</Markdown>
+              </div>
+            )
+          : options.map((option) => (
               <Option
-                id={option.id}
-                checked={selectedChoice === option.id}
-                onChange={(value: string) => setSelectedChoice(value)}
-                optionText={option.optionText}
-                key={option.id}
+                id={option.optionId}
+                checked={selectedChoice === option.isCorrect}
+                onChange={(value: any) => setSelectedChoice(value)}
+                optionText={option.text}
+                key={option.optionId}
                 className={classNames({
-                  [styles.isAttempted]: isAttempted,
-                  [styles.correct]:
-                    (isCorrect && selectedChoice === option.id) || correctOptionHash === btoa(option.optionText),
-                  [styles.inCorrect]: selectedChoice === option.id && !isCorrect,
+                  [styles.isAttempted]: !!selectedOptionId,
+                  [styles.correct]: option.isCorrect && selectedOptionId === option.optionId,
+                  [styles.inCorrect]: !option.isCorrect && selectedOptionId === option.optionId,
                   [styles.isPreview]: isPreview,
                 })}
-                disabled={isAttempted}
+                disabled={!!selectedOptionId}
               />
             ))}
-          </>
-        )}
       </div>
       {/* show reveal answer button for question without options in non preview mode when playing */}
       {isWithoutOptions && !isPreview && !isAnswerRevealed && (
@@ -109,7 +100,7 @@ export default function Question({
         </Button>
       )}
       <Divider />
-      {isAttempted && (!isPreview || isQuestionSaved) ? (
+      {!!selectedOptionId && (!isPreview || isQuestionSaved) ? (
         <Button size="large" onClick={() => onClose()} type="button" color="blue">
           Close
         </Button>
@@ -126,7 +117,7 @@ export default function Question({
               size="large"
               className="ml-lg fullWidth"
               color="green"
-              onClick={() => submitResponse(options[0].id)}>
+              onClick={() => submitResponse(options[0].optionId)}>
               Correct
             </Button>
           </div>

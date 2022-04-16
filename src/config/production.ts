@@ -5,6 +5,7 @@ const config: IConfig = {
   productName: 'Quiz Master',
   productUrl: 'https://quizmaster.com',
   backendUrl: 'https://api.quizmaster.com',
+  tokenKey: 'TOKEN-PROD',
 };
 
 export default config;

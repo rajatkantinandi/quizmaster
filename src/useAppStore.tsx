@@ -1,9 +1,13 @@
 import React from 'react';
 import create from 'zustand';
-import { post } from './helpers/request';
+import { post, get as getReq } from './helpers/request';
+import { setCookie } from './helpers/cookieHelper';
+import config from './config';
+import { formatGameData, formatQuizzesData } from './helpers/quiz';
 
-export const useAppStore = create((set: Function) => ({
+export const useAppStore = create((set: Function, get: Function) => ({
   confirmationModal: null,
+  userData: {},
   setConfirmationModal: (confirmationModal: ConfirmationModalState | null) => {
     set((state: AppState) => ({ ...state, confirmationModal }));
   },
@@ -39,13 +43,55 @@ export const useAppStore = create((set: Function) => ({
   },
   logIn: async (data: any) => {
     const response = await post('user/login', data);
+    setCookie(config.tokenKey, response.token);
 
-    if (response.userId) {
-      set((state: AppState) => ({
-        ...state,
-        userData: response,
-      }));
-    }
+    set((state: AppState) => ({
+      ...state,
+      userData: response,
+    }));
+  },
+  logout: async () => {
+    await post('user/logout');
+    setCookie(config.tokenKey, '');
+
+    set((state: AppState) => ({
+      ...state,
+      userData: {},
+    }));
+  },
+  getQuizzes: async () => {
+    const response = await getReq('quiz/userQuizzes');
+    return formatQuizzesData(response);
+  },
+  getQuiz: async (quizId: number) => {
+    const response = await getReq('quiz/data', { quizId });
+
+    return formatQuizzesData(response)[0];
+  },
+  getUserData: async () => {
+    const response = await getReq('user/data');
+
+    set((state: AppState) => ({
+      ...state,
+      userData: response,
+    }));
+  },
+  createOrUpdateQuiz: async (data: any) => {
+    const response = await post('quiz/createOrUpdate', data);
+    return response;
+  },
+  editQuestion: async (data: any) => {
+    const response = await post('question/edit', data);
+    return response;
+  },
+  addGame: async (data: any) => {
+    const response = await post('game/add', data);
+    return response;
+  },
+  getGameData: async (gameId: number) => {
+    const response = await getReq('game/data', { gameId });
+
+    return formatGameData(response);
   },
 }));
 

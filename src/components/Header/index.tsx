@@ -1,11 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Header as SemanticHeader, Icon } from 'semantic-ui-react';
-import { getSignedInUserName, signOut } from '../../helpers/user';
 import logo from '../../img/logo.svg';
+import { useAppStore } from '../../useAppStore';
+import Cookies from 'js-cookie';
 
 export default function Header() {
-  const userName = getSignedInUserName();
+  const { logout } = useAppStore();
+  const userData: any = useAppStore((state) => state.userData);
+
+  async function onLogout() {
+    try {
+      await logout();
+    } catch (err) {
+      console.log(err);
+    }
+
+    Cookies.set('sessionId', '', {
+      domain: window.location.hostname,
+      sameSite: 'Strict',
+    });
+    Cookies.set('userName', '', {
+      domain: window.location.hostname,
+      sameSite: 'Strict',
+    });
+    window.location.href = '/';
+  }
 
   return (
     <SemanticHeader className="App-header flex spaceBetween">
@@ -13,11 +33,11 @@ export default function Header() {
         <Link to="/">
           <img src={logo} className="App-logo" alt="logo" />
         </Link>
-        {userName ? (
+        {userData.userName ? (
           <>
-            <div className="mx-lg">{userName}</div>
-            <Button color="brown" onClick={signOut}>
-              Sign out
+            <div className="mx-lg">{userData.userName}</div>
+            <Button color="brown" onClick={onLogout}>
+              Log out
             </Button>
           </>
         ) : (

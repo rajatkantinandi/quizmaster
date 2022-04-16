@@ -2,20 +2,26 @@ export interface Question {
   id: string;
   text: string;
   options: Option[];
-  point: number;
-  correctOptionHash: string;
-  isWithoutOptions?: boolean;
+  points: number;
+  categoryId: any;
 }
 
 export interface Option {
-  id: string;
-  optionText: string;
+  optionId: string;
+  text: string;
+  isCorrect: boolean;
 }
 
 export interface Category {
   name: string;
-  id: string;
+  categoryId: string | number;
   questions: Question[];
+}
+
+export interface QuizInfo {
+  quizId: string | number;
+  name: string;
+  categoryIds: (string | number)[];
 }
 
 export interface User {
@@ -30,4 +36,22 @@ export interface Quiz {
   isDraft: boolean;
   userName: string;
   id: string;
+}
+
+export interface GameInfo {
+  gameId?: number;
+  winnerTeamId?: string;
+  currentTeamId: number;
+  timeLimit: number;
+  selectionTimeLimit: number;
+  questionTimer: number;
+  isComplete: boolean;
+  teams: Team[];
+}
+
+export interface Team {
+  teamId?: number;
+  name: string;
+  score: number;
+  selectedOptions: { [key: string]: number };
 }

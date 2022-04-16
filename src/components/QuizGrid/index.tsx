@@ -1,20 +1,17 @@
 import React from 'react';
 import { Button, Divider, Icon } from 'semantic-ui-react';
-import { Category } from '../../types';
+import { Category, QuizInfo, GameInfo } from '../../types';
 import classNames from 'classnames';
 import styles from './styles.module.css';
 
 interface Props {
-  showQuestion: (id: string, categoryId: string) => void;
+  showQuestion: (id: string | number, categoryId: string | number) => void;
   isExpanded?: boolean;
-  categoriesInfo: Category[];
-  quizName: string;
+  categoriesInfo: { [key: string]: Category };
+  quizInfo: QuizInfo;
   setIsExpanded: Function;
   selectedQuestionId: string;
-  attemptedQuestions?: {
-    id: string;
-    isCorrect: boolean;
-  }[];
+  gameInfo?: any;
   savedQuestionIds?: string[];
 }
 
@@ -24,14 +21,16 @@ export default function QuizGrid({
   setIsExpanded,
   showQuestion,
   categoriesInfo,
-  quizName,
-  attemptedQuestions = [], // for play mode
+  quizInfo,
+  gameInfo = { teams: [] },
   savedQuestionIds = [], // for edit mode
 }: Props) {
+  const selectedOptionsData = gameInfo.teams.reduce((acc: any, team: any) => ({ ...acc, ...team.selectedOptions }), {});
+
   return (
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
       <h2>
-        {quizName}
+        {quizInfo.name}
         {!isExpanded && (
           <Button
             icon={<Icon name="expand" />}
@@ -45,19 +44,19 @@ export default function QuizGrid({
       <Divider />
       <h3>Categories</h3>
       <div className={classNames('flex flexWrap justifyCenter', styles.gridButtons)}>
-        {categoriesInfo.map((category) => (
-          <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={category.id}>
-            <h4>{category.name}</h4>
-            {category.questions.map((q) => {
-              const attemptedQuestion = attemptedQuestions.find((ques) => ques.id === q.id);
+        {quizInfo.categoryIds.map((categoryId) => (
+          <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={categoryId}>
+            <h4>{categoriesInfo[categoryId]?.name || ''}</h4>
+            {(categoriesInfo[categoryId]?.questions || []).map((q) => {
+              const correctOption = q.options.find((o) => o.isCorrect);
 
               return (
                 <Button
                   key={q.id}
-                  onClick={() => showQuestion(q.id, category.id)}
+                  onClick={() => showQuestion(q.id, categoryId)}
                   color={
-                    attemptedQuestion
-                      ? attemptedQuestion.isCorrect
+                    selectedOptionsData[q.id]
+                      ? selectedOptionsData[q.id] === correctOption?.optionId
                         ? 'green'
                         : 'red'
                       : selectedQuestionId === q.id
@@ -66,8 +65,8 @@ export default function QuizGrid({
                       ? 'blue'
                       : undefined
                   }
-                  disabled={!!attemptedQuestion}>
-                  {q.point}
+                  disabled={!!selectedOptionsData[q.id]}>
+                  {q.points}
                 </Button>
               );
             })}

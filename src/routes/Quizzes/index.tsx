@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Card } from 'semantic-ui-react';
-import { getQuizzes } from '../../helpers/quiz';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
+import { useAppStore } from '../../useAppStore';
 
-export default function Login() {
+export default function Quizzes() {
   const { userName } = useParams();
   const [quizzes, setQuizzes] = useState<any>([]);
+  const { getQuizzes } = useAppStore();
+
   const navigate = useNavigate();
   useLoginCheckAndPageTitle();
 
   useEffect(() => {
-    getQuizzes(userName || '').then((quizzes) => {
-      if (quizzes) {
-        setQuizzes(quizzes);
-      }
+    getQuizzes().then((quizzes) => {
+      setQuizzes(quizzes);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -32,7 +32,7 @@ export default function Login() {
               if (quiz.isDraft) {
                 navigate(`/edit-quiz/${userName}/${quiz.id}`);
               } else {
-                navigate(`/play-quiz/${userName}/${quiz.id}`);
+                navigate(`/configure-game/${userName}/${quiz.id}`);
               }
             }}>
             <div className="title">{quiz.name}</div>
@@ -46,7 +46,7 @@ export default function Login() {
           </Card>
         ))}
       </section>
-      <Button onClick={() => navigate(`/edit-quiz/${userName}`)} size="large" color="green">
+      <Button onClick={() => navigate(`/configure-quiz/${userName}`)} size="large" color="green">
         + Create Quiz
       </Button>
     </>

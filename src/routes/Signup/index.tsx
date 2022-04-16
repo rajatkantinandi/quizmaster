@@ -3,7 +3,7 @@ import { Button, Form } from 'semantic-ui-react';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { signUpUser } from '../../helpers/user';
 import { useAppStore } from '../../useAppStore';
 import { useForm, FieldValues } from 'react-hook-form';
@@ -17,7 +17,8 @@ export default function Login() {
     formState: { errors },
   } = useForm();
   useLoginCheckAndPageTitle();
-  const { signUp } = useAppStore();
+  const navigate = useNavigate();
+  const { signUp, showErrorModal } = useAppStore();
 
   async function handleSignUp(data: FieldValues) {
     try {
@@ -32,8 +33,11 @@ export default function Login() {
         domain: window.location.hostname,
         sameSite: 'Strict',
       });
-      window.location.href = `/quizzes/${data.userName}`;
-    } catch (err) {}
+
+      navigate(`/quizzes/${data.userName}`);
+    } catch (errMessage: any) {
+      showErrorModal({ message: errMessage });
+    }
   }
 
   const shouldMatchWithPassword = (value: string) => value === getValues('password') || 'Should match with password';

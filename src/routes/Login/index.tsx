@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import { Button, Form, Input } from 'semantic-ui-react';
+import React from 'react';
+import { Button, Form } from 'semantic-ui-react';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Link } from 'react-router-dom';
-import { isValidCredentials } from '../../helpers/user';
 import { useAppStore } from '../../useAppStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  // const [userName, setUserName] = useState('');
-  // const [password, setPassword] = useState('');
   useLoginCheckAndPageTitle();
-  const { logIn } = useAppStore();
+  const navigate = useNavigate();
+  const { logIn, showErrorModal } = useAppStore();
   const {
     control,
     handleSubmit,
@@ -32,38 +31,12 @@ export default function Login() {
         domain: window.location.hostname,
         sameSite: 'Strict',
       });
-      window.location.href = `/quizzes/${data.userName}`;
-    } catch (err) {}
 
-    // ev.preventDefault();
-
-    // const isValid = await isValidCredentials({ userName, password });
-
-    // if (isValid) {
-    //   cookie.set('sessionId', nanoid(16), {
-    //     domain: window.location.hostname,
-    //     sameSite: 'Strict',
-    //   });
-    //   cookie.set('userName', btoa(userName), {
-    //     domain: window.location.hostname,
-    //     sameSite: 'Strict',
-    //   });
-    //   window.location.href = `/quizzes/${userName}`;
-    //   return;
-    // }
-
-    // showErrorModal({ message: 'Invalid username or password! Please try again.' });
+      navigate(`/quizzes/${data.userName}`);
+    } catch (errMessage: any) {
+      showErrorModal({ message: errMessage });
+    }
   }
-
-  // function handleChange(ev: React.ChangeEvent<HTMLInputElement>) {
-  //   switch (ev.target.name) {
-  //     case 'username':
-  //       setUserName(ev.target.value);
-  //       break;
-  //     case 'password':
-  //       setPassword(ev.target.value);
-  //   }
-  // }
 
   return (
     <div className="flex flexCol">
