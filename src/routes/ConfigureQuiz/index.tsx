@@ -62,7 +62,6 @@ export default function ConfigureQuiz() {
   }, []);
 
   async function onFormSubmit(data: FieldValues) {
-    debugger;
     data.categories = data.categories.filter((category: any) => category.name);
     data.categories = data.categories.map((category: any) => ({
       ...category,

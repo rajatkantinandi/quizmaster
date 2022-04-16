@@ -52,7 +52,6 @@ export default function ConfigureGame() {
 
   async function handleGameConfig(data: FieldValues) {
     if (id) {
-      debugger;
       const { gameId } = await addGame({
         teams: data.teams.map((team: any) => {
           delete team.id;

@@ -20,9 +20,8 @@ const defaultQuizInfo: QuizInfo = {
 
 const defaultGameInfo: GameInfo = {
   teams: [],
-  questionTimer: 0,
-  currentTeamId: 0,
   timeLimit: 0,
+  currentTeamId: 0,
   selectionTimeLimit: 0,
   isComplete: false,
 };
@@ -38,7 +37,7 @@ export default function PlayQuiz() {
   // useLoginCheckAndPageTitle(quizInfo.name || '');
   const [categoriesInfo, setCategoriesInfo] = useState(defaultCategoryInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
-  const { questionTimer } = gameInfo;
+  const { timeLimit, selectionTimeLimit } = gameInfo;
   const [isPlaying, setIsPlaying] = useState(false);
   const [winner, setWinner] = useState('');
   const attemptedQuestionIds = gameInfo.teams.reduce(
@@ -46,15 +45,13 @@ export default function PlayQuiz() {
     [] as string[],
   );
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.id);
-  const showQuestionTimer = !!questionTimer && !!selectedQuestion && !isQuestionAttempted;
+  const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
   const { showAlertModal, getGameData } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (gameId) {
       getGameData(parseInt(gameId)).then((game: any) => {
-        console.log('gamegamegame', game);
-        debugger;
         const { quiz, ...restData } = game;
         const categoryIds = quiz.categories.map((category: any) => category.categoryId);
         setQuizInfo({
@@ -64,8 +61,6 @@ export default function PlayQuiz() {
         });
 
         if (categoryIds.length > 0) {
-          console.log(formatCategoryInfo(quiz.categories, categoryIds));
-          debugger;
           setCategoriesInfo(formatCategoryInfo(quiz.categories, categoryIds));
         }
 
@@ -117,6 +112,7 @@ export default function PlayQuiz() {
   }
 
   async function handleSubmitResponse(questionId: string, optionId: string) {
+    debugger;
     const allQuestions = quizInfo.categoryIds.reduce(
       (acc, catId) => acc.concat(categoriesInfo[catId].questions),
       [] as IQuestion[],
@@ -138,7 +134,7 @@ export default function PlayQuiz() {
         currentTeam.score += isCorrect ? question.points : 0;
         currentTeam.selectedOptions = {
           ...currentTeam.selectedOptions,
-          [question.id]: parseInt(optionId),
+          [question.id]: optionId ? parseInt(optionId) : null,
         };
 
         setGameInfo({
@@ -243,20 +239,21 @@ export default function PlayQuiz() {
           />
         )}
         <div className={classNames(styles.scoreContainer, 'ml-lg')}>
-          {(showQuestionTimer || !!gameInfo.selectionTimeLimit) && !winner && (
+          {(showQuestionTimer || !!selectionTimeLimit) && !winner && (
             <Timer
-              duration={showQuestionTimer ? questionTimer : gameInfo.selectionTimeLimit}
+              duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
               title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
               handleTimeUp={() => {
                 if (showQuestionTimer) {
                   handleSubmitResponse(selectedQuestion.id, '');
-                } else if (gameInfo.selectionTimeLimit) {
+                } else if (selectionTimeLimit) {
                   selectRandomQuestion();
                 }
               }}
               key={showQuestionTimer ? selectedQuestion.id : 'questionSelection'}
               running={isPlaying}
               setIsRunning={setIsPlaying}
+              selectedQuestionId={selectedQuestion?.id}
             />
           )}
           <table className="mt-lg">

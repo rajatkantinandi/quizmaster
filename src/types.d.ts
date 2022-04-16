@@ -44,7 +44,6 @@ export interface GameInfo {
   currentTeamId: number;
   timeLimit: number;
   selectionTimeLimit: number;
-  questionTimer: number;
   isComplete: boolean;
   teams: Team[];
 }
@@ -53,5 +52,5 @@ export interface Team {
   teamId?: number;
   name: string;
   score: number;
-  selectedOptions: { [key: string]: number };
+  selectedOptions: { [key: string]: number | null };
 }

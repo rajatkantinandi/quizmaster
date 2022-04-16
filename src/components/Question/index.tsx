@@ -37,20 +37,16 @@ export default function Question({
   const selectedOptionId = selectedQuestion.id ? selectedOptionsData[selectedQuestion.id] : null;
 
   useEffect(() => {
-    if (selectedOptionId && !isPreview) {
+    if (!isPreview) {
       // reveal answer when question is attempted due to timeout
-      setIsAnswerRevealed(true);
+      setIsAnswerRevealed(!!selectedOptionId);
     }
-  }, [selectedOptionId, isPreview]);
+  }, [selectedQuestion.id, selectedOptionId, isPreview]);
 
   function handleSubmit(ev: any) {
     ev.preventDefault();
 
-    if (isPreview) {
-      submitResponse(options.find((option) => option.isCorrect)?.optionId);
-    } else {
-      submitResponse(selectedChoice);
-    }
+    submitResponse(selectedChoice);
   }
 
   return (
@@ -69,7 +65,7 @@ export default function Question({
           : options.map((option) => (
               <Option
                 id={option.optionId}
-                checked={selectedChoice === option.isCorrect}
+                checked={selectedChoice === option.optionId}
                 onChange={(value: any) => setSelectedChoice(value)}
                 optionText={option.text}
                 key={option.optionId}

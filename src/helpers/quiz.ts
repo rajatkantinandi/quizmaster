@@ -197,7 +197,6 @@ export const formatGameData = (gameData: any) => {
     }
   }, {});
 
-  debugger;
   data.quiz = formatQuizzesData(gameData)[0];
 
   return data;

@@ -9,9 +9,17 @@ interface Props {
   title: string;
   handleTimeUp: Function;
   setIsRunning: Function;
+  selectedQuestionId: string | undefined;
 }
 
-export default function Question({ duration, running = false, title, handleTimeUp, setIsRunning }: Props) {
+export default function Question({
+  duration,
+  running = false,
+  title,
+  handleTimeUp,
+  setIsRunning,
+  selectedQuestionId,
+}: Props) {
   const [remainingTime, setRemainingTime] = useState(duration);
 
   useEffect(() => {
@@ -34,6 +42,10 @@ export default function Question({ duration, running = false, title, handleTimeU
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, remainingTime]);
+
+  useEffect(() => {
+    setRemainingTime(duration);
+  }, [selectedQuestionId]);
 
   return (
     <div className={classNames(styles.timer, { [styles.running]: running })}>
