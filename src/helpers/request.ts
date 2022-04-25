@@ -40,6 +40,16 @@ export const post = async (url: string, data = {}) => {
   }
 };
 
+export const postBeaconReq = async (url: string, data = {}) => {
+  navigator.sendBeacon(
+    getEndpointFullUrl(url),
+    JSON.stringify({
+      ...data,
+      'auth-token': getCookie(config.tokenKey),
+    }),
+  );
+};
+
 class ResponseError extends Error {
   public response: Response;
 

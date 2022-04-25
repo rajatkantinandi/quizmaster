@@ -12,7 +12,7 @@ interface Props {
   isPreview?: boolean;
   isQuestionSaved?: boolean;
   pauseTimer?: Function;
-  selectedOptionsData?: any;
+  selectedOptionId: any;
   selectedQuestion: {
     id?: string;
     text: string;
@@ -27,14 +27,13 @@ export default function Question({
   isPreview = false,
   isQuestionSaved = true,
   pauseTimer,
-  selectedOptionsData = {},
+  selectedOptionId,
   selectedQuestion,
   isWithoutOptions,
 }: Props) {
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
   const { options } = selectedQuestion;
-  const selectedOptionId = selectedQuestion.id ? selectedOptionsData[selectedQuestion.id] : null;
 
   useEffect(() => {
     if (!isPreview) {

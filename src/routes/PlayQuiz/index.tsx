@@ -46,8 +46,9 @@ export default function PlayQuiz() {
   );
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.id);
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
-  const { showAlertModal, getGameData } = useAppStore();
+  const { showAlertModal, getGameData, updateGame } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
+  const selectedOptionsData = gameInfo.teams.reduce((acc: any, team: any) => ({ ...acc, ...team.selectedOptions }), {});
 
   useEffect(() => {
     if (gameId) {
@@ -70,28 +71,6 @@ export default function PlayQuiz() {
     }
   }, [gameId]);
 
-  // useEffect(() => {
-  //   if (id && quizInfo.name) {
-  //     getQuizRun(id).then((quizRun: any) => {
-  //       if (quizRun) {
-  //         setTeams(quizRun.teams);
-  //         setAttemptedQuestions(quizRun.attemptedQuestions);
-  //         setCurrentTeamId(quizRun.currentTeamId);
-  //         setQuestionTimer(quizRun.questionTimer || 0);
-  //         setQuestionSelectionTimer(quizRun.questionSelectionTimer || 0);
-
-  //         if (quizRun.isComplete) {
-  //           showWinner(quizRun.teams);
-  //         }
-  //       } else {
-  //       }
-
-  //       setIsLoading(false);
-  //     });
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [quizInfo.name, id]);
-
   function showWinner(teams: any[], callback?: Function) {
     const maxScore = Math.max(...teams.map((team) => team.score));
     const winners = teams.filter((team) => team.score === maxScore);
@@ -111,8 +90,7 @@ export default function PlayQuiz() {
     return winnerIds;
   }
 
-  async function handleSubmitResponse(questionId: string, optionId: string) {
-    debugger;
+  async function handleSubmitResponse(questionId: string, optionId?: string) {
     const allQuestions = quizInfo.categoryIds.reduce(
       (acc, catId) => acc.concat(categoriesInfo[catId].questions),
       [] as IQuestion[],
@@ -130,11 +108,12 @@ export default function PlayQuiz() {
       const clonedTeams = [...gameInfo.teams];
 
       if (currentTeamIndex >= 0) {
+        const selectedOptionId = optionId || question.options.find((option) => option.isCorrect)?.optionId;
         const currentTeam = clonedTeams[currentTeamIndex];
         currentTeam.score += isCorrect ? question.points : 0;
         currentTeam.selectedOptions = {
           ...currentTeam.selectedOptions,
-          [question.id]: optionId ? parseInt(optionId) : null,
+          [question.id]: selectedOptionId ? parseInt(selectedOptionId) : null,
         };
 
         setGameInfo({
@@ -148,9 +127,18 @@ export default function PlayQuiz() {
       const isComplete = nextTeamIndex === 0 && allQuestions.length - attemptedQuestionsCount < gameInfo.teams.length;
       const winner = isComplete ? showWinner(clonedTeams) : null;
 
-      // await saveGameData({
-      //   gameId,
-      // });
+      await updateGame({
+        gameId,
+        isComplete,
+        winnerTeamId: winner,
+        nextTeamId: gameInfo.teams[nextTeamIndex].teamId,
+        currentTeam: {
+          score: clonedTeams[currentTeamIndex].score,
+          selectedOptionId: optionId || null,
+          questionId,
+          teamId: clonedTeams[currentTeamIndex].teamId,
+        },
+      });
 
       // await saveGame(gameId, {
       //   attemptedQuestions: attemptedQuestionsToSet,
@@ -191,20 +179,16 @@ export default function PlayQuiz() {
     }
   }
 
+  function shouldShowTimer() {
+    return ((!selectedQuestion && !!selectionTimeLimit) || (selectedQuestion && showQuestionTimer)) && !winner;
+  }
+
   return isLoading ? (
     <></>
   ) : (
     <>
       <div className="flex alignCenter">
         <h1>asda</h1>
-        {/* <Button
-          onClick={() => navigate(`/edit-quiz/${userName}/${id}`)}
-          basic
-          color="blue"
-          size="mini"
-          className="mb-lg ml-xl">
-          Edit Quiz
-        </Button> */}
       </div>
       <div className="flex justifyCenter">
         <QuizGrid
@@ -232,14 +216,11 @@ export default function PlayQuiz() {
             }}
             isWithoutOptions={selectedQuestion.options.length === 1}
             pauseTimer={() => setIsPlaying(false)}
-            selectedOptionsData={gameInfo.teams.reduce(
-              (acc: any, team: any) => ({ ...acc, ...team.selectedOptions }),
-              {},
-            )}
+            selectedOptionId={selectedQuestion.id ? selectedOptionsData[selectedQuestion.id] : null}
           />
         )}
         <div className={classNames(styles.scoreContainer, 'ml-lg')}>
-          {(showQuestionTimer || !!selectionTimeLimit) && !winner && (
+          {shouldShowTimer() && (
             <Timer
               duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
               title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
@@ -273,24 +254,21 @@ export default function PlayQuiz() {
               ))}
             </tbody>
           </table>
-          {/* <Button
+          <Button
             color="purple"
             className="mt-xl"
             onClick={async () => {
-              await saveGame(gameId, {
-                attemptedQuestions,
-                quizId: id || '',
+              const winnerTeamId = showWinner(gameInfo.teams, () => window.location.reload());
+
+              await updateGame({
+                gameId,
                 isComplete: true,
-                teams,
-                quizName: quizInfo.name,
-                currentTeamId,
-                questionTimer,
-                questionSelectionTimer,
+                winnerTeamId,
+                nextTeamId: gameInfo.currentTeamId,
               });
-              showWinner(teams, () => window.location.reload());
             }}>
             Start a new Game
-          </Button> */}
+          </Button>
         </div>
       </div>
     </>

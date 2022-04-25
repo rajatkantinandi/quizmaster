@@ -8,6 +8,8 @@ import { Category, QuizInfo as IQuizInfo, Question } from '../../types';
 import { nanoid } from 'nanoid';
 import { generateEmptyQuestions } from '../../helpers/question';
 import { formatCategoryInfo } from '../../helpers/quiz';
+import config from '../../config';
+import { getCookie } from '../../helpers/cookieHelper';
 
 interface CategoryData {
   name: string;
@@ -23,7 +25,8 @@ interface CategoryInfo {
 }
 
 export default function ConfigureQuiz() {
-  const { userName = 'guest', quizId } = useParams();
+  const { userName = 'guest', ...rest } = useParams();
+  const [quizId, setQuizId] = useState(rest.quizId);
   const navigate = useNavigate();
   const [quizInfo, setQuizInfo] = useState({
     quizId: nanoid(),
@@ -32,13 +35,15 @@ export default function ConfigureQuiz() {
   } as IQuizInfo);
   const [categoriesInfo, setCategoriesInfo] = useState(initCategoryInfo());
   const [numberOfQuestionsPerCategory, setNumberOfQuestionsPerCategory] = useState(5);
-  const { createOrUpdateQuiz, getQuiz } = useAppStore();
+  const { createOrUpdateQuiz, getQuiz, sendBeaconPost } = useAppStore();
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
+    getValues,
   } = useForm();
+  let saveQuizNameTimer: number = 0;
 
   useEffect(() => {
     if (quizId) {
@@ -59,7 +64,27 @@ export default function ConfigureQuiz() {
         });
       });
     }
-  }, []);
+
+    window.onbeforeunload = function (event) {
+      const data = getValues();
+
+      if (quizId) {
+        data.categories = data.categories.filter((category: any) => category.name);
+        data.categories = data.categories.map((category: any) => ({
+          ...category,
+          questions: new Array(numberOfQuestionsPerCategory).fill(0).map((el, idx) => ({
+            points: parseInt(category.questions[idx].points || '0'),
+          })),
+        }));
+
+        data.quizId = quizId;
+        data.isDraft = true;
+
+        sendBeaconPost(data);
+        navigate(`/edit-quiz/${userName}/${quizId}`);
+      }
+    };
+  }, [quizId]);
 
   async function onFormSubmit(data: FieldValues) {
     data.categories = data.categories.filter((category: any) => category.name);
@@ -68,34 +93,33 @@ export default function ConfigureQuiz() {
       questions: category.questions.filter((question: any) => parseInt(question.points) >= 0),
     }));
     data.quizId = quizId;
-
     const { questions, categoryData, ...restProps } = await createOrUpdateQuiz(data);
-    const categoryIds = categoryData.map((category: CategoryData) => category.categoryId);
+    // const categoryIds = categoryData.map((category: CategoryData) => category.categoryId);
 
-    setCategoriesInfo(
-      questions.reduce((categoryInfo: CategoryInfo, question: Question) => {
-        const category = categoryData.find((category: CategoryData) => category.categoryId === question.categoryId) || {
-          name: '',
-        };
+    // setCategoriesInfo(
+    //   questions.reduce((categoryInfo: CategoryInfo, question: Question) => {
+    //     const category = categoryData.find((category: CategoryData) => category.categoryId === question.categoryId) || {
+    //       name: '',
+    //     };
 
-        if (!categoryInfo[question.categoryId]) {
-          categoryInfo[question.categoryId] = {
-            name: category.name,
-            categoryId: question.categoryId,
-            questions: [question],
-          };
-        } else {
-          categoryInfo[question.categoryId].questions.push(question);
-        }
+    //     if (!categoryInfo[question.categoryId]) {
+    //       categoryInfo[question.categoryId] = {
+    //         name: category.name,
+    //         categoryId: question.categoryId,
+    //         questions: [question],
+    //       };
+    //     } else {
+    //       categoryInfo[question.categoryId].questions.push(question);
+    //     }
 
-        return categoryInfo;
-      }, {} as CategoryInfo),
-    );
-    setQuizInfo({
-      quizId: restProps.quizId,
-      name: data.name,
-      categoryIds,
-    });
+    //     return categoryInfo;
+    //   }, {} as CategoryInfo),
+    // );
+    // setQuizInfo({
+    //   quizId: restProps.quizId,
+    //   name: data.name,
+    //   categoryIds,
+    // });
     navigate(`/edit-quiz/${userName}/${restProps.quizId}`);
   }
 
@@ -171,6 +195,22 @@ export default function ConfigureQuiz() {
     }, {});
   }
 
+  async function handleAddQuizName(ev: any, inputData: { value: string }) {
+    if (saveQuizNameTimer) {
+      clearTimeout(saveQuizNameTimer);
+    }
+    console.log(inputData);
+
+    saveQuizNameTimer = setTimeout(() => {
+      // const data = await createOrUpdateQuiz({
+      //   name: quizName,
+      //   categories: [],
+      //   isDraft: true,
+      // });
+      // setQuizId(data.quizId);
+    }, 1000);
+  }
+
   const removeLastCategory = () => {
     const lastCategoryId = quizInfo.categoryIds[quizInfo.categoryIds.length - 1];
     const categoriesInfoData = { ...categoriesInfo };
@@ -195,6 +235,7 @@ export default function ConfigureQuiz() {
             inputProps={{
               type: 'text',
               label: 'Quiz name',
+              onChange: handleAddQuizName,
             }}
           />
           <FormInput

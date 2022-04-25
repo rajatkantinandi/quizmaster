@@ -1,6 +1,6 @@
 import React from 'react';
 import create from 'zustand';
-import { post, get as getReq } from './helpers/request';
+import { post, get as getReq, postBeaconReq } from './helpers/request';
 import { setCookie } from './helpers/cookieHelper';
 import config from './config';
 import { formatGameData, formatQuizzesData } from './helpers/quiz';
@@ -80,6 +80,15 @@ export const useAppStore = create((set: Function, get: Function) => ({
     const response = await post('quiz/createOrUpdate', data);
     return response;
   },
+  sendBeaconPost: async (data: any) => {
+    if ('sendBeacon' in navigator) {
+      const response = await postBeaconReq('quiz/createOrUpdate', data);
+      return response;
+    } else {
+      const response = await post('quiz/createOrUpdate', data);
+      return response;
+    }
+  },
   editQuestion: async (data: any) => {
     const response = await post('question/edit', data);
     return response;
@@ -92,6 +101,10 @@ export const useAppStore = create((set: Function, get: Function) => ({
     const response = await getReq('game/data', { gameId });
 
     return formatGameData(response);
+  },
+  updateGame: async (data: any) => {
+    const response = await post('game/edit', data);
+    return response;
   },
 }));
 

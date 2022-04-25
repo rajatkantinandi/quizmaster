@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { nanoid } from 'nanoid';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Checkbox, Divider, Icon, Label, Tab } from 'semantic-ui-react';
 import { Question as IQuestion } from '../../types';
 import Question from '../Question';
@@ -16,40 +16,46 @@ interface Props {
   onClose: Function;
 }
 
+const defaultOptions = [
+  {
+    optionId: nanoid(),
+    text: '',
+    isCorrect: false,
+  },
+  {
+    optionId: nanoid(),
+    text: '',
+    isCorrect: false,
+  },
+];
+
 export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }: Props) {
   const { text, options, points } = selectedQuestion;
+  const formDefaultValues = {
+    text,
+    points,
+    options: options.length > 0 ? options : defaultOptions,
+  };
+
   const {
     control,
     handleSubmit,
     formState: { errors },
     getValues,
     setValue,
-  } = useForm({
-    defaultValues: {
-      text,
-      points,
-      options:
-        options.length > 0
-          ? options
-          : [
-              {
-                optionId: nanoid(),
-                text: '',
-                isCorrect: false,
-              },
-              {
-                optionId: nanoid(),
-                text: '',
-                isCorrect: false,
-              },
-            ],
-    },
-  });
-  const [optionsData, setOptionData] = useState(getValues('options'));
+    reset,
+  } = useForm({ defaultValues: formDefaultValues });
+
+  useEffect(() => {
+    reset(formDefaultValues);
+  }, [selectedQuestion.id]);
+
+  const [refreshComponent, setRefreshComponent] = useState(0);
   const [isPreview, setIsPreview] = useState(false);
   const [isQuestionSaved, setIsQuestionSaved] = useState(false);
   const [isWithoutOptions, setIsWithoutOptions] = useState(options.length === 1);
   const { showErrorModal } = useAppStore();
+  const optionsData = getValues('options');
 
   function onFormSubmit(data: FieldValues) {
     if (isWithoutOptions) {
@@ -80,45 +86,41 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
   }
 
   function setQuestionCorrectOptionId(optionId: any, checked: boolean) {
-    const options = getValues('options').map((option) => ({
+    const options = optionsData.map((option) => ({
       ...option,
-      isCorrect: option.optionId === optionId,
+      isCorrect: checked && option.optionId === optionId,
     }));
-    setOptionData(options);
     setValue('options', options);
+    setRefreshComponent(Math.random());
   }
 
   function removeOption(ev: any, optionId: any) {
     ev.preventDefault();
-    const options = getValues('options');
-
-    if (options.length === 2) {
+    if (optionsData.length === 2) {
       showErrorModal({ message: 'At least 2 options are mandatory!' });
     } else {
-      const remainingOptions = options.filter((o) => o.optionId !== optionId);
-      setOptionData(remainingOptions);
+      const remainingOptions = optionsData.filter((o) => o.optionId !== optionId);
       setValue('options', remainingOptions);
+      setRefreshComponent(2);
     }
   }
 
   function addOption(ev: any) {
     ev.preventDefault();
-    const options = getValues('options').concat({
+    const options = optionsData.concat({
       optionId: nanoid(),
       text: '',
       isCorrect: false,
     });
 
-    setOptionData(options);
     setValue('options', options);
+    setRefreshComponent(3);
   }
 
   function getValidationError() {
-    const options = getValues('options');
-
-    if (!options.some((option) => option.isCorrect)) {
+    if (!optionsData.some((option) => option.isCorrect)) {
       return 'Please select 1 correct option!';
-    } else if (options.length === 1) {
+    } else if (optionsData.length === 1) {
       return 'At least 2 options are mandatory!';
     }
 
@@ -163,7 +165,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
                 menuItem: 'With options',
                 render: () => (
                   <Tab.Pane active={!isWithoutOptions}>
-                    {getValues('options').map((option: any, idx: number) => (
+                    {optionsData.map((option: any, idx: number) => (
                       <div className="flex alignStart" key={option.optionId}>
                         <Checkbox
                           checked={option.isCorrect}
@@ -259,6 +261,9 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
           isQuestionSaved={isQuestionSaved}
           submitResponse={() => onFormSubmit(getValues())}
           isWithoutOptions={isWithoutOptions}
+          selectedOptionId={
+            isWithoutOptions ? optionsData[0].optionId : optionsData.find((option) => option.isCorrect)?.optionId
+          }
         />
       </div>
     </div>

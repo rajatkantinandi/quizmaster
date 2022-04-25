@@ -26,6 +26,7 @@ export default function QuizGrid({
   savedQuestionIds = [], // for edit mode
 }: Props) {
   const selectedOptionsData = gameInfo.teams.reduce((acc: any, team: any) => ({ ...acc, ...team.selectedOptions }), {});
+  console.log('selectedOptionsData', gameInfo.teams);
 
   return (
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>

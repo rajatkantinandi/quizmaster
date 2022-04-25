@@ -36,7 +36,7 @@ export default function FormInput(props: Props) {
               field.onChange(ev, data);
 
               if (inputProps.onChange) {
-                inputProps.onChange(ev);
+                inputProps.onChange(ev, data);
               }
             }}
           />
