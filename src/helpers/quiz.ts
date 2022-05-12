@@ -1,5 +1,6 @@
 import { Quiz, Category } from '../types';
 import db from './db';
+import { getEmptyQuestion, getEmptyCategory } from '../helpers/question';
 
 const quizzesC = db.collection('quizzes');
 const quizRun = db.collection('quizRun');
@@ -13,13 +14,6 @@ export const saveQuiz = async ({ name, categories, id, isDraft, userName }: Quiz
     await quizzesC.insert({ name, categories, _id: id, isDraft, userName });
   }
 };
-
-// export const getQuizzes = async (userName: string): Promise<Quiz[]> => {
-//   const quizzes = (await quizzesC.find({}).toArray()).map(({ _id, ...q }: any) => ({ ...q, id: _id }));
-//   const updatedQuizzes = await addMissingUserNameToQuizzes(userName, quizzes);
-
-//   return updatedQuizzes.filter(q => q.userName === userName);
-// }
 
 export const getQuiz = async (_id: string) => {
   return quizzesC.findOne({ _id });
@@ -103,103 +97,128 @@ export const getQuizRun = async (quizId: string) => {
 //   }));
 // }
 
-export const formatQuizzesData = (quizzes: any[]) => {
-  const data: any[] = [];
+const quizDataSchema = {
+  _meta: {
+    dataKey: 'id',
+    respKey: 'QuizId',
+  },
+  id: 'QuizId',
+  name: 'Name',
+  isDraft: 'IsDraft',
+  numberOfQuestionsPerCategory: 'NumberOfQuestionsPerCategory',
+  categories: {
+    _meta: {
+      dataKey: 'categoryId',
+      respKey: 'CategoryId',
+    },
+    categoryId: 'CategoryId',
+    name: 'CategoryName',
+    questions: {
+      _meta: {
+        dataKey: 'id',
+        respKey: 'QuestionId',
+      },
+      id: 'QuestionId',
+      points: 'Points',
+      text: 'Text',
+      options: {
+        _meta: {
+          dataKey: 'optionId',
+          respKey: 'OptionId',
+        },
+        optionId: 'OptionId',
+        text: 'OptionText',
+        isCorrect: 'IsCorrect',
+      },
+    },
+  },
+};
 
-  quizzes.forEach((quiz: any) => {
-    const index = data.findIndex((x: any) => x.id === quiz.QuizId);
-    const option = {
-      optionId: quiz.OptionId,
-      text: quiz.OptionText || '',
-      isCorrect: quiz.IsCorrect,
-    };
-    const options = quiz.OptionId ? [option] : [];
-    const question = {
-      id: quiz.QuestionId,
-      points: quiz.Points,
-      text: quiz.Text,
-      options,
-    };
-    const category = {
-      categoryId: quiz.CategoryId,
-      name: quiz.CategoryName || '',
-      questions: [question],
-    };
-    const quizData = {
-      id: quiz.QuizId,
-      name: quiz.Name,
-      isDraft: quiz.IsDraft,
-      categories: [category],
-    };
+export const createQuizData = (acc: any, quiz: any, schema: any) => {
+  const metaData = schema._meta;
+  const index = acc.findIndex((x: any) => x[metaData.dataKey] === quiz[metaData.respKey]);
+  const data: any = index < 0 ? {} : acc[index];
 
-    if (index < 0) {
-      data.push(quizData);
-    } else {
-      const { categories } = data[index];
-      const catIndex = categories.findIndex((x: any) => x.categoryId === quiz.CategoryId);
-
-      if (catIndex < 0) {
-        categories.push(category);
+  for (const key in schema) {
+    if (key !== '_meta') {
+      if (typeof schema[key] === 'object') {
+        data[key] = createQuizData(data[key] || [], quiz, schema[key]);
       } else {
-        const { questions } = categories[catIndex];
-        const qIndex = questions.findIndex((x: any) => x.id === quiz.QuestionId);
-
-        if (qIndex < 0) {
-          questions.push(question);
-        } else {
-          const { options } = categories[catIndex].questions[qIndex];
-          const oIndex = options.findIndex((x: any) => x.optionId === quiz.OptionId);
-
-          if (oIndex < 0) {
-            options.push(option);
-          }
-        }
+        data[key] = quiz[schema[key]];
       }
     }
-  });
+  }
 
-  return data;
+  if (index < 0 && data[metaData.dataKey]) {
+    acc.push(data);
+  }
+
+  return acc;
+};
+
+export const formatQuizzesData = (quizzes: any[]) => {
+  const formattedData = quizzes.reduce((acc, quiz: any) => {
+    createQuizData(acc, quiz, quizDataSchema);
+    return acc;
+  }, []);
+
+  return formattedData.map((quiz: any) => {
+    if (quiz.categories.length < 2) {
+      quiz.categories = [0, 1].map(
+        (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
+      );
+    }
+    quiz.categories.forEach((category: any) => {
+      if (category.questions.length < quiz.numberOfQuestionsPerCategory) {
+        category.questions = [...Array(quiz.numberOfQuestionsPerCategory).keys()].map(
+          (index) => category.questions[index] || getEmptyQuestion(category.categoryId),
+        );
+      }
+    });
+
+    return quiz;
+  });
+};
+
+const gameSchema = {
+  _meta: {
+    dataKey: 'gameId',
+    respKey: 'GameId',
+  },
+  gameId: 'GameId',
+  winnerTeamId: 'WinnerTeamId',
+  currentTeamId: 'CurrentTeamId',
+  timeLimit: 'TimeLimit',
+  selectionTimeLimit: 'SelectionTimeLimit',
+  isComplete: 'IsComplete',
+  teams: {
+    _meta: {
+      dataKey: 'teamId',
+      respKey: 'TeamId',
+    },
+    teamId: 'TeamId',
+    name: 'TeamName',
+    score: 'Score',
+    selectedOptions: {
+      _meta: {
+        dataKey: 'teamQuestionMapId',
+        respKey: 'TeamQuestionMapId',
+      },
+      teamQuestionMapId: 'TeamQuestionMapId',
+      selectedOptionId: 'SelectedOptionId',
+      questionId: 'QuestionId',
+    },
+  },
+  quiz: quizDataSchema,
 };
 
 export const formatGameData = (gameData: any) => {
-  const data: any = gameData.reduce((acc: any, game: any) => {
-    const team = {
-      teamId: game.TeamId,
-      name: game.TeamName,
-      score: game.Score,
-      selectedOptions: game.SelectedOptionId
-        ? {
-            [game.QuestionId]: game.SelectedOptionId,
-          }
-        : {},
-    };
+  const data = gameData.reduce((acc: any, game: any) => {
+    createQuizData(acc, game, gameSchema);
+    return acc;
+  }, []);
 
-    if (Object.keys(acc).length === 0) {
-      return {
-        gameId: game.GameId,
-        winnerTeamId: game.WinnerTeamId,
-        currentTeamId: game.CurrentTeamId,
-        timeLimit: game.TimeLimit,
-        selectionTimeLimit: game.SelectionTimeLimit,
-        isComplete: game.IsComplete,
-        teams: [team],
-      };
-    } else {
-      const index = acc.teams.findIndex((team: any) => team.teamId === game.TeamId);
-
-      if (index < 0) {
-        acc.teams.push(team);
-      } else if (game.SelectedOptionId) {
-        acc.teams[index].selectedOptions[game.QuestionId] = game.SelectedOptionId;
-      }
-
-      return acc;
-    }
-  }, {});
-
-  data.quiz = formatQuizzesData(gameData)[0];
-
-  return data;
+  return data[0];
 };
 
 export const formatCategoryInfo = (categories: Category[], categoryIds: (string | number)[]) => {

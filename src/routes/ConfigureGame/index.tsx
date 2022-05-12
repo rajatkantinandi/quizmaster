@@ -7,6 +7,12 @@ import styles from './styles.module.css';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { useParams, useNavigate } from 'react-router';
+import { Team } from '../../types';
+import { getEmptyTeam } from '../../helpers/question';
+
+const formDefaultValues: { teams: Team[] } = {
+  teams: [0, 1].map((index) => getEmptyTeam()),
+};
 
 export default function ConfigureGame() {
   const { id, userName } = useParams();
@@ -17,22 +23,7 @@ export default function ConfigureGame() {
     formState: { errors },
     getValues,
     setValue,
-  } = useForm({
-    defaultValues: {
-      teams: [
-        {
-          name: '',
-          id: nanoid(),
-          score: 0,
-        },
-        {
-          name: '',
-          id: nanoid(),
-          score: 0,
-        },
-      ],
-    },
-  });
+  } = useForm({ defaultValues: formDefaultValues });
 
   const [teamCount, setTeamCount] = useState(2);
   const [questionTimer, setQuestionTimer] = useState(0);
@@ -41,7 +32,7 @@ export default function ConfigureGame() {
   const { addGame } = useAppStore();
 
   function addTeam() {
-    setValue('teams', teams.concat({ id: nanoid(), name: '', score: 0 }));
+    setValue('teams', teams.concat(getEmptyTeam()));
     setTeamCount(teams.length + 1);
   }
 
@@ -53,8 +44,8 @@ export default function ConfigureGame() {
   async function handleGameConfig(data: FieldValues) {
     if (id) {
       const { gameId } = await addGame({
-        teams: data.teams.map((team: any) => {
-          delete team.id;
+        teams: data.teams.map((team: Team) => {
+          delete team.teamId;
           return team;
         }),
         quizId: parseInt(id),
@@ -80,7 +71,7 @@ export default function ConfigureGame() {
               inputProps={{
                 label: `Team ${idx + 1} name`,
               }}
-              key={team.id}
+              key={team.teamId}
             />
           ))}
           <div className="flex mb-lg">

@@ -30,7 +30,7 @@ export default function Quizzes() {
             className="flex alignCenter"
             onClick={() => {
               if (quiz.isDraft) {
-                navigate(`/edit-quiz/${userName}/${quiz.id}`);
+                navigate(`/configure-quiz/${userName}/${quiz.id}`);
               } else {
                 navigate(`/configure-game/${userName}/${quiz.id}`);
               }
@@ -39,7 +39,7 @@ export default function Quizzes() {
             <div className="details">
               {quiz.categories.length} Categories
               <br />
-              {quiz.categories[0].questions.length} Questions per category.
+              {quiz.numberOfQuestionsPerCategory} Questions per category.
               {quiz.isDraft && <div className="badge">Draft</div>}
             </div>
             <div className="action">{quiz.isDraft ? 'Edit' : 'Play'}</div>

@@ -12,7 +12,7 @@ interface Props {
   isPreview?: boolean;
   isQuestionSaved?: boolean;
   pauseTimer?: Function;
-  selectedOptionId: any;
+  selectedOptionId: number | null | undefined | string;
   selectedQuestion: {
     id?: string;
     text: string;
@@ -42,7 +42,7 @@ export default function Question({
     }
   }, [selectedQuestion.id, selectedOptionId, isPreview]);
 
-  function handleSubmit(ev: any) {
+  function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
 
     submitResponse(selectedChoice);

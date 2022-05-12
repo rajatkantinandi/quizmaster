@@ -4,7 +4,7 @@ import { Button, Divider } from 'semantic-ui-react';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuizGrid from '../../components/QuizGrid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
-import { Category, Question as IQuestion, QuizInfo } from '../../types';
+import { Category, Question as IQuestion, QuizInfo, Quiz, Option } from '../../types';
 import { useAppStore } from '../../useAppStore';
 import { formatCategoryInfo } from '../../helpers/quiz';
 
@@ -15,6 +15,7 @@ export default function AddEditQuiz() {
     quizId: '',
     name: '',
     categoryIds: [],
+    numberOfQuestionsPerCategory: 5,
   });
   const [categoriesInfo, setCategoriesInfo] = useState<{ [key: string]: Category }>({});
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
@@ -27,13 +28,14 @@ export default function AddEditQuiz() {
       setIsLoading(false);
 
       if (id) {
-        getQuiz(parseInt(id)).then((quiz: any) => {
-          const categoryIds = quiz.categories.map((category: any) => category.categoryId);
+        getQuiz(parseInt(id)).then((quiz: Quiz) => {
+          const categoryIds = quiz.categories.map((category: Category) => category.categoryId);
 
           setQuizInfo({
             quizId: quiz.id,
             name: quiz.name,
             categoryIds,
+            numberOfQuestionsPerCategory: quiz.numberOfQuestionsPerCategory,
           });
           setCategoriesInfo(formatCategoryInfo(quiz.categories, categoryIds));
         });
@@ -55,8 +57,9 @@ export default function AddEditQuiz() {
         body: `There ${
           unSavedQuestionsCount > 1 ? `are ${unSavedQuestionsCount} empty questions` : 'is an empty question'
         }. 
-        Do you want to finish the quiz with empty questions or cancel and and complete those questions first?`,
-        cancelText: 'Cancel and complete questions',
+        Please complete those questions first.`,
+        okText: 'Cancel and complete questions',
+        cancelText: '',
       });
     } else {
       showAlertModal({ title: 'Quiz saved!', message: 'Lets play now!' });
@@ -64,15 +67,17 @@ export default function AddEditQuiz() {
     }
   }
 
-  async function saveQuestion(questionId: string, { text, options, points }: any) {
+  async function saveQuestion(questionId: string, { text, options, points }: IQuestion) {
     try {
       await editQuestion({
         questionId,
         text,
-        options: options.map((newOption: any) => {
-          newOption.questionId = questionId;
-          if (!selectedQuestion?.options.find((option) => option.optionId === newOption.optionId)) {
-            delete newOption.optionId;
+        options: options.map((newOption: Option) => {
+          const clonedOption: any = { ...newOption };
+          clonedOption.questionId = questionId;
+
+          if (!selectedQuestion?.options.find((option) => option.optionId === clonedOption.optionId)) {
+            delete clonedOption.optionId;
           }
 
           return newOption;
@@ -111,23 +116,15 @@ export default function AddEditQuiz() {
 
   function getSavedQuestionIds() {
     const allQuestions: IQuestion[] = Object.values(categoriesInfo).reduce(
-      (acc: any, curr: any) => [...acc, ...curr.questions],
+      (acc: IQuestion[], curr: Category) => [...acc, ...curr.questions],
       [] as IQuestion[],
     );
 
-    return allQuestions.filter((q: any) => isValidQuestion(q)).map((q: any) => q.id);
+    return allQuestions.filter((q: IQuestion) => isValidQuestion(q)).map((q: IQuestion) => q.id);
   }
 
   function isValidQuestion(question: IQuestion) {
     const { options } = question;
-    console.log(
-      'questionquestion',
-      question,
-      !!question.text,
-      options.length > 0,
-      options.some((option) => option.isCorrect),
-      !options.some((option) => !option.text),
-    );
 
     return (
       !!question.text &&
@@ -162,7 +159,7 @@ export default function AddEditQuiz() {
         {!!selectedQuestion && (
           <QuestionEdit
             key={selectedQuestion.id}
-            saveQuestion={(data: any) => saveQuestion(selectedQuestion.id, data)}
+            saveQuestion={(data: IQuestion) => saveQuestion(selectedQuestion.id, data)}
             selectedQuestion={selectedQuestion}
             onClose={() => {
               setSelectedQuestion(null);

@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 
 export default function Header() {
   const { logout } = useAppStore();
-  const userData: any = useAppStore((state) => state.userData);
+  const userData = useAppStore<{ userName?: string }>((state) => state.userData);
 
   async function onLogout() {
     try {

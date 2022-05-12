@@ -4,9 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 import { Button } from 'semantic-ui-react';
 import Question from '../../components/Question';
 import QuizGrid from '../../components/QuizGrid';
-import { getQuizRun, saveGame } from '../../helpers/quiz';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
-import { Category, Question as IQuestion, QuizInfo, GameInfo } from '../../types';
+import { Category, Question as IQuestion, QuizInfo, GameInfo, SelectedOptions } from '../../types';
 import styles from './styles.module.css';
 import Timer from '../../components/Timer';
 import { useAppStore } from '../../useAppStore';
@@ -16,6 +14,7 @@ const defaultQuizInfo: QuizInfo = {
   quizId: '',
   name: '',
   categoryIds: [],
+  numberOfQuestionsPerCategory: 5,
 };
 
 const defaultGameInfo: GameInfo = {
@@ -40,29 +39,31 @@ export default function PlayQuiz() {
   const { timeLimit, selectionTimeLimit } = gameInfo;
   const [isPlaying, setIsPlaying] = useState(false);
   const [winner, setWinner] = useState('');
-  const attemptedQuestionIds = gameInfo.teams.reduce(
-    (acc, team) => acc.concat(Object.keys(team.selectedOptions)),
-    [] as string[],
+  const selectedOptionsData = gameInfo.teams.reduce(
+    (acc, team) => acc.concat(team.selectedOptions),
+    [] as SelectedOptions[],
   );
+  const attemptedQuestionIds = selectedOptionsData.map((x) => x.questionId);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.id);
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
   const { showAlertModal, getGameData, updateGame } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
-  const selectedOptionsData = gameInfo.teams.reduce((acc: any, team: any) => ({ ...acc, ...team.selectedOptions }), {});
 
   useEffect(() => {
     if (gameId) {
       getGameData(parseInt(gameId)).then((game: any) => {
         const { quiz, ...restData } = game;
-        const categoryIds = quiz.categories.map((category: any) => category.categoryId);
+        const quizData = quiz[0];
+        const categoryIds = quizData.categories.map((category: any) => category.categoryId);
         setQuizInfo({
-          quizId: quiz.id,
-          name: quiz.name,
+          quizId: quizData.id,
+          name: quizData.name,
           categoryIds,
+          numberOfQuestionsPerCategory: quizData.numberOfQuestionsPerCategory,
         });
 
         if (categoryIds.length > 0) {
-          setCategoriesInfo(formatCategoryInfo(quiz.categories, categoryIds));
+          setCategoriesInfo(formatCategoryInfo(quizData.categories, categoryIds));
         }
 
         setGameInfo(restData);
@@ -96,10 +97,7 @@ export default function PlayQuiz() {
       [] as IQuestion[],
     );
     const question = allQuestions.find((q) => q.id === questionId);
-    const attemptedQuestionsCount = gameInfo.teams.reduce(
-      (count, team) => count + Object.keys(team.selectedOptions).length,
-      0,
-    );
+    const attemptedQuestionsCount = selectedOptionsData.length;
 
     if (question) {
       const isCorrect = question.options.find((o: any) => o.optionId === optionId)?.isCorrect;
@@ -108,17 +106,16 @@ export default function PlayQuiz() {
       const clonedTeams = [...gameInfo.teams];
 
       if (currentTeamIndex >= 0) {
-        const selectedOptionId = optionId || question.options.find((option) => option.isCorrect)?.optionId;
         const currentTeam = clonedTeams[currentTeamIndex];
         currentTeam.score += isCorrect ? question.points : 0;
-        currentTeam.selectedOptions = {
-          ...currentTeam.selectedOptions,
-          [question.id]: selectedOptionId ? parseInt(selectedOptionId) : null,
-        };
+        currentTeam.selectedOptions.push({
+          questionId: question.id,
+          selectedOptionId: optionId ? parseInt(optionId) : null,
+        });
 
         setGameInfo({
           ...gameInfo,
-          currentTeamId: gameInfo.teams[nextTeamIndex].teamId || 0,
+          currentTeamId: (gameInfo.teams[nextTeamIndex].teamId as number) || 0,
           teams: clonedTeams,
         });
       }
@@ -139,17 +136,6 @@ export default function PlayQuiz() {
           teamId: clonedTeams[currentTeamIndex].teamId,
         },
       });
-
-      // await saveGame(gameId, {
-      //   attemptedQuestions: attemptedQuestionsToSet,
-      //   quizId: id || '',
-      //   quizName: quizInfo.name,
-      //   isComplete,
-      //   currentTeamId: currentTeamIdToSet,
-      //   teams: teamsToSet,
-      //   questionTimer,
-      //   questionSelectionTimer,
-      // });
     }
   }
 
@@ -159,9 +145,8 @@ export default function PlayQuiz() {
       [] as IQuestion[],
     );
 
-    const allUnattemptedQuestions = allQuestions.filter(
-      (q) => !gameInfo.teams.some((team) => team.selectedOptions[q.id]),
-    );
+    const allUnattemptedQuestions = allQuestions.filter((q) => !selectedOptionsData.find((x) => x.questionId === q.id));
+
     if (allUnattemptedQuestions.length > 0) {
       setSelectedQuestion(allUnattemptedQuestions[Math.floor(Math.random() * allUnattemptedQuestions.length)]);
       setIsPlaying(true);
@@ -216,7 +201,11 @@ export default function PlayQuiz() {
             }}
             isWithoutOptions={selectedQuestion.options.length === 1}
             pauseTimer={() => setIsPlaying(false)}
-            selectedOptionId={selectedQuestion.id ? selectedOptionsData[selectedQuestion.id] : null}
+            selectedOptionId={
+              selectedQuestion.id
+                ? selectedOptionsData.find((x) => x.questionId === selectedQuestion.id)?.selectedOptionId
+                : null
+            }
           />
         )}
         <div className={classNames(styles.scoreContainer, 'ml-lg')}>

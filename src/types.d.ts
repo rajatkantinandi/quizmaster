@@ -3,11 +3,11 @@ export interface Question {
   text: string;
   options: Option[];
   points: number;
-  categoryId: any;
+  categoryId: string | number;
 }
 
 export interface Option {
-  optionId: string;
+  optionId: string | number;
   text: string;
   isCorrect: boolean;
 }
@@ -20,8 +20,9 @@ export interface Category {
 
 export interface QuizInfo {
   quizId: string | number;
-  name: string;
+  name?: string;
   categoryIds: (string | number)[];
+  numberOfQuestionsPerCategory?: number;
 }
 
 export interface User {
@@ -36,21 +37,27 @@ export interface Quiz {
   isDraft: boolean;
   userName: string;
   id: string;
+  numberOfQuestionsPerCategory: number;
 }
 
 export interface GameInfo {
   gameId?: number;
   winnerTeamId?: string;
-  currentTeamId: number;
+  currentTeamId?: number;
   timeLimit: number;
   selectionTimeLimit: number;
-  isComplete: boolean;
+  isComplete?: boolean;
   teams: Team[];
 }
 
 export interface Team {
-  teamId?: number;
+  teamId?: number | string;
   name: string;
   score: number;
-  selectedOptions: { [key: string]: number | null };
+  selectedOptions: SelectedOptions[];
+}
+
+export interface SelectedOptions {
+  selectedOptionId: number | null;
+  questionId: string;
 }

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { nanoid } from 'nanoid';
 import React, { useState, useEffect } from 'react';
 import { Button, Checkbox, Divider, Icon, Label, Tab } from 'semantic-ui-react';
-import { Question as IQuestion } from '../../types';
+import { Question as IQuestion, Option } from '../../types';
 import Question from '../Question';
 import styles from './styles.module.css';
 import markdownLogo from '../../img/markdown.svg';
@@ -85,7 +85,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
     setIsPreview(!isPreview);
   }
 
-  function setQuestionCorrectOptionId(optionId: any, checked: boolean) {
+  function setQuestionCorrectOptionId(optionId: string | number, checked: boolean) {
     const options = optionsData.map((option) => ({
       ...option,
       isCorrect: checked && option.optionId === optionId,
@@ -94,7 +94,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
     setRefreshComponent(Math.random());
   }
 
-  function removeOption(ev: any, optionId: any) {
+  function removeOption(ev: React.MouseEvent, optionId: string | number) {
     ev.preventDefault();
     if (optionsData.length === 2) {
       showErrorModal({ message: 'At least 2 options are mandatory!' });
@@ -105,7 +105,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
     }
   }
 
-  function addOption(ev: any) {
+  function addOption(ev: React.MouseEvent) {
     ev.preventDefault();
     const options = optionsData.concat({
       optionId: nanoid(),
@@ -165,7 +165,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
                 menuItem: 'With options',
                 render: () => (
                   <Tab.Pane active={!isWithoutOptions}>
-                    {optionsData.map((option: any, idx: number) => (
+                    {optionsData.map((option: Option, idx: number) => (
                       <div className="flex alignStart" key={option.optionId}>
                         <Checkbox
                           checked={option.isCorrect}

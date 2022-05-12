@@ -6,7 +6,7 @@ import styles from './styles.module.css';
 
 interface Props {
   optionText: string;
-  id: string;
+  id: string | number;
   onChange: Function;
   checked: boolean;
   className?: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Divider, Icon } from 'semantic-ui-react';
-import { Category, QuizInfo, GameInfo } from '../../types';
+import { Category, QuizInfo, GameInfo, Team, SelectedOptions } from '../../types';
 import classNames from 'classnames';
 import styles from './styles.module.css';
 
@@ -11,7 +11,7 @@ interface Props {
   quizInfo: QuizInfo;
   setIsExpanded: Function;
   selectedQuestionId: string;
-  gameInfo?: any;
+  gameInfo?: GameInfo;
   savedQuestionIds?: string[];
 }
 
@@ -22,11 +22,13 @@ export default function QuizGrid({
   showQuestion,
   categoriesInfo,
   quizInfo,
-  gameInfo = { teams: [] },
+  gameInfo = { teams: [], timeLimit: 0, selectionTimeLimit: 0 },
   savedQuestionIds = [], // for edit mode
 }: Props) {
-  const selectedOptionsData = gameInfo.teams.reduce((acc: any, team: any) => ({ ...acc, ...team.selectedOptions }), {});
-  console.log('selectedOptionsData', gameInfo.teams);
+  const selectedOptionsData = gameInfo.teams.reduce(
+    (acc: SelectedOptions[], team: Team) => acc.concat(team.selectedOptions),
+    [],
+  );
 
   return (
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
@@ -50,14 +52,15 @@ export default function QuizGrid({
             <h4>{categoriesInfo[categoryId]?.name || ''}</h4>
             {(categoriesInfo[categoryId]?.questions || []).map((q) => {
               const correctOption = q.options.find((o) => o.isCorrect);
+              const selectedOption = selectedOptionsData.find((data: SelectedOptions) => data.questionId === q.id);
 
               return (
                 <Button
                   key={q.id}
                   onClick={() => showQuestion(q.id, categoryId)}
                   color={
-                    selectedOptionsData[q.id]
-                      ? selectedOptionsData[q.id] === correctOption?.optionId
+                    selectedOption
+                      ? selectedOption.selectedOptionId === correctOption?.optionId
                         ? 'green'
                         : 'red'
                       : selectedQuestionId === q.id
@@ -66,7 +69,7 @@ export default function QuizGrid({
                       ? 'blue'
                       : undefined
                   }
-                  disabled={!!selectedOptionsData[q.id]}>
+                  disabled={!!selectedOption}>
                   {q.points}
                 </Button>
               );

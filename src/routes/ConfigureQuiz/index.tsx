@@ -4,37 +4,28 @@ import { useAppStore } from '../../useAppStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { useNavigate, useParams } from 'react-router';
-import { Category, QuizInfo as IQuizInfo, Question } from '../../types';
+import { QuizInfo as IQuizInfo, Quiz, Category } from '../../types';
 import { nanoid } from 'nanoid';
-import { generateEmptyQuestions } from '../../helpers/question';
-import { formatCategoryInfo } from '../../helpers/quiz';
-import config from '../../config';
-import { getCookie } from '../../helpers/cookieHelper';
+import { getEmptyQuestion, getEmptyCategory } from '../../helpers/question';
+import { isInt } from '../../helpers/objectHelper';
 
-interface CategoryData {
-  name: string;
-  categoryId: number;
-}
-
-interface CategoryInfo {
-  [key: string]: {
-    name: string;
-    categoryId: number;
-    questions: Question[];
+const getFormDefaultValues = (categoryIds: (string | number)[]) => {
+  return {
+    name: '',
+    numberOfQuestionsPerCategory: '5',
+    categories: categoryIds.map((categoryId) => getEmptyCategory(5)),
   };
-}
+};
 
 export default function ConfigureQuiz() {
   const { userName = 'guest', ...rest } = useParams();
-  const [quizId, setQuizId] = useState(rest.quizId);
   const navigate = useNavigate();
   const [quizInfo, setQuizInfo] = useState({
-    quizId: nanoid(),
-    name: '',
+    quizId: rest.quizId || nanoid(),
     categoryIds: [nanoid(), nanoid(), nanoid()],
+    numberOfQuestionsPerCategory: 5,
   } as IQuizInfo);
-  const [categoriesInfo, setCategoriesInfo] = useState(initCategoryInfo());
-  const [numberOfQuestionsPerCategory, setNumberOfQuestionsPerCategory] = useState(5);
+  const [refreshComponent, setRefreshComponent] = useState(0);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost } = useAppStore();
   const {
     control,
@@ -42,185 +33,141 @@ export default function ConfigureQuiz() {
     formState: { errors },
     reset,
     getValues,
-  } = useForm();
-  let saveQuizNameTimer: number = 0;
+  } = useForm({ defaultValues: getFormDefaultValues(quizInfo.categoryIds) });
+  let saveQuizNameTimer: any = 0;
 
   useEffect(() => {
-    if (quizId) {
-      getQuiz(parseInt(quizId)).then((quiz: any) => {
-        const categoryIds = quiz.categories.map((category: any) => category.categoryId);
+    if (isInt(quizInfo.quizId)) {
+      getQuiz(quizInfo.quizId as number).then((quiz: Quiz) => {
+        const categoryIds = quiz.categories.map((category: Category) => category.categoryId);
 
         setQuizInfo({
           quizId: quiz.id,
-          name: quiz.name,
           categoryIds,
         });
-        setNumberOfQuestionsPerCategory(quiz.categories[0].questions.length);
-        setCategoriesInfo(formatCategoryInfo(quiz.categories, categoryIds));
-        reset({
-          name: quiz.name,
-          numOfQuestionPerCategory: quiz.categories[0].questions?.length,
-          categories: quiz.categories,
-        });
+        setTimeout(() => {
+          reset({
+            name: quiz.name,
+            numberOfQuestionsPerCategory: quiz.numberOfQuestionsPerCategory.toString(),
+            categories: quiz.categories,
+          });
+        }, 0);
       });
     }
+  }, []);
 
-    window.onbeforeunload = function (event) {
-      const data = getValues();
+  useEffect(() => {
+    window.onbeforeunload = function () {
+      const { quizId } = quizInfo;
 
-      if (quizId) {
-        data.categories = data.categories.filter((category: any) => category.name);
-        data.categories = data.categories.map((category: any) => ({
-          ...category,
-          questions: new Array(numberOfQuestionsPerCategory).fill(0).map((el, idx) => ({
-            points: parseInt(category.questions[idx].points || '0'),
-          })),
-        }));
-
-        data.quizId = quizId;
-        data.isDraft = true;
-
-        sendBeaconPost(data);
-        navigate(`/edit-quiz/${userName}/${quizId}`);
+      if (isInt(quizId)) {
+        sendBeaconPost({
+          name: getValues('name'),
+          numberOfQuestionsPerCategory: parseInt(getValues('numberOfQuestionsPerCategory')),
+          quizId,
+          categories: getCategoryData(getValues()),
+          isDraft: true,
+        });
       }
     };
-  }, [quizId]);
+  }, [quizInfo]);
 
-  async function onFormSubmit(data: FieldValues) {
-    data.categories = data.categories.filter((category: any) => category.name);
-    data.categories = data.categories.map((category: any) => ({
-      ...category,
-      questions: category.questions.filter((question: any) => parseInt(question.points) >= 0),
-    }));
-    data.quizId = quizId;
-    const { questions, categoryData, ...restProps } = await createOrUpdateQuiz(data);
-    // const categoryIds = categoryData.map((category: CategoryData) => category.categoryId);
+  async function onFormSubmit(formData: FieldValues) {
+    const { questions, categoryData, ...restProps } = await createOrUpdateQuiz({
+      categories: getCategoryData(formData),
+      quizId: quizInfo.quizId,
+      name: formData.name,
+      numberOfQuestionsPerCategory: parseInt(formData.numberOfQuestionsPerCategory),
+    });
 
-    // setCategoriesInfo(
-    //   questions.reduce((categoryInfo: CategoryInfo, question: Question) => {
-    //     const category = categoryData.find((category: CategoryData) => category.categoryId === question.categoryId) || {
-    //       name: '',
-    //     };
-
-    //     if (!categoryInfo[question.categoryId]) {
-    //       categoryInfo[question.categoryId] = {
-    //         name: category.name,
-    //         categoryId: question.categoryId,
-    //         questions: [question],
-    //       };
-    //     } else {
-    //       categoryInfo[question.categoryId].questions.push(question);
-    //     }
-
-    //     return categoryInfo;
-    //   }, {} as CategoryInfo),
-    // );
-    // setQuizInfo({
-    //   quizId: restProps.quizId,
-    //   name: data.name,
-    //   categoryIds,
-    // });
     navigate(`/edit-quiz/${userName}/${restProps.quizId}`);
   }
 
-  const addCategory = () => {
-    const id = nanoid();
+  const getCategoryData = (formData: FieldValues): Category[] => {
+    return Object.values(formData.categories)
+      .filter((category: any) => category.name)
+      .map((category: any) => {
+        const categoryData: any = {
+          name: category.name,
+          questions: Array(parseInt(formData.numberOfQuestionsPerCategory))
+            .fill(1)
+            .map((val, index) => {
+              const question = category.questions[index];
+              const data: any = {
+                points: question.points || 0,
+              };
 
+              if (isInt(question.id)) {
+                data.id = question.id;
+              } else if (isInt(question.categoryId)) {
+                data.categoryId = question.categoryId;
+              }
+
+              return data;
+            }),
+        };
+
+        if (isInt(category.categoryId)) {
+          categoryData.categoryId = category.categoryId;
+        }
+
+        return categoryData;
+      });
+  };
+
+  const addCategory = () => {
     setQuizInfo({
       ...quizInfo,
-      categoryIds: [...quizInfo.categoryIds, id],
-    });
-    setCategoriesInfo({
-      ...categoriesInfo,
-      [id]: {
-        name: '',
-        categoryId: id,
-        questions: generateEmptyQuestions(numberOfQuestionsPerCategory, id),
-      },
+      categoryIds: [...quizInfo.categoryIds, nanoid()],
     });
   };
 
-  function handleNumberOfQuestionsPerCategory(numQuestionsPerCategory: number) {
-    setNumberOfQuestionsPerCategory(numQuestionsPerCategory);
-
-    if (numQuestionsPerCategory) {
-      const firstCategoryId = quizInfo.categoryIds[0];
-      const currentQuestionsCount = categoriesInfo[firstCategoryId].questions.length;
-
-      if (currentQuestionsCount > numQuestionsPerCategory) {
-        setCategoriesInfo(
-          quizInfo.categoryIds.reduce((data: { [key: string]: Category }, categoryId: string | number) => {
-            const category = categoriesInfo[categoryId];
-
-            data[categoryId] = {
-              ...category,
-              questions: category.questions.slice(0, numQuestionsPerCategory - currentQuestionsCount),
-            };
-
-            return data;
-          }, {}),
-        );
-      } else if (numQuestionsPerCategory > currentQuestionsCount) {
-        setCategoriesInfo(
-          quizInfo.categoryIds.reduce((data: { [key: string]: Category }, categoryId: string | number) => {
-            const category = categoriesInfo[categoryId];
-
-            data[categoryId] = {
-              ...category,
-              questions: category.questions.concat(
-                generateEmptyQuestions(
-                  numQuestionsPerCategory - currentQuestionsCount,
-                  categoryId,
-                  currentQuestionsCount,
-                ),
-              ),
-            };
-
-            return data;
-          }, {}),
-        );
-      }
-    }
+  function reRenderComponent() {
+    setRefreshComponent(Math.random());
   }
 
-  function initCategoryInfo(): { [key: string]: Category } {
-    return quizInfo.categoryIds.reduce((acc: { [key: string]: Category }, categoryId) => {
-      acc[categoryId] = {
-        name: '',
-        categoryId,
-        questions: generateEmptyQuestions(5, categoryId),
-      };
+  function getQuestionsForCategory(categoryId: string | number) {
+    const categories = getValues('categories') || [];
+    const questions = categories.find((category: Category) => category.categoryId === categoryId)?.questions || [];
+    const numberOfQuestionsPerCategory = parseInt(getValues('numberOfQuestionsPerCategory')) || questions.length;
 
-      return acc;
-    }, {});
+    return Array(numberOfQuestionsPerCategory)
+      .fill(1)
+      .map((val, index) => questions[index] || getEmptyQuestion(categoryId));
   }
 
-  async function handleAddQuizName(ev: any, inputData: { value: string }) {
+  async function handleAddQuizName(ev: React.ChangeEvent, inputData: { value: string }) {
     if (saveQuizNameTimer) {
       clearTimeout(saveQuizNameTimer);
     }
-    console.log(inputData);
 
-    saveQuizNameTimer = setTimeout(() => {
-      // const data = await createOrUpdateQuiz({
-      //   name: quizName,
-      //   categories: [],
-      //   isDraft: true,
-      // });
-      // setQuizId(data.quizId);
+    saveQuizNameTimer = setTimeout(async () => {
+      const data: any = {
+        name: inputData.value,
+        categories: [],
+        isDraft: true,
+        numberOfQuestionsPerCategory: 5,
+      };
+
+      if (isInt(quizInfo.quizId)) {
+        data.quizId = quizInfo.quizId;
+      }
+
+      const resp = await createOrUpdateQuiz(data);
+      setQuizInfo({
+        ...quizInfo,
+        quizId: resp.quizId,
+      });
+
+      navigate(`/configure-quiz/${userName}/${resp.quizId}`);
     }, 1000);
   }
 
   const removeLastCategory = () => {
-    const lastCategoryId = quizInfo.categoryIds[quizInfo.categoryIds.length - 1];
-    const categoriesInfoData = { ...categoriesInfo };
-    delete categoriesInfoData[lastCategoryId];
-
     setQuizInfo({
       ...quizInfo,
       categoryIds: quizInfo.categoryIds.slice(0, -1),
     });
-    setCategoriesInfo(categoriesInfoData);
   };
 
   return (
@@ -239,17 +186,17 @@ export default function ConfigureQuiz() {
             }}
           />
           <FormInput
-            name="numOfQuestionPerCategory"
+            name="numberOfQuestionsPerCategory"
             control={control}
             rules={{
               required: 'Please enter number of questions per category',
             }}
-            errorMessage={errors.numOfQuestionPerCategory?.message || ''}
+            errorMessage={errors.numberOfQuestionsPerCategory?.message || ''}
             inputProps={{
               type: 'number',
               label: 'Number of questions per category',
               min: 2,
-              onChange: (ev: any) => handleNumberOfQuestionsPerCategory(parseInt(ev.target.value, 10)),
+              onChange: reRenderComponent,
             }}
           />
         </div>
@@ -267,7 +214,7 @@ export default function ConfigureQuiz() {
         <hr />
         <h2>Categories</h2>
         <div className="flex flexWrap">
-          {quizInfo.categoryIds.map((categoryId: any, idx: number) => (
+          {quizInfo.categoryIds.map((categoryId: string | number, idx: number) => (
             <div className="flex flexCol mr-xl mb-xl" key={categoryId}>
               <h3>Category {idx + 1}</h3>
               <FormInput
@@ -283,13 +230,13 @@ export default function ConfigureQuiz() {
                 }}
               />
               <h4>Question points</h4>
-              {(categoriesInfo[categoryId]?.questions || []).map((q, index) => (
+              {getQuestionsForCategory(categoryId).map((q, index) => (
                 <FormInput
                   key={q.id}
                   name={`categories[${idx}].questions[${index}].points`}
                   control={control}
                   rules={{ required: 'Please enter question pointes' }}
-                  errorMessage={errors.categories?.[idx]?.questions[index]?.points?.message || ''}
+                  errorMessage={errors.categories?.[idx]?.questions?.[index]?.points?.message || ''}
                   inputProps={{
                     type: 'number',
                     label: `Q${index + 1} points`,
