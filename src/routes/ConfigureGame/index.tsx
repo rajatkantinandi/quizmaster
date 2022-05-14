@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { Button, Checkbox, Input } from 'semantic-ui-react';
+import { Button, Checkbox, Icon, Input } from 'semantic-ui-react';
 import { useAppStore } from '../../useAppStore';
 import styles from './styles.module.css';
 import { useForm, FieldValues } from 'react-hook-form';
@@ -8,6 +8,7 @@ import FormInput from '../../components/FormInput';
 import { useParams, useNavigate } from 'react-router';
 import { Team } from '../../types';
 import { getEmptyTeam } from '../../helpers/dataCreator';
+import TeamGenerator from '../../../components/TeamGenerator';
 
 const formDefaultValues: { teams: Team[] } = {
   teams: [0, 1].map((index) => getEmptyTeam()),
@@ -25,6 +26,7 @@ export default function ConfigureGame() {
   } = useForm({ defaultValues: formDefaultValues });
 
   const [teamCount, setTeamCount] = useState(2);
+  const [showTeamGenerator, setShowTeamGenerator] = useState(false);
   const [questionTimer, setQuestionTimer] = useState(0);
   const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);
   const teams = getValues('teams');
@@ -83,8 +85,11 @@ export default function ConfigureGame() {
               </Button>
             )}
           </div>
+          <Button className="mt-lg" size="large" onClick={() => setShowTeamGenerator(true)} color="facebook">
+            <Icon name="random" /> Random team generator
+          </Button>
         </fieldset>
-        <fieldset className={classNames('container-md', styles.timing)}>
+        <fieldset className={classNames('container-md', styles.settings)}>
           <legend>Timing</legend>
           <div className="flex alignCenter">
             <Checkbox
@@ -98,7 +103,7 @@ export default function ConfigureGame() {
               disabled={!questionTimer}
               onChange={(ev) => setQuestionTimer(parseInt(ev.target.value, 10))}
               size="mini"
-              className={classNames('ml-lg', styles.timeInput)}
+              className={classNames('ml-lg', styles.settingsInput)}
             />
           </div>
           <div className="flex alignCenter">
@@ -115,14 +120,29 @@ export default function ConfigureGame() {
               disabled={!questionSelectionTimer}
               onChange={(ev) => setQuestionSelectionTimer(parseInt(ev.target.value, 10))}
               size="mini"
-              className={classNames('ml-lg', styles.timeInput)}
+              className={classNames('ml-lg', styles.settingsInput)}
             />
           </div>
+        </fieldset>
+        <fieldset className={classNames('container-md mt-lg', styles.settings)}>
+          <legend>Points</legend>
+          <Checkbox
+            label="Hide question points until revealed"
+            checked={isQuestionPointsHidden}
+            onChange={() => setIsQuestionPointsHidden(!isQuestionPointsHidden)}
+          />
         </fieldset>
       </div>
       <Button color="orange" className="mb-lg mt-xl ml-lg" size="huge" type="submit">
         Play
       </Button>
+      {showTeamGenerator && (
+        <TeamGenerator
+          okCallback={(teams: any) => setTeams(teams)}
+          numOfTeams={teams.length}
+          hideModal={() => setShowTeamGenerator(false)}
+        />
+      )}
     </form>
   );
 }

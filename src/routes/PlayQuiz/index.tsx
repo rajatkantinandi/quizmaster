@@ -47,6 +47,7 @@ export default function PlayQuiz() {
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
   const { showAlertModal, getGameData, updateGame } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [isQuestionPointsHidden, setIsQuestionPointsHidden] = useState(false);
 
   useEffect(() => {
     if (gameId) {

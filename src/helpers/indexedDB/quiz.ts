@@ -90,6 +90,7 @@ export const addGame = async (data: {
   quizId: number;
   timeLimit?: number;
   selectionTimeLimit?: number;
+  isQuestionPointsHidden: boolean;
   teams: {
     name: string;
     points?: number;
