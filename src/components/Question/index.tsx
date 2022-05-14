@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { Button, Divider } from 'semantic-ui-react';
-import { Option as IOption, Question as IQuestion } from '../../types';
+import { Option as IOption } from '../../types';
 import Markdown from '../Markdown';
 import Option from './Option';
 import styles from './styles.module.css';
@@ -14,7 +14,7 @@ interface Props {
   pauseTimer?: Function;
   selectedOptionId: number | null | undefined | string;
   selectedQuestion: {
-    id?: string;
+    questionId?: string;
     text: string;
     options: IOption[];
   };
@@ -40,7 +40,7 @@ export default function Question({
       // reveal answer when question is attempted due to timeout
       setIsAnswerRevealed(!!selectedOptionId);
     }
-  }, [selectedQuestion.id, selectedOptionId, isPreview]);
+  }, [selectedQuestion.questionId, selectedOptionId, isPreview]);
 
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
@@ -63,7 +63,7 @@ export default function Question({
             )
           : options.map((option) => (
               <Option
-                id={option.optionId}
+                optionId={option.optionId}
                 checked={selectedChoice === option.optionId}
                 onChange={(value: any) => setSelectedChoice(value)}
                 optionText={option.text}

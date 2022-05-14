@@ -3,10 +3,10 @@ import { Category } from '../types';
 
 const quizDataSchema = {
   _meta: {
-    dataKey: 'id',
+    dataKey: 'quizId',
     respKey: 'QuizId',
   },
-  id: 'QuizId',
+  quizId: 'QuizId',
   name: 'Name',
   isDraft: 'IsDraft',
   numberOfQuestionsPerCategory: 'NumberOfQuestionsPerCategory',
@@ -16,13 +16,13 @@ const quizDataSchema = {
       respKey: 'CategoryId',
     },
     categoryId: 'CategoryId',
-    name: 'CategoryName',
+    categoryName: 'CategoryName',
     questions: {
       _meta: {
-        dataKey: 'id',
+        dataKey: 'questionId',
         respKey: 'QuestionId',
       },
-      id: 'QuestionId',
+      questionId: 'QuestionId',
       points: 'Points',
       text: 'Text',
       options: {

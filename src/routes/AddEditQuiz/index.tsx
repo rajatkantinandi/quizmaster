@@ -7,9 +7,10 @@ import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle
 import { Category, Question as IQuestion, QuizInfo, Quiz, Option } from '../../types';
 import { useAppStore } from '../../useAppStore';
 import { formatCategoryInfo } from '../../helpers/dataFormatter';
+import { isInt } from '../../helpers/objectHelper';
 
 export default function AddEditQuiz() {
-  const { id, userName = 'guest' } = useParams();
+  const { quizId, userName = 'guest' } = useParams();
   const navigate = useNavigate();
   const [quizInfo, setQuizInfo] = useState<QuizInfo>({
     quizId: '',
@@ -27,12 +28,12 @@ export default function AddEditQuiz() {
     if (isLoading) {
       setIsLoading(false);
 
-      if (id) {
-        getQuiz(parseInt(id)).then((quiz: Quiz) => {
+      if (quizId) {
+        getQuiz(parseInt(quizId)).then((quiz: Quiz) => {
           const categoryIds = quiz.categories.map((category: Category) => category.categoryId);
 
           setQuizInfo({
-            quizId: quiz.id,
+            quizId: quiz.quizId,
             name: quiz.name,
             categoryIds,
             numberOfQuestionsPerCategory: quiz.numberOfQuestionsPerCategory,
@@ -42,7 +43,7 @@ export default function AddEditQuiz() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, isLoading]);
+  }, [quizId, isLoading]);
 
   function handleFinishQuiz() {
     const totalQuestions = Object.values(categoriesInfo).reduce((count, categoryData) => {
@@ -69,30 +70,33 @@ export default function AddEditQuiz() {
 
   async function saveQuestion(questionId: string, { text, options, points }: IQuestion) {
     try {
-      await editQuestion({
-        questionId,
-        text,
-        options: options.map((newOption: Option) => {
-          const clonedOption: any = { ...newOption };
-          clonedOption.questionId = questionId;
+      await editQuestion(
+        {
+          questionId,
+          text,
+          options: options.map((option: Option) => {
+            const clonedOption: any = { ...option };
+            clonedOption.questionId = questionId;
 
-          if (!selectedQuestion?.options.find((option) => option.optionId === clonedOption.optionId)) {
-            delete clonedOption.optionId;
-          }
+            if (!isInt(option.optionId)) {
+              delete clonedOption.optionId;
+            }
 
-          return newOption;
-        }),
-        points,
-      });
+            return clonedOption;
+          }),
+          points,
+        },
+        quizInfo.quizId,
+      );
 
       const categoryId = quizInfo.categoryIds.find((id) =>
-        categoriesInfo[id].questions.find((question) => question.id === questionId),
+        categoriesInfo[id].questions.find((question) => question.questionId === questionId),
       );
 
       if (categoryId) {
         const { questions } = categoriesInfo[categoryId];
         const clonedQuestions = [...questions];
-        const index = questions.findIndex((question) => question.id === questionId);
+        const index = questions.findIndex((question) => question.questionId === questionId);
 
         clonedQuestions[index] = {
           ...clonedQuestions[index],
@@ -120,7 +124,7 @@ export default function AddEditQuiz() {
       [] as IQuestion[],
     );
 
-    return allQuestions.filter((q: IQuestion) => isValidQuestion(q)).map((q: IQuestion) => q.id);
+    return allQuestions.filter((q: IQuestion) => isValidQuestion(q)).map((q: IQuestion) => q.questionId);
   }
 
   function isValidQuestion(question: IQuestion) {
@@ -141,8 +145,8 @@ export default function AddEditQuiz() {
       <div className="flex justifyCenter">
         <QuizGrid
           categoriesInfo={categoriesInfo}
-          showQuestion={(id, categoryId) => {
-            const question = categoriesInfo[categoryId].questions.find((q: IQuestion) => q.id === id);
+          showQuestion={(questionId, categoryId) => {
+            const question = categoriesInfo[categoryId].questions.find((q: IQuestion) => q.questionId === questionId);
 
             setSelectedQuestion(question || null);
           }}
@@ -153,13 +157,13 @@ export default function AddEditQuiz() {
               setSelectedQuestion(null);
             }
           }}
-          selectedQuestionId={selectedQuestion?.id || ''}
+          selectedQuestionId={selectedQuestion?.questionId || ''}
           savedQuestionIds={getSavedQuestionIds()}
         />
         {!!selectedQuestion && (
           <QuestionEdit
-            key={selectedQuestion.id}
-            saveQuestion={(data: IQuestion) => saveQuestion(selectedQuestion.id, data)}
+            key={selectedQuestion.questionId}
+            saveQuestion={(data: IQuestion) => saveQuestion(selectedQuestion.questionId, data)}
             selectedQuestion={selectedQuestion}
             onClose={() => {
               setSelectedQuestion(null);

@@ -4,7 +4,19 @@ import { post, get as getReq, postBeaconReq } from './helpers/request';
 import { setCookie } from './helpers/cookieHelper';
 import config from './config';
 import { formatGameData, formatQuizzesData } from './helpers/dataFormatter';
-import { saveQuiz, getQuizzes, getQuiz, addGame, getGame } from './helpers/indexedDB';
+import {
+  saveQuiz,
+  getQuizzes,
+  getQuiz,
+  addGame,
+  getGame,
+  saveQuestion,
+  saveGame,
+  signUpUser,
+  saveQuizzes,
+  updateQuiz,
+  updateGame,
+} from './helpers/indexedDB';
 
 export const useAppStore = create((set: Function, get: Function) => ({
   confirmationModal: null,
@@ -34,6 +46,7 @@ export const useAppStore = create((set: Function, get: Function) => ({
   },
   signUp: async (data: any) => {
     const response = await post('user/signup', data);
+    await signUpUser({ userName: data.userName, password: data.password });
 
     if (response.userId) {
       set((state: AppState) => ({
@@ -62,13 +75,15 @@ export const useAppStore = create((set: Function, get: Function) => ({
   },
   getQuizzes: async () => {
     try {
-      const response = await getQuizzes(get().userData.userId);
+      const response = await getQuizzes();
 
       return response;
     } catch (err) {
       const response = await getReq('quiz/userQuizzes');
+      const data = formatQuizzesData(response);
+      await saveQuizzes(data);
 
-      return formatQuizzesData(response);
+      return data;
     }
   },
   getQuiz: async (quizId: number) => {
@@ -78,8 +93,10 @@ export const useAppStore = create((set: Function, get: Function) => ({
       return response;
     } catch (err) {
       const response = await getReq('quiz/data', { quizId });
+      const data = formatQuizzesData(response)[0];
+      await saveQuiz(data);
 
-      return formatQuizzesData(response)[0];
+      return data;
     }
   },
   getUserData: async () => {
@@ -92,46 +109,48 @@ export const useAppStore = create((set: Function, get: Function) => ({
   },
   createOrUpdateQuiz: async (data: any) => {
     const response = await post('quiz/createOrUpdate', data);
-    const { userId } = get().userData;
+    await saveQuiz(response);
 
-    await saveQuiz({ ...data, userId });
     return response;
   },
   sendBeaconPost: async (data: any) => {
     if ('sendBeacon' in navigator) {
-      const response = await postBeaconReq('quiz/createOrUpdate', data);
-      const { userId } = get().userData;
-
-      await saveQuiz({ ...data, userId });
-      return response;
+      await postBeaconReq('quiz/createOrUpdate', data);
+      await updateQuiz(data);
     } else {
       const response = await post('quiz/createOrUpdate', data);
+
       return response;
     }
   },
-  editQuestion: async (data: any) => {
+  editQuestion: async (data: any, quizId: string | number) => {
     const response = await post('question/edit', data);
-    return response;
+
+    await saveQuestion(response, quizId);
   },
   addGame: async (data: any) => {
     const response = await post('game/add', data);
-    await addGame(data);
+    await addGame(response);
 
     return response;
   },
   getGameData: async (gameId: number) => {
-    let response;
-
     try {
-      response = await getGame(gameId);
-    } catch (err) {
-      response = await getReq('game/data', { gameId });
-    }
+      const response = await getGame(gameId);
 
-    return formatGameData(response);
+      return response;
+    } catch (err) {
+      const response = await getReq('game/data', { gameId });
+      const data = formatGameData(response);
+      await saveGame(data);
+
+      return data;
+    }
   },
   updateGame: async (data: any) => {
     const response = await post('game/edit', data);
+
+    await updateGame(data);
     return response;
   },
 }));

@@ -4,7 +4,6 @@ import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Link, useNavigate } from 'react-router-dom';
-import { signUpUser } from '../../helpers/indexedDB';
 import { useAppStore } from '../../useAppStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
@@ -23,7 +22,6 @@ export default function Login() {
   async function handleSignUp(data: FieldValues) {
     try {
       await signUp(data);
-      await signUpUser({ userName: data.userName, password: data.password });
 
       cookie.set('sessionId', nanoid(16), {
         domain: window.location.hostname,

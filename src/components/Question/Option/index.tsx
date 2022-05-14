@@ -6,14 +6,14 @@ import styles from './styles.module.css';
 
 interface Props {
   optionText: string;
-  id: string | number;
+  optionId: string | number;
   onChange: Function;
   checked: boolean;
   className?: string;
   disabled: boolean;
 }
 
-export default function Option({ optionText, onChange, id, checked, className = '', disabled }: Props) {
+export default function Option({ optionText, onChange, optionId, checked, className = '', disabled }: Props) {
   return (
     <Checkbox
       className={classNames(styles.option, className)}
@@ -25,7 +25,7 @@ export default function Option({ optionText, onChange, id, checked, className = 
       onChange={(ev, data) => {
         onChange(data.value);
       }}
-      value={id}
+      value={optionId}
       checked={checked}
       disabled={disabled}
     />

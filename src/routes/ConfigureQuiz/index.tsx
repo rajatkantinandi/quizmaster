@@ -42,7 +42,7 @@ export default function ConfigureQuiz() {
         const categoryIds = quiz.categories.map((category: Category) => category.categoryId);
 
         setQuizInfo({
-          quizId: quiz.id,
+          quizId: quiz.quizId,
           categoryIds,
         });
         setTimeout(() => {
@@ -73,32 +73,33 @@ export default function ConfigureQuiz() {
   }, [quizInfo]);
 
   async function onFormSubmit(formData: FieldValues) {
-    const { questions, categoryData, ...restProps } = await createOrUpdateQuiz({
+    const response = await createOrUpdateQuiz({
       categories: getCategoryData(formData),
       quizId: quizInfo.quizId,
       name: formData.name,
       numberOfQuestionsPerCategory: parseInt(formData.numberOfQuestionsPerCategory),
     });
 
-    navigate(`/edit-quiz/${userName}/${restProps.quizId}`);
+    navigate(`/edit-quiz/${userName}/${response.quizId}`);
   }
 
   const getCategoryData = (formData: FieldValues): Category[] => {
     return Object.values(formData.categories)
-      .filter((category: any) => category.name)
+      .filter((category: any) => category.categoryName)
       .map((category: any) => {
         const categoryData: any = {
-          name: category.name,
+          categoryName: category.categoryName,
           questions: Array(parseInt(formData.numberOfQuestionsPerCategory))
             .fill(1)
             .map((val, index) => {
               const question = category.questions[index];
               const data: any = {
                 points: question.points || 0,
+                options: question.options || [],
               };
 
-              if (isInt(question.id)) {
-                data.id = question.id;
+              if (isInt(question.questionId)) {
+                data.questionId = question.questionId;
               } else if (isInt(question.categoryId)) {
                 data.categoryId = question.categoryId;
               }
@@ -218,10 +219,10 @@ export default function ConfigureQuiz() {
             <div className="flex flexCol mr-xl mb-xl" key={categoryId}>
               <h3>Category {idx + 1}</h3>
               <FormInput
-                name={`categories[${idx}].name`}
+                name={`categories[${idx}].categoryName`}
                 control={control}
                 rules={{ required: 'Please enter category name' }}
-                errorMessage={errors.categories?.[idx]?.name?.message || ''}
+                errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
                 inputProps={{
                   type: 'text',
                   label: 'Name',
@@ -232,7 +233,7 @@ export default function ConfigureQuiz() {
               <h4>Question points</h4>
               {getQuestionsForCategory(categoryId).map((q, index) => (
                 <FormInput
-                  key={q.id}
+                  key={q.questionId}
                   name={`categories[${idx}].questions[${index}].points`}
                   control={control}
                   rules={{ required: 'Please enter question pointes' }}

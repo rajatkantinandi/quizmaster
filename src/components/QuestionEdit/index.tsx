@@ -48,7 +48,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
 
   useEffect(() => {
     reset(formDefaultValues);
-  }, [selectedQuestion.id]);
+  }, [selectedQuestion.questionId]);
 
   const [refreshComponent, setRefreshComponent] = useState(0);
   const [isPreview, setIsPreview] = useState(false);
@@ -101,7 +101,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
     } else {
       const remainingOptions = optionsData.filter((o) => o.optionId !== optionId);
       setValue('options', remainingOptions);
-      setRefreshComponent(2);
+      setRefreshComponent(Math.random());
     }
   }
 
@@ -114,7 +114,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
     });
 
     setValue('options', options);
-    setRefreshComponent(3);
+    setRefreshComponent(Math.random());
   }
 
   function getValidationError() {

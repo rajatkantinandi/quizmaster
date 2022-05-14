@@ -26,13 +26,13 @@ export default function Quizzes() {
       <section className="mb-xl flex flexWrap">
         {quizzes.map((quiz: any) => (
           <Card
-            key={quiz.id}
+            key={quiz.quizId}
             className="flex alignCenter"
             onClick={() => {
               if (quiz.isDraft) {
-                navigate(`/configure-quiz/${userName}/${quiz.id}`);
+                navigate(`/configure-quiz/${userName}/${quiz.quizId}`);
               } else {
-                navigate(`/configure-game/${userName}/${quiz.id}`);
+                navigate(`/configure-game/${userName}/${quiz.quizId}`);
               }
             }}>
             <div className="title">{quiz.name}</div>

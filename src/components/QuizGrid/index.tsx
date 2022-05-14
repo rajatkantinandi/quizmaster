@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import styles from './styles.module.css';
 
 interface Props {
-  showQuestion: (id: string | number, categoryId: string | number) => void;
+  showQuestion: (questionId: string | number, categoryId: string | number) => void;
   isExpanded?: boolean;
   categoriesInfo: { [key: string]: Category };
   quizInfo: QuizInfo;
@@ -49,23 +49,25 @@ export default function QuizGrid({
       <div className={classNames('flex flexWrap justifyCenter', styles.gridButtons)}>
         {quizInfo.categoryIds.map((categoryId) => (
           <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={categoryId}>
-            <h4>{categoriesInfo[categoryId]?.name || ''}</h4>
+            <h4>{categoriesInfo[categoryId]?.categoryName || ''}</h4>
             {(categoriesInfo[categoryId]?.questions || []).map((q) => {
               const correctOption = q.options.find((o) => o.isCorrect);
-              const selectedOption = selectedOptionsData.find((data: SelectedOptions) => data.questionId === q.id);
+              const selectedOption = selectedOptionsData.find(
+                (data: SelectedOptions) => data.questionId === q.questionId,
+              );
 
               return (
                 <Button
-                  key={q.id}
-                  onClick={() => showQuestion(q.id, categoryId)}
+                  key={q.questionId}
+                  onClick={() => showQuestion(q.questionId, categoryId)}
                   color={
                     selectedOption
                       ? selectedOption.selectedOptionId === correctOption?.optionId
                         ? 'green'
                         : 'red'
-                      : selectedQuestionId === q.id
+                      : selectedQuestionId === q.questionId
                       ? 'black'
-                      : savedQuestionIds.includes(q.id)
+                      : savedQuestionIds.includes(q.questionId)
                       ? 'blue'
                       : undefined
                   }

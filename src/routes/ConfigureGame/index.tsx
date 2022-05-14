@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { nanoid } from 'nanoid';
 import { Button, Checkbox, Input } from 'semantic-ui-react';
 import { useAppStore } from '../../useAppStore';
 import styles from './styles.module.css';
@@ -8,14 +7,14 @@ import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { useParams, useNavigate } from 'react-router';
 import { Team } from '../../types';
-import { getEmptyTeam } from '../../helpers/question';
+import { getEmptyTeam } from '../../helpers/dataCreator';
 
 const formDefaultValues: { teams: Team[] } = {
   teams: [0, 1].map((index) => getEmptyTeam()),
 };
 
 export default function ConfigureGame() {
-  const { id, userName } = useParams();
+  const { quizId, userName } = useParams();
   const navigate = useNavigate();
   const {
     control,
@@ -42,13 +41,13 @@ export default function ConfigureGame() {
   }
 
   async function handleGameConfig(data: FieldValues) {
-    if (id) {
+    if (quizId) {
       const { gameId } = await addGame({
         teams: data.teams.map((team: Team) => {
           delete team.teamId;
           return team;
         }),
-        quizId: parseInt(id),
+        quizId: parseInt(quizId),
         timeLimit: questionTimer,
         selectionTimeLimit: questionSelectionTimer,
       });

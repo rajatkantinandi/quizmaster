@@ -31,8 +31,8 @@ function App() {
           <Route path="/quizzes/:userName" element={<Quizzes />} />
           <Route path="/configure-quiz/:userName" element={<ConfigureQuiz />} />
           <Route path="/configure-quiz/:userName/:quizId" element={<ConfigureQuiz />} />
-          <Route path="/edit-quiz/:userName/:id" element={<AddEditQuiz />} />
-          <Route path="/configure-game/:userName/:id" element={<ConfigureGame />} />
+          <Route path="/edit-quiz/:userName/:quizId" element={<AddEditQuiz />} />
+          <Route path="/configure-game/:userName/:quizId" element={<ConfigureGame />} />
           <Route path="/play-game/:userName/:gameId" element={<PlayQuiz />} />
         </Routes>
       </BrowserRouter>

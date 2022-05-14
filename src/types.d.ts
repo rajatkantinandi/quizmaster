@@ -1,5 +1,5 @@
 export interface Question {
-  id: string;
+  questionId: string;
   text: string;
   options: Option[];
   points: number;
@@ -13,7 +13,7 @@ export interface Option {
 }
 
 export interface Category {
-  name: string;
+  categoryName: string;
   categoryId: string | number;
   questions: Question[];
 }
@@ -36,7 +36,7 @@ export interface Quiz {
   categories: Category[];
   isDraft: boolean;
   userName: string;
-  id: string;
+  quizId: string;
   numberOfQuestionsPerCategory: number;
 }
 
