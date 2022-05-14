@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 import { nanoid } from 'nanoid';
-import { getHashedPassword } from './crypto';
+import { getHashedPassword } from '../crypto';
 import db from './db';
 
 const users = db.collection('users');

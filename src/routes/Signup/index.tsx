@@ -4,7 +4,7 @@ import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Link, useNavigate } from 'react-router-dom';
-import { signUpUser } from '../../helpers/user';
+import { signUpUser } from '../../helpers/indexedDB';
 import { useAppStore } from '../../useAppStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';

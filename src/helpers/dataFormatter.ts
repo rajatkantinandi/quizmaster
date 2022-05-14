@@ -1,4 +1,4 @@
-import { getEmptyQuestion, getEmptyCategory } from '../helpers/question';
+import { getEmptyQuestion, getEmptyCategory } from './dataCreator';
 import { Category } from '../types';
 
 const quizDataSchema = {

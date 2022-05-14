@@ -4,6 +4,7 @@ import { post, get as getReq, postBeaconReq } from './helpers/request';
 import { setCookie } from './helpers/cookieHelper';
 import config from './config';
 import { formatGameData, formatQuizzesData } from './helpers/dataFormatter';
+import { saveQuiz, getQuizzes, getQuiz, addGame, getGame } from './helpers/indexedDB';
 
 export const useAppStore = create((set: Function, get: Function) => ({
   confirmationModal: null,
@@ -60,13 +61,26 @@ export const useAppStore = create((set: Function, get: Function) => ({
     }));
   },
   getQuizzes: async () => {
-    const response = await getReq('quiz/userQuizzes');
-    return formatQuizzesData(response);
+    try {
+      const response = await getQuizzes(get().userData.userId);
+
+      return response;
+    } catch (err) {
+      const response = await getReq('quiz/userQuizzes');
+
+      return formatQuizzesData(response);
+    }
   },
   getQuiz: async (quizId: number) => {
-    const response = await getReq('quiz/data', { quizId });
+    try {
+      const response = await getQuiz(quizId);
 
-    return formatQuizzesData(response)[0];
+      return response;
+    } catch (err) {
+      const response = await getReq('quiz/data', { quizId });
+
+      return formatQuizzesData(response)[0];
+    }
   },
   getUserData: async () => {
     const response = await getReq('user/data');
@@ -78,11 +92,17 @@ export const useAppStore = create((set: Function, get: Function) => ({
   },
   createOrUpdateQuiz: async (data: any) => {
     const response = await post('quiz/createOrUpdate', data);
+    const { userId } = get().userData;
+
+    await saveQuiz({ ...data, userId });
     return response;
   },
   sendBeaconPost: async (data: any) => {
     if ('sendBeacon' in navigator) {
       const response = await postBeaconReq('quiz/createOrUpdate', data);
+      const { userId } = get().userData;
+
+      await saveQuiz({ ...data, userId });
       return response;
     } else {
       const response = await post('quiz/createOrUpdate', data);
@@ -95,10 +115,18 @@ export const useAppStore = create((set: Function, get: Function) => ({
   },
   addGame: async (data: any) => {
     const response = await post('game/add', data);
+    await addGame(data);
+
     return response;
   },
   getGameData: async (gameId: number) => {
-    const response = await getReq('game/data', { gameId });
+    let response;
+
+    try {
+      response = await getGame(gameId);
+    } catch (err) {
+      response = await getReq('game/data', { gameId });
+    }
 
     return formatGameData(response);
   },
