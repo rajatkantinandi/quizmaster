@@ -6,7 +6,7 @@ import QuizGrid from '../../components/QuizGrid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Category, Question as IQuestion, QuizInfo, Quiz, Option } from '../../types';
 import { useAppStore } from '../../useAppStore';
-import { formatCategoryInfo } from '../../helpers/quiz';
+import { formatCategoryInfo } from '../../helpers/dataFormatter';
 
 export default function AddEditQuiz() {
   const { id, userName = 'guest' } = useParams();

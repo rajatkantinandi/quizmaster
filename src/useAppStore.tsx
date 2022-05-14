@@ -3,7 +3,7 @@ import create from 'zustand';
 import { post, get as getReq, postBeaconReq } from './helpers/request';
 import { setCookie } from './helpers/cookieHelper';
 import config from './config';
-import { formatGameData, formatQuizzesData } from './helpers/quiz';
+import { formatGameData, formatQuizzesData } from './helpers/dataFormatter';
 
 export const useAppStore = create((set: Function, get: Function) => ({
   confirmationModal: null,
