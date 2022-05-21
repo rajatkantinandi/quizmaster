@@ -72,7 +72,9 @@ export const getQuizzes = async (): Promise<Object[]> => {
 };
 
 export const saveQuizzes = async (quizzes: any) => {
-  await quizzesC.insert(quizzes);
+  if (quizzes.length > 0) {
+    await quizzesC.insert(quizzes);
+  }
 };
 
 export const getQuiz = async (quizId: any) => {
@@ -91,6 +93,7 @@ export const addGame = async (data: {
   timeLimit?: number;
   selectionTimeLimit?: number;
   isQuestionPointsHidden: boolean;
+  currentTeamId: number;
   teams: {
     name: string;
     points?: number;
@@ -148,17 +151,4 @@ export const saveGame = async (gameData: any) => {
   } else {
     await gamesC.insert(restData);
   }
-};
-
-const addMissingUserNameToQuizzes = async (userId: number, quizzes: any[]) => {
-  return Promise.all(
-    quizzes.map(async (quiz) => {
-      if (!quiz.userId) {
-        quiz = { ...quiz, userId };
-        await quizzesC.update({ quizId: quiz.quizId }, quiz);
-      }
-
-      return quiz;
-    }),
-  );
 };

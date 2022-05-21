@@ -13,7 +13,6 @@ interface Props {
   selectedQuestionId: string;
   gameInfo?: GameInfo;
   savedQuestionIds?: string[];
-  isQuestionPointsHidden?: boolean;
 }
 
 export default function QuizGrid({
@@ -23,9 +22,8 @@ export default function QuizGrid({
   showQuestion,
   categoriesInfo,
   quizInfo,
-  gameInfo = { teams: [], timeLimit: 0, selectionTimeLimit: 0 },
+  gameInfo = { teams: [], timeLimit: 0, selectionTimeLimit: 0, isQuestionPointsHidden: false },
   savedQuestionIds = [], // for edit mode
-  isQuestionPointsHidden = false,
 }: Props) {
   const selectedOptionsData = gameInfo.teams.reduce(
     (acc: SelectedOptions[], team: Team) => acc.concat(team.selectedOptions),
@@ -52,7 +50,7 @@ export default function QuizGrid({
         {quizInfo.categoryIds.map((categoryId, idx) => (
           <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={categoryId}>
             <h4>{categoriesInfo[categoryId]?.categoryName || ''}</h4>
-            {(categoriesInfo[categoryId]?.questions || []).map((q) => {
+            {(categoriesInfo[categoryId]?.questions || []).map((q, index) => {
               const correctOption = q.options.find((o) => o.isCorrect);
               const selectedOption = selectedOptionsData.find(
                 (data: SelectedOptions) => data.questionId === q.questionId,
@@ -74,8 +72,9 @@ export default function QuizGrid({
                       : undefined
                   }
                   disabled={!!selectedOption}>
-                  {q.points}
-                  {isQuestionPointsHidden && selectedQuestionId !== q.questionId ? 'Q-' + (idx + 1) : q.points}
+                  {gameInfo.isQuestionPointsHidden && selectedQuestionId !== q.questionId
+                    ? 'Q-' + (index + 1)
+                    : q.points}
                 </Button>
               );
             })}

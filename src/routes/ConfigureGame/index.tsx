@@ -8,7 +8,7 @@ import FormInput from '../../components/FormInput';
 import { useParams, useNavigate } from 'react-router';
 import { Team } from '../../types';
 import { getEmptyTeam } from '../../helpers/dataCreator';
-import TeamGenerator from '../../../components/TeamGenerator';
+import TeamGenerator from '../../components/TeamGenerator';
 
 const formDefaultValues: { teams: Team[] } = {
   teams: [0, 1].map((index) => getEmptyTeam()),
@@ -25,10 +25,11 @@ export default function ConfigureGame() {
     setValue,
   } = useForm({ defaultValues: formDefaultValues });
 
-  const [teamCount, setTeamCount] = useState(2);
+  const [teamCount, setTeamCount] = useState(0);
   const [showTeamGenerator, setShowTeamGenerator] = useState(false);
   const [questionTimer, setQuestionTimer] = useState(0);
   const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);
+  const [isQuestionPointsHidden, setIsQuestionPointsHidden] = useState(false);
   const teams = getValues('teams');
   const { addGame } = useAppStore();
 
@@ -52,6 +53,7 @@ export default function ConfigureGame() {
         quizId: parseInt(quizId),
         timeLimit: questionTimer,
         selectionTimeLimit: questionSelectionTimer,
+        isQuestionPointsHidden,
       });
 
       navigate(`/play-game/${userName}/${gameId}`);
@@ -138,7 +140,10 @@ export default function ConfigureGame() {
       </Button>
       {showTeamGenerator && (
         <TeamGenerator
-          okCallback={(teams: any) => setTeams(teams)}
+          okCallback={(teams: any) => {
+            setValue('teams', teams);
+            setTeamCount(teams.length);
+          }}
           numOfTeams={teams.length}
           hideModal={() => setShowTeamGenerator(false)}
         />

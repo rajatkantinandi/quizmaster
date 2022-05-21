@@ -37,7 +37,7 @@ export default function Header() {
           <>
             <div className="mx-lg">{userData.userName}</div>
             <Button color="brown" onClick={onLogout}>
-              Log out
+              Sign out
             </Button>
           </>
         ) : (

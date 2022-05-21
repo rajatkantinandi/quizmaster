@@ -3,7 +3,7 @@ import create from 'zustand';
 import { post, get as getReq, postBeaconReq } from './helpers/request';
 import { setCookie } from './helpers/cookieHelper';
 import config from './config';
-import { formatGameData, formatQuizzesData } from './helpers/dataFormatter';
+import { formatGameData, formatQuizzesData, insertCategoryAndQuestionsData } from './helpers/dataFormatter';
 import {
   saveQuiz,
   getQuizzes,
@@ -90,6 +90,7 @@ export const useAppStore = create((set: Function, get: Function) => ({
     try {
       const response = await getQuiz(quizId);
 
+      insertCategoryAndQuestionsData(response);
       return response;
     } catch (err) {
       const response = await getReq('quiz/data', { quizId });

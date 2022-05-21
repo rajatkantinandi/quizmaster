@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Button } from 'semantic-ui-react';
 import Question from '../../components/Question';
 import QuizGrid from '../../components/QuizGrid';
@@ -23,6 +23,7 @@ const defaultGameInfo: GameInfo = {
   currentTeamId: 0,
   selectionTimeLimit: 0,
   isComplete: false,
+  isQuestionPointsHidden: false,
 };
 
 const defaultCategoryInfo: { [key: string]: Category } = {};
@@ -47,7 +48,8 @@ export default function PlayQuiz() {
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
   const { showAlertModal, getGameData, updateGame } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
-  const [isQuestionPointsHidden, setIsQuestionPointsHidden] = useState(false);
+  const navigate = useNavigate();
+  const userData = useAppStore<{ userName?: string }>((state) => state.userData);
 
   useEffect(() => {
     if (gameId) {
@@ -73,8 +75,7 @@ export default function PlayQuiz() {
   }, [gameId]);
 
   function showWinner(teams: any[], callback?: Function) {
-    const maxScore = Math.max(...teams.map((team) => team.score));
-    const winners = teams.filter((team) => team.score === maxScore);
+    const winners = getWinners(teams);
     const winnerIds = winners.map((winner) => winner.teamId).join(',');
     setWinner(winnerIds);
 
@@ -89,6 +90,11 @@ export default function PlayQuiz() {
     }
 
     return winnerIds;
+  }
+
+  function getWinners(teams: any[]) {
+    const maxScore = Math.max(...teams.map((team) => team.score));
+    return teams.filter((team) => team.score === maxScore);
   }
 
   async function handleSubmitResponse(questionId: string, optionId?: string) {
@@ -247,14 +253,16 @@ export default function PlayQuiz() {
             color="purple"
             className="mt-xl"
             onClick={async () => {
-              const winnerTeamId = showWinner(gameInfo.teams, () => window.location.reload());
+              const winners = getWinners(gameInfo.teams);
 
               await updateGame({
                 gameId,
                 isComplete: true,
-                winnerTeamId,
+                winnerTeamId: winners.map((winner) => winner.teamId).join(','),
                 nextTeamId: gameInfo.currentTeamId,
               });
+
+              navigate(`/configure-game/${userData.userName}/${quizInfo.quizId}`);
             }}>
             Start a new Game
           </Button>

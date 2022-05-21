@@ -54,6 +54,10 @@ export default function ConfigureQuiz() {
         }, 0);
       });
     }
+
+    return () => {
+      window.onbeforeunload = null;
+    };
   }, []);
 
   useEffect(() => {
@@ -84,8 +88,8 @@ export default function ConfigureQuiz() {
   }
 
   const getCategoryData = (formData: FieldValues): Category[] => {
-    return Object.values(formData.categories)
-      .filter((category: any) => category.categoryName)
+    return formData.categories
+      .filter((category: any) => category.categoryName && quizInfo.categoryIds.includes(category.categoryId))
       .map((category: any) => {
         const categoryData: any = {
           categoryName: category.categoryName,

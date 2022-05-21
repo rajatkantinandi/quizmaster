@@ -97,22 +97,7 @@ export const formatQuizzesData = (quizzes: any[]) => {
     return acc;
   }, []);
 
-  return formattedData.map((quiz: any) => {
-    if (quiz.categories.length < 2) {
-      quiz.categories = [0, 1].map(
-        (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
-      );
-    }
-    quiz.categories.forEach((category: any) => {
-      if (category.questions.length < quiz.numberOfQuestionsPerCategory) {
-        category.questions = [...Array(quiz.numberOfQuestionsPerCategory).keys()].map(
-          (index) => category.questions[index] || getEmptyQuestion(category.categoryId),
-        );
-      }
-    });
-
-    return quiz;
-  });
+  return formattedData.map(insertCategoryAndQuestionsData);
 };
 
 export const formatGameData = (gameData: any) => {
@@ -134,4 +119,21 @@ export const formatCategoryInfo = (categories: Category[], categoryIds: (string 
 
     return acc;
   }, {} as { [key: string]: Category });
+};
+
+export const insertCategoryAndQuestionsData = (quiz: any) => {
+  if (quiz.categories.length < 3) {
+    quiz.categories = [0, 1, 2].map(
+      (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
+    );
+  }
+  quiz.categories.forEach((category: any) => {
+    if (category.questions.length < quiz.numberOfQuestionsPerCategory) {
+      category.questions = [...Array(quiz.numberOfQuestionsPerCategory).keys()].map(
+        (index) => category.questions[index] || getEmptyQuestion(category.categoryId),
+      );
+    }
+  });
+
+  return quiz;
 };

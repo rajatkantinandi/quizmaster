@@ -48,6 +48,7 @@ export interface GameInfo {
   selectionTimeLimit: number;
   isComplete?: boolean;
   teams: Team[];
+  isQuestionPointsHidden: boolean;
 }
 
 export interface Team {
