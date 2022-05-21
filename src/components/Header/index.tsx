@@ -4,10 +4,12 @@ import { Button, Header as SemanticHeader, Icon } from 'semantic-ui-react';
 import logo from '../../img/logo.svg';
 import { useAppStore } from '../../useAppStore';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router';
 
 export default function Header() {
   const { logout } = useAppStore();
   const userData = useAppStore<{ userName?: string }>((state) => state.userData);
+  const navigate = useNavigate();
 
   async function onLogout() {
     try {
@@ -39,6 +41,9 @@ export default function Header() {
             <Button color="brown" onClick={onLogout}>
               Sign out
             </Button>
+            {!window.location.pathname.includes('quizzes') && (
+              <Button onClick={() => navigate(`/quizzes/${userData.userName}`)}>View all quizzes</Button>
+            )}
           </>
         ) : (
           <div className="mx-lg">Quizmaster</div>

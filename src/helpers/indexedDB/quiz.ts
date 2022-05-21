@@ -12,24 +12,30 @@ export const saveQuiz = async ({
   numberOfQuestionsPerCategory,
   userId,
 }: any) => {
-  const existing = await quizzesC.findOne({ quizId });
+  let existing: any = await quizzesC.findOne({ quizId });
 
   if (existing) {
-    await quizzesC.update({ quizId }, { name, categories, isDraft, userId, numberOfQuestionsPerCategory });
+    categories = categories.map((category: any) => {
+      const existingCategory = existing.categories.find((x: any) => x.categoryId === category.categoryId);
+
+      if (existingCategory) {
+        category.questions = category.questions.map((q: any) => {
+          const existingQuestion = existingCategory.questions.find((x: any) => x.questionId === q.questionId);
+
+          return existingQuestion ? { ...existingQuestion, points: q.points } : q;
+        });
+      }
+
+      return category;
+    });
+    await quizzesC.update({ quizId }, { name, categories, quizId, isDraft, userId, numberOfQuestionsPerCategory });
   } else {
     await quizzesC.insert({ name, categories, quizId, isDraft, userId, numberOfQuestionsPerCategory });
   }
 };
 
-export const updateQuiz = async ({
-  name,
-  categories,
-  quizId,
-  isDraft = false,
-  numberOfQuestionsPerCategory,
-  userId,
-}: any) => {
-  await quizzesC.update({ quizId }, { name, categories, isDraft, userId, numberOfQuestionsPerCategory });
+export const unDraftQuiz = async (quizId: string | number) => {
+  await quizzesC.update({ quizId }, { isDraft: false });
 };
 
 export const saveQuestion = async ({ QuestionId, Text, Points, TimeLimit, Options }: any, quizId: string | number) => {

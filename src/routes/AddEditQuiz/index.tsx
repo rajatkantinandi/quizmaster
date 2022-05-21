@@ -20,7 +20,7 @@ export default function AddEditQuiz() {
   });
   const [categoriesInfo, setCategoriesInfo] = useState<{ [key: string]: Category }>({});
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
-  const { showAlertModal, setConfirmationModal, getQuiz, editQuestion } = useAppStore();
+  const { showAlertModal, setConfirmationModal, getQuiz, editQuestion, unDraftQuiz } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
   useLoginCheckAndPageTitle(quizInfo.name);
 
@@ -45,7 +45,7 @@ export default function AddEditQuiz() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizId, isLoading]);
 
-  function handleFinishQuiz() {
+  async function handleFinishQuiz() {
     const totalQuestions = Object.values(categoriesInfo).reduce((count, categoryData) => {
       return count + categoryData.questions.length;
     }, 0);
@@ -63,8 +63,12 @@ export default function AddEditQuiz() {
         cancelText: '',
       });
     } else {
-      showAlertModal({ title: 'Quiz saved!', message: 'Lets play now!' });
-      navigate(`/quizzes/${userName}`);
+      await unDraftQuiz(quizInfo.quizId);
+      showAlertModal({
+        title: 'Quiz saved!',
+        message: 'Lets play now!',
+        okCallback: () => navigate(`/quizzes/${userName}`),
+      });
     }
   }
 

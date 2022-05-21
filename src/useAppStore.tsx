@@ -14,8 +14,8 @@ import {
   saveGame,
   signUpUser,
   saveQuizzes,
-  updateQuiz,
   updateGame,
+  unDraftQuiz,
 } from './helpers/indexedDB';
 
 export const useAppStore = create((set: Function, get: Function) => ({
@@ -46,7 +46,8 @@ export const useAppStore = create((set: Function, get: Function) => ({
   },
   signUp: async (data: any) => {
     const response = await post('user/signup', data);
-    await signUpUser({ userName: data.userName, password: data.password });
+    await signUpUser({ userName: response.userName, password: data.password });
+    setCookie(config.tokenKey, response.token);
 
     if (response.userId) {
       set((state: AppState) => ({
@@ -54,6 +55,8 @@ export const useAppStore = create((set: Function, get: Function) => ({
         userData: response,
       }));
     }
+
+    return response;
   },
   logIn: async (data: any) => {
     const response = await post('user/login', data);
@@ -117,7 +120,7 @@ export const useAppStore = create((set: Function, get: Function) => ({
   sendBeaconPost: async (data: any) => {
     if ('sendBeacon' in navigator) {
       await postBeaconReq('quiz/createOrUpdate', data);
-      await updateQuiz(data);
+      await saveQuiz(data);
     } else {
       const response = await post('quiz/createOrUpdate', data);
 
@@ -153,6 +156,11 @@ export const useAppStore = create((set: Function, get: Function) => ({
 
     await updateGame(data);
     return response;
+  },
+  unDraftQuiz: async (quizId: string | number) => {
+    await post('quiz/unDraft', { quizId });
+
+    await unDraftQuiz(quizId);
   },
 }));
 

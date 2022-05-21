@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid';
-import { Category } from '../types';
+import { Category, Option } from '../types';
 
 export const getEmptyQuestion = (categoryId: number | string) => ({
   questionId: nanoid(),
   text: '',
-  options: [],
+  options: [] as Option[],
   points: 0,
   categoryId,
 });

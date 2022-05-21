@@ -9,6 +9,7 @@ import { useParams, useNavigate } from 'react-router';
 import { Team } from '../../types';
 import { getEmptyTeam } from '../../helpers/dataCreator';
 import TeamGenerator from '../../components/TeamGenerator';
+import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 
 const formDefaultValues: { teams: Team[] } = {
   teams: [0, 1].map((index) => getEmptyTeam()),
@@ -16,6 +17,7 @@ const formDefaultValues: { teams: Team[] } = {
 
 export default function ConfigureGame() {
   const { quizId, userName } = useParams();
+  useLoginCheckAndPageTitle();
   const navigate = useNavigate();
   const {
     control,
@@ -135,7 +137,7 @@ export default function ConfigureGame() {
           />
         </fieldset>
       </div>
-      <Button color="orange" className="mb-lg mt-xl ml-lg" size="huge" type="submit">
+      <Button color="orange" className="mb-lg mt-xl ml-lg" size="large" type="submit">
         Play
       </Button>
       {showTeamGenerator && (

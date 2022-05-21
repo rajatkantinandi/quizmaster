@@ -9,6 +9,7 @@ import styles from './styles.module.css';
 import Timer from '../../components/Timer';
 import { useAppStore } from '../../useAppStore';
 import { formatCategoryInfo } from '../../helpers/dataFormatter';
+import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -30,10 +31,10 @@ const defaultCategoryInfo: { [key: string]: Category } = {};
 const defaultSelectedQuestion: IQuestion | null = null;
 
 export default function PlayQuiz() {
-  const { gameId } = useParams();
+  const { gameId, userName } = useParams();
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
-  // useLoginCheckAndPageTitle(quizInfo.name || '');
+  useLoginCheckAndPageTitle(quizInfo.name || '');
   const [categoriesInfo, setCategoriesInfo] = useState(defaultCategoryInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
   const { timeLimit, selectionTimeLimit } = gameInfo;
@@ -49,7 +50,6 @@ export default function PlayQuiz() {
   const { showAlertModal, getGameData, updateGame } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const userData = useAppStore<{ userName?: string }>((state) => state.userData);
 
   useEffect(() => {
     if (gameId) {
@@ -262,7 +262,7 @@ export default function PlayQuiz() {
                 nextTeamId: gameInfo.currentTeamId,
               });
 
-              navigate(`/configure-game/${userData.userName}/${quizInfo.quizId}`);
+              navigate(`/configure-game/${userName}/${quizInfo.quizId}`);
             }}>
             Start a new Game
           </Button>

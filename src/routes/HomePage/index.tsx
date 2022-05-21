@@ -31,7 +31,6 @@ export default function HomePage() {
       domain: window.location.hostname,
       sameSite: 'Strict',
     });
-
     navigate(`/quizzes/${userName}`);
   }
 

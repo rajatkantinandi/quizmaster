@@ -21,18 +21,18 @@ export default function Login() {
 
   async function handleSignUp(data: FieldValues) {
     try {
-      await signUp(data);
+      const userData = await signUp(data);
 
       cookie.set('sessionId', nanoid(16), {
         domain: window.location.hostname,
         sameSite: 'Strict',
       });
-      cookie.set('userName', btoa(data.userName), {
+      cookie.set('userName', btoa(userData.userName), {
         domain: window.location.hostname,
         sameSite: 'Strict',
       });
 
-      navigate(`/quizzes/${data.userName}`);
+      navigate(`/quizzes/${userData.userName}`);
     } catch (errMessage: any) {
       showErrorModal({ message: errMessage });
     }

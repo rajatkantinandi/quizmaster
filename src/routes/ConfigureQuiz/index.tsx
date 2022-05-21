@@ -8,17 +8,25 @@ import { QuizInfo as IQuizInfo, Quiz, Category } from '../../types';
 import { nanoid } from 'nanoid';
 import { getEmptyQuestion, getEmptyCategory } from '../../helpers/dataCreator';
 import { isInt } from '../../helpers/objectHelper';
+import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 
 const getFormDefaultValues = (categoryIds: (string | number)[]) => {
   return {
     name: '',
     numberOfQuestionsPerCategory: '5',
-    categories: categoryIds.map((categoryId) => getEmptyCategory(5)),
+    categories: categoryIds.map((categoryId) => ({
+      categoryId,
+      categoryName: '',
+      questions: Array(5)
+        .fill(1)
+        .map((val, idx) => getEmptyQuestion(categoryId)),
+    })),
   };
 };
 
 export default function ConfigureQuiz() {
   const { userName = 'guest', ...rest } = useParams();
+  useLoginCheckAndPageTitle();
   const navigate = useNavigate();
   const [quizInfo, setQuizInfo] = useState({
     quizId: rest.quizId || nanoid(),
@@ -33,6 +41,7 @@ export default function ConfigureQuiz() {
     formState: { errors },
     reset,
     getValues,
+    setValue,
   } = useForm({ defaultValues: getFormDefaultValues(quizInfo.categoryIds) });
   let saveQuizNameTimer: any = 0;
 
@@ -81,6 +90,7 @@ export default function ConfigureQuiz() {
       categories: getCategoryData(formData),
       quizId: quizInfo.quizId,
       name: formData.name,
+      isDraft: true,
       numberOfQuestionsPerCategory: parseInt(formData.numberOfQuestionsPerCategory),
     });
 
@@ -121,9 +131,13 @@ export default function ConfigureQuiz() {
   };
 
   const addCategory = () => {
+    const newCategory = getEmptyCategory(5);
+    const categories = getValues('categories');
+    categories.push(newCategory);
+    setValue('categories', categories);
     setQuizInfo({
       ...quizInfo,
-      categoryIds: [...quizInfo.categoryIds, nanoid()],
+      categoryIds: [...quizInfo.categoryIds, newCategory.categoryId],
     });
   };
 
