@@ -7,7 +7,7 @@ import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { useParams, useNavigate } from 'react-router';
 import { Team } from '../../types';
-import { getEmptyTeam } from '../../helpers/dataCreator';
+import { getEmptyTeam } from '../../helpers';
 import TeamGenerator from '../../components/TeamGenerator';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 

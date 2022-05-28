@@ -1,6 +1,6 @@
 import config from '../config';
 import queryString from 'qs';
-import { getCookie } from '../helpers/cookieHelper';
+import { getCookie } from '../helpers';
 
 function getEndpointFullUrl(api: string, queryParams: any = {}): string {
   return `${config.backendUrl}/${api}?${queryString.stringify(queryParams, { arrayFormat: 'brackets' })}`;

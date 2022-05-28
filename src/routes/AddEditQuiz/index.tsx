@@ -6,8 +6,7 @@ import QuizGrid from '../../components/QuizGrid';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Category, Question as IQuestion, QuizInfo, Quiz, Option } from '../../types';
 import { useAppStore } from '../../useAppStore';
-import { formatCategoryInfo } from '../../helpers/dataFormatter';
-import { isInt } from '../../helpers/objectHelper';
+import { formatCategoryInfo, isInt, plural } from '../../helpers';
 
 export default function AddEditQuiz() {
   const { quizId, userName = 'guest' } = useParams();
@@ -55,10 +54,11 @@ export default function AddEditQuiz() {
     if (unSavedQuestionsCount > 0) {
       setConfirmationModal({
         title: 'Finish incomplete quiz!',
-        body: `There ${
-          unSavedQuestionsCount > 1 ? `are ${unSavedQuestionsCount} empty questions` : 'is an empty question'
-        }. 
-        Please complete those questions first.`,
+        body: plural(
+          unSavedQuestionsCount,
+          'There is an empty question. Please complete those questions first.',
+          'There are %count empty questions. Please complete those questions first.',
+        ),
         okText: 'Cancel and complete questions',
         cancelText: '',
       });

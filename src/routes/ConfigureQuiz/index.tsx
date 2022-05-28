@@ -6,8 +6,7 @@ import FormInput from '../../components/FormInput';
 import { useNavigate, useParams } from 'react-router';
 import { QuizInfo as IQuizInfo, Quiz, Category } from '../../types';
 import { nanoid } from 'nanoid';
-import { getEmptyQuestion, getEmptyCategory } from '../../helpers/dataCreator';
-import { isInt } from '../../helpers/objectHelper';
+import { getEmptyQuestion, getEmptyCategory, isInt } from '../../helpers';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 
 const getFormDefaultValues = (categoryIds: (string | number)[]) => {

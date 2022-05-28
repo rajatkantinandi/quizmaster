@@ -91,6 +91,49 @@ export const createQuizData = (acc: any, quiz: any, schema: any) => {
   return acc;
 };
 
+/* This function is converting quiz data, which we are getting in array of object
+ * format from API response, into nested object format
+ * API Response Data Format = [
+ *   {
+ *     QuizId: 1,
+ *     Name: 'quiz 1',
+ *     IsDraft: true,
+ *     NumberOfQuestionsPerCategory: 5,
+ *     CategoryId: 1,
+ *     CategoryName: 'cat 1',
+ *     QuestionId: 1,
+ *     Points: 1,
+ *     Text: 'question text',
+ *     OptionId: 1,
+ *     OptionText: 'option text',
+ *     IsCorrect: true,
+ *   },
+ * ]
+ *
+ * Converted data format = {
+ *   quizId: 1,
+ *   name: 'quiz 1',
+ *   isDraft: true,
+ *   numberOfQuestionsPerCategory: 5,
+ *   categories: [{
+ *     categoryId: 1,
+ *     categoryName: 'cat 1',
+ *     questions: [{
+ *       questionId: 1,
+ *       points: 1,
+ *       text: 'question text',
+ *       options: [{
+ *         optionId: 1,
+ *         optionText: 'option text',
+ *         isCorrect: true,
+ *       }]
+ *     }]
+ *   }]
+ * }
+ *
+ * if there are multiple catagories/questions/options,
+ * they will keep adding in the respective array
+ */
 export const formatQuizzesData = (quizzes: any[]) => {
   const formattedData = quizzes.reduce((acc, quiz: any) => {
     createQuizData(acc, quiz, quizDataSchema);

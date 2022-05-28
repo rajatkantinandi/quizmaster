@@ -1,9 +1,6 @@
 import React from 'react';
 import create from 'zustand';
-import { post, get as getReq, postBeaconReq } from './helpers/request';
-import { setCookie } from './helpers/cookieHelper';
-import config from './config';
-import { formatGameData, formatQuizzesData, insertCategoryAndQuestionsData } from './helpers/dataFormatter';
+\import config from './config';
 import {
   saveQuiz,
   getQuizzes,
@@ -16,7 +13,14 @@ import {
   saveQuizzes,
   updateGame,
   unDraftQuiz,
-} from './helpers/indexedDB';
+  post,
+  get as getReq,
+  postBeaconReq,
+  setCookie,
+  formatGameData,
+  formatQuizzesData,
+  insertCategoryAndQuestionsData
+} from './helpers';
 
 export const useAppStore = create((set: Function, get: Function) => ({
   confirmationModal: null,

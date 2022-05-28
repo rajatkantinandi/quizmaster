@@ -8,7 +8,7 @@ import { Category, Question as IQuestion, QuizInfo, GameInfo, SelectedOptions } 
 import styles from './styles.module.css';
 import Timer from '../../components/Timer';
 import { useAppStore } from '../../useAppStore';
-import { formatCategoryInfo } from '../../helpers/dataFormatter';
+import { formatCategoryInfo } from '../../helpers';
 import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 
 const defaultQuizInfo: QuizInfo = {

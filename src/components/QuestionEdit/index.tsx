@@ -9,6 +9,7 @@ import markdownLogo from '../../img/markdown.svg';
 import { useAppStore } from '../../useAppStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
+import { FormInputTypes } from '../../constants';
 
 interface Props {
   selectedQuestion: IQuestion;
@@ -151,7 +152,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
                 validate: (value: string) => !!value.trim() || 'The question text should not be empty!',
               }}
               errorMessage={errors.text?.message || ''}
-              componentType="textArea"
+              componentType={FormInputTypes.TEXT_AREA}
               inputProps={{
                 rows: 4,
               }}
@@ -184,7 +185,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
                               validate: (value: string) => !!value.trim() || 'Option text should not be empty!',
                             }}
                             errorMessage={errors.options?.[idx]?.text?.message || ''}
-                            componentType="textArea"
+                            componentType={FormInputTypes.TEXT_AREA}
                             inputProps={{
                               rows: 1,
                             }}
@@ -220,7 +221,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
                           validate: (value: string) => !!value.trim() || 'The correct answer should not be empty!',
                         }}
                         errorMessage={errors.options?.[0]?.text?.message || ''}
-                        componentType="textArea"
+                        componentType={FormInputTypes.TEXT_AREA}
                         inputProps={{
                           rows: 1,
                         }}

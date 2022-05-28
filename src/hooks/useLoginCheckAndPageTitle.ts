@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { getSignedInUserName } from '../helpers/indexedDB';
+import { getSignedInUserName } from '../helpers';
 
 export function useLoginCheckAndPageTitle(customTitle = '') {
   const { userName } = useParams();

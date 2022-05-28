@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router';
 
 export default function Header() {
-  const { logout } = useAppStore();
+  const { logout, showErrorModal } = useAppStore();
   const userData = useAppStore<{ userName?: string }>((state) => state.userData);
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ export default function Header() {
     try {
       await logout();
     } catch (err) {
-      console.log(err);
+      showErrorModal({ message: 'Something went wrong while logout' });
     }
 
     Cookies.set('sessionId', '', {

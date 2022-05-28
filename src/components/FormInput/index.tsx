@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Label, Input, TextArea, Checkbox } from 'semantic-ui-react';
 import { Controller } from 'react-hook-form';
 import styles from './styles.module.css';
+import { FormInputTypes } from '../../constants';
 
 interface Props {
   inputProps: any;
@@ -12,12 +13,11 @@ interface Props {
   componentType?: string;
 }
 
-export default function FormInput(props: Props) {
-  const { inputProps, name, control, rules, errorMessage, componentType } = props;
+export default function FormInput({ inputProps, name, control, rules, errorMessage, componentType }: Props) {
   const InputElement = (propsVal: any) =>
-    componentType === 'textArea' ? (
+    componentType === FormInputTypes.TEXT_AREA ? (
       <TextArea {...inputProps} {...propsVal} />
-    ) : componentType === 'checkBox' ? (
+    ) : componentType === FormInputTypes.CHECK_BOX ? (
       <Checkbox {...inputProps} {...propsVal} />
     ) : (
       <Input {...inputProps} {...propsVal} />
