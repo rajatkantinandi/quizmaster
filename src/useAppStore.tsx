@@ -1,6 +1,6 @@
 import React from 'react';
 import create from 'zustand';
-\import config from './config';
+import config from './config';
 import {
   saveQuiz,
   getQuizzes,
@@ -19,7 +19,7 @@ import {
   setCookie,
   formatGameData,
   formatQuizzesData,
-  insertCategoryAndQuestionsData
+  insertCategoryAndQuestionsData,
 } from './helpers';
 
 export const useAppStore = create((set: Function, get: Function) => ({
@@ -116,6 +116,7 @@ export const useAppStore = create((set: Function, get: Function) => ({
     }));
   },
   createOrUpdateQuiz: async (data: any) => {
+    debugger;
     const response = await post('quiz/createOrUpdate', data);
     await saveQuiz(response);
 
