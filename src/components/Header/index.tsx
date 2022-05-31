@@ -30,9 +30,6 @@ export default function Header() {
             <Button color="brown" onClick={onLogout}>
               Sign out
             </Button>
-            {!window.location.pathname.includes('quizzes') && (
-              <Button onClick={() => navigate(`/quizzes/${userData.userName}`)}>View all quizzes</Button>
-            )}
           </>
         ) : (
           <div className="mx-lg">Quizmaster</div>

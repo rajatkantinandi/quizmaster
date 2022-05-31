@@ -3,5 +3,4 @@ export interface IConfig {
   productName: string;
   productUrl: string;
   backendUrl: string;
-  tokenKey: string;
 }
