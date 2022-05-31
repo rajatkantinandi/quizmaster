@@ -8,12 +8,11 @@ import './styles/card.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { getCookie, get } from './helpers';
-import { useAppStore } from './useAppStore';
-import { Navigate } from 'react-router-dom';
+import { useStore } from './useStore';
 
 if (getCookie('userToken')) {
   get('user/data').then((resp: any) => {
-    useAppStore.setState({ userData: resp });
+    useStore.setState({ userData: resp });
     ReactDOM.render(
       <React.StrictMode>
         <App />
