@@ -25,6 +25,7 @@ export default function QuizGrid({
   gameInfo = { teams: [], timeLimit: 0, selectionTimeLimit: 0, isQuestionPointsHidden: false },
   savedQuestionIds = [], // for edit mode
 }: Props) {
+  const { name, categoryIds } = quizInfo;
   const selectedOptionsData = gameInfo.teams.reduce(
     (acc: SelectedOptions[], team: Team) => acc.concat(team.selectedOptions),
     [],
@@ -33,7 +34,7 @@ export default function QuizGrid({
   return (
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
       <h2>
-        {quizInfo.name}
+        {name}
         {!isExpanded && (
           <Button
             icon={<Icon name="expand" />}
@@ -47,7 +48,7 @@ export default function QuizGrid({
       <Divider />
       <h3>Categories</h3>
       <div className={classNames('flex flexWrap justifyCenter', styles.gridButtons)}>
-        {quizInfo.categoryIds.map((categoryId, idx) => (
+        {categoryIds.map((categoryId, idx) => (
           <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={categoryId}>
             <h4>{categoriesInfo[categoryId]?.categoryName || ''}</h4>
             {(categoriesInfo[categoryId]?.questions || []).map((q, index) => {

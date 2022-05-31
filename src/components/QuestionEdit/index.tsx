@@ -10,6 +10,7 @@ import { useAppStore } from '../../useAppStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { FormInputTypes } from '../../constants';
+import { getEmptyOptions } from '../../helpers';
 
 interface Props {
   selectedQuestion: IQuestion;
@@ -17,25 +18,12 @@ interface Props {
   onClose: Function;
 }
 
-const defaultOptions = [
-  {
-    optionId: nanoid(),
-    text: '',
-    isCorrect: false,
-  },
-  {
-    optionId: nanoid(),
-    text: '',
-    isCorrect: false,
-  },
-];
-
 export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }: Props) {
   const { text, options, points } = selectedQuestion;
   const formDefaultValues = {
     text,
     points,
-    options: options.length > 0 ? options : defaultOptions,
+    options: options.length > 0 ? options : getEmptyOptions(2),
   };
 
   const {
@@ -121,7 +109,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
   function getValidationError() {
     if (!optionsData.some((option) => option.isCorrect)) {
       return 'Please select 1 correct option!';
-    } else if (optionsData.length === 1) {
+    } else if (optionsData.length < 2) {
       return 'At least 2 options are mandatory!';
     }
 

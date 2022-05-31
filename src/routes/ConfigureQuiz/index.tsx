@@ -7,7 +7,6 @@ import { useNavigate, useParams } from 'react-router';
 import { QuizInfo as IQuizInfo, Quiz, Category } from '../../types';
 import { nanoid } from 'nanoid';
 import { getEmptyQuestion, getEmptyCategory, isInt } from '../../helpers';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 
 const getFormDefaultValues = (categoryIds: (string | number)[]) => {
   return {
@@ -25,7 +24,6 @@ const getFormDefaultValues = (categoryIds: (string | number)[]) => {
 
 export default function ConfigureQuiz() {
   const { userName = 'guest', ...rest } = useParams();
-  useLoginCheckAndPageTitle();
   const navigate = useNavigate();
   const [quizInfo, setQuizInfo] = useState({
     quizId: rest.quizId || nanoid(),

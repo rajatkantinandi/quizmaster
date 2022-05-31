@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Button, Header as SemanticHeader, Icon } from 'semantic-ui-react';
 import logo from '../../img/logo.svg';
 import { useAppStore } from '../../useAppStore';
-import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router';
 
 export default function Header() {
@@ -17,16 +16,6 @@ export default function Header() {
     } catch (err) {
       showErrorModal({ message: 'Something went wrong while logout' });
     }
-
-    Cookies.set('sessionId', '', {
-      domain: window.location.hostname,
-      sameSite: 'Strict',
-    });
-    Cookies.set('userName', '', {
-      domain: window.location.hostname,
-      sameSite: 'Strict',
-    });
-    window.location.href = '/';
   }
 
   return (

@@ -9,7 +9,6 @@ import styles from './styles.module.css';
 import Timer from '../../components/Timer';
 import { useAppStore } from '../../useAppStore';
 import { formatCategoryInfo } from '../../helpers';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -34,7 +33,6 @@ export default function PlayQuiz() {
   const { gameId, userName } = useParams();
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
-  useLoginCheckAndPageTitle(quizInfo.name || '');
   const [categoriesInfo, setCategoriesInfo] = useState(defaultCategoryInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
   const { timeLimit, selectionTimeLimit } = gameInfo;

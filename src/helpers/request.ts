@@ -8,11 +8,13 @@ function getEndpointFullUrl(api: string, queryParams: any = {}): string {
 
 export const get = async (url: string, queryParams = {}) => {
   const response = await fetch(getEndpointFullUrl(url, queryParams), {
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      'auth-token': getCookie(config.tokenKey),
     },
   });
+
+  handleUnAuthorized(response);
 
   return response.json();
 };
@@ -21,18 +23,17 @@ export const post = async (url: string, data = {}) => {
   // Default options are marked with *
   const response = await fetch(getEndpointFullUrl(url), {
     method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
+    credentials: 'include',
+    body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
-      'auth-token': getCookie(config.tokenKey),
     },
-    body: JSON.stringify(data),
   });
 
   try {
+    handleUnAuthorized(response);
     checkStatus(response);
+
     return parseJSON(response);
   } catch (err: any) {
     const message = await err.response.json();
@@ -45,9 +46,33 @@ export const postBeaconReq = async (url: string, data = {}) => {
     getEndpointFullUrl(url),
     JSON.stringify({
       ...data,
-      'auth-token': getCookie(config.tokenKey),
+      'auth-token': getCookie('userToken'),
     }),
   );
+};
+
+export const postRedirect = async (url: string, data: any) => {
+  const form = document.createElement('form');
+  form.setAttribute('method', 'post');
+  form.setAttribute('action', getEndpointFullUrl(url));
+
+  const createHiddenField = (name: string, value: string) => {
+    const hiddenField = document.createElement('input');
+    hiddenField.setAttribute('type', 'hidden');
+    hiddenField.setAttribute('name', name);
+    hiddenField.setAttribute('value', value);
+    return hiddenField;
+  };
+
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const hiddenField = createHiddenField(key, data[key]);
+      form.appendChild(hiddenField);
+    }
+  }
+
+  document.body.appendChild(form);
+  form.submit();
 };
 
 class ResponseError extends Error {
@@ -73,5 +98,11 @@ async function parseJSON(response: any): Promise<any> {
   } else {
     const resp = await response.json();
     return resp;
+  }
+}
+
+function handleUnAuthorized(response: any): void {
+  if (response.status === 401) {
+    window.location.pathname = '/login';
   }
 }

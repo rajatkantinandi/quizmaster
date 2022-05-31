@@ -33,14 +33,15 @@ export default function Question({
 }: Props) {
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
-  const { options } = selectedQuestion;
+  const { options, questionId, text } = selectedQuestion;
+  const isAttempted = !!selectedOptionId;
 
   useEffect(() => {
     if (!isPreview) {
       // reveal answer when question is attempted due to timeout
-      setIsAnswerRevealed(!!selectedOptionId);
+      setIsAnswerRevealed(isAttempted);
     }
-  }, [selectedQuestion.questionId, selectedOptionId, isPreview]);
+  }, [questionId, isAttempted, isPreview]);
 
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
@@ -50,7 +51,7 @@ export default function Question({
 
   return (
     <form className={styles.container} onSubmit={handleSubmit}>
-      <Markdown>{selectedQuestion.text}</Markdown>
+      <Markdown>{text}</Markdown>
       <Divider />
       <div className="flex flexWrap">
         {isWithoutOptions
@@ -69,12 +70,12 @@ export default function Question({
                 optionText={option.text}
                 key={option.optionId}
                 className={classNames({
-                  [styles.isAttempted]: !!selectedOptionId,
+                  [styles.isAttempted]: isAttempted,
                   [styles.correct]: option.isCorrect && selectedOptionId === option.optionId,
                   [styles.inCorrect]: !option.isCorrect && selectedOptionId === option.optionId,
                   [styles.isPreview]: isPreview,
                 })}
-                disabled={!!selectedOptionId}
+                disabled={isAttempted}
               />
             ))}
       </div>
@@ -95,7 +96,7 @@ export default function Question({
         </Button>
       )}
       <Divider />
-      {!!selectedOptionId && (!isPreview || isQuestionSaved) ? (
+      {isAttempted && (!isPreview || isQuestionSaved) ? (
         <Button size="large" onClick={() => onClose()} type="button" color="blue">
           Close
         </Button>

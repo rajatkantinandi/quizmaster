@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './styles/app.css';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import HomePage from './routes/HomePage';
@@ -12,22 +12,40 @@ import PlayQuiz from './routes/PlayQuiz';
 import { useAppStore } from './useAppStore';
 import ConfirmationModal from './components/ConfirmationModal';
 import Header from './components/Header';
+import NavigateToQuizzesIfLoggedIn from './components/NavigateToQuizzesIfLoggedIn';
 
 function App() {
-  const { confirmationModal, getUserData } = useAppStore();
-
-  useEffect(() => {
-    getUserData();
-  }, []);
+  const { confirmationModal } = useAppStore();
 
   return (
     <div className="App">
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/"
+            element={
+              <NavigateToQuizzesIfLoggedIn>
+                <HomePage />
+              </NavigateToQuizzesIfLoggedIn>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <NavigateToQuizzesIfLoggedIn>
+                <Login />
+              </NavigateToQuizzesIfLoggedIn>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <NavigateToQuizzesIfLoggedIn>
+                <Signup />
+              </NavigateToQuizzesIfLoggedIn>
+            }
+          />
           <Route path="/quizzes/:userName" element={<Quizzes />} />
           <Route path="/configure-quiz/:userName" element={<ConfigureQuiz />} />
           <Route path="/configure-quiz/:userName/:quizId" element={<ConfigureQuiz />} />

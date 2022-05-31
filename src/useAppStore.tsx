@@ -1,6 +1,5 @@
 import React from 'react';
 import create from 'zustand';
-import config from './config';
 import {
   saveQuiz,
   getQuizzes,
@@ -9,17 +8,17 @@ import {
   getGame,
   saveQuestion,
   saveGame,
-  signUpUser,
   saveQuizzes,
   updateGame,
   unDraftQuiz,
   post,
   get as getReq,
   postBeaconReq,
-  setCookie,
   formatGameData,
   formatQuizzesData,
   insertCategoryAndQuestionsData,
+  postRedirect,
+  getCookie,
 } from './helpers';
 
 export const useAppStore = create((set: Function, get: Function) => ({
@@ -49,36 +48,13 @@ export const useAppStore = create((set: Function, get: Function) => ({
     }));
   },
   signUp: async (data: any) => {
-    const response = await post('user/signup', data);
-    await signUpUser({ userName: response.userName, password: data.password });
-    setCookie(config.tokenKey, response.token);
-
-    if (response.userId) {
-      set((state: AppState) => ({
-        ...state,
-        userData: response,
-      }));
-    }
-
-    return response;
+    await postRedirect('user/signup', data);
   },
   logIn: async (data: any) => {
-    const response = await post('user/login', data);
-    setCookie(config.tokenKey, response.token);
-
-    set((state: AppState) => ({
-      ...state,
-      userData: response,
-    }));
+    await postRedirect('user/login', data);
   },
   logout: async () => {
-    await post('user/logout');
-    setCookie(config.tokenKey, '');
-
-    set((state: AppState) => ({
-      ...state,
-      userData: {},
-    }));
+    await postRedirect('user/logout', { userToken: getCookie('userToken'), userId: get().userData.userId });
   },
   getQuizzes: async () => {
     try {
@@ -107,16 +83,7 @@ export const useAppStore = create((set: Function, get: Function) => ({
       return data;
     }
   },
-  getUserData: async () => {
-    const response = await getReq('user/data');
-
-    set((state: AppState) => ({
-      ...state,
-      userData: response,
-    }));
-  },
   createOrUpdateQuiz: async (data: any) => {
-    debugger;
     const response = await post('quiz/createOrUpdate', data);
     await saveQuiz(response);
 

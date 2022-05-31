@@ -1,9 +1,6 @@
 import React from 'react';
 import { Button, Form } from 'semantic-ui-react';
-import cookie from 'js-cookie';
-import { nanoid } from 'nanoid';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAppStore } from '../../useAppStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
@@ -15,24 +12,11 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  useLoginCheckAndPageTitle();
-  const navigate = useNavigate();
   const { signUp, showErrorModal } = useAppStore();
 
   async function handleSignUp(data: FieldValues) {
     try {
-      const userData = await signUp(data);
-
-      cookie.set('sessionId', nanoid(16), {
-        domain: window.location.hostname,
-        sameSite: 'Strict',
-      });
-      cookie.set('userName', btoa(userData.userName), {
-        domain: window.location.hostname,
-        sameSite: 'Strict',
-      });
-
-      navigate(`/quizzes/${userData.userName}`);
+      await signUp(data);
     } catch (errMessage: any) {
       showErrorModal({ message: errMessage });
     }

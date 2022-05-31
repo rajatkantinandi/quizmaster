@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router';
 import { Button, Divider } from 'semantic-ui-react';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuizGrid from '../../components/QuizGrid';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { Category, Question as IQuestion, QuizInfo, Quiz, Option } from '../../types';
 import { useAppStore } from '../../useAppStore';
 import { formatCategoryInfo, isInt, plural } from '../../helpers';
@@ -21,7 +20,6 @@ export default function AddEditQuiz() {
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
   const { showAlertModal, setConfirmationModal, getQuiz, editQuestion, unDraftQuiz } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
-  useLoginCheckAndPageTitle(quizInfo.name);
 
   useEffect(() => {
     if (isLoading) {

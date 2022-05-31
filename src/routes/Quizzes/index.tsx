@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Card } from 'semantic-ui-react';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import { useAppStore } from '../../useAppStore';
 
 export default function Quizzes() {
   const { userName } = useParams();
   const [quizzes, setQuizzes] = useState<any>([]);
   const { getQuizzes } = useAppStore();
-
   const navigate = useNavigate();
-  useLoginCheckAndPageTitle();
 
   useEffect(() => {
     getQuizzes().then((quizzes) => {

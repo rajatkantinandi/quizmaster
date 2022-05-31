@@ -27,3 +27,12 @@ export const getEmptyTeam = () => ({
   score: 0,
   selectedOptions: [],
 });
+
+export const getEmptyOptions = (count: number) =>
+  Array(count)
+    .fill(1)
+    .map((val, idx) => ({
+      optionId: nanoid(),
+      text: '',
+      isCorrect: false,
+    }));

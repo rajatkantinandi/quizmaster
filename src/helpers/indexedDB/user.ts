@@ -1,20 +1,8 @@
-import Cookies from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { getHashedPassword } from '../crypto';
 import db from './db';
 
 const users = db.collection('users');
-
-export const getSignedInUserName = () => {
-  const sessionId = Cookies.get('sessionId');
-  const encryptedUserName = Cookies.get('userName');
-
-  if (sessionId && encryptedUserName) {
-    return atob(encryptedUserName);
-  } else {
-    return null;
-  }
-};
 
 export const signUpUser = async ({ userName, password }: { userName: string; password: string }): Promise<string> => {
   if (userName === 'guest') {

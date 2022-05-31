@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import styles from './styles.module.css';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
@@ -9,7 +8,6 @@ import { useAppStore } from '../../useAppStore';
 
 export default function HomePage() {
   const navigate = useNavigate();
-  useLoginCheckAndPageTitle();
   const { setConfirmationModal } = useAppStore();
 
   function loginAsGuest() {
