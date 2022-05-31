@@ -1,14 +1,14 @@
 import React from 'react';
 import { Button, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { logIn, showErrorModal } = useAppStore();
+  const { logIn, showErrorModal } = useStore();
   const {
     control,
     handleSubmit,

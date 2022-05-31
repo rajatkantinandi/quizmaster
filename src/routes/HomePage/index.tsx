@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import styles from './styles.module.css';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { setConfirmationModal } = useAppStore();
+  const { setConfirmationModal } = useStore();
 
   function loginAsGuest() {
     if (!localStorage.getItem('DoNotShowGuestAccountWarning')) {
