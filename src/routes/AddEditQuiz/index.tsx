@@ -4,7 +4,7 @@ import { Button, Divider } from 'semantic-ui-react';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuizGrid from '../../components/QuizGrid';
 import { Category, Question as IQuestion, QuizInfo, Quiz, Option } from '../../types';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 import { formatCategoryInfo, isInt, plural } from '../../helpers';
 
 export default function AddEditQuiz() {
@@ -18,7 +18,7 @@ export default function AddEditQuiz() {
   });
   const [categoriesInfo, setCategoriesInfo] = useState<{ [key: string]: Category }>({});
   const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
-  const { showAlertModal, setConfirmationModal, getQuiz, editQuestion, unDraftQuiz } = useAppStore();
+  const { showAlertModal, setConfirmationModal, getQuiz, editQuestion, unDraftQuiz } = useStore();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

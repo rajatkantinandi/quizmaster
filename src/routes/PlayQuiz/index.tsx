@@ -7,7 +7,7 @@ import QuizGrid from '../../components/QuizGrid';
 import { Category, Question as IQuestion, QuizInfo, GameInfo, SelectedOptions } from '../../types';
 import styles from './styles.module.css';
 import Timer from '../../components/Timer';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 import { formatCategoryInfo } from '../../helpers';
 
 const defaultQuizInfo: QuizInfo = {
@@ -45,7 +45,7 @@ export default function PlayQuiz() {
   const attemptedQuestionIds = selectedOptionsData.map((x) => x.questionId);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.questionId);
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
-  const { showAlertModal, getGameData, updateGame } = useAppStore();
+  const { showAlertModal, getGameData, updateGame } = useStore();
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 

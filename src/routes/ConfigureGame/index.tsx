@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import { Button, Checkbox, Icon, Input } from 'semantic-ui-react';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
@@ -31,7 +31,7 @@ export default function ConfigureGame() {
   const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);
   const [isQuestionPointsHidden, setIsQuestionPointsHidden] = useState(false);
   const teams = getValues('teams');
-  const { addGame } = useAppStore();
+  const { addGame } = useStore();
 
   function addTeam() {
     setValue('teams', teams.concat(getEmptyTeam()));

@@ -1,61 +1,10 @@
-import React from 'react';
-import create from 'zustand';
 import {
-  saveQuiz,
-  getQuizzes,
-  getQuiz,
-  addGame,
-  getGame,
-  saveQuestion,
-  saveGame,
-  saveQuizzes,
-  updateGame,
-  unDraftQuiz,
-  post,
-  get as getReq,
-  postBeaconReq,
-  formatGameData,
-  formatQuizzesData,
-  insertCategoryAndQuestionsData,
-  postRedirect,
-  getCookie,
-} from './helpers';
+  getQuizzes, post, get as getReq, formatQuizzesData, saveQuizzes,
+  getQuiz, insertCategoryAndQuestionsData, saveQuiz, postBeaconReq, saveQuestion,
+  addGame, getGame, formatGameData, saveGame, updateGame, unDraftQuiz,
+} from "../helpers";
 
-export const useAppStore = create((set: Function, get: Function) => ({
-  confirmationModal: null,
-  userData: {},
-  setConfirmationModal: (confirmationModal: ConfirmationModalState | null) => {
-    set((state: AppState) => ({ ...state, confirmationModal }));
-  },
-  showAlertModal: ({
-    title,
-    message,
-    ...rest
-  }: Omit<ConfirmationModalState, 'body'> & { title: string; message: React.ReactNode }) => {
-    set((state: AppState) => ({
-      ...state,
-      confirmationModal: { title, body: message, cancelText: '', isAlert: true, ...rest },
-    }));
-  },
-  showErrorModal: ({
-    title = 'Error!',
-    message,
-    ...rest
-  }: Omit<Omit<ConfirmationModalState, 'body'>, 'title'> & { title?: string; message: React.ReactNode }) => {
-    set((state: AppState) => ({
-      ...state,
-      confirmationModal: { title, body: message, cancelText: '', isAlert: true, ...rest },
-    }));
-  },
-  signUp: async (data: any) => {
-    await postRedirect('user/signup', data);
-  },
-  logIn: async (data: any) => {
-    await postRedirect('user/login', data);
-  },
-  logout: async () => {
-    await postRedirect('user/logout', { userToken: getCookie('userToken'), userId: get().userData.userId });
-  },
+export const getQuizStore = () => ({
   getQuizzes: async () => {
     try {
       const response = await getQuizzes();
@@ -134,20 +83,4 @@ export const useAppStore = create((set: Function, get: Function) => ({
 
     await unDraftQuiz(quizId);
   },
-}));
-
-interface AppState {
-  confirmationModal: ConfirmationModalState | null;
-}
-
-export interface ConfirmationModalState {
-  title: string;
-  body: React.ReactNode;
-  okText?: string;
-  okCallback?: Function;
-  className?: string;
-  cancelText?: string;
-  size?: 'mini' | 'tiny' | 'small' | 'large' | 'fullscreen';
-  isAlert?: boolean;
-  doNotShowAgainKey?: string;
-}
+});

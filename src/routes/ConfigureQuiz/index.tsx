@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'semantic-ui-react';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { useNavigate, useParams } from 'react-router';
@@ -31,7 +31,7 @@ export default function ConfigureQuiz() {
     numberOfQuestionsPerCategory: 5,
   } as IQuizInfo);
   const [refreshComponent, setRefreshComponent] = useState(0);
-  const { createOrUpdateQuiz, getQuiz, sendBeaconPost } = useAppStore();
+  const { createOrUpdateQuiz, getQuiz, sendBeaconPost } = useStore();
   const {
     control,
     handleSubmit,

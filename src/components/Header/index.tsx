@@ -2,12 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Header as SemanticHeader, Icon } from 'semantic-ui-react';
 import logo from '../../img/logo.svg';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 import { useNavigate } from 'react-router';
 
 export default function Header() {
-  const { logout, showErrorModal } = useAppStore();
-  const userData = useAppStore<{ userName?: string }>((state) => state.userData);
+  const { logout, showErrorModal } = useStore();
+  const userData = useStore<{ userName?: string }>((state) => state.userData);
   const navigate = useNavigate();
 
   async function onLogout() {

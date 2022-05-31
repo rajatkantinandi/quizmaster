@@ -9,13 +9,13 @@ import AddEditQuiz from './routes/AddEditQuiz';
 import ConfigureQuiz from './routes/ConfigureQuiz';
 import ConfigureGame from './routes/ConfigureGame';
 import PlayQuiz from './routes/PlayQuiz';
-import { useAppStore } from './useAppStore';
+import { useStore } from './useStore';
 import ConfirmationModal from './components/ConfirmationModal';
 import Header from './components/Header';
 import NavigateToQuizzesIfLoggedIn from './components/NavigateToQuizzesIfLoggedIn';
 
 function App() {
-  const { confirmationModal } = useAppStore();
+  const { confirmationModal } = useStore();
 
   return (
     <div className="App">

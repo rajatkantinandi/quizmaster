@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 
@@ -12,7 +12,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { signUp, showErrorModal } = useAppStore();
+  const { signUp, showErrorModal } = useStore();
 
   async function handleSignUp(data: FieldValues) {
     try {

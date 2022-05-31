@@ -6,7 +6,7 @@ import { Question as IQuestion, Option } from '../../types';
 import Question from '../Question';
 import styles from './styles.module.css';
 import markdownLogo from '../../img/markdown.svg';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { FormInputTypes } from '../../constants';
@@ -43,7 +43,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
   const [isPreview, setIsPreview] = useState(false);
   const [isQuestionSaved, setIsQuestionSaved] = useState(false);
   const [isWithoutOptions, setIsWithoutOptions] = useState(options.length === 1);
-  const { showErrorModal } = useAppStore();
+  const { showErrorModal } = useStore();
   const optionsData = getValues('options');
 
   function onFormSubmit(data: FieldValues) {

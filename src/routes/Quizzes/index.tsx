@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Card } from 'semantic-ui-react';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
 
 export default function Quizzes() {
   const { userName } = useParams();
   const [quizzes, setQuizzes] = useState<any>([]);
-  const { getQuizzes } = useAppStore();
+  const { getQuizzes } = useStore();
   const navigate = useNavigate();
 
   useEffect(() => {

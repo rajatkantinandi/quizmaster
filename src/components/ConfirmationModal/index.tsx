@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Checkbox, Modal } from 'semantic-ui-react';
-import { ConfirmationModalState, useAppStore } from '../../useAppStore';
+import { ConfirmationModalState } from '../../stores/appStore';
+import { useStore } from '../../useStore';
 
 interface Props extends ConfirmationModalState {}
 
@@ -15,7 +16,7 @@ function ConfirmationModal({
   isAlert = false,
   doNotShowAgainKey,
 }: Props) {
-  const { setConfirmationModal } = useAppStore();
+  const { setConfirmationModal } = useStore();
   const okRef = useRef<any>();
   const [shouldNotShowAgain, setShouldNotShowAgain] = useState(false);
 
