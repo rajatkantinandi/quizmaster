@@ -32,6 +32,7 @@ export default function FormInput({ inputProps, name, control, rules, errorMessa
         render={({ field }) => (
           <InputElement
             {...field}
+            id={name}
             onChange={(ev: any, data: any) => {
               field.onChange(ev, data);
 
@@ -42,6 +43,7 @@ export default function FormInput({ inputProps, name, control, rules, errorMessa
           />
         )}
       />
+      <label htmlFor={name}></label>
       {errorMessage && (
         <Label basic color="red" size="small" className={styles.errorMessage}>
           {errorMessage}
