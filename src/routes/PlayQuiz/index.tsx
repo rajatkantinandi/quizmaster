@@ -95,26 +95,25 @@ export default function PlayQuiz() {
     return teams.filter((team) => team.score === maxScore);
   }
 
-  async function handleSubmitResponse(questionId: string, optionId?: string) {
-    const allQuestions = quizInfo.categoryIds.reduce(
-      (acc, catId) => acc.concat(categoriesInfo[catId].questions),
-      [] as IQuestion[],
-    );
-    const question = allQuestions.find((q) => q.questionId === questionId);
-    const attemptedQuestionsCount = selectedOptionsData.length;
-
-    if (question) {
-      const isCorrect = question.options.find((o: any) => o.optionId === optionId)?.isCorrect;
+  async function handleSubmitResponse(optionId?: string, isQuestionTimerUp = false) {
+    if (selectedQuestion) {
+      const isCorrect = selectedQuestion.options.find((o: any) => o.optionId === optionId)?.isCorrect;
       const currentTeamIndex = gameInfo.teams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
       const nextTeamIndex = (currentTeamIndex + 1) % gameInfo.teams.length;
       const clonedTeams = [...gameInfo.teams];
+      const allQuestionCount = quizInfo.categoryIds.reduce((count: number, catId) => {
+        count += categoriesInfo[catId].questions.length;
+
+        return count;
+      }, 0);
 
       if (currentTeamIndex >= 0) {
         const currentTeam = clonedTeams[currentTeamIndex];
-        currentTeam.score += isCorrect ? question.points : 0;
+        currentTeam.score += isCorrect ? selectedQuestion.points : 0;
         currentTeam.selectedOptions.push({
-          questionId: question.questionId,
+          questionId: selectedQuestion.questionId,
           selectedOptionId: optionId ? parseInt(optionId) : null,
+          isQuestionTimerUp,
         });
 
         setGameInfo({
@@ -125,7 +124,7 @@ export default function PlayQuiz() {
       }
 
       setIsPlaying(false);
-      const isComplete = nextTeamIndex === 0 && allQuestions.length - attemptedQuestionsCount < gameInfo.teams.length;
+      const isComplete = nextTeamIndex === 0 && allQuestionCount - selectedOptionsData.length < gameInfo.teams.length;
       const winner = isComplete ? showWinner(clonedTeams) : null;
 
       await updateGame({
@@ -136,7 +135,7 @@ export default function PlayQuiz() {
         currentTeam: {
           score: clonedTeams[currentTeamIndex].score,
           selectedOptionId: optionId || null,
-          questionId,
+          questionId: selectedQuestion.questionId,
           teamId: clonedTeams[currentTeamIndex].teamId,
         },
       });
@@ -197,7 +196,7 @@ export default function PlayQuiz() {
         />
         {!!selectedQuestion && (
           <Question
-            submitResponse={(optionId: string) => handleSubmitResponse(selectedQuestion.questionId, optionId)}
+            submitResponse={(optionId: string) => handleSubmitResponse(optionId)}
             selectedQuestion={selectedQuestion}
             onClose={() => {
               setIsPlaying(!winner);
@@ -206,9 +205,10 @@ export default function PlayQuiz() {
             isWithoutOptions={selectedQuestion.options.length === 1}
             pauseTimer={() => setIsPlaying(false)}
             selectedOptionId={
-              selectedQuestion.questionId
-                ? selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId)?.selectedOptionId
-                : null
+              selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId)?.selectedOptionId
+            }
+            isQuestionTimerUp={
+              selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId)?.isQuestionTimerUp
             }
           />
         )}
@@ -219,12 +219,12 @@ export default function PlayQuiz() {
               title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
               handleTimeUp={() => {
                 if (showQuestionTimer) {
-                  handleSubmitResponse(selectedQuestion.questionId, '');
+                  handleSubmitResponse('', true);
                 } else if (selectionTimeLimit) {
                   selectRandomQuestion();
                 }
               }}
-              key={showQuestionTimer ? selectedQuestion.questionId : 'questionSelection'}
+              key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
               running={isPlaying}
               setIsRunning={setIsPlaying}
               selectedQuestionId={selectedQuestion?.questionId}

@@ -61,4 +61,5 @@ export interface Team {
 export interface SelectedOptions {
   selectedOptionId: number | null;
   questionId: string;
+  isQuestionTimerUp?: boolean;
 }

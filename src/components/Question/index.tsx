@@ -19,6 +19,7 @@ interface Props {
     options: IOption[];
   };
   isWithoutOptions: boolean;
+  isQuestionTimerUp?: boolean;
 }
 
 export default function Question({
@@ -30,18 +31,19 @@ export default function Question({
   selectedOptionId,
   selectedQuestion,
   isWithoutOptions,
+  isQuestionTimerUp,
 }: Props) {
   const [selectedChoice, setSelectedChoice] = useState(null);
-  const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
+  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
   const { options, questionId, text } = selectedQuestion;
   const isAttempted = !!selectedOptionId;
 
   useEffect(() => {
-    if (!isPreview) {
+    if (!isAttempted) {
       // reveal answer when question is attempted due to timeout
-      setIsAnswerRevealed(isAttempted);
+      setIsAnswerRevealed(!!isQuestionTimerUp);
     }
-  }, [questionId, isAttempted, isPreview]);
+  }, [isQuestionTimerUp, questionId, isAttempted]);
 
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
@@ -96,14 +98,15 @@ export default function Question({
         </Button>
       )}
       <Divider />
-      {isAttempted && (!isPreview || isQuestionSaved) ? (
+      {(isAttempted || isQuestionTimerUp) && (!isPreview || isQuestionSaved) ? (
         <Button size="large" onClick={() => onClose()} type="button" color="blue">
           Close
         </Button>
       ) : isWithoutOptions && !isPreview ? (
         // Show correct & incorrect button in non preview mode when playing
-        // When answer is revealed show correct or incorrect button for the quiz host, clicking on which will add points accordingly
-        isAnswerRevealed && (
+        // When answer is revealed by quiz host show correct or incorrect button, clicking on which will add points accordingly
+        isAnswerRevealed &&
+        !isQuestionTimerUp && (
           <div className="flex">
             <Button type="button" size="large" className="fullWidth" color="red" onClick={() => submitResponse(null)}>
               Incorrect
