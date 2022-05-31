@@ -1,27 +1,27 @@
 export const getAppStore = (set: Function, get: Function) => ({
   confirmationModal: null,
   setConfirmationModal: (confirmationModal: ConfirmationModalState | null) => {
-    set((state: AppState) => ({ ...state, confirmationModal }), false, 'setConfirmationModal');
+    set((state: AppState) => {
+      state.confirmationModal = confirmationModal;
+    }, false, 'setConfirmationModal');
   },
   showAlertModal: ({
     title,
     message,
     ...rest
   }: Omit<ConfirmationModalState, 'body'> & { title: string; message: React.ReactNode }) => {
-    set((state: AppState) => ({
-      ...state,
-      confirmationModal: { title, body: message, cancelText: '', isAlert: true, ...rest },
-    }), false, 'showAlertModal');
+    set((state: AppState) => {
+      state.confirmationModal = { title, body: message, cancelText: '', isAlert: true, ...rest };
+    }, false, 'showAlertModal');
   },
   showErrorModal: ({
     title = 'Error!',
     message,
     ...rest
   }: Omit<Omit<ConfirmationModalState, 'body'>, 'title'> & { title?: string; message: React.ReactNode }) => {
-    set((state: AppState) => ({
-      ...state,
-      confirmationModal: { title, body: message, cancelText: '', isAlert: true, ...rest },
-    }), false, 'showErrorModal');
+    set((state: AppState) => {
+      state.confirmationModal = { title, body: message, cancelText: '', isAlert: true, ...rest };
+    }, false, 'showErrorModal');
   },
 });
 
@@ -37,6 +37,6 @@ export interface ConfirmationModalState {
   doNotShowAgainKey?: string;
 }
 
-interface AppState {
+export interface AppState extends Omit<ReturnType<typeof getAppStore>, 'confirmationModal'> {
   confirmationModal: ConfirmationModalState | null;
-}
+};

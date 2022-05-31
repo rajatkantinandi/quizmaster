@@ -15,3 +15,7 @@ export const getAuthStore = (set: Function, get: Function) => ({
     await postRedirect('user/logout', { userToken: getCookie('userToken'), userId: get().userData.userId });
   },
 });
+
+export interface AuthState extends Omit<ReturnType<typeof getAuthStore>, 'userData'> {
+  userData: object;
+};

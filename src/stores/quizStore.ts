@@ -84,3 +84,5 @@ export const getQuizStore = () => ({
     await unDraftQuiz(quizId);
   },
 });
+
+export type QuizState = ReturnType<typeof getQuizStore>;
