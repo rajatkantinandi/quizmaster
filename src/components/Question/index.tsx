@@ -20,6 +20,7 @@ interface Props {
   };
   isWithoutOptions: boolean;
   isQuestionTimerUp?: boolean;
+  isAttempted: boolean;
 }
 
 export default function Question({
@@ -32,18 +33,18 @@ export default function Question({
   selectedQuestion,
   isWithoutOptions,
   isQuestionTimerUp,
+  isAttempted,
 }: Props) {
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
   const { options, questionId, text } = selectedQuestion;
-  const isAttempted = !!selectedOptionId;
 
   useEffect(() => {
-    if (!isAttempted) {
+    if (!selectedOptionId) {
       // reveal answer when question is attempted due to timeout
       setIsAnswerRevealed(!!isQuestionTimerUp);
     }
-  }, [isQuestionTimerUp, questionId, isAttempted]);
+  }, [isQuestionTimerUp, questionId, selectedOptionId]);
 
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
@@ -98,7 +99,7 @@ export default function Question({
         </Button>
       )}
       <Divider />
-      {(isAttempted || isQuestionTimerUp) && (!isPreview || isQuestionSaved) ? (
+      {(selectedOptionId || isQuestionTimerUp) && (!isPreview || isQuestionSaved) ? (
         <Button size="large" onClick={() => onClose()} type="button" color="blue">
           Close
         </Button>

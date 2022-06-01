@@ -247,6 +247,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
           selectedQuestion={getValues()}
           onClose={onClose}
           isPreview
+          isAttempted
           isQuestionSaved={isQuestionSaved}
           submitResponse={() => onFormSubmit(getValues())}
           isWithoutOptions={isWithoutOptions}

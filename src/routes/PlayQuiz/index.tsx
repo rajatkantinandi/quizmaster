@@ -203,6 +203,7 @@ export default function PlayQuiz() {
               setSelectedQuestion(null);
             }}
             isWithoutOptions={selectedQuestion.options.length === 1}
+            isAttempted={isQuestionAttempted}
             pauseTimer={() => setIsPlaying(false)}
             selectedOptionId={
               selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId)?.selectedOptionId
