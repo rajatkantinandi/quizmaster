@@ -87,8 +87,8 @@ export const saveQuestion = async (
   await quizzesC.update({ quizId }, quiz);
 };
 
-export const getQuizzes = async (): Promise<Object[]> => {
-  const quizzes = await quizzesC.find({}).toArray();
+export const getQuizzes = async (userId: number): Promise<Object[]> => {
+  const quizzes = await quizzesC.find({ userId }).toArray();
 
   if (quizzes.length > 0) {
     return quizzes;

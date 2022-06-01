@@ -7,8 +7,15 @@ import { immer } from 'zustand/middleware/immer';
 
 type CombinedState = AppState & AuthState & QuizState;
 
-export const useStore: UseBoundStore<StoreApi<CombinedState>> = create<any>()(immer(devtools((set: Function, get: Function) => ({
-  ...getAppStore(set, get),
-  ...getAuthStore(set, get),
-  ...getQuizStore(),
-}), { name: 'AppStore' })));
+export const useStore: UseBoundStore<StoreApi<CombinedState>> = create<any>()(
+  immer(
+    devtools(
+      (set: Function, get: Function) => ({
+        ...getAppStore(set, get),
+        ...getAuthStore(set, get),
+        ...getQuizStore(set, get),
+      }),
+      { name: 'AppStore' },
+    ),
+  ),
+);

@@ -18,10 +18,10 @@ import {
 } from '../helpers';
 import { GameData } from '../types';
 
-export const getQuizStore = () => ({
+export const getQuizStore = (set: Function, get: Function) => ({
   getQuizzes: async () => {
     try {
-      const response = await getQuizzes();
+      const response = await getQuizzes(get().userData.userId);
 
       return response;
     } catch (err) {
