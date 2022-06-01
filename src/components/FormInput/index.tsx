@@ -14,13 +14,17 @@ interface Props {
 }
 
 export default function FormInput({ inputProps, name, control, rules, errorMessage, componentType }: Props) {
+  const inputPropsWithLabel = inputProps.label
+    ? { ...inputProps, label: { as: 'label', children: inputProps.label } }
+    : inputProps;
+
   const InputElement = (propsVal) =>
     componentType === FormInputTypes.TEXT_AREA ? (
       <TextArea {...inputProps} {...propsVal} />
     ) : componentType === FormInputTypes.CHECK_BOX ? (
       <Checkbox {...inputProps} {...propsVal} />
     ) : (
-      <Input {...inputProps} {...propsVal} />
+      <Input {...inputPropsWithLabel} {...propsVal} />
     );
 
   return (
