@@ -30,24 +30,26 @@ export default function Login() {
       <Form className="flex flexCol container-md" onSubmit={handleSubmit(handleLogin)}>
         <FormInput
           name="userName"
+          id="userName"
           control={control}
           rules={{ required: 'Please enter username' }}
           errorMessage={errors.username?.message}
+          label="Username"
           inputProps={{
             type: 'text',
-            label: 'Username',
             labelPosition: 'left',
             autoFocus: true,
           }}
         />
         <FormInput
           name="password"
+          id="password"
           control={control}
           rules={{ required: 'Please enter password' }}
           errorMessage={errors.password?.message}
+          label="Password"
           inputProps={{
             type: 'password',
-            label: 'Password',
             labelPosition: 'left',
           }}
         />

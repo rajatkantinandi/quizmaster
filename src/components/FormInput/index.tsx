@@ -5,26 +5,33 @@ import styles from './styles.module.css';
 import { FormInputTypes } from '../../constants';
 
 interface Props {
-  inputProps: any;
+  inputProps?: any;
   name: string;
   rules: object;
   control: any;
   errorMessage: string;
   componentType?: string;
+  label?: String;
+  id: String;
 }
 
-export default function FormInput({ inputProps, name, control, rules, errorMessage, componentType }: Props) {
-  const inputPropsWithLabel = inputProps.label
-    ? { ...inputProps, label: { as: 'label', children: inputProps.label } }
-    : inputProps;
-
+export default function FormInput({
+  inputProps = {},
+  name,
+  control,
+  label = '',
+  rules,
+  errorMessage,
+  componentType,
+  id,
+}: Props) {
   const InputElement = (propsVal) =>
     componentType === FormInputTypes.TEXT_AREA ? (
       <TextArea {...inputProps} {...propsVal} />
     ) : componentType === FormInputTypes.CHECK_BOX ? (
       <Checkbox {...inputProps} {...propsVal} />
     ) : (
-      <Input {...inputPropsWithLabel} {...propsVal} />
+      <Input label={label ? { as: 'label', children: label, for: id } : null} {...inputProps} {...propsVal} />
     );
 
   return (
@@ -36,7 +43,7 @@ export default function FormInput({ inputProps, name, control, rules, errorMessa
         render={({ field }) => (
           <InputElement
             {...field}
-            id={name}
+            id={id}
             onChange={(ev, data) => {
               field.onChange(ev, data);
 

@@ -3,12 +3,10 @@ import { Link } from 'react-router-dom';
 import { Button, Header as SemanticHeader, Icon } from 'semantic-ui-react';
 import logo from '../../img/logo.svg';
 import { useStore } from '../../useStore';
-import { useNavigate } from 'react-router';
 
 export default function Header() {
   const { logout, showErrorModal } = useStore();
-  const userData = useStore<{ userName?: string }>((state) => state.userData);
-  const navigate = useNavigate();
+  const userData = useStore((state) => state.userData);
 
   async function onLogout() {
     try {

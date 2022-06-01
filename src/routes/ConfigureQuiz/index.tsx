@@ -192,25 +192,27 @@ export default function ConfigureQuiz() {
         <div className="container-md">
           <FormInput
             name="name"
+            id="name"
             control={control}
             rules={{ required: 'Please enter quiz name' }}
             errorMessage={errors.name?.message || ''}
+            label="Quiz name"
             inputProps={{
               type: 'text',
-              label: 'Quiz name',
               onChange: handleAddQuizName,
             }}
           />
           <FormInput
             name="numberOfQuestionsPerCategory"
+            id="numberOfQuestionsPerCategory"
             control={control}
             rules={{
               required: 'Please enter number of questions per category',
             }}
             errorMessage={errors.numberOfQuestionsPerCategory?.message || ''}
+            label="Number of questions per category"
             inputProps={{
               type: 'number',
-              label: 'Number of questions per category',
               min: 2,
               onChange: reRenderComponent,
             }}
@@ -235,12 +237,13 @@ export default function ConfigureQuiz() {
               <h3>Category {idx + 1}</h3>
               <FormInput
                 name={`categories[${idx}].categoryName`}
+                id={`categories${idx}categoryName`}
                 control={control}
                 rules={{ required: 'Please enter category name' }}
                 errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
+                label="Name"
                 inputProps={{
                   type: 'text',
-                  label: 'Name',
                   className: 'fullWidth',
                   size: 'small',
                 }}
@@ -250,12 +253,13 @@ export default function ConfigureQuiz() {
                 <FormInput
                   key={q.questionId}
                   name={`categories[${idx}].questions[${index}].points`}
+                  id={`categories${idx}questions${index}points`}
                   control={control}
                   rules={{ required: 'Please enter question pointes' }}
                   errorMessage={errors.categories?.[idx]?.questions?.[index]?.points?.message || ''}
+                  label={`Q${index + 1} points`}
                   inputProps={{
                     type: 'number',
-                    label: `Q${index + 1} points`,
                     className: 'fullWidth',
                     size: 'small',
                   }}

@@ -1,7 +1,12 @@
 import { postRedirect } from '../helpers';
 
 export const getAuthStore = (set: Function, get: Function) => ({
-  userData: {},
+  userData: {
+    userName: '',
+    userId: null,
+    emailId: '',
+    token: '',
+  },
   signUp: async (data) => {
     await postRedirect('user/signup', data);
   },
@@ -14,5 +19,10 @@ export const getAuthStore = (set: Function, get: Function) => ({
 });
 
 export interface AuthState extends Omit<ReturnType<typeof getAuthStore>, 'userData'> {
-  userData: object;
+  userData: {
+    userName: string;
+    userId: number;
+    emailId: string;
+    token: string;
+  };
 }

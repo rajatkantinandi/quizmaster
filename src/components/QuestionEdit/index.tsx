@@ -134,6 +134,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
             </div>
             <FormInput
               name="text"
+              id="text"
               control={control}
               rules={{
                 required: 'The question text should not be empty!',
@@ -167,6 +168,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
                           </div>
                           <FormInput
                             name={`options[${idx}].text`}
+                            id={`options${idx}text`}
                             control={control}
                             rules={{
                               required: 'Option text should not be empty!',
@@ -203,6 +205,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
                       </div>
                       <FormInput
                         name="options[0].text"
+                        id="withoutOptionsText"
                         control={control}
                         rules={{
                           required: 'The correct answer should not be empty!',
@@ -224,6 +227,7 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
           <Divider />
           <FormInput
             name="points"
+            id="points"
             control={control}
             rules={{
               required: "Question's correct response points should not be empty",
@@ -231,8 +235,8 @@ export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }
                 (value && value > 0) || "Question's correct response points should be greater than zero!",
             }}
             errorMessage={errors.points?.message || ''}
+            label="Points for correct response"
             inputProps={{
-              label: 'Points for correct response',
               type: 'number',
             }}
           />

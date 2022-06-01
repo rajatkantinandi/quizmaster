@@ -29,68 +29,61 @@ export default function Login() {
       <Form className="flexCol flex container-md" onSubmit={handleSubmit(handleSignUp)}>
         <FormInput
           name="name"
+          id="name"
           control={control}
           rules={{ required: 'Please enter name' }}
           errorMessage={errors.name?.message}
+          label="Name"
           inputProps={{
             type: 'text',
-            label: 'Name',
             labelPosition: 'left',
             autoFocus: true,
           }}
         />
         <FormInput
           name="emailId"
+          id="emailId"
           control={control}
           rules={{ required: 'Please enter email' }}
           errorMessage={errors.emailId?.message}
-          inputProps={{
-            type: 'email',
-            label: 'EmailId',
-            labelPosition: 'left',
-          }}
+          label="EmailId"
+          inputProps={{ type: 'email' }}
         />
         <FormInput
           name="userName"
+          id="userName"
           control={control}
           rules={{
             required: 'Please enter username',
             minLength: { value: 6, message: 'too small username' },
           }}
+          label="Username (min 6 chars)"
           errorMessage={errors.userName?.message}
-          inputProps={{
-            type: 'text',
-            label: 'Username (min 6 chars)',
-            labelPosition: 'left',
-          }}
+          inputProps={{ type: 'text' }}
         />
         <FormInput
           name="password"
+          id="password"
           control={control}
           rules={{
             required: 'Please enter password',
             minLength: { value: 8, message: 'too small password' },
           }}
           errorMessage={errors.password?.message}
-          inputProps={{
-            type: 'password',
-            label: 'Password (min 8 chars)',
-            labelPosition: 'left',
-          }}
+          label="Password (min 8 chars)"
+          inputProps={{ type: 'password' }}
         />
         <FormInput
           name="repeatPassword"
+          id="repeatPassword"
           control={control}
           rules={{
             required: 'Please re-enter password',
             validate: shouldMatchWithPassword,
           }}
           errorMessage={errors.repeatPassword?.message}
-          inputProps={{
-            type: 'password',
-            label: 'Password (min 8 chars)',
-            labelPosition: 'left',
-          }}
+          label="Password (min 8 chars)"
+          inputProps={{ type: 'password' }}
         />
         <Button type="submit" color="blue" size="large" className="mt-lg">
           Sign up

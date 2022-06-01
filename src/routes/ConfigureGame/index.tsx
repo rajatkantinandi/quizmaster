@@ -67,13 +67,12 @@ export default function ConfigureGame() {
           <legend>Teams</legend>
           {teams.map((team, idx) => (
             <FormInput
+              id={`teams${idx}name`}
               name={`teams[${idx}].name`}
               control={control}
               rules={{ required: 'Team names cannot be empty!' }}
               errorMessage={errors?.teams?.[idx]?.name?.message || ''}
-              inputProps={{
-                label: `Team ${idx + 1} name`,
-              }}
+              label={`Team ${idx + 1} name`}
               key={team.teamId}
             />
           ))}
