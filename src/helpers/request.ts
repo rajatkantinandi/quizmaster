@@ -1,6 +1,6 @@
 import config from '../config';
 import queryString from 'qs';
-import { getCookie } from '../helpers';
+import Cookies from 'js-cookie';
 
 function getEndpointFullUrl(api: string, queryParams: any = {}): string {
   return `${config.backendUrl}/${api}?${queryString.stringify(queryParams, { arrayFormat: 'brackets' })}`;
@@ -42,13 +42,7 @@ export const post = async (url: string, data = {}) => {
 };
 
 export const postBeaconReq = async (url: string, data = {}) => {
-  navigator.sendBeacon(
-    getEndpointFullUrl(url),
-    JSON.stringify({
-      ...data,
-      'auth-token': getCookie('userToken'),
-    }),
-  );
+  navigator.sendBeacon(getEndpointFullUrl(url), JSON.stringify(data));
 };
 
 export const postRedirect = async (url: string, data: any) => {

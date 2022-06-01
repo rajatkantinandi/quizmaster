@@ -1,8 +1,22 @@
 import {
-  getQuizzes, post, get as getReq, formatQuizzesData, saveQuizzes,
-  getQuiz, insertCategoryAndQuestionsData, saveQuiz, postBeaconReq, saveQuestion,
-  addGame, getGame, formatGameData, saveGame, updateGame, unDraftQuiz,
-} from "../helpers";
+  getQuizzes,
+  post,
+  get as getReq,
+  formatQuizzesData,
+  saveQuizzes,
+  getQuiz,
+  insertCategoryAndQuestionsData,
+  saveQuiz,
+  postBeaconReq,
+  saveQuestion,
+  addGame,
+  getGame,
+  formatGameData,
+  saveGame,
+  updateGame,
+  unDraftQuiz,
+} from '../helpers';
+import { GameData } from '../types';
 
 export const getQuizStore = () => ({
   getQuizzes: async () => {
@@ -32,13 +46,13 @@ export const getQuizStore = () => ({
       return data;
     }
   },
-  createOrUpdateQuiz: async (data: any) => {
+  createOrUpdateQuiz: async (data) => {
     const response = await post('quiz/createOrUpdate', data);
     await saveQuiz(response);
 
     return response;
   },
-  sendBeaconPost: async (data: any) => {
+  sendBeaconPost: async (data) => {
     if ('sendBeacon' in navigator) {
       await postBeaconReq('quiz/createOrUpdate', data);
       await saveQuiz(data);
@@ -48,12 +62,12 @@ export const getQuizStore = () => ({
       return response;
     }
   },
-  editQuestion: async (data: any, quizId: string | number) => {
+  editQuestion: async (data, quizId: string | number) => {
     const response = await post('question/edit', data);
 
     await saveQuestion(response, quizId);
   },
-  addGame: async (data: any) => {
+  addGame: async (data) => {
     const response = await post('game/add', data);
     await addGame(response);
 
@@ -72,7 +86,7 @@ export const getQuizStore = () => ({
       return data;
     }
   },
-  updateGame: async (data: any) => {
+  updateGame: async (data: GameData) => {
     const response = await post('game/edit', data);
 
     await updateGame(data);

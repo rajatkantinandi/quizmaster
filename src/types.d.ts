@@ -63,3 +63,16 @@ export interface SelectedOptions {
   questionId: string;
   isQuestionTimerUp?: boolean;
 }
+
+export interface GameData {
+  gameId: number;
+  isComplete: boolean;
+  winnerTeamId: string | null;
+  nextTeamId: number;
+  currentTeam?: {
+    score: number;
+    selectedOptionId: number | null;
+    questionId: number;
+    teamId: number;
+  };
+}

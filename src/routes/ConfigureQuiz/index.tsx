@@ -40,11 +40,11 @@ export default function ConfigureQuiz() {
     getValues,
     setValue,
   } = useForm({ defaultValues: getFormDefaultValues(quizInfo.categoryIds) });
-  let saveQuizNameTimer: any = 0;
+  let saveQuizNameTimer: NodeJS.Timeout;
 
   useEffect(() => {
     if (isInt(quizInfo.quizId)) {
-      getQuiz(quizInfo.quizId as number).then((quiz: Quiz) => {
+      getQuiz(parseInt(`${quizInfo.quizId}`)).then((quiz: Quiz) => {
         const categoryIds = quiz.categories.map((category: Category) => category.categoryId);
 
         setQuizInfo({
@@ -96,8 +96,8 @@ export default function ConfigureQuiz() {
 
   const getCategoryData = (formData: FieldValues): Category[] => {
     return formData.categories
-      .filter((category: any) => category.categoryName && quizInfo.categoryIds.includes(category.categoryId))
-      .map((category: any) => {
+      .filter((category) => category.categoryName && quizInfo.categoryIds.includes(category.categoryId))
+      .map((category) => {
         const categoryData: any = {
           categoryName: category.categoryName,
           questions: Array(parseInt(formData.numberOfQuestionsPerCategory))

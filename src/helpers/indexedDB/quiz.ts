@@ -1,5 +1,18 @@
-import { Quiz } from '../../types';
+import { Quiz, Option, GameData } from '../../types';
 import db from './db';
+
+interface QuizParams extends Quiz {
+  userId: number;
+}
+
+interface QuestionParams {
+  QuestionId: string;
+  Text: string;
+  Options: Option[];
+  Points: number;
+  TimeLimit: number;
+  CategoryId: number;
+}
 
 const quizzesC = db.collection('quizzes');
 const gamesC = db.collection('games');
@@ -11,16 +24,16 @@ export const saveQuiz = async ({
   isDraft = false,
   numberOfQuestionsPerCategory,
   userId,
-}: any) => {
-  let existing: any = await quizzesC.findOne({ quizId });
+}: QuizParams) => {
+  let existing = (await quizzesC.findOne({ quizId })) as Quiz;
 
   if (existing) {
-    categories = categories.map((category: any) => {
-      const existingCategory = existing.categories.find((x: any) => x.categoryId === category.categoryId);
+    categories = categories.map((category) => {
+      const existingCategory = existing.categories.find((x) => x.categoryId === category.categoryId);
 
       if (existingCategory) {
-        category.questions = category.questions.map((q: any) => {
-          const existingQuestion = existingCategory.questions.find((x: any) => x.questionId === q.questionId);
+        category.questions = category.questions.map((q) => {
+          const existingQuestion = existingCategory.questions.find((x) => x.questionId === q.questionId);
 
           return existingQuestion ? { ...existingQuestion, points: q.points } : q;
         });
@@ -38,18 +51,22 @@ export const unDraftQuiz = async (quizId: string | number) => {
   await quizzesC.update({ quizId }, { isDraft: false });
 };
 
-export const saveQuestion = async ({ QuestionId, Text, Points, TimeLimit, Options }: any, quizId: string | number) => {
-  const quiz: any = await quizzesC.findOne({ quizId });
+export const saveQuestion = async (
+  { QuestionId, Text, Points, TimeLimit, Options }: QuestionParams,
+  quizId: string | number,
+) => {
+  const quiz = (await quizzesC.findOne({ quizId })) as Quiz;
   const questionData = {
     questionId: QuestionId,
     text: Text,
     points: Points,
     timeLimit: TimeLimit,
     options: Options,
+    categoryId: 0,
   };
   let questionIndex = -1;
-  const categoryIndex: any = quiz.categories.findIndex((category: any) => {
-    const index = category.questions.findIndex((question: any) => question.questionId === QuestionId);
+  const categoryIndex = quiz.categories.findIndex((category) => {
+    const index = category.questions.findIndex((question) => question.questionId === QuestionId);
 
     if (index >= 0) {
       questionIndex = index;
@@ -58,10 +75,13 @@ export const saveQuestion = async ({ QuestionId, Text, Points, TimeLimit, Option
     return category.questions[index];
   });
 
+  const category = quiz.categories[categoryIndex];
+
   if (questionIndex >= 0) {
-    quiz.categories[categoryIndex].questions[questionIndex] = questionData;
+    questionData.categoryId = category.categoryId as number;
+    category.questions[questionIndex] = questionData;
   } else {
-    quiz.categories[categoryIndex].questions.push(questionData);
+    category.questions.push(questionData);
   }
 
   await quizzesC.update({ quizId }, quiz);
@@ -77,14 +97,14 @@ export const getQuizzes = async (): Promise<Object[]> => {
   }
 };
 
-export const saveQuizzes = async (quizzes: any) => {
+export const saveQuizzes = async (quizzes: Quiz[]) => {
   if (quizzes.length > 0) {
     await quizzesC.insert(quizzes);
   }
 };
 
-export const getQuiz = async (quizId: any) => {
-  const quiz = await quizzesC.findOne({ quizId: parseInt(quizId) });
+export const getQuiz = async (quizId: number) => {
+  const quiz = await quizzesC.findOne({ quizId });
 
   if (quiz) {
     return quiz;
@@ -108,8 +128,8 @@ export const addGame = async (data: {
   await gamesC.insert(data);
 };
 
-export const getGame = async (gameId: any) => {
-  const game: any = await gamesC.findOne({ gameId: parseInt(gameId) });
+export const getGame = async (gameId: number) => {
+  const game: any = await gamesC.findOne({ gameId });
 
   if (game) {
     const quiz = await getQuiz(game.quizId);
@@ -123,15 +143,15 @@ export const getGame = async (gameId: any) => {
   }
 };
 
-export const updateGame = async (gameData: any) => {
-  const game: any = await gamesC.findOne({ gameId: parseInt(gameData.gameId) });
+export const updateGame = async (gameData: GameData) => {
+  const game: any = await gamesC.findOne({ gameId: gameData.gameId });
   game.isComplete = gameData.isComplete;
   game.winnerTeamId = gameData.winnerTeamId;
   game.currentTeamId = gameData.nextTeamId;
   const { currentTeam } = gameData;
 
   if (currentTeam) {
-    const index = game.teams.findIndex((team: any) => team.teamId === currentTeam.teamId);
+    const index = game.teams.findIndex((team) => team.teamId === currentTeam.teamId);
     game.teams[index].score = currentTeam.score;
     game.teams[index].selectedOptions.push({
       selectedOptionId: currentTeam.selectedOptionId,
@@ -142,7 +162,7 @@ export const updateGame = async (gameData: any) => {
   await gamesC.update({ gameId: game.gameId }, game);
 };
 
-export const saveGame = async (gameData: any) => {
+export const saveGame = async (gameData) => {
   const { quiz = [], ...restData } = gameData;
   const existing = await gamesC.findOne({ gameId: gameData.gameId });
 

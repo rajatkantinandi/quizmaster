@@ -140,7 +140,7 @@ export default function ConfigureGame() {
       </Button>
       {showTeamGenerator && (
         <TeamGenerator
-          okCallback={(teams: any) => {
+          okCallback={(teams) => {
             setValue('teams', teams);
             setTeamCount(teams.length);
           }}

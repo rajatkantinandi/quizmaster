@@ -49,6 +49,7 @@ export default function Question({
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
 
+    // submit response or save question on clicking submit or save button
     submitResponse(selectedChoice);
   }
 
@@ -69,7 +70,7 @@ export default function Question({
               <Option
                 optionId={option.optionId}
                 checked={selectedChoice === option.optionId}
-                onChange={(value: any) => setSelectedChoice(value)}
+                onChange={(value) => setSelectedChoice(value)}
                 optionText={option.text}
                 key={option.optionId}
                 className={classNames({

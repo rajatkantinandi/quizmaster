@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
-import { getCookie } from '../../helpers';
+import Cookies from 'js-cookie';
 
 function NavigateToQuizzesIfLoggedIn({ children }: { children: JSX.Element }) {
-  if (getCookie('userToken')) {
+  if (Cookies.get('userToken')) {
     return <Navigate to="/quizzes/:userName" replace />;
   }
 

@@ -7,11 +7,12 @@ import './styles/spacing.css';
 import './styles/card.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { getCookie, get } from './helpers';
+import { get } from './helpers';
 import { useStore } from './useStore';
+import Cookies from 'js-cookie';
 
-if (getCookie('userToken')) {
-  get('user/data').then((resp: any) => {
+if (Cookies.get('userToken')) {
+  get('user/data').then((resp) => {
     useStore.setState({ userData: resp });
     ReactDOM.render(
       <React.StrictMode>

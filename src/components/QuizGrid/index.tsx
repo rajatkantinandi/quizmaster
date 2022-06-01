@@ -26,7 +26,8 @@ export default function QuizGrid({
   savedQuestionIds = [], // for edit mode
 }: Props) {
   const { name, categoryIds } = quizInfo;
-  const selectedOptionsData = gameInfo.teams.reduce(
+  const { isQuestionPointsHidden, teams } = gameInfo;
+  const selectedOptionsData = teams.reduce(
     (acc: SelectedOptions[], team: Team) => acc.concat(team.selectedOptions),
     [],
   );
@@ -73,9 +74,7 @@ export default function QuizGrid({
                       : undefined
                   }
                   disabled={!!selectedOption}>
-                  {gameInfo.isQuestionPointsHidden && selectedQuestionId !== q.questionId
-                    ? 'Q-' + (index + 1)
-                    : q.points}
+                  {isQuestionPointsHidden && selectedQuestionId !== q.questionId ? 'Q-' + (index + 1) : q.points}
                 </Button>
               );
             })}

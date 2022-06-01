@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 import { Button } from 'semantic-ui-react';
 import Question from '../../components/Question';
 import QuizGrid from '../../components/QuizGrid';
-import { Category, Question as IQuestion, QuizInfo, GameInfo, SelectedOptions } from '../../types';
+import { Category, Question as IQuestion, QuizInfo, GameInfo, SelectedOptions, Team } from '../../types';
 import styles from './styles.module.css';
 import Timer from '../../components/Timer';
 import { useStore } from '../../useStore';
@@ -51,10 +51,10 @@ export default function PlayQuiz() {
 
   useEffect(() => {
     if (gameId) {
-      getGameData(parseInt(gameId)).then((game: any) => {
+      getGameData(parseInt(gameId)).then((game) => {
         const { quiz, ...restData } = game;
         const quizData = quiz[0];
-        const categoryIds = quizData.categories.map((category: any) => category.categoryId);
+        const categoryIds = quizData.categories.map((category) => category.categoryId);
         setQuizInfo({
           quizId: quizData.quizId,
           name: quizData.name,
@@ -72,7 +72,7 @@ export default function PlayQuiz() {
     }
   }, [gameId]);
 
-  function showWinner(teams: any[], callback?: Function) {
+  function showWinner(teams: Team[], callback?: Function) {
     const winners = getWinners(teams);
     const winnerIds = winners.map((winner) => winner.teamId).join(',');
     setWinner(winnerIds);
@@ -90,14 +90,14 @@ export default function PlayQuiz() {
     return winnerIds;
   }
 
-  function getWinners(teams: any[]) {
+  function getWinners(teams: Team[]) {
     const maxScore = Math.max(...teams.map((team) => team.score));
     return teams.filter((team) => team.score === maxScore);
   }
 
   async function handleSubmitResponse(optionId?: string, isQuestionTimerUp = false) {
     if (selectedQuestion) {
-      const isCorrect = selectedQuestion.options.find((o: any) => o.optionId === optionId)?.isCorrect;
+      const isCorrect = selectedQuestion.options.find((o) => o.optionId === optionId)?.isCorrect;
       const currentTeamIndex = gameInfo.teams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
       const nextTeamIndex = (currentTeamIndex + 1) % gameInfo.teams.length;
       const clonedTeams = [...gameInfo.teams];
@@ -128,15 +128,15 @@ export default function PlayQuiz() {
       const winner = isComplete ? showWinner(clonedTeams) : null;
 
       await updateGame({
-        gameId,
+        gameId: parseInt(gameId as string),
         isComplete,
         winnerTeamId: winner,
-        nextTeamId: gameInfo.teams[nextTeamIndex].teamId,
+        nextTeamId: parseInt(gameInfo.teams[nextTeamIndex].teamId as string),
         currentTeam: {
           score: clonedTeams[currentTeamIndex].score,
-          selectedOptionId: optionId || null,
-          questionId: selectedQuestion.questionId,
-          teamId: clonedTeams[currentTeamIndex].teamId,
+          selectedOptionId: optionId ? parseInt(optionId) : null,
+          questionId: parseInt(selectedQuestion.questionId),
+          teamId: parseInt(clonedTeams[currentTeamIndex].teamId as string),
         },
       });
     }
@@ -237,11 +237,11 @@ export default function PlayQuiz() {
                 <th>Team</th>
                 <th>Score</th>
               </tr>
-              {gameInfo.teams.map((t: any) => (
+              {gameInfo.teams.map((t: Team) => (
                 <tr key={t.teamId} className={classNames({ [styles.active]: t.teamId === gameInfo.currentTeamId })}>
                   <td>
                     {t.name}
-                    {winner.includes(t.teamId) && <span title="winner"> 👑</span>}
+                    {t.teamId && winner.includes(`${t.teamId}`) && <span title="winner"> 👑</span>}
                   </td>
                   <td>{t.score}</td>
                 </tr>
@@ -255,10 +255,10 @@ export default function PlayQuiz() {
               const winners = getWinners(gameInfo.teams);
 
               await updateGame({
-                gameId,
+                gameId: parseInt(gameId as string),
                 isComplete: true,
                 winnerTeamId: winners.map((winner) => winner.teamId).join(','),
-                nextTeamId: gameInfo.currentTeamId,
+                nextTeamId: gameInfo.currentTeamId as number,
               });
 
               navigate(`/configure-game/${userName}/${quizInfo.quizId}`);

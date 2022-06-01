@@ -69,10 +69,10 @@ const gameSchema = {
   quiz: quizDataSchema,
 };
 
-export const createQuizData = (acc: any, quiz: any, schema: any) => {
+export const createQuizData = (acc, quiz, schema) => {
   const metaData = schema._meta;
-  const index = acc.findIndex((x: any) => x[metaData.dataKey] === quiz[metaData.respKey]);
-  const data: any = index < 0 ? {} : acc[index];
+  const index = acc.findIndex((x) => x[metaData.dataKey] === quiz[metaData.respKey]);
+  const data = index < 0 ? {} : acc[index];
 
   for (const key in schema) {
     if (key !== '_meta') {
@@ -134,8 +134,8 @@ export const createQuizData = (acc: any, quiz: any, schema: any) => {
  * if there are multiple catagories/questions/options,
  * they will keep adding in the respective array
  */
-export const formatQuizzesData = (quizzes: any[]) => {
-  const formattedData = quizzes.reduce((acc, quiz: any) => {
+export const formatQuizzesData = (quizzes) => {
+  const formattedData = quizzes.reduce((acc, quiz) => {
     createQuizData(acc, quiz, quizDataSchema);
     return acc;
   }, []);
@@ -143,8 +143,8 @@ export const formatQuizzesData = (quizzes: any[]) => {
   return formattedData.map(insertCategoryAndQuestionsData);
 };
 
-export const formatGameData = (gameData: any) => {
-  const data = gameData.reduce((acc: any, game: any) => {
+export const formatGameData = (gameData) => {
+  const data = gameData.reduce((acc, game) => {
     createQuizData(acc, game, gameSchema);
     return acc;
   }, []);
@@ -164,13 +164,13 @@ export const formatCategoryInfo = (categories: Category[], categoryIds: (string 
   }, {} as { [key: string]: Category });
 };
 
-export const insertCategoryAndQuestionsData = (quiz: any) => {
+export const insertCategoryAndQuestionsData = (quiz) => {
   if (quiz.categories.length < 3) {
     quiz.categories = [0, 1, 2].map(
       (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
     );
   }
-  quiz.categories.forEach((category: any) => {
+  quiz.categories.forEach((category) => {
     if (category.questions.length < quiz.numberOfQuestionsPerCategory) {
       category.questions = [...Array(quiz.numberOfQuestionsPerCategory).keys()].map(
         (index) => category.questions[index] || getEmptyQuestion(category.categoryId),

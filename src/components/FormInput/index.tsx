@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function FormInput({ inputProps, name, control, rules, errorMessage, componentType }: Props) {
-  const InputElement = (propsVal: any) =>
+  const InputElement = (propsVal) =>
     componentType === FormInputTypes.TEXT_AREA ? (
       <TextArea {...inputProps} {...propsVal} />
     ) : componentType === FormInputTypes.CHECK_BOX ? (
@@ -33,7 +33,7 @@ export default function FormInput({ inputProps, name, control, rules, errorMessa
           <InputElement
             {...field}
             id={name}
-            onChange={(ev: any, data: any) => {
+            onChange={(ev, data) => {
               field.onChange(ev, data);
 
               if (inputProps.onChange) {

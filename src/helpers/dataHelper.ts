@@ -1,4 +1,4 @@
-export const isInt = (value: any) => {
+export const isInt = (value) => {
   if (isNaN(value)) {
     return false;
   }
@@ -6,6 +6,6 @@ export const isInt = (value: any) => {
   return (x | 0) === x;
 };
 
-export function isObject(item: any): boolean {
+export function isObject(item): boolean {
   return item && typeof item === 'object' && !Array.isArray(item);
 }

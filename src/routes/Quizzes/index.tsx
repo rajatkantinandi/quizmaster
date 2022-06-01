@@ -21,7 +21,7 @@ export default function Quizzes() {
       <h1>Welcome: {userName}</h1>
       <h2>Quizzes</h2>
       <section className="mb-xl flex flexWrap">
-        {quizzes.map((quiz: any) => (
+        {quizzes.map((quiz) => (
           <Card
             key={quiz.quizId}
             className="flex alignCenter"
