@@ -1,6 +1,5 @@
 import config from '../config';
 import queryString from 'qs';
-import Cookies from 'js-cookie';
 
 function getEndpointFullUrl(api: string, queryParams: any = {}): string {
   return `${config.backendUrl}/${api}?${queryString.stringify(queryParams, { arrayFormat: 'brackets' })}`;
