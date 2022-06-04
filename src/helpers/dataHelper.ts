@@ -2,7 +2,7 @@ export const isInt = (value) => {
   if (isNaN(value)) {
     return false;
   }
-  var x = parseFloat(value);
+  const x = parseFloat(value);
   return (x | 0) === x;
 };
 

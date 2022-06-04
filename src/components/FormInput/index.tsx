@@ -54,7 +54,6 @@ export default function FormInput({
           />
         )}
       />
-      <label htmlFor={name}></label>
       {errorMessage && (
         <Label basic color="red" size="small" className={styles.errorMessage}>
           {errorMessage}

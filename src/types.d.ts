@@ -43,7 +43,7 @@ export interface Quiz {
 export interface GameInfo {
   gameId?: number;
   winnerTeamId?: string;
-  currentTeamId?: number;
+  currentTeamId: number;
   timeLimit: number;
   selectionTimeLimit: number;
   isComplete?: boolean;
@@ -61,7 +61,6 @@ export interface Team {
 export interface SelectedOptions {
   selectedOptionId: number | null;
   questionId: string;
-  isQuestionTimerUp?: boolean;
 }
 
 export interface GameData {

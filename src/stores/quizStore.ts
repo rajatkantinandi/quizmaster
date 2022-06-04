@@ -5,7 +5,6 @@ import {
   formatQuizzesData,
   saveQuizzes,
   getQuiz,
-  insertCategoryAndQuestionsData,
   saveQuiz,
   postBeaconReq,
   saveQuestion,
@@ -36,7 +35,6 @@ export const getQuizStore = (set: Function, get: Function) => ({
     try {
       const response = await getQuiz(quizId);
 
-      insertCategoryAndQuestionsData(response);
       return response;
     } catch (err) {
       const response = await getReq('quiz/data', { quizId });

@@ -19,7 +19,6 @@ interface Props {
     options: IOption[];
   };
   isWithoutOptions: boolean;
-  isQuestionTimerUp?: boolean;
   isAttempted: boolean;
 }
 
@@ -32,19 +31,22 @@ export default function Question({
   selectedOptionId,
   selectedQuestion,
   isWithoutOptions,
-  isQuestionTimerUp,
   isAttempted,
 }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState(null);
-  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
+  const [selectedChoice, setSelectedChoice] = useState('');
+  const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
   const { options, questionId, text } = selectedQuestion;
 
   useEffect(() => {
-    if (!selectedOptionId) {
+    if (isAttempted && !isPreview) {
       // reveal answer when question is attempted due to timeout
-      setIsAnswerRevealed(!!isQuestionTimerUp);
+      setIsAnswerRevealed(true);
     }
-  }, [isQuestionTimerUp, questionId, selectedOptionId]);
+  }, [isAttempted, isPreview]);
+
+  useEffect(() => {
+    setIsAnswerRevealed(isPreview);
+  }, [questionId]);
 
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
@@ -70,7 +72,7 @@ export default function Question({
               <Option
                 optionId={option.optionId}
                 checked={selectedChoice === option.optionId}
-                onChange={(value) => setSelectedChoice(value)}
+                onChange={(value: string) => setSelectedChoice(value)}
                 optionText={option.text}
                 key={option.optionId}
                 className={classNames({
@@ -100,15 +102,14 @@ export default function Question({
         </Button>
       )}
       <Divider />
-      {(selectedOptionId || isQuestionTimerUp) && (!isPreview || isQuestionSaved) ? (
+      {isAttempted && (!isPreview || isQuestionSaved) ? (
         <Button size="large" onClick={() => onClose()} type="button" color="blue">
           Close
         </Button>
       ) : isWithoutOptions && !isPreview ? (
         // Show correct & incorrect button in non preview mode when playing
         // When answer is revealed by quiz host show correct or incorrect button, clicking on which will add points accordingly
-        isAnswerRevealed &&
-        !isQuestionTimerUp && (
+        isAnswerRevealed && (
           <div className="flex">
             <Button type="button" size="large" className="fullWidth" color="red" onClick={() => submitResponse(null)}>
               Incorrect

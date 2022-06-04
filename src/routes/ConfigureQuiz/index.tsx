@@ -6,7 +6,7 @@ import FormInput from '../../components/FormInput';
 import { useNavigate, useParams } from 'react-router';
 import { QuizInfo as IQuizInfo, Quiz, Category } from '../../types';
 import { nanoid } from 'nanoid';
-import { getEmptyQuestion, getEmptyCategory, isInt } from '../../helpers';
+import { getEmptyQuestion, getEmptyCategory, isInt, insertCategoryAndQuestionsData } from '../../helpers';
 
 const getFormDefaultValues = (categoryIds: (string | number)[]) => {
   return {
@@ -25,11 +25,11 @@ const getFormDefaultValues = (categoryIds: (string | number)[]) => {
 export default function ConfigureQuiz() {
   const { userName = 'guest', ...rest } = useParams();
   const navigate = useNavigate();
-  const [quizInfo, setQuizInfo] = useState({
+  const [quizInfo, setQuizInfo] = useState<IQuizInfo>({
     quizId: rest.quizId || nanoid(),
     categoryIds: [nanoid(), nanoid(), nanoid()],
     numberOfQuestionsPerCategory: 5,
-  } as IQuizInfo);
+  });
   const [refreshComponent, setRefreshComponent] = useState(0);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost } = useStore();
   const {
@@ -45,6 +45,7 @@ export default function ConfigureQuiz() {
   useEffect(() => {
     if (isInt(quizInfo.quizId)) {
       getQuiz(parseInt(`${quizInfo.quizId}`)).then((quiz: Quiz) => {
+        insertCategoryAndQuestionsData(quiz);
         const categoryIds = quiz.categories.map((category: Category) => category.categoryId);
 
         setQuizInfo({

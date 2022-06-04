@@ -3,6 +3,7 @@ import { Button, Divider, Icon } from 'semantic-ui-react';
 import { Category, QuizInfo, GameInfo, Team, SelectedOptions } from '../../types';
 import classNames from 'classnames';
 import styles from './styles.module.css';
+import { defaultGameInfo } from '../../constants';
 
 interface Props {
   showQuestion: (questionId: string | number, categoryId: string | number) => void;
@@ -22,7 +23,7 @@ export default function QuizGrid({
   showQuestion,
   categoriesInfo,
   quizInfo,
-  gameInfo = { teams: [], timeLimit: 0, selectionTimeLimit: 0, isQuestionPointsHidden: false },
+  gameInfo = defaultGameInfo,
   savedQuestionIds = [], // for edit mode
 }: Props) {
   const { name, categoryIds } = quizInfo;
