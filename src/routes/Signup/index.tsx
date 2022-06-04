@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
+import { Helmet } from 'react-helmet';
 
 export default function Login() {
   const {
@@ -26,6 +27,9 @@ export default function Login() {
 
   return (
     <div className="flexCol flex">
+      <Helmet>
+        <title>Sign up</title>
+      </Helmet>
       <Form className="flexCol flex container-md" onSubmit={handleSubmit(handleSignUp)}>
         <FormInput
           name="name"

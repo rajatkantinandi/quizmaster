@@ -10,6 +10,7 @@ import Timer from '../../components/Timer';
 import { useStore } from '../../useStore';
 import { formatCategoryInfo } from '../../helpers';
 import { defaultGameInfo } from '../../constants';
+import { Helmet } from 'react-helmet';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -166,9 +167,9 @@ export default function PlayQuiz() {
     <></>
   ) : (
     <>
-      <div className="flex alignCenter">
-        <h1>asda</h1>
-      </div>
+      <Helmet>
+        <title>Play Quiz</title>
+      </Helmet>
       <div className="flex justifyCenter">
         <QuizGrid
           categoriesInfo={categoriesInfo}

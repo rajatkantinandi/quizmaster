@@ -5,6 +5,7 @@ import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -27,6 +28,9 @@ export default function Login() {
 
   return (
     <div className="flex flexCol">
+      <Helmet>
+        <title>Login</title>
+      </Helmet>
       <Form className="flex flexCol container-md" onSubmit={handleSubmit(handleLogin)}>
         <FormInput
           name="userName"

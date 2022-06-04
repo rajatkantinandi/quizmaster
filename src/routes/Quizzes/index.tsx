@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Card } from 'semantic-ui-react';
 import { useStore } from '../../useStore';
+import { Helmet } from 'react-helmet';
 
 export default function Quizzes() {
   const { userName } = useParams();
@@ -18,6 +19,9 @@ export default function Quizzes() {
 
   return (
     <>
+      <Helmet>
+        <title>Quizzes</title>
+      </Helmet>
       <h1>Welcome: {userName}</h1>
       <h2>Quizzes</h2>
       <section className="mb-xl flex flexWrap">

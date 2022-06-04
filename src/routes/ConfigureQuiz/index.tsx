@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router';
 import { QuizInfo as IQuizInfo, Quiz, Category } from '../../types';
 import { nanoid } from 'nanoid';
 import { getEmptyQuestion, getEmptyCategory, isInt, insertCategoryAndQuestionsData } from '../../helpers';
+import { Helmet } from 'react-helmet';
 
 const getFormDefaultValues = (categoryIds: (string | number)[]) => {
   return {
@@ -189,6 +190,9 @@ export default function ConfigureQuiz() {
 
   return (
     <>
+      <Helmet>
+        <title>Create Quiz</title>
+      </Helmet>
       <Form className="flex flexCol" onSubmit={handleSubmit(onFormSubmit)}>
         <div className="container-md">
           <FormInput

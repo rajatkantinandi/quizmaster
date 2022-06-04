@@ -6,6 +6,7 @@ import QuizGrid from '../../components/QuizGrid';
 import { Category, Question as IQuestion, QuizInfo, Quiz, Option } from '../../types';
 import { useStore } from '../../useStore';
 import { formatCategoryInfo, isInt, plural } from '../../helpers';
+import { Helmet } from 'react-helmet';
 
 export default function AddEditQuiz() {
   const { quizId, userName = 'guest' } = useParams();
@@ -144,6 +145,9 @@ export default function AddEditQuiz() {
     <></>
   ) : (
     <>
+      <Helmet>
+        <title>Add Question to Quiz</title>
+      </Helmet>
       <div className="flex justifyCenter">
         <QuizGrid
           categoriesInfo={categoriesInfo}

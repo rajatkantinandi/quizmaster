@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import cookie from 'js-cookie';
 import { nanoid } from 'nanoid';
 import { useStore } from '../../useStore';
+import { Helmet } from 'react-helmet';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -44,6 +45,9 @@ export default function HomePage() {
 
   return (
     <section>
+      <Helmet>
+        <title>Homepage</title>
+      </Helmet>
       <h1>Welcome to quizmaster</h1>
       <nav className={styles.nav}>
         <div className="flex">
