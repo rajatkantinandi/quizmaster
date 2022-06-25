@@ -1,0 +1,12 @@
+.inputWrapper {
+  position: relative;
+  margin-bottom: 2em !important;
+}
+
+.errorMessage {
+  position: absolute !important;
+  left: 0;
+  bottom: -15px;
+  border: none !important;
+  padding: 0 !important;
+}

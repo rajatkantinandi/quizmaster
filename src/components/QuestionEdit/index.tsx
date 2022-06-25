@@ -1,112 +1,69 @@
 import classNames from 'classnames';
 import { nanoid } from 'nanoid';
-import React, { useState } from 'react';
-import { Button, Checkbox, Divider, Icon, Input, Label, Tab, TextArea } from 'semantic-ui-react';
-import { Option as IOption } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { Button, Checkbox, Divider, Icon, Label, Tab } from 'semantic-ui-react';
+import { Question as IQuestion, Option } from '../../types';
 import Question from '../Question';
 import styles from './styles.module.css';
 import markdownLogo from '../../img/markdown.svg';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
+import { useForm, FieldValues } from 'react-hook-form';
+import FormInput from '../../components/FormInput';
+import { FormInputTypes } from '../../constants';
+import { getEmptyOptions } from '../../helpers';
 
 interface Props {
-  text: string;
-  options: IOption[];
+  selectedQuestion: IQuestion;
   saveQuestion: Function;
-  correctOptionId?: string;
-  point: number;
   onClose: Function;
-  withoutOptions?: boolean;
 }
 
-export default function QuestionEdit({
-  text,
-  options,
-  saveQuestion,
-  correctOptionId = '',
-  point,
-  onClose,
-  withoutOptions = false,
-}: Props) {
-  const [questionText, setQuestionText] = useState(text || '');
-  const [questionOptions, setQuestionOptions] = useState<IOption[]>(
-    options.length > 0
-      ? options
-      : [
-          {
-            id: nanoid(),
-            optionText: '',
-          },
-          {
-            id: nanoid(),
-            optionText: '',
-          },
-        ],
-  );
-  const [questionCorrectOptionId, setQuestionCorrectOptionId] = useState(correctOptionId || '');
-  const [questionPoint, setQuestionPoint] = useState(point);
+export default function QuestionEdit({ selectedQuestion, saveQuestion, onClose }: Props) {
+  const { text, options, points } = selectedQuestion;
+  const formDefaultValues = {
+    text,
+    points,
+    options: options.length > 0 ? options : getEmptyOptions(2),
+  };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    setValue,
+    reset,
+  } = useForm({ defaultValues: formDefaultValues });
+
+  useEffect(() => {
+    reset(formDefaultValues);
+  }, [selectedQuestion.questionId]);
+
+  const [refreshComponent, setRefreshComponent] = useState(0);
   const [isPreview, setIsPreview] = useState(false);
   const [isQuestionSaved, setIsQuestionSaved] = useState(false);
-  const [isWithoutOptions, setIsWithoutOptions] = useState(withoutOptions);
-  const { showErrorModal } = useAppStore();
+  const [isWithoutOptions, setIsWithoutOptions] = useState(options.length === 1);
+  const { showErrorModal } = useStore();
+  const optionsData = getValues('options');
 
-  function handleSubmit(ev?: any) {
-    if (ev) {
-      ev.preventDefault();
-    }
-
-    const validationError = getValidationError();
-
-    if (validationError) {
-      showErrorModal({ message: validationError });
-    } else {
-      saveQuestion({
-        text: questionText,
-        options: isWithoutOptions ? questionOptions.slice(0, 1) : questionOptions,
-        correctOptionId: isWithoutOptions ? questionOptions[0].id : questionCorrectOptionId,
-        point: questionPoint,
-        isWithoutOptions,
-      });
-      setIsPreview(true);
-      setIsQuestionSaved(true);
-    }
-  }
-
-  function handleOptionChange(ev: any, id: string) {
-    setQuestionOptions(
-      questionOptions.map((o) => {
-        if (o.id === id) {
-          return { id, optionText: ev.target.value };
-        } else {
-          return o;
-        }
-      }),
-    );
-  }
-
-  function getValidationError() {
-    if (questionText.trim().length === 0) {
-      return 'The question text should not be empty!';
-    }
+  function onFormSubmit(data: FieldValues) {
     if (isWithoutOptions) {
-      if (questionOptions[0].optionText.trim().length === 0) {
-        return 'The correct answer should not be empty!';
-      }
+      const firstOption = data.options[0];
+      firstOption.isCorrect = true;
+      data.options = [firstOption];
     } else {
-      if (questionOptions.length < 2) {
-        return 'At least 2 options are mandatory!';
+      const validationError = getValidationError();
+
+      if (validationError) {
+        showErrorModal({ message: validationError });
+
+        return;
       }
-      if (questionOptions.some((q) => q.optionText.trim().length === 0)) {
-        return 'Option text should not be empty!';
-      }
-      if (!questionOptions.some((q) => q.id === questionCorrectOptionId)) {
-        return 'Please select 1 correct option!';
-      }
-    }
-    if (!questionPoint || questionPoint < 0) {
-      return "Question's correct response points should be greater than zero!";
     }
 
-    return '';
+    saveQuestion(data);
+    setIsPreview(true);
+    setIsQuestionSaved(true);
   }
 
   function togglePreview() {
@@ -115,6 +72,48 @@ export default function QuestionEdit({
     }
 
     setIsPreview(!isPreview);
+  }
+
+  function setQuestionCorrectOptionId(optionId: string | number, checked: boolean) {
+    const options = optionsData.map((option) => ({
+      ...option,
+      isCorrect: checked && option.optionId === optionId,
+    }));
+    setValue('options', options);
+    setRefreshComponent(Math.random());
+  }
+
+  function removeOption(ev: React.MouseEvent, optionId: string | number) {
+    ev.preventDefault();
+    if (optionsData.length === 2) {
+      showErrorModal({ message: 'At least 2 options are mandatory!' });
+    } else {
+      const remainingOptions = optionsData.filter((o) => o.optionId !== optionId);
+      setValue('options', remainingOptions);
+      setRefreshComponent(Math.random());
+    }
+  }
+
+  function addOption(ev: React.MouseEvent) {
+    ev.preventDefault();
+    const options = optionsData.concat({
+      optionId: nanoid(),
+      text: '',
+      isCorrect: false,
+    });
+
+    setValue('options', options);
+    setRefreshComponent(Math.random());
+  }
+
+  function getValidationError() {
+    if (!optionsData.some((option) => option.isCorrect)) {
+      return 'Please select 1 correct option!';
+    } else if (optionsData.length < 2) {
+      return 'At least 2 options are mandatory!';
+    }
+
+    return '';
   }
 
   return (
@@ -127,13 +126,26 @@ export default function QuestionEdit({
       <form
         aria-hidden={isPreview}
         className={classNames(styles.container, { [styles.toggledOff]: isPreview })}
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit(onFormSubmit)}>
         <div className={styles.editFormBody}>
           <Label as="label" className={styles.questionText}>
             <div className="mb-md">
               Question text <MarkDownLogo />
             </div>
-            <TextArea rows={4} value={questionText} onChange={(ev) => setQuestionText(ev.target.value)} />
+            <FormInput
+              name="text"
+              id="text"
+              control={control}
+              rules={{
+                required: 'The question text should not be empty!',
+                validate: (value: string) => !!value.trim() || 'The question text should not be empty!',
+              }}
+              errorMessage={errors.text?.message || ''}
+              componentType={FormInputTypes.TEXT_AREA}
+              inputProps={{
+                rows: 4,
+              }}
+            />
           </Label>
           <Divider />
           <Tab
@@ -143,39 +155,41 @@ export default function QuestionEdit({
                 menuItem: 'With options',
                 render: () => (
                   <Tab.Pane active={!isWithoutOptions}>
-                    {questionOptions.map((option, idx) => (
-                      <div className="flex alignStart" key={option.id}>
+                    {optionsData.map((option: Option, idx: number) => (
+                      <div className="flex alignStart" key={option.optionId}>
                         <Checkbox
-                          checked={option.id === questionCorrectOptionId}
-                          value={option.id}
+                          checked={option.isCorrect}
                           className={classNames('mr-lg mt-lg', styles.optionCheckbox)}
-                          onChange={(ev, data) => setQuestionCorrectOptionId(data.value as string)}
+                          onChange={(ev, data) => setQuestionCorrectOptionId(option.optionId, !!data.checked)}
                         />
                         <Label as="label" className={styles.optionText}>
                           <div className="mb-md">
                             Option {idx + 1} <MarkDownLogo />
                           </div>
-                          <TextArea
-                            rows={1}
-                            value={option.optionText}
-                            onChange={(ev) => handleOptionChange(ev, option.id)}
+                          <FormInput
+                            name={`options[${idx}].text`}
+                            id={`options${idx}text`}
+                            control={control}
+                            rules={{
+                              required: 'Option text should not be empty!',
+                              validate: (value: string) => !!value.trim() || 'Option text should not be empty!',
+                            }}
+                            errorMessage={errors.options?.[idx]?.text?.message || ''}
+                            componentType={FormInputTypes.TEXT_AREA}
+                            inputProps={{
+                              rows: 1,
+                            }}
                           />
                         </Label>
                         <Button
                           icon={<Icon name="trash" />}
                           basic
                           className="mt-lg"
-                          onClick={() => setQuestionOptions(questionOptions.filter((o) => o.id !== option.id))}
+                          onClick={(ev) => removeOption(ev, option.optionId)}
                         />
                       </div>
                     ))}
-                    <Button
-                      color="blue"
-                      onClick={() => {
-                        setQuestionOptions(questionOptions.concat({ id: nanoid(), optionText: '' }));
-                      }}
-                      type="button"
-                      className="alignSelfStart">
+                    <Button color="blue" onClick={addOption} type="button" className="alignSelfStart">
                       Add Option
                     </Button>
                   </Tab.Pane>
@@ -189,10 +203,19 @@ export default function QuestionEdit({
                       <div className="mb-md">
                         Correct answer <MarkDownLogo />
                       </div>
-                      <TextArea
-                        rows={1}
-                        value={questionOptions[0].optionText}
-                        onChange={(ev) => handleOptionChange(ev, questionOptions[0].id)}
+                      <FormInput
+                        name="options[0].text"
+                        id="withoutOptionsText"
+                        control={control}
+                        rules={{
+                          required: 'The correct answer should not be empty!',
+                          validate: (value: string) => !!value.trim() || 'The correct answer should not be empty!',
+                        }}
+                        errorMessage={errors.options?.[0]?.text?.message || ''}
+                        componentType={FormInputTypes.TEXT_AREA}
+                        inputProps={{
+                          rows: 1,
+                        }}
                       />
                     </Label>
                   </Tab.Pane>
@@ -202,11 +225,20 @@ export default function QuestionEdit({
             onTabChange={() => setIsWithoutOptions(!isWithoutOptions)}
           />
           <Divider />
-          <Input
+          <FormInput
+            name="points"
+            id="points"
+            control={control}
+            rules={{
+              required: "Question's correct response points should not be empty",
+              validate: (value: number) =>
+                (value && value > 0) || "Question's correct response points should be greater than zero!",
+            }}
+            errorMessage={errors.points?.message || ''}
             label="Points for correct response"
-            onChange={(ev) => setQuestionPoint(parseInt(ev.target.value, 10) || 0)}
-            value={questionPoint}
-            type="number"
+            inputProps={{
+              type: 'number',
+            }}
           />
         </div>
         <Divider />
@@ -216,16 +248,16 @@ export default function QuestionEdit({
       </form>
       <div aria-hidden={!isPreview} className={classNames(styles.container, { [styles.toggledOff]: !isPreview })}>
         <Question
-          text={questionText}
-          options={questionOptions}
-          preSelectedChoice={questionCorrectOptionId}
+          selectedQuestion={getValues()}
           onClose={onClose}
-          isAttempted
-          isCorrect
           isPreview
+          isAttempted
           isQuestionSaved={isQuestionSaved}
-          submitResponse={() => handleSubmit()}
+          submitResponse={() => onFormSubmit(getValues())}
           isWithoutOptions={isWithoutOptions}
+          selectedOptionId={
+            isWithoutOptions ? optionsData[0].optionId : optionsData.find((option) => option.isCorrect)?.optionId
+          }
         />
       </div>
     </div>

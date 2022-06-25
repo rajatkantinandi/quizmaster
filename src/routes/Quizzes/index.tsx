@@ -1,52 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Button, Card } from 'semantic-ui-react';
-import { getQuizzes } from '../../helpers/quiz';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
+import { useStore } from '../../useStore';
+import { Helmet } from 'react-helmet';
 
-export default function Login() {
+export default function Quizzes() {
   const { userName } = useParams();
   const [quizzes, setQuizzes] = useState<any>([]);
+  const { getQuizzes } = useStore();
   const navigate = useNavigate();
-  useLoginCheckAndPageTitle();
 
   useEffect(() => {
-    getQuizzes(userName || '').then((quizzes) => {
-      if (quizzes) {
-        setQuizzes(quizzes);
-      }
+    getQuizzes().then((quizzes) => {
+      setQuizzes(quizzes);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
+      <Helmet>
+        <title>Quizzes</title>
+      </Helmet>
       <h1>Welcome: {userName}</h1>
       <h2>Quizzes</h2>
       <section className="mb-xl flex flexWrap">
-        {quizzes.map((quiz: any) => (
+        {quizzes.map((quiz) => (
           <Card
-            key={quiz.id}
+            key={quiz.quizId}
             className="flex alignCenter"
             onClick={() => {
               if (quiz.isDraft) {
-                navigate(`/edit-quiz/${userName}/${quiz.id}`);
+                navigate(`/configure-quiz/${userName}/${quiz.quizId}`);
               } else {
-                navigate(`/play-quiz/${userName}/${quiz.id}`);
+                navigate(`/configure-game/${userName}/${quiz.quizId}`);
               }
             }}>
             <div className="title">{quiz.name}</div>
             <div className="details">
               {quiz.categories.length} Categories
               <br />
-              {quiz.categories[0].questions.length} Questions per category.
+              {quiz.numberOfQuestionsPerCategory} Questions per category.
               {quiz.isDraft && <div className="badge">Draft</div>}
             </div>
             <div className="action">{quiz.isDraft ? 'Edit' : 'Play'}</div>
           </Card>
         ))}
       </section>
-      <Button onClick={() => navigate(`/edit-quiz/${userName}`)} size="large" color="green">
+      <Button onClick={() => navigate(`/configure-quiz/${userName}`)} size="large" color="green">
         + Create Quiz
       </Button>
     </>

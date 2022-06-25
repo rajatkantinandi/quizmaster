@@ -1,174 +1,148 @@
-import classNames from 'classnames';
-import { nanoid } from 'nanoid';
 import React, { useEffect, useState } from 'react';
+import classNames from 'classnames';
 import { useNavigate, useParams } from 'react-router';
 import { Button } from 'semantic-ui-react';
 import Question from '../../components/Question';
 import QuizGrid from '../../components/QuizGrid';
-import { getQuiz, getQuizRun, saveGame } from '../../helpers/quiz';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
-import { Category, Question as IQuestion } from '../../types';
-import ConfigureGame from './ConfigureGame';
+import { Category, Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
 import styles from './styles.module.css';
 import Timer from '../../components/Timer';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
+import { formatCategoryInfo } from '../../helpers';
+import { defaultGameInfo } from '../../constants';
+import { Helmet } from 'react-helmet';
+
+const defaultQuizInfo: QuizInfo = {
+  quizId: '',
+  name: '',
+  categoryIds: [],
+  numberOfQuestionsPerCategory: 5,
+};
+
+const defaultCategoryInfo: { [key: string]: Category } = {};
+const defaultSelectedQuestion: IQuestion | null = null;
 
 export default function PlayQuiz() {
-  const { id, userName } = useParams();
-  const navigate = useNavigate();
-  const [name, setName] = useState('');
-  useLoginCheckAndPageTitle(name);
-  const [categoriesInfo, setCategoriesInfo] = useState<Category[]>([]);
-  const [isConfigured, setIsConfigured] = useState(false);
-  const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
-  const [teams, setTeams] = useState([
-    {
-      name: '',
-      id: nanoid(),
-      score: 0,
-    },
-    {
-      name: '',
-      id: nanoid(),
-      score: 0,
-    },
-  ]);
-  const [attemptedQuestions, setAttemptedQuestions] = useState<
-    {
-      id: string;
-      isCorrect: boolean;
-    }[]
-  >([]);
-  const [currentTeamId, setCurrentTeamId] = useState('');
-  const [gameId, setGameId] = useState('');
-  const [questionTimer, setQuestionTimer] = useState(0);
-  const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);
+  const { gameId, userName } = useParams();
+  const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
+  const [gameInfo, setGameInfo] = useState(defaultGameInfo);
+  const [categoriesInfo, setCategoriesInfo] = useState(defaultCategoryInfo);
+  const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
+  const { timeLimit, selectionTimeLimit } = gameInfo;
   const [isPlaying, setIsPlaying] = useState(false);
-  const [winner, setWinner] = useState<string | null>(null);
-  const isQuestionAttempted = !!selectedQuestion && attemptedQuestions.some((q: any) => q.id === selectedQuestion.id);
-  const showQuestionTimer = !!questionTimer && !!selectedQuestion && !isQuestionAttempted;
-  const { showAlertModal } = useAppStore();
+  const [winner, setWinner] = useState('');
+  const selectedOptionsData = gameInfo.teams.reduce(
+    (acc, team) => acc.concat(team.selectedOptions),
+    [] as SelectedOptions[],
+  );
+  const attemptedQuestionIds = selectedOptionsData.map((x) => x.questionId);
+  const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.questionId);
+  const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
+  const { showAlertModal, getGameData, updateGame } = useStore();
   const [isLoading, setIsLoading] = useState(true);
-  const [isQuestionPointsHidden, setIsQuestionPointsHidden] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (id) {
-      getQuiz(id).then((quiz: any) => {
-        setName(quiz.name);
+    if (gameId) {
+      getGameData(parseInt(gameId)).then((game) => {
+        const { quiz, ...restData } = game;
+        const quizData = quiz[0];
+        const categoryIds = quizData.categories.map((category) => category.categoryId);
+        setQuizInfo({
+          quizId: quizData.quizId,
+          name: quizData.name,
+          categoryIds,
+          numberOfQuestionsPerCategory: quizData.numberOfQuestionsPerCategory,
+        });
 
-        if (quiz.categories && quiz.categories.length > 0) {
-          setCategoriesInfo(quiz.categories);
-        }
-      });
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (id && name) {
-      getQuizRun(id).then((quizRun: any) => {
-        if (quizRun) {
-          setTeams(quizRun.teams);
-          setAttemptedQuestions(quizRun.attemptedQuestions);
-          setCurrentTeamId(quizRun.currentTeamId);
-          setQuestionTimer(quizRun.questionTimer || 0);
-          setQuestionSelectionTimer(quizRun.questionSelectionTimer || 0);
-          setIsQuestionPointsHidden(quizRun.isQuestionPointsHidden || false);
-
-          if (quizRun.isComplete) {
-            showWinner(quizRun.teams);
-          }
-          setGameId(quizRun._id);
-          setIsConfigured(true);
-        } else {
-          setGameId(nanoid());
+        if (categoryIds.length > 0) {
+          setCategoriesInfo(formatCategoryInfo(quizData.categories, categoryIds));
         }
 
+        setGameInfo(restData);
         setIsLoading(false);
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, id]);
+  }, [gameId]);
 
-  function showWinner(teams: any[], callback?: Function) {
-    let winner = teams[0];
-    let isDraw = false;
+  function showWinner(teams: Team[], callback?: Function) {
+    const winners = getWinners(teams);
+    const winnerIds = winners.map((winner) => winner.teamId).join(',');
+    setWinner(winnerIds);
 
-    teams.slice(1).forEach((t) => {
-      if (t.score === winner.score) {
-        isDraw = true;
-      } else {
-        isDraw = false;
-
-        if (t.score > winner.score) {
-          winner = t;
-        }
-      }
-    });
-
-    if (isDraw) {
+    if (winners.length > 1) {
       showAlertModal({ title: 'Match drawn!', message: 'Well played! It is a draw!', okCallback: callback });
-      setWinner('draw');
     } else {
-      setWinner(winner.id);
       showAlertModal({
-        title: `Congrats ${winner.name}!`,
-        message: `Team '${winner.name}' has won the game with ${winner.score} points.`,
+        title: `Congrats ${winners[0].name}!`,
+        message: `Team '${winners[0].name}' has won the game with ${winners[0].score} points.`,
         okCallback: callback,
       });
     }
+
+    return winnerIds;
   }
 
-  async function handleSubmitResponse(questionId: string, optionId: string) {
-    const allQuestions = categoriesInfo.reduce((acc, curr) => acc.concat(curr.questions), [] as IQuestion[]);
-    const question = allQuestions.find((q) => q.id === questionId);
+  function getWinners(teams: Team[]) {
+    const maxScore = Math.max(...teams.map((team) => team.score));
+    return teams.filter((team) => team.score === maxScore);
+  }
 
-    if (question) {
-      const isCorrect = question.options.some(
-        (o) => o.id === optionId && btoa(o.optionText) === question.correctOptionHash,
-      );
-      const attemptedQuestionsToSet = attemptedQuestions.concat({
-        id: questionId,
-        isCorrect,
-      });
-      setAttemptedQuestions(attemptedQuestionsToSet);
+  async function handleSubmitResponse(optionId?: string) {
+    if (selectedQuestion) {
+      const isCorrect = selectedQuestion.options.find((o) => o.optionId === optionId)?.isCorrect;
+      const currentTeamIndex = gameInfo.teams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
+      const nextTeamIndex = (currentTeamIndex + 1) % gameInfo.teams.length;
+      const clonedTeams = [...gameInfo.teams];
+      const allQuestionCount = quizInfo.categoryIds.reduce((count: number, catId) => {
+        count += categoriesInfo[catId].questions.length;
 
-      const teamsToSet = [...teams];
-      const activeTeamIndex = teamsToSet.findIndex((t) => t.id === currentTeamId);
-      let currentTeamIdToSet = currentTeamId;
-      const nextTeamIndex = (activeTeamIndex + 1) % teamsToSet.length;
+        return count;
+      }, 0);
 
-      if (activeTeamIndex !== -1) {
-        teamsToSet[activeTeamIndex].score += isCorrect ? question.point : 0;
-        setTeams(teamsToSet);
-        currentTeamIdToSet = teamsToSet[nextTeamIndex]?.id;
-        setCurrentTeamId(currentTeamIdToSet);
+      if (currentTeamIndex >= 0) {
+        const currentTeam = clonedTeams[currentTeamIndex];
+        currentTeam.score += isCorrect ? selectedQuestion.points : 0;
+        currentTeam.selectedOptions.push({
+          questionId: selectedQuestion.questionId,
+          selectedOptionId: optionId ? parseInt(optionId) : null,
+        });
+
+        setGameInfo({
+          ...gameInfo,
+          currentTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
+          teams: clonedTeams,
+        });
       }
+
       setIsPlaying(false);
+      const isComplete = allQuestionCount === selectedOptionsData.length + 1;
+      const winner = isComplete ? showWinner(clonedTeams) : null;
 
-      const isComplete = nextTeamIndex === 0 && allQuestions.length - attemptedQuestionsToSet.length < teams.length;
-
-      await saveGame(gameId, {
-        attemptedQuestions: attemptedQuestionsToSet,
-        quizId: id || '',
-        quizName: name,
+      await updateGame({
+        gameId: parseInt(`${gameId}`),
         isComplete,
-        currentTeamId: currentTeamIdToSet,
-        teams: teamsToSet,
-        questionTimer,
-        questionSelectionTimer,
-        isQuestionPointsHidden,
+        winnerTeamId: winner,
+        nextTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
+        currentTeam: {
+          score: clonedTeams[currentTeamIndex].score,
+          selectedOptionId: optionId ? parseInt(optionId) : null,
+          questionId: parseInt(selectedQuestion.questionId),
+          teamId: parseInt(`${clonedTeams[currentTeamIndex].teamId}`),
+        },
       });
-
-      if (isComplete) {
-        showWinner(teamsToSet);
-      }
     }
   }
 
   function selectRandomQuestion() {
-    const allUnattemptedQuestions = categoriesInfo
-      .reduce((acc, curr) => acc.concat(curr.questions), [] as IQuestion[])
-      .filter((q) => !attemptedQuestions.some((aq) => aq.id === q.id));
+    const allQuestions = quizInfo.categoryIds.reduce(
+      (acc, catId) => acc.concat(categoriesInfo[catId].questions),
+      [] as IQuestion[],
+    );
+
+    const allUnattemptedQuestions = allQuestions.filter(
+      (q) => !selectedOptionsData.find((x) => x.questionId === q.questionId),
+    );
 
     if (allUnattemptedQuestions.length > 0) {
       setSelectedQuestion(allUnattemptedQuestions[Math.floor(Math.random() * allUnattemptedQuestions.length)]);
@@ -176,135 +150,112 @@ export default function PlayQuiz() {
     }
   }
 
+  function showQuestion(questionId: string | number, categoryId: string | number) {
+    if (categoryId) {
+      const question = categoriesInfo[categoryId].questions.find((q) => q.questionId === questionId);
+
+      setSelectedQuestion(question || null);
+      setIsPlaying(true);
+    }
+  }
+
+  function shouldShowTimer() {
+    return ((!selectedQuestion && !!selectionTimeLimit) || (selectedQuestion && showQuestionTimer)) && !winner;
+  }
+
   return isLoading ? (
     <></>
   ) : (
     <>
-      <div className="flex alignCenter">
-        <h1>{name}</h1>
-        <Button
-          onClick={() => navigate(`/edit-quiz/${userName}/${id}`)}
-          basic
-          color="blue"
-          size="mini"
-          className="mb-lg ml-xl">
-          Edit Quiz
-        </Button>
-      </div>
-      {!isConfigured && (
-        <ConfigureGame
-          teams={teams}
-          setTeams={setTeams}
-          setIsConfigured={setIsConfigured}
-          setCurrentTeamId={setCurrentTeamId}
-          questionTimer={questionTimer}
-          setQuestionTimer={setQuestionTimer}
-          questionSelectionTimer={questionSelectionTimer}
-          setQuestionSelectionTimer={setQuestionSelectionTimer}
-          isQuestionPointsHidden={isQuestionPointsHidden}
-          setIsQuestionPointsHidden={setIsQuestionPointsHidden}
+      <Helmet>
+        <title>Play Quiz</title>
+      </Helmet>
+      <div className="flex justifyCenter">
+        <QuizGrid
+          categoriesInfo={categoriesInfo}
+          showQuestion={showQuestion}
+          gameInfo={gameInfo}
+          isExpanded={!selectedQuestion}
+          quizInfo={quizInfo}
+          setIsExpanded={(expanded: boolean) => {
+            // Upon expanding grid deselect question & resume play
+            if (expanded) {
+              setSelectedQuestion(null);
+              setIsPlaying(!winner);
+            }
+          }}
+          selectedQuestionId={selectedQuestion?.questionId || ''}
         />
-      )}
-      {isConfigured && (
-        <div className="flex justifyCenter">
-          <QuizGrid
-            categoriesInfo={categoriesInfo}
-            showQuestion={(id, categoryId) => {
-              const category = categoriesInfo.find((category) => category.id === categoryId);
-
-              if (category) {
-                const question = category.questions.find((q) => q.id === id);
-
-                setSelectedQuestion(question || null);
-                setIsPlaying(true);
-              }
+        {!!selectedQuestion && (
+          <Question
+            submitResponse={(optionId: string) => handleSubmitResponse(optionId)}
+            selectedQuestion={selectedQuestion}
+            onClose={() => {
+              setIsPlaying(!winner);
+              setSelectedQuestion(null);
             }}
-            attemptedQuestions={attemptedQuestions}
-            isExpanded={!selectedQuestion}
-            quizName={name}
-            setIsExpanded={(expanded: boolean) => {
-              // Upon expanding grid deselect question & resume play
-              if (expanded) {
-                setSelectedQuestion(null);
-                setIsPlaying(!winner);
-              }
-            }}
-            selectedQuestionId={selectedQuestion?.id || ''}
-            isQuestionPointsHidden={isQuestionPointsHidden}
+            isWithoutOptions={selectedQuestion.options.length === 1}
+            isAttempted={isQuestionAttempted}
+            pauseTimer={() => setIsPlaying(false)}
+            selectedOptionId={
+              selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId)?.selectedOptionId
+            }
           />
-          {!!selectedQuestion && (
-            <Question
-              isAttempted={isQuestionAttempted}
-              isCorrect={attemptedQuestions.some((q: any) => q.id === selectedQuestion.id && q.isCorrect)}
-              correctOptionHash={selectedQuestion.correctOptionHash}
-              submitResponse={(optionId: string) => handleSubmitResponse(selectedQuestion.id, optionId)}
-              key={selectedQuestion.id}
-              text={selectedQuestion.text}
-              options={selectedQuestion.options}
-              isWithoutOptions={selectedQuestion.isWithoutOptions}
-              onClose={() => {
-                setIsPlaying(!winner);
-                setSelectedQuestion(null);
+        )}
+        <div className={classNames(styles.scoreContainer, 'ml-lg')}>
+          {shouldShowTimer() && (
+            <Timer
+              duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
+              title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
+              handleTimeUp={() => {
+                if (showQuestionTimer) {
+                  handleSubmitResponse('');
+                } else if (selectionTimeLimit) {
+                  selectRandomQuestion();
+                }
               }}
-              pauseTimer={() => setIsPlaying(false)}
+              key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
+              running={isPlaying}
+              setIsRunning={setIsPlaying}
+              selectedQuestionId={selectedQuestion?.questionId}
             />
           )}
-          <div className={classNames(styles.scoreContainer, 'ml-lg')}>
-            {(showQuestionTimer || !!questionSelectionTimer) && !winner && (
-              <Timer
-                duration={showQuestionTimer ? questionTimer : questionSelectionTimer}
-                title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
-                handleTimeUp={() => {
-                  if (showQuestionTimer) {
-                    handleSubmitResponse(selectedQuestion.id, '');
-                  } else if (questionSelectionTimer) {
-                    selectRandomQuestion();
-                  }
-                }}
-                key={showQuestionTimer ? selectedQuestion.id : 'questionSelection'}
-                running={isPlaying}
-                setIsRunning={setIsPlaying}
-              />
-            )}
-            <table className="mt-lg">
-              <tbody>
-                <tr>
-                  <th>Team</th>
-                  <th>Score</th>
+          <table className="mt-lg">
+            <tbody>
+              <tr>
+                <th>Team</th>
+                <th>Score</th>
+              </tr>
+              {gameInfo.teams.map((t: Team) => (
+                <tr key={t.teamId} className={classNames({ [styles.active]: t.teamId === gameInfo.currentTeamId })}>
+                  <td>
+                    {t.name}
+                    {t.teamId && winner.includes(`${t.teamId}`) && <span title="winner"> 👑</span>}
+                  </td>
+                  <td>{t.score}</td>
                 </tr>
-                {teams.map((t) => (
-                  <tr key={t.id} className={classNames({ [styles.active]: t.id === currentTeamId })}>
-                    <td>
-                      {t.name}
-                      {winner === t.id && <span title="winner"> 👑</span>}
-                    </td>
-                    <td>{t.score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <Button
-              color="purple"
-              className="mt-xl"
-              onClick={async () => {
-                await saveGame(gameId, {
-                  attemptedQuestions,
-                  quizId: id || '',
-                  isComplete: true,
-                  teams,
-                  quizName: name,
-                  currentTeamId,
-                  questionTimer,
-                  questionSelectionTimer,
-                  isQuestionPointsHidden,
-                });
-                showWinner(teams, () => window.location.reload());
-              }}>
-              Start a new Game
-            </Button>
-          </div>
+              ))}
+            </tbody>
+          </table>
+          <Button
+            color="purple"
+            className="mt-xl"
+            onClick={async () => {
+              const winners = getWinners(gameInfo.teams);
+
+              await updateGame({
+                gameId: parseInt(`${gameId}`),
+                isComplete: true,
+                winnerTeamId: winners.map((winner) => winner.teamId).join(','),
+                nextTeamId: gameInfo.currentTeamId,
+              });
+
+              navigate(`/configure-game/${userName}/${quizInfo.quizId}`);
+            }}>
+            Start a new Game
+          </Button>
         </div>
-      )}
+      </div>
     </>
   );
 }

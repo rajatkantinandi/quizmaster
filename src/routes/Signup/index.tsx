@@ -1,89 +1,97 @@
-import React, { useState } from 'react';
-import { Button, Form, Input } from 'semantic-ui-react';
-import cookie from 'js-cookie';
-import { nanoid } from 'nanoid';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
+import React from 'react';
+import { Button, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { signUpUser } from '../../helpers/user';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
+import { useForm, FieldValues } from 'react-hook-form';
+import FormInput from '../../components/FormInput';
+import { Helmet } from 'react-helmet';
+import Cookies from 'js-cookie';
 
 export default function Login() {
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordRepeat, setPasswordRepeat] = useState('');
-  useLoginCheckAndPageTitle();
-  const { showErrorModal } = useAppStore();
+  const {
+    control,
+    getValues,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const { signUp, showErrorModal } = useStore();
 
-  async function handleSignUp(ev: React.FormEvent<HTMLFormElement>) {
-    ev.preventDefault();
-
-    if (!userName || userName.length < 6) {
-      showErrorModal({ message: 'Username must be min 6 chars' });
-    } else if (!password || password.length < 8) {
-      showErrorModal({ message: 'Password must be min 8 chars' });
-    } else if (passwordRepeat !== password) {
-      showErrorModal({ message: 'Passwords do not match' });
-    } else {
-      const errorMessage = await signUpUser({ userName, password });
-
-      if (errorMessage) {
-        showErrorModal({ message: errorMessage });
-      } else {
-        cookie.set('sessionId', nanoid(16), {
-          domain: window.location.hostname,
-          sameSite: 'Strict',
-        });
-        cookie.set('userName', btoa(userName), {
-          domain: window.location.hostname,
-          sameSite: 'Strict',
-        });
-        window.location.href = `/quizzes/${userName}`;
-      }
+  async function handleSignUp(data: FieldValues) {
+    try {
+      Cookies.remove('userName');
+      await signUp(data);
+    } catch (errMessage: any) {
+      showErrorModal({ message: errMessage });
     }
   }
 
-  function handleChange(ev: React.ChangeEvent<HTMLInputElement>) {
-    switch (ev.target.name) {
-      case 'username':
-        setUserName(ev.target.value);
-        break;
-      case 'password':
-        setPassword(ev.target.value);
-        break;
-      case 'repeat-password':
-        setPasswordRepeat(ev.target.value);
-    }
-  }
+  const shouldMatchWithPassword = (value: string) => value === getValues('password') || 'Should match with password';
 
   return (
     <div className="flexCol flex">
-      <Form className="flexCol flex container-md" onSubmit={handleSignUp}>
-        <Input
-          type="text"
+      <Helmet>
+        <title>Sign up</title>
+      </Helmet>
+      <Form className="flexCol flex container-md" onSubmit={handleSubmit(handleSignUp)}>
+        <FormInput
+          name="name"
+          id="name"
+          control={control}
+          rules={{ required: 'Please enter name' }}
+          errorMessage={errors.name?.message}
+          label="Name"
+          inputProps={{
+            type: 'text',
+            labelPosition: 'left',
+            autoFocus: true,
+          }}
+        />
+        <FormInput
+          name="emailId"
+          id="emailId"
+          control={control}
+          rules={{ required: 'Please enter email' }}
+          errorMessage={errors.emailId?.message}
+          label="EmailId"
+          inputProps={{ type: 'email' }}
+        />
+        <FormInput
+          name="userName"
+          id="userName"
+          control={control}
+          rules={{
+            required: 'Please enter username',
+            minLength: { value: 6, message: 'too small username' },
+          }}
           label="Username (min 6 chars)"
-          labelPosition="left"
-          name="username"
-          value={userName}
-          onChange={handleChange}
-          autoFocus
+          errorMessage={errors.userName?.message}
+          inputProps={{ type: 'text' }}
         />
-        <Input
-          type="password"
-          label="Password (min 8 chars)"
-          labelPosition="left"
+        <FormInput
           name="password"
-          value={password}
-          onChange={handleChange}
+          id="password"
+          control={control}
+          rules={{
+            required: 'Please enter password',
+            minLength: { value: 8, message: 'too small password' },
+          }}
+          errorMessage={errors.password?.message}
+          label="Password (min 8 chars)"
+          inputProps={{ type: 'password' }}
         />
-        <Input
-          type="password"
-          label="Repeat Password"
-          labelPosition="left"
-          name="repeat-password"
-          value={passwordRepeat}
-          onChange={handleChange}
+        <FormInput
+          name="repeatPassword"
+          id="repeatPassword"
+          control={control}
+          rules={{
+            required: 'Please re-enter password',
+            validate: shouldMatchWithPassword,
+          }}
+          errorMessage={errors.repeatPassword?.message}
+          label="Password (min 8 chars)"
+          inputProps={{ type: 'password' }}
         />
-        <Button color="blue" size="large" className="mt-lg">
+        <Button type="submit" color="blue" size="large" className="mt-lg">
           Sign up
         </Button>
       </Form>

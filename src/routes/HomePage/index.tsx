@@ -1,16 +1,14 @@
 import React from 'react';
 import { Button } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
 import styles from './styles.module.css';
-import cookie from 'js-cookie';
-import { nanoid } from 'nanoid';
-import { useAppStore } from '../../useAppStore';
+import Cookies from 'js-cookie';
+import { useStore } from '../../useStore';
+import { Helmet } from 'react-helmet';
 
 export default function HomePage() {
   const navigate = useNavigate();
-  useLoginCheckAndPageTitle();
-  const { setConfirmationModal } = useAppStore();
+  const { setConfirmationModal } = useStore();
 
   function loginAsGuest() {
     if (!localStorage.getItem('DoNotShowGuestAccountWarning')) {
@@ -21,17 +19,8 @@ export default function HomePage() {
   }
 
   function guestAccountLogin() {
-    const userName = 'guest';
-
-    cookie.set('sessionId', nanoid(16), {
-      domain: window.location.hostname,
-      sameSite: 'Strict',
-    });
-    cookie.set('userName', btoa(userName), {
-      domain: window.location.hostname,
-      sameSite: 'Strict',
-    });
-    window.location.href = `/quizzes/${userName}`;
+    Cookies.set('userName', 'guest');
+    navigate('/quizzes/guest');
   }
 
   function showGuestLoginWarning(okCallback: Function) {
@@ -46,6 +35,9 @@ export default function HomePage() {
 
   return (
     <section>
+      <Helmet>
+        <title>Homepage</title>
+      </Helmet>
       <h1>Welcome to quizmaster</h1>
       <nav className={styles.nav}>
         <div className="flex">

@@ -7,41 +7,35 @@ import Option from './Option';
 import styles from './styles.module.css';
 
 interface Props {
-  text: string;
-  options: IOption[];
   submitResponse: Function;
-  isAttempted: boolean;
-  isCorrect: boolean;
-  correctOptionHash?: string;
   onClose: Function;
-  preSelectedChoice?: string;
   isPreview?: boolean;
   isQuestionSaved?: boolean;
-  isWithoutOptions?: boolean;
   pauseTimer?: Function;
+  selectedOptionId: number | null | undefined | string;
+  selectedQuestion: {
+    questionId?: string;
+    text: string;
+    options: IOption[];
+  };
+  isWithoutOptions: boolean;
+  isAttempted: boolean;
 }
 
 export default function Question({
-  text,
-  options,
   submitResponse,
-  isAttempted,
-  isCorrect,
-  correctOptionHash = '',
   onClose,
-  preSelectedChoice = '',
   isPreview = false,
   isQuestionSaved = true,
-  isWithoutOptions = false,
   pauseTimer,
+  selectedOptionId,
+  selectedQuestion,
+  isWithoutOptions,
+  isAttempted,
 }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState(preSelectedChoice);
+  const [selectedChoice, setSelectedChoice] = useState('');
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
-
-  useEffect(() => {
-    // sync selected choice from props with state when changed from the edit component
-    setSelectedChoice(preSelectedChoice);
-  }, [preSelectedChoice]);
+  const { options, questionId, text } = selectedQuestion;
 
   useEffect(() => {
     if (isAttempted && !isPreview) {
@@ -50,7 +44,11 @@ export default function Question({
     }
   }, [isAttempted, isPreview]);
 
-  function handleSubmit(ev: any) {
+  useEffect(() => {
+    setIsAnswerRevealed(isPreview);
+  }, [questionId]);
+
+  function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
 
     // submit response or save question on clicking submit or save button
@@ -62,35 +60,30 @@ export default function Question({
       <Markdown>{text}</Markdown>
       <Divider />
       <div className="flex flexWrap">
-        {isWithoutOptions ? (
-          // Show correct answer for question without options when answer is revealed
-          isAnswerRevealed && (
-            <div className={styles.correctAns}>
-              <div className={styles.heading}>Correct answer</div>
-              <Markdown>{options[0].optionText}</Markdown>
-            </div>
-          )
-        ) : (
-          <>
-            {options.map((option) => (
+        {isWithoutOptions
+          ? // Show correct answer for question without options when answer is revealed
+            isAnswerRevealed && (
+              <div className={styles.correctAns}>
+                <div className={styles.heading}>Correct answer</div>
+                <Markdown>{options[0].text}</Markdown>
+              </div>
+            )
+          : options.map((option) => (
               <Option
-                id={option.id}
-                checked={selectedChoice === option.id}
+                optionId={option.optionId}
+                checked={selectedChoice === option.optionId}
                 onChange={(value: string) => setSelectedChoice(value)}
-                optionText={option.optionText}
-                key={option.id}
+                optionText={option.text}
+                key={option.optionId}
                 className={classNames({
                   [styles.isAttempted]: isAttempted,
-                  [styles.correct]:
-                    (isCorrect && selectedChoice === option.id) || correctOptionHash === btoa(option.optionText),
-                  [styles.inCorrect]: selectedChoice === option.id && !isCorrect,
+                  [styles.correct]: option.isCorrect && selectedOptionId === option.optionId,
+                  [styles.inCorrect]: !option.isCorrect && selectedOptionId === option.optionId,
                   [styles.isPreview]: isPreview,
                 })}
                 disabled={isAttempted}
               />
             ))}
-          </>
-        )}
       </div>
       {/* show reveal answer button for question without options in non preview mode when playing */}
       {isWithoutOptions && !isPreview && !isAnswerRevealed && (
@@ -115,7 +108,7 @@ export default function Question({
         </Button>
       ) : isWithoutOptions && !isPreview ? (
         // Show correct & incorrect button in non preview mode when playing
-        // When answer is revealed show correct or incorrect button for the quiz host, clicking on which will add points accordingly
+        // When answer is revealed by quiz host show correct or incorrect button, clicking on which will add points accordingly
         isAnswerRevealed && (
           <div className="flex">
             <Button type="button" size="large" className="fullWidth" color="red" onClick={() => submitResponse(null)}>
@@ -126,7 +119,7 @@ export default function Question({
               size="large"
               className="ml-lg fullWidth"
               color="green"
-              onClick={() => submitResponse(options[0].id)}>
+              onClick={() => submitResponse(options[0].optionId)}>
               Correct
             </Button>
           </div>

@@ -1,22 +1,19 @@
 import React from 'react';
 import { Button, Divider, Icon } from 'semantic-ui-react';
-import { Category } from '../../types';
+import { Category, QuizInfo, GameInfo, Team, SelectedOptions } from '../../types';
 import classNames from 'classnames';
 import styles from './styles.module.css';
+import { defaultGameInfo } from '../../constants';
 
 interface Props {
-  showQuestion: (id: string, categoryId: string) => void;
+  showQuestion: (questionId: string | number, categoryId: string | number) => void;
   isExpanded?: boolean;
-  categoriesInfo: Category[];
-  quizName: string;
+  categoriesInfo: { [key: string]: Category };
+  quizInfo: QuizInfo;
   setIsExpanded: Function;
   selectedQuestionId: string;
-  attemptedQuestions?: {
-    id: string;
-    isCorrect: boolean;
-  }[];
+  gameInfo?: GameInfo;
   savedQuestionIds?: string[];
-  isQuestionPointsHidden?: boolean;
 }
 
 export default function QuizGrid({
@@ -25,15 +22,21 @@ export default function QuizGrid({
   setIsExpanded,
   showQuestion,
   categoriesInfo,
-  quizName,
-  attemptedQuestions = [], // for play mode
+  quizInfo,
+  gameInfo = defaultGameInfo,
   savedQuestionIds = [], // for edit mode
-  isQuestionPointsHidden = false,
 }: Props) {
+  const { name, categoryIds } = quizInfo;
+  const { isQuestionPointsHidden, teams } = gameInfo;
+  const selectedOptionsData = teams.reduce(
+    (acc: SelectedOptions[], team: Team) => acc.concat(team.selectedOptions),
+    [],
+  );
+
   return (
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
       <h2>
-        {quizName}
+        {name}
         {!isExpanded && (
           <Button
             icon={<Icon name="expand" />}
@@ -47,29 +50,32 @@ export default function QuizGrid({
       <Divider />
       <h3>Categories</h3>
       <div className={classNames('flex flexWrap justifyCenter', styles.gridButtons)}>
-        {categoriesInfo.map((category) => (
-          <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={category.id}>
-            <h4>{category.name}</h4>
-            {category.questions.map((q, idx) => {
-              const attemptedQuestion = attemptedQuestions.find((ques) => ques.id === q.id);
+        {categoryIds.map((categoryId, idx) => (
+          <div className={classNames('flex flexCol mr-xl mb-xl', styles.gridCol)} key={categoryId}>
+            <h4>{categoriesInfo[categoryId]?.categoryName || ''}</h4>
+            {(categoriesInfo[categoryId]?.questions || []).map((q, index) => {
+              const correctOption = q.options.find((o) => o.isCorrect);
+              const selectedOption = selectedOptionsData.find(
+                (data: SelectedOptions) => data.questionId === q.questionId,
+              );
 
               return (
                 <Button
-                  key={q.id}
-                  onClick={() => showQuestion(q.id, category.id)}
+                  key={q.questionId}
+                  onClick={() => showQuestion(q.questionId, categoryId)}
                   color={
-                    attemptedQuestion
-                      ? attemptedQuestion.isCorrect
+                    selectedOption
+                      ? selectedOption.selectedOptionId === correctOption?.optionId
                         ? 'green'
                         : 'red'
-                      : selectedQuestionId === q.id
+                      : selectedQuestionId === q.questionId
                       ? 'black'
-                      : savedQuestionIds.includes(q.id)
+                      : savedQuestionIds.includes(q.questionId)
                       ? 'blue'
                       : undefined
                   }
-                  disabled={!!attemptedQuestion}>
-                  {isQuestionPointsHidden && selectedQuestionId !== q.id ? 'Q-' + (idx + 1) : q.point}
+                  disabled={!!selectedOption}>
+                  {isQuestionPointsHidden && selectedQuestionId !== q.questionId ? 'Q-' + (index + 1) : q.points}
                 </Button>
               );
             })}

@@ -1,72 +1,67 @@
-import React, { useState } from 'react';
-import { Button, Form, Input } from 'semantic-ui-react';
-import cookie from 'js-cookie';
-import { nanoid } from 'nanoid';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
+import React from 'react';
+import { Button, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { isValidCredentials } from '../../helpers/user';
-import { useAppStore } from '../../useAppStore';
+import { useStore } from '../../useStore';
+import { useForm, FieldValues } from 'react-hook-form';
+import FormInput from '../../components/FormInput';
+import { Helmet } from 'react-helmet';
+import styles from './styles.module.css';
+import Cookies from 'js-cookie';
 
 export default function Login() {
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
-  useLoginCheckAndPageTitle();
-  const { showErrorModal } = useAppStore();
+  const { logIn, showErrorModal } = useStore();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  async function handleLogin(ev: React.FormEvent<HTMLFormElement>) {
-    ev.preventDefault();
-
-    const isValid = await isValidCredentials({ userName, password });
-
-    if (isValid) {
-      cookie.set('sessionId', nanoid(16), {
-        domain: window.location.hostname,
-        sameSite: 'Strict',
-      });
-      cookie.set('userName', btoa(userName), {
-        domain: window.location.hostname,
-        sameSite: 'Strict',
-      });
-      window.location.href = `/quizzes/${userName}`;
-      return;
-    }
-
-    showErrorModal({ message: 'Invalid username or password! Please try again.' });
-  }
-
-  function handleChange(ev: React.ChangeEvent<HTMLInputElement>) {
-    switch (ev.target.name) {
-      case 'username':
-        setUserName(ev.target.value);
-        break;
-      case 'password':
-        setPassword(ev.target.value);
+  async function handleLogin(data: FieldValues) {
+    try {
+      Cookies.remove('userName');
+      await logIn(data);
+    } catch (errMessage: any) {
+      showErrorModal({ message: errMessage.message });
     }
   }
 
   return (
     <div className="flex flexCol">
-      <Form className="flex flexCol container-md" onSubmit={handleLogin}>
-        <Input
-          type="text"
+      <Helmet>
+        <title>Login</title>
+      </Helmet>
+      <Form className="flex flexCol container-md" onSubmit={handleSubmit(handleLogin)}>
+        <FormInput
+          name="userName"
+          id="userName"
+          control={control}
+          rules={{ required: 'Please enter username' }}
+          errorMessage={errors.username?.message}
           label="Username"
-          labelPosition="left"
-          name="username"
-          value={userName}
-          onChange={handleChange}
-          autoFocus
+          inputProps={{
+            type: 'text',
+            labelPosition: 'left',
+            autoFocus: true,
+          }}
         />
-        <Input
-          type="password"
-          label="Password"
-          labelPosition="left"
+        <FormInput
           name="password"
-          value={password}
-          onChange={handleChange}
+          id="password"
+          control={control}
+          rules={{ required: 'Please enter password' }}
+          errorMessage={errors.password?.message}
+          label="Password"
+          inputProps={{
+            type: 'password',
+            labelPosition: 'left',
+          }}
         />
-        <Button color="blue" className="alignCenter" size="large">
-          Login
-        </Button>
+        <div className={styles.forgotLinkWrapper}>
+          <Button type="submit" color="blue" className="alignCenter" size="large">
+            Login
+          </Button>
+          <Link to="/forgotpassword">Forgot password ?</Link>
+        </div>
       </Form>
       <div className="mt-lg">
         Don't have an account? <Link to="/signup">Sign up</Link>

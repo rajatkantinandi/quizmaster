@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import React, { useState } from 'react';
 import { Button, Icon, Input, Label, Modal, TextArea } from 'semantic-ui-react';
-import { getCommaSeparatedStringWithAndBeforeTheLastItem } from '../../helpers/common';
+import { getCommaSeparatedStringWithAndBeforeTheLastItem } from '../../helpers';
 import { Team } from '../../types';
 import styles from './styles.module.css';
 
@@ -43,9 +43,10 @@ export default function TeamGenerator({ okCallback, numOfTeams, hideModal }: Pro
 
     setTeams(
       teamsPlayers.map((playerNames) => ({
-        id: nanoid(),
+        teamId: nanoid(),
         name: getCommaSeparatedStringWithAndBeforeTheLastItem(playerNames),
         score: 0,
+        selectedOptions: [],
       })),
     );
   }
@@ -83,7 +84,7 @@ export default function TeamGenerator({ okCallback, numOfTeams, hideModal }: Pro
               <h3>Teams:</h3>
               <ol>
                 {teams.map((t) => (
-                  <li key={t.id}>{t.name}</li>
+                  <li key={t.teamId}>{t.name}</li>
                 ))}
               </ol>
             </div>

@@ -1,11 +1,30 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Header as SemanticHeader, Icon } from 'semantic-ui-react';
-import { getSignedInUserName, signOut } from '../../helpers/user';
 import logo from '../../img/logo.svg';
+import { useStore } from '../../useStore';
+import { isGuestUser } from '../../helpers';
+import Cookies from 'js-cookie';
+import { useNavigate, useParams } from 'react-router';
 
 export default function Header() {
-  const userName = getSignedInUserName();
+  const { logout, showErrorModal } = useStore();
+  const userData = useStore((state) => state.userData);
+  const navigate = useNavigate();
+
+  async function onLogout() {
+    try {
+      if (isGuestUser()) {
+        Cookies.remove('userName');
+
+        navigate('/');
+      } else {
+        await logout();
+      }
+    } catch (err) {
+      showErrorModal({ message: 'Something went wrong while logout' });
+    }
+  }
 
   return (
     <SemanticHeader className="App-header flex spaceBetween">
@@ -13,10 +32,10 @@ export default function Header() {
         <Link to="/">
           <img src={logo} className="App-logo" alt="logo" />
         </Link>
-        {userName ? (
+        {userData.userName || isGuestUser() ? (
           <>
-            <div className="mx-lg">{userName}</div>
-            <Button color="brown" onClick={signOut}>
+            <div className="mx-lg">{userData.userName}</div>
+            <Button color="brown" onClick={onLogout}>
               Sign out
             </Button>
           </>

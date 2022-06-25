@@ -7,13 +7,28 @@ import './styles/spacing.css';
 import './styles/card.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { get } from './helpers';
+import { useStore } from './useStore';
+import Cookies from 'js-cookie';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root'),
-);
+if (Cookies.get('userToken')) {
+  get('user/data').then((resp) => {
+    useStore.setState({ userData: resp });
+    ReactDOM.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
+      document.getElementById('root'),
+    );
+  });
+} else {
+  ReactDOM.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    document.getElementById('root'),
+  );
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
