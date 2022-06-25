@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
-import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import styles from './styles.module.css';
+import Cookies from 'js-cookie';
 
 export default function Login() {
-  const navigate = useNavigate();
   const { logIn, showErrorModal } = useStore();
   const {
     control,
@@ -18,9 +18,8 @@ export default function Login() {
 
   async function handleLogin(data: FieldValues) {
     try {
+      Cookies.remove('userName');
       await logIn(data);
-
-      navigate(`/quizzes/${data.userName}`);
     } catch (errMessage: any) {
       showErrorModal({ message: errMessage.message });
     }
@@ -57,9 +56,12 @@ export default function Login() {
             labelPosition: 'left',
           }}
         />
-        <Button type="submit" color="blue" className="alignCenter" size="large">
-          Login
-        </Button>
+        <div className={styles.forgotLinkWrapper}>
+          <Button type="submit" color="blue" className="alignCenter" size="large">
+            Login
+          </Button>
+          <Link to="/forgotpassword">Forgot password ?</Link>
+        </div>
       </Form>
       <div className="mt-lg">
         Don't have an account? <Link to="/signup">Sign up</Link>

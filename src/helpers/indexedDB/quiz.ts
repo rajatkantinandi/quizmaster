@@ -1,34 +1,29 @@
-import { Quiz, Option, GameData } from '../../types';
+import { Quiz, GameData, Question } from '../../types';
 import db from './db';
-
+import { isGuestUser } from '../common';
 interface QuizParams extends Quiz {
   userId: number;
-}
-
-interface QuestionParams {
-  QuestionId: string;
-  Text: string;
-  Options: Option[];
-  Points: number;
-  TimeLimit: number;
-  CategoryId: number;
 }
 
 const quizzesC = db.collection('quizzes');
 const gamesC = db.collection('games');
 
-export const saveQuiz = async ({
-  name,
-  categories,
-  quizId,
-  isDraft = false,
-  numberOfQuestionsPerCategory,
-  userId,
-}: QuizParams) => {
-  let existing = (await quizzesC.findOne({ quizId })) as Quiz;
+export const generateRandomNumber = () => parseInt(`${Math.random() * 10000}`);
+
+export const saveQuiz = async (data: QuizParams) => {
+  data.quizId = data.quizId || generateRandomNumber();
+  let existing = (await quizzesC.findOne({ quizId: data.quizId })) as Quiz;
 
   if (existing) {
-    categories = categories.map((category) => {
+    data.categories = data.categories.map((category) => {
+      category.categoryId = category.categoryId || generateRandomNumber();
+      category.questions = category.questions.map((q) => {
+        q.questionId = q.questionId || generateRandomNumber();
+        q.categoryId = category.categoryId;
+
+        return q;
+      });
+
       const existingCategory = existing.categories.find((x) => x.categoryId === category.categoryId);
 
       if (existingCategory) {
@@ -41,32 +36,23 @@ export const saveQuiz = async ({
 
       return category;
     });
-    await quizzesC.update({ quizId }, { name, categories, quizId, isDraft, userId, numberOfQuestionsPerCategory });
+    await quizzesC.update({ quizId: data.quizId }, data);
   } else {
-    await quizzesC.insert({ name, categories, quizId, isDraft, userId, numberOfQuestionsPerCategory });
+    await quizzesC.insert(data);
   }
+
+  return data;
 };
 
 export const unDraftQuiz = async (quizId: string | number) => {
   await quizzesC.update({ quizId }, { isDraft: false });
 };
 
-export const saveQuestion = async (
-  { QuestionId, Text, Points, TimeLimit, Options }: QuestionParams,
-  quizId: string | number,
-) => {
-  const quiz = (await quizzesC.findOne({ quizId })) as Quiz;
-  const questionData = {
-    questionId: QuestionId,
-    text: Text,
-    points: Points,
-    timeLimit: TimeLimit,
-    options: Options,
-    categoryId: 0,
-  };
+export const saveQuestion = async (questionData: Question, quizId: string | number) => {
+  const quiz = (await quizzesC.findOne({ quizId })) as QuizParams;
   let questionIndex = -1;
   const categoryIndex = quiz.categories.findIndex((category) => {
-    const index = category.questions.findIndex((question) => question.questionId === QuestionId);
+    const index = category.questions.findIndex((question) => question.questionId === questionData.questionId);
 
     if (index >= 0) {
       questionIndex = index;
@@ -74,17 +60,27 @@ export const saveQuestion = async (
 
     return category.questions[index];
   });
-
-  const category = quiz.categories[categoryIndex];
+  questionData.options.forEach((option) => {
+    option.optionId = option.optionId || generateRandomNumber();
+  });
 
   if (questionIndex >= 0) {
-    questionData.categoryId = category.categoryId as number;
-    category.questions[questionIndex] = questionData;
+    quiz.categories[categoryIndex].questions[questionIndex] = questionData;
   } else {
-    category.questions.push(questionData);
+    quiz.categories[categoryIndex].questions.push(questionData);
   }
 
-  await quizzesC.update({ quizId }, quiz);
+  await quizzesC.update(
+    { quizId },
+    {
+      categories: quiz.categories,
+      isDraft: quiz.isDraft,
+      name: quiz.name,
+      numberOfQuestionsPerCategory: quiz.numberOfQuestionsPerCategory,
+      quizId: quiz.quizId,
+      userId: quiz.userId,
+    },
+  );
 };
 
 export const getQuizzes = async (userId: number): Promise<Object[]> => {
@@ -92,6 +88,8 @@ export const getQuizzes = async (userId: number): Promise<Object[]> => {
 
   if (quizzes.length > 0) {
     return quizzes;
+  } else if (isGuestUser()) {
+    return [];
   } else {
     throw new Error('no quizzes in local db');
   }
@@ -108,6 +106,8 @@ export const getQuiz = async (quizId: number) => {
 
   if (quiz) {
     return quiz;
+  } else if (isGuestUser()) {
+    return {};
   } else {
     throw new Error('no quiz in local db');
   }
@@ -123,9 +123,24 @@ export const addGame = async (data: {
   teams: {
     name: string;
     points?: number;
-  };
+    teamId?: number;
+  }[];
 }) => {
-  await gamesC.insert(data);
+  const teams = data.teams.map((team) => ({
+    ...team,
+    teamId: team.teamId || generateRandomNumber(),
+  }));
+
+  const dataToInsert = {
+    ...data,
+    gameId: data.gameId || generateRandomNumber(),
+    teams,
+    currentTeamId: data.currentTeamId || teams[0].teamId,
+  };
+
+  await gamesC.insert(dataToInsert);
+
+  return dataToInsert;
 };
 
 export const getGame = async (gameId: number) => {
@@ -138,6 +153,8 @@ export const getGame = async (gameId: number) => {
       ...game,
       quiz: [quiz],
     };
+  } else if (isGuestUser()) {
+    return {};
   } else {
     throw new Error('game not exists');
   }
@@ -159,7 +176,10 @@ export const updateGame = async (gameData: GameData) => {
     });
   }
 
+  delete game._id;
   await gamesC.update({ gameId: game.gameId }, game);
+
+  return game;
 };
 
 export const saveGame = async (gameData) => {

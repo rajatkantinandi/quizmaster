@@ -5,6 +5,7 @@ import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { Helmet } from 'react-helmet';
+import Cookies from 'js-cookie';
 
 export default function Login() {
   const {
@@ -17,6 +18,7 @@ export default function Login() {
 
   async function handleSignUp(data: FieldValues) {
     try {
+      Cookies.remove('userName');
       await signUp(data);
     } catch (errMessage: any) {
       showErrorModal({ message: errMessage });

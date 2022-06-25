@@ -4,6 +4,7 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import HomePage from './routes/HomePage';
 import Login from './routes/Login';
 import Signup from './routes/Signup';
+import ForgotPassword from './routes/ForgotPassword';
 import Quizzes from './routes/Quizzes';
 import AddEditQuiz from './routes/AddEditQuiz';
 import ConfigureQuiz from './routes/ConfigureQuiz';
@@ -43,6 +44,14 @@ function App() {
             element={
               <NavigateToQuizzesIfLoggedIn>
                 <Signup />
+              </NavigateToQuizzesIfLoggedIn>
+            }
+          />
+          <Route
+            path="/forgotpassword"
+            element={
+              <NavigateToQuizzesIfLoggedIn>
+                <ForgotPassword />
               </NavigateToQuizzesIfLoggedIn>
             }
           />

@@ -14,13 +14,14 @@ import {
   saveGame,
   updateGame,
   unDraftQuiz,
+  isGuestUser,
 } from '../helpers';
 import { GameData } from '../types';
 
 export const getQuizStore = (set: Function, get: Function) => ({
   getQuizzes: async () => {
     try {
-      const response = await getQuizzes(get().userData.userId);
+      const response = await getQuizzes(isGuestUser() ? -1 : get().userData.userId);
 
       return response;
     } catch (err) {
@@ -45,31 +46,64 @@ export const getQuizStore = (set: Function, get: Function) => ({
     }
   },
   createOrUpdateQuiz: async (data) => {
-    const response = await post('quiz/createOrUpdate', data);
-    await saveQuiz(response);
+    if (isGuestUser()) {
+      data.userId = -1;
+      const response = await saveQuiz(data);
 
-    return response;
-  },
-  sendBeaconPost: async (data) => {
-    if ('sendBeacon' in navigator) {
-      await postBeaconReq('quiz/createOrUpdate', data);
-      await saveQuiz(data);
+      return response;
     } else {
       const response = await post('quiz/createOrUpdate', data);
+      await saveQuiz(response);
 
       return response;
     }
   },
-  editQuestion: async (data, quizId: string | number) => {
-    const response = await post('question/edit', data);
+  sendBeaconPost: async (data) => {
+    if (isGuestUser()) {
+      data.userId = -1;
+      const response = await saveQuiz(data);
 
-    await saveQuestion(response, quizId);
+      return response;
+    } else {
+      if ('sendBeacon' in navigator) {
+        await postBeaconReq('quiz/createOrUpdate', data);
+        await saveQuiz(data);
+      } else {
+        const response = await post('quiz/createOrUpdate', data);
+
+        return response;
+      }
+    }
+  },
+  editQuestion: async (data, quizId: string | number) => {
+    if (isGuestUser()) {
+      await saveQuestion(data, quizId);
+    } else {
+      const response = await post('question/edit', data);
+
+      await saveQuestion(
+        {
+          questionId: response.QuestionId,
+          text: response.Text,
+          points: response.Points,
+          options: response.Options,
+          categoryId: data.categoryId,
+        },
+        quizId,
+      );
+    }
   },
   addGame: async (data) => {
-    const response = await post('game/add', data);
-    await addGame(response);
+    if (isGuestUser()) {
+      const response = await addGame(data);
 
-    return response;
+      return response;
+    } else {
+      const response = await post('game/add', data);
+      await addGame(response);
+
+      return response;
+    }
   },
   getGameData: async (gameId: number) => {
     try {
@@ -85,13 +119,21 @@ export const getQuizStore = (set: Function, get: Function) => ({
     }
   },
   updateGame: async (data: GameData) => {
-    const response = await post('game/edit', data);
+    if (isGuestUser()) {
+      const response = await updateGame(data);
 
-    await updateGame(data);
-    return response;
+      return response;
+    } else {
+      const response = await post('game/edit', data);
+
+      await updateGame(data);
+      return response;
+    }
   },
   unDraftQuiz: async (quizId: string | number) => {
-    await post('quiz/unDraft', { quizId });
+    if (!isGuestUser()) {
+      await post('quiz/unDraft', { quizId });
+    }
 
     await unDraftQuiz(quizId);
   },

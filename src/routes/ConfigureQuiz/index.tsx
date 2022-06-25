@@ -107,7 +107,7 @@ export default function ConfigureQuiz() {
             .map((val, index) => {
               const question = category.questions[index];
               const data: any = {
-                points: question.points || 0,
+                points: parseInt(question.points) || 0,
                 options: question.options || [],
               };
 
@@ -182,6 +182,9 @@ export default function ConfigureQuiz() {
   }
 
   const removeLastCategory = () => {
+    const categories = getValues('categories');
+    categories.pop();
+    setValue('categories', categories);
     setQuizInfo({
       ...quizInfo,
       categoryIds: quizInfo.categoryIds.slice(0, -1),

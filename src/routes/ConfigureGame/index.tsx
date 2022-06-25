@@ -91,7 +91,14 @@ export default function ConfigureGame() {
                 </Button>
               )}
             </div>
-            <Button className="mt-lg" size="large" onClick={() => setShowTeamGenerator(true)} color="facebook">
+            <Button
+              className="mt-lg"
+              size="large"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowTeamGenerator(true);
+              }}
+              color="facebook">
               <Icon name="random" /> Random team generator
             </Button>
           </fieldset>

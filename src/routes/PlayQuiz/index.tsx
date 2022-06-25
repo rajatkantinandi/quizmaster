@@ -116,7 +116,7 @@ export default function PlayQuiz() {
       }
 
       setIsPlaying(false);
-      const isComplete = nextTeamIndex === 0 && allQuestionCount - selectedOptionsData.length < gameInfo.teams.length;
+      const isComplete = allQuestionCount === selectedOptionsData.length + 1;
       const winner = isComplete ? showWinner(clonedTeams) : null;
 
       await updateGame({

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router';
 import { Button, Divider } from 'semantic-ui-react';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuizGrid from '../../components/QuizGrid';
-import { Category, Question as IQuestion, QuizInfo, Quiz, Option } from '../../types';
+import { Category, Question as IQuestion, QuizInfo, Quiz, Option, Question } from '../../types';
 import { useStore } from '../../useStore';
 import { formatCategoryInfo, isInt, plural } from '../../helpers';
 import { Helmet } from 'react-helmet';
@@ -71,15 +71,15 @@ export default function AddEditQuiz() {
     }
   }
 
-  async function saveQuestion(questionId: string, { text, options, points }: IQuestion) {
+  async function saveQuestion(selectedQuestion: Question, { text, options, points }: IQuestion) {
     try {
       await editQuestion(
         {
-          questionId,
+          ...selectedQuestion,
           text,
           options: options.map((option: Option) => {
             const clonedOption: any = { ...option };
-            clonedOption.questionId = questionId;
+            clonedOption.questionId = selectedQuestion.questionId;
 
             if (!isInt(option.optionId)) {
               delete clonedOption.optionId;
@@ -93,13 +93,13 @@ export default function AddEditQuiz() {
       );
 
       const categoryId = quizInfo.categoryIds.find((id) =>
-        categoriesInfo[id].questions.find((question) => question.questionId === questionId),
+        categoriesInfo[id].questions.find((question) => question.questionId === selectedQuestion.questionId),
       );
 
       if (categoryId) {
         const { questions } = categoriesInfo[categoryId];
         const clonedQuestions = [...questions];
-        const index = questions.findIndex((question) => question.questionId === questionId);
+        const index = questions.findIndex((question) => question.questionId === selectedQuestion.questionId);
 
         clonedQuestions[index] = {
           ...clonedQuestions[index],
@@ -154,7 +154,7 @@ export default function AddEditQuiz() {
           showQuestion={(questionId, categoryId) => {
             const question = categoriesInfo[categoryId].questions.find((q: IQuestion) => q.questionId === questionId);
 
-            setSelectedQuestion(question || null);
+            setSelectedQuestion(question ? { ...question, categoryId } : null);
           }}
           isExpanded={!selectedQuestion}
           quizInfo={quizInfo}
@@ -169,7 +169,7 @@ export default function AddEditQuiz() {
         {!!selectedQuestion && (
           <QuestionEdit
             key={selectedQuestion.questionId}
-            saveQuestion={(data: IQuestion) => saveQuestion(selectedQuestion.questionId, data)}
+            saveQuestion={(data: IQuestion) => saveQuestion(selectedQuestion, data)}
             selectedQuestion={selectedQuestion}
             onClose={() => {
               setSelectedQuestion(null);
