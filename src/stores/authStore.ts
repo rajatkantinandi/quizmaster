@@ -1,4 +1,4 @@
-import { post } from '../helpers';
+import { postRedirect, post } from '../helpers';
 
 export const getAuthStore = (set: Function, get: Function) => ({
   userData: {
@@ -8,13 +8,13 @@ export const getAuthStore = (set: Function, get: Function) => ({
     token: '',
   },
   signUp: async (data) => {
-    await post('user/signup', data);
+    await postRedirect('user/signup', data);
   },
   logIn: async (data) => {
-    await post('user/login', data);
+    await postRedirect('user/login', data);
   },
   logout: async () => {
-    await post('user/logout', { userId: get().userData.userId });
+    await postRedirect('user/logout', { userId: get().userData.userId });
   },
   sendForgotPasswordLink: async (data) => {
     await post('user/forgotpassword', data);
