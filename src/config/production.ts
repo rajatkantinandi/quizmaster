@@ -3,7 +3,7 @@ import { IConfig } from './types';
 const config: IConfig = {
   env: 'production',
   productName: 'Quiz Master',
-  productUrl: 'https://quizmaster.vercel.app',
+  productUrl: 'https://web.quizmasterapp.in',
   backendUrl: 'https://api.quizmasterapp.in',
 };
 
