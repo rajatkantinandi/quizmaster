@@ -6,7 +6,7 @@ import { IConfig } from './types';
 function getConfig(): IConfig {
   if (window.location.hostname === 'localhost') {
     return local;
-  } else if (window.location.hostname.includes('quizmaster-staging')) {
+  } else if (window.location.hostname.includes('staging.quizmasterapp')) {
     return staging;
   }
   else {
