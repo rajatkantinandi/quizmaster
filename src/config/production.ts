@@ -4,7 +4,7 @@ const config: IConfig = {
   env: 'production',
   productName: 'Quiz Master',
   productUrl: 'https://quizmaster.vercel.app',
-  backendUrl: 'http://quizmaster-staging-dev.ap-south-1.elasticbeanstalk.com',
+  backendUrl: 'http://api.quizmasterapp.in',
 };
 
 export default config;
