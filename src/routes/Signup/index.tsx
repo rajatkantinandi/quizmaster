@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import FormInput from '../../components/FormInput';
 import { Helmet } from 'react-helmet';
-import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router';
 
 export default function Login() {
   const {
@@ -15,15 +15,22 @@ export default function Login() {
     formState: { errors },
   } = useForm();
   const { signUp, showErrorModal } = useStore();
+  const navigate = useNavigate();
 
   async function handleSignUp(data: FieldValues) {
-    try {
-      Cookies.remove('userName');
-      await signUp(data);
-    } catch (errMessage: any) {
-      showErrorModal({ message: errMessage });
-    }
+    await signUp(data);
   }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('error')) {
+      showErrorModal({
+        message: params.get('error'),
+        okCallback: () => navigate('/login'),
+      });
+    }
+  }, []);
 
   const shouldMatchWithPassword = (value: string) => value === getValues('password') || 'Should match with password';
 

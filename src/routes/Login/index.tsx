@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../../useStore';
@@ -7,9 +7,11 @@ import FormInput from '../../components/FormInput';
 import { Helmet } from 'react-helmet';
 import styles from './styles.module.css';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router';
 
 export default function Login() {
   const { logIn, showErrorModal } = useStore();
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -17,13 +19,20 @@ export default function Login() {
   } = useForm();
 
   async function handleLogin(data: FieldValues) {
-    try {
-      Cookies.remove('userName');
-      await logIn(data);
-    } catch (errMessage: any) {
-      showErrorModal({ message: errMessage.message });
-    }
+    Cookies.remove('userName');
+    await logIn(data);
   }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('error')) {
+      showErrorModal({
+        message: params.get('error'),
+        okCallback: () => navigate('/login'),
+      });
+    }
+  }, []);
 
   return (
     <div className="flex flexCol">

@@ -5,7 +5,7 @@ import logo from '../../img/logo.svg';
 import { useStore } from '../../useStore';
 import { isGuestUser } from '../../helpers';
 import Cookies from 'js-cookie';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 
 export default function Header() {
   const { logout, showErrorModal } = useStore();
