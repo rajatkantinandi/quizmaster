@@ -1,11 +1,15 @@
 import local from './local';
 import production from './production';
+import staging from './staging';
 import { IConfig } from './types';
 
 function getConfig(): IConfig {
   if (window.location.hostname === 'localhost') {
     return local;
-  } else {
+  } else if (window.location.hostname.includes('staging.quizmasterapp')) {
+    return staging;
+  }
+  else {
     return production;
   }
 }
