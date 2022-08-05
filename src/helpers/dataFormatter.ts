@@ -165,6 +165,7 @@ export const formatCategoryInfo = (categories: Category[], categoryIds: (string 
 };
 
 export const insertCategoryAndQuestionsData = (quiz) => {
+  // Need atleast 2 categories to show when user refreshes the page after adding less than 2 category
   if (quiz.categories.length < 2) {
     quiz.categories = [0, 1].map(
       (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
