@@ -1,5 +1,6 @@
 import { getEmptyQuestion, getEmptyCategory } from './dataCreator';
 import { Category } from '../types';
+import { MIN_NUM_OF_CATEGORIES } from '../constants';
 
 const quizDataSchema = {
   _meta: {
@@ -166,7 +167,7 @@ export const formatCategoryInfo = (categories: Category[], categoryIds: (string 
 
 export const insertCategoryAndQuestionsData = (quiz) => {
   // Need atleast 2 categories to show when user refreshes the page after adding less than 2 category
-  if (quiz.categories.length < 2) {
+  if (quiz.categories.length < MIN_NUM_OF_CATEGORIES) {
     quiz.categories = [0, 1].map(
       (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
     );

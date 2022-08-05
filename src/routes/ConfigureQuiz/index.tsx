@@ -8,6 +8,7 @@ import { QuizInfo as IQuizInfo, Quiz, Category } from '../../types';
 import { nanoid } from 'nanoid';
 import { getEmptyQuestion, getEmptyCategory, isInt, insertCategoryAndQuestionsData } from '../../helpers';
 import { Helmet } from 'react-helmet';
+import { MIN_NUM_OF_CATEGORIES } from '../../constants';
 
 const getFormDefaultValues = (categoryIds: (string | number)[]) => {
   return {
@@ -221,7 +222,7 @@ export default function ConfigureQuiz() {
             label="Number of questions per category"
             inputProps={{
               type: 'number',
-              min: 2,
+              min: MIN_NUM_OF_CATEGORIES,
               onChange: reRenderComponent,
             }}
           />
@@ -231,7 +232,7 @@ export default function ConfigureQuiz() {
           <Button type="button" color="blue" onClick={addCategory} className="mr-lg">
             Add one more category
           </Button>
-          {quizInfo.categoryIds.length > 2 && (
+          {quizInfo.categoryIds.length > MIN_NUM_OF_CATEGORIES && (
             <Button type="button" color="red" onClick={removeLastCategory}>
               Remove last category
             </Button>
