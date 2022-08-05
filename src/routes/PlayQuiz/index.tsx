@@ -177,6 +177,7 @@ export default function PlayQuiz() {
           gameInfo={gameInfo}
           isExpanded={!selectedQuestion}
           quizInfo={quizInfo}
+          mode="play"
           setIsExpanded={(expanded: boolean) => {
             // Upon expanding grid deselect question & resume play
             if (expanded) {

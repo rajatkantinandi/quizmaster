@@ -165,6 +165,7 @@ export default function AddEditQuiz() {
           }}
           selectedQuestionId={selectedQuestion?.questionId || ''}
           savedQuestionIds={getSavedQuestionIds()}
+          mode="edit"
         />
         {!!selectedQuestion && (
           <QuestionEdit
