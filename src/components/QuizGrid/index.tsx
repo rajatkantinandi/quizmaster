@@ -4,6 +4,7 @@ import { Category, QuizInfo, GameInfo, Team, SelectedOptions } from '../../types
 import classNames from 'classnames';
 import styles from './styles.module.css';
 import { defaultGameInfo } from '../../constants';
+import { useNavigate, useParams } from 'react-router';
 
 interface Props {
   showQuestion: (questionId: string | number, categoryId: string | number) => void;
@@ -14,6 +15,7 @@ interface Props {
   selectedQuestionId: string;
   gameInfo?: GameInfo;
   savedQuestionIds?: string[];
+  mode: string;
 }
 
 export default function QuizGrid({
@@ -25,9 +27,12 @@ export default function QuizGrid({
   quizInfo,
   gameInfo = defaultGameInfo,
   savedQuestionIds = [], // for edit mode
+  mode,
 }: Props) {
+  const { userName = 'guest' } = useParams();
   const { name, categoryIds } = quizInfo;
   const { isQuestionPointsHidden, teams } = gameInfo;
+  const navigate = useNavigate();
   const selectedOptionsData = teams.reduce(
     (acc: SelectedOptions[], team: Team) => acc.concat(team.selectedOptions),
     [],
@@ -37,6 +42,16 @@ export default function QuizGrid({
     <div className={classNames(styles.gridContainer, { [styles.isExpanded]: isExpanded })}>
       <h2>
         {name}
+        {mode === 'play' && (
+          <Button
+            onClick={() => navigate(`/edit-quiz/${userName}/${quizInfo.quizId}`)}
+            basic
+            color="blue"
+            size="mini"
+            className="mb-lg ml-xl">
+            Edit Quiz
+          </Button>
+        )}
         {!isExpanded && (
           <Button
             icon={<Icon name="expand" />}
