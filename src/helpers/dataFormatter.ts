@@ -140,7 +140,7 @@ export const formatQuizzesData = (quizzes) => {
     return acc;
   }, []);
 
-  return formattedData.map(insertCategoryAndQuestionsData);
+  return formattedData;
 };
 
 export const formatGameData = (gameData) => {
@@ -165,11 +165,12 @@ export const formatCategoryInfo = (categories: Category[], categoryIds: (string 
 };
 
 export const insertCategoryAndQuestionsData = (quiz) => {
-  if (quiz.categories.length < 3) {
-    quiz.categories = [0, 1, 2].map(
+  if (quiz.categories.length < 2) {
+    quiz.categories = [0, 1].map(
       (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
     );
   }
+
   quiz.categories.forEach((category) => {
     if (category.questions.length < quiz.numberOfQuestionsPerCategory) {
       category.questions = [...Array(quiz.numberOfQuestionsPerCategory).keys()].map(
