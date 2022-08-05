@@ -1,5 +1,6 @@
 import { getEmptyQuestion, getEmptyCategory } from './dataCreator';
 import { Category } from '../types';
+import { MIN_NUM_OF_CATEGORIES } from '../constants';
 
 const quizDataSchema = {
   _meta: {
@@ -140,7 +141,7 @@ export const formatQuizzesData = (quizzes) => {
     return acc;
   }, []);
 
-  return formattedData.map(insertCategoryAndQuestionsData);
+  return formattedData;
 };
 
 export const formatGameData = (gameData) => {
@@ -165,11 +166,13 @@ export const formatCategoryInfo = (categories: Category[], categoryIds: (string 
 };
 
 export const insertCategoryAndQuestionsData = (quiz) => {
-  if (quiz.categories.length < 3) {
-    quiz.categories = [0, 1, 2].map(
+  // Need atleast 2 categories to show when user refreshes the page after adding less than 2 category
+  if (quiz.categories.length < MIN_NUM_OF_CATEGORIES) {
+    quiz.categories = [0, 1].map(
       (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
     );
   }
+
   quiz.categories.forEach((category) => {
     if (category.questions.length < quiz.numberOfQuestionsPerCategory) {
       category.questions = [...Array(quiz.numberOfQuestionsPerCategory).keys()].map(

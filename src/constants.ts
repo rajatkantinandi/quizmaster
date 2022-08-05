@@ -13,3 +13,5 @@ export const defaultGameInfo: GameInfo = {
   isComplete: false,
   isQuestionPointsHidden: false,
 };
+
+export const MIN_NUM_OF_CATEGORIES = 2;
