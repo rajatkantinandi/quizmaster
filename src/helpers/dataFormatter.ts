@@ -1,92 +1,95 @@
 import { getEmptyQuestion, getEmptyCategory } from './dataCreator';
 import { Category } from '../types';
 import { MIN_NUM_OF_CATEGORIES } from '../constants';
+import { getParamsInCamelCase } from './objectHelpers';
 
 const quizDataSchema = {
-  _meta: {
-    dataKey: 'quizId',
-    respKey: 'QuizId',
-  },
-  quizId: 'QuizId',
-  name: 'Name',
-  isDraft: 'IsDraft',
-  userId: 'UserId',
-  numberOfQuestionsPerCategory: 'NumberOfQuestionsPerCategory',
-  categories: {
-    _meta: {
-      dataKey: 'categoryId',
-      respKey: 'CategoryId',
-    },
-    categoryId: 'CategoryId',
-    categoryName: 'CategoryName',
-    questions: {
-      _meta: {
-        dataKey: 'questionId',
-        respKey: 'QuestionId',
-      },
-      questionId: 'QuestionId',
-      points: 'Points',
-      text: 'Text',
-      options: {
-        _meta: {
-          dataKey: 'optionId',
-          respKey: 'OptionId',
-        },
-        optionId: 'OptionId',
-        text: 'OptionText',
-        isCorrect: 'IsCorrect',
+  primaryKey: 'quizId',
+  dataKeys: [
+    'quizId',
+    'name',
+    'isDraft',
+    'userId',
+    'numberOfQuestionsPerCategory',
+    {
+      categories: {
+        primaryKey: 'categoryId',
+        dataKeys: [
+          'categoryId',
+          'categoryName',
+          {
+            questions: {
+              primaryKey: 'questionId',
+              dataKeys: [
+                'questionId',
+                'points',
+                'text',
+                {
+                  options: {
+                    primaryKey: 'optionId',
+                    dataKeys: ['optionId', { text: 'optionText' }, 'isCorrect'],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
     },
-  },
+  ],
 };
 const gameSchema = {
-  _meta: {
-    dataKey: 'gameId',
-    respKey: 'GameId',
-  },
-  gameId: 'GameId',
-  winnerTeamId: 'WinnerTeamId',
-  currentTeamId: 'CurrentTeamId',
-  timeLimit: 'TimeLimit',
-  selectionTimeLimit: 'SelectionTimeLimit',
-  isComplete: 'IsComplete',
-  teams: {
-    _meta: {
-      dataKey: 'teamId',
-      respKey: 'TeamId',
-    },
-    teamId: 'TeamId',
-    name: 'TeamName',
-    score: 'Score',
-    selectedOptions: {
-      _meta: {
-        dataKey: 'teamQuestionMapId',
-        respKey: 'TeamQuestionMapId',
+  primaryKey: 'gameId',
+  dataKeys: [
+    'gameId',
+    'winnerTeamId',
+    'currentTeamId',
+    'timeLimit',
+    'selectionTimeLimit',
+    'isComplete',
+    {
+      teams: {
+        primaryKey: 'teamId',
+        dataKeys: [
+          'teamId',
+          { name: 'teamName' },
+          'score',
+          {
+            selectedOptions: {
+              primaryKey: 'teamQuestionMapId',
+              dataKeys: ['teamQuestionMapId', 'selectedOptionId', 'questionId'],
+            },
+          },
+        ],
       },
-      teamQuestionMapId: 'TeamQuestionMapId',
-      selectedOptionId: 'SelectedOptionId',
-      questionId: 'QuestionId',
     },
-  },
-  quiz: quizDataSchema,
+    {
+      quiz: quizDataSchema,
+    },
+  ],
 };
 
 export const createQuizData = (acc, quiz, schema) => {
-  const metaData = schema._meta;
-  const index = acc.findIndex((x) => x[metaData.dataKey] === quiz[metaData.respKey]);
+  const primaryKey = schema.primaryKey;
+  const index = acc.findIndex((x) => x[primaryKey] === quiz[primaryKey]);
   const data = index < 0 ? {} : acc[index];
+  const dataKeys = schema.dataKeys;
 
-  for (const key in schema) {
-    if (key !== '_meta') {
-      if (typeof schema[key] === 'object') {
-        data[key] = createQuizData(data[key] || [], quiz, schema[key]);
+  dataKeys.forEach((key) => {
+    if (typeof key === 'string') {
+      data[key] = quiz[key];
+    } else {
+      const keyVal: any = Object.values(key)[0];
+
+      if (typeof keyVal === 'string') {
+        data[Object.keys(key)[0]] = quiz[keyVal];
       } else {
-        data[key] = quiz[schema[key]];
+        data[Object.keys(key)[0]] = createQuizData(data[Object.keys(key)[0]] || [], quiz, keyVal);
       }
     }
-  }
+  });
 
-  if (index < 0 && data[metaData.dataKey]) {
+  if (index < 0 && data[primaryKey]) {
     acc.push(data);
   }
 
@@ -137,7 +140,9 @@ export const createQuizData = (acc, quiz, schema) => {
  * they will keep adding in the respective array
  */
 export const formatQuizzesData = (quizzes) => {
-  const formattedData = quizzes.reduce((acc, quiz) => {
+  const quizzesDataInCamelCase = getParamsInCamelCase(quizzes);
+
+  const formattedData = quizzesDataInCamelCase.reduce((acc, quiz) => {
     createQuizData(acc, quiz, quizDataSchema);
     return acc;
   }, []);
@@ -146,7 +151,8 @@ export const formatQuizzesData = (quizzes) => {
 };
 
 export const formatGameData = (gameData) => {
-  const data = gameData.reduce((acc, game) => {
+  const gamesDataInCamelCase = getParamsInCamelCase(gameData);
+  const data = gamesDataInCamelCase.reduce((acc, game) => {
     createQuizData(acc, game, gameSchema);
     return acc;
   }, []);
