@@ -20,11 +20,11 @@ import { GameData } from '../types';
 
 export const getQuizStore = (set: Function, get: Function) => ({
   getQuizzes: async () => {
-    try {
-      const response = await getQuizzes(isGuestUser() ? -1 : get().userData.userId);
+    if (isGuestUser()) {
+      const response = await getQuizzes(-1);
 
       return response;
-    } catch (err) {
+    } else {
       const response = await getReq('quiz/userQuizzes');
       const data = formatQuizzesData(response);
       await saveQuizzes(data);

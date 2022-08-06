@@ -86,13 +86,7 @@ export const saveQuestion = async (questionData: Question, quizId: string | numb
 export const getQuizzes = async (userId: number): Promise<Object[]> => {
   const quizzes = await quizzesC.find({ userId }).toArray();
 
-  if (quizzes.length > 0) {
-    return quizzes;
-  } else if (isGuestUser()) {
-    return [];
-  } else {
-    throw new Error('no quizzes in local db');
-  }
+  return quizzes;
 };
 
 export const saveQuizzes = async (quizzes: Quiz[]) => {
