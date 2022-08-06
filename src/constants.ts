@@ -15,3 +15,5 @@ export const defaultGameInfo: GameInfo = {
 };
 
 export const MIN_NUM_OF_CATEGORIES = 2;
+
+export const DEFAULT_NEW_QUESTION_POINTS = 10;
