@@ -10,6 +10,7 @@ const quizDataSchema = {
   quizId: 'QuizId',
   name: 'Name',
   isDraft: 'IsDraft',
+  userId: 'UserId',
   numberOfQuestionsPerCategory: 'NumberOfQuestionsPerCategory',
   categories: {
     _meta: {

@@ -89,7 +89,9 @@ export const getQuizzes = async (userId: number): Promise<Object[]> => {
   return quizzes;
 };
 
-export const saveQuizzes = async (quizzes: Quiz[]) => {
+export const saveQuizzes = async (quizzes: Quiz[], userId: number) => {
+  await quizzesC.remove({ userId });
+
   if (quizzes.length > 0) {
     await quizzesC.insert(quizzes);
   }
