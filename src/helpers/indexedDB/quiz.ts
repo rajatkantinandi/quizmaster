@@ -89,7 +89,7 @@ export const getQuizzes = async (userId: number): Promise<Object[]> => {
   return quizzes;
 };
 
-export const saveQuizzes = async (quizzes: Quiz[], userId: number) => {
+export const replaceQuizzes = async (quizzes: Quiz[], userId: number) => {
   await quizzesC.remove({ userId });
 
   if (quizzes.length > 0) {

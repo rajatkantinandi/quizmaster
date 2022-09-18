@@ -3,7 +3,7 @@ import {
   post,
   get as getReq,
   formatQuizzesData,
-  saveQuizzes,
+  replaceQuizzes,
   getQuiz,
   saveQuiz,
   postBeaconReq,
@@ -27,7 +27,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
     } else {
       const response = await getReq('quiz/userQuizzes');
       const data = formatQuizzesData(response);
-      await saveQuizzes(data, get().userData.userId);
+      await replaceQuizzes(data, get().userData.userId);
 
       return data;
     }
