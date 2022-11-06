@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
@@ -7,7 +6,7 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router';
 import { Card, Button, Title, Text, Divider } from '@mantine/core';
 
-export default function LoginCard({ setViewType }) {
+export default function LoginCard() {
   const { logIn, showModal } = useStore();
   const navigate = useNavigate();
   const {
@@ -43,7 +42,7 @@ export default function LoginCard({ setViewType }) {
 
   function guestAccountLogin() {
     Cookies.set('userName', 'guest');
-    navigate('/quizzes/guest');
+    window.location.href = '/quizzes/guest';
   }
 
   function showGuestLoginWarning(okCallback: Function) {
@@ -82,7 +81,7 @@ export default function LoginCard({ setViewType }) {
           type="password"
         />
         <Text size="sm" align="right" mt="sm">
-          <Button compact color="transparent" variant="subtle" onClick={() => setViewType('forgotPassword')}>
+          <Button compact color="transparent" variant="subtle" onClick={() => navigate('/forgot-password')}>
             Forgot password ?
           </Button>
         </Text>
@@ -96,7 +95,7 @@ export default function LoginCard({ setViewType }) {
       </form>
       <Text size="sm" align="center" mt="sm">
         Don't have an account?
-        <Button compact color="transparent" variant="subtle" onClick={() => setViewType('signUp')}>
+        <Button compact color="transparent" variant="subtle" onClick={() => navigate('/signup')}>
           Sign up
         </Button>
       </Text>

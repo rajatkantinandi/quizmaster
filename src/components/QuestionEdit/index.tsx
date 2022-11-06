@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Question as IQuestion } from '../../types';
 import styles from './styles.module.css';
 import { useStore } from '../../useStore';

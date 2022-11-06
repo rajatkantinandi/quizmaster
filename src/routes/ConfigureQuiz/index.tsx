@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
@@ -106,7 +106,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     }
 
     try {
-      const response = await createOrUpdateQuiz({
+      await createOrUpdateQuiz({
         categories: formData.categories,
         quizId,
         name: quizName,

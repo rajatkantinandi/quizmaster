@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import {
   getQuizzes,
   post,
@@ -51,6 +52,8 @@ export const getQuizStore = (set: Function, get: Function) => ({
   createOrUpdateQuiz: async (data) => {
     if (isGuestUser()) {
       data.userId = -1;
+      data.quizId = data.quizId || nanoid();
+
       const response = await saveQuiz(data);
 
       return response;

@@ -31,8 +31,6 @@ export const tilesBGColors = [
   '#9c4afb',
 ];
 
-export const MIN_NUM_OF_CATEGORIES = 2;
-
 export const appPaths = [
   '/quizzes/:userName',
   '/configure-quiz/:userName',

@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
 import { useNavigate } from 'react-router';
 import { Card, Button, Title, Text } from '@mantine/core';
 
-export default function SignUpCard({ setViewType }) {
+export default function SignUpCard() {
   const {
     register,
     getValues,
@@ -99,7 +98,7 @@ export default function SignUpCard({ setViewType }) {
       </form>
       <Text size="sm" align="center" mt="sm">
         Already have an account?
-        <Button compact color="transparent" variant="subtle" onClick={() => setViewType('logIn')}>
+        <Button compact color="transparent" variant="subtle" onClick={() => navigate('/login')}>
           Log in
         </Button>
       </Text>

@@ -4,9 +4,11 @@ import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router';
 
-export default function Login({ setViewType }) {
+export default function Login() {
   const { sendForgotPasswordLink, showAlert } = useStore();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -43,7 +45,7 @@ export default function Login({ setViewType }) {
         </Button>
       </Form>
       <div className="mt-lg">
-        Remember your password? <button onClick={() => setViewType('logIn')}>Log in</button>
+        Remember your password? <button onClick={() => navigate('/login')}>Log in</button>
       </div>
     </div>
   );

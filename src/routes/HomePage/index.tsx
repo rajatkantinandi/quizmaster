@@ -1,26 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './styles.module.css';
 import { Helmet } from 'react-helmet';
 import { Grid, AppShell } from '@mantine/core';
 import LoginCard from '../../components/LoginCard';
 import SignUpCard from '../../components/SignUpCard';
 import ForgotPassword from '../../components/ForgotPassword';
+import { useParams } from 'react-router';
+import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
+import { isValidUser } from '../../helpers/authHelper';
 
 export default function HomePage() {
-  const [viewType, setViewType] = useState('logIn');
+  const { viewType } = useParams();
 
   function getViewType() {
     switch (viewType) {
-      case 'logIn':
-        return <LoginCard setViewType={setViewType} />;
-      case 'signUp':
-        return <SignUpCard setViewType={setViewType} />;
-      case 'forgotPassword':
-        return <ForgotPassword setViewType={setViewType} />;
+      case 'login':
+        return <LoginCard />;
+      case 'signup':
+        return <SignUpCard />;
+      case 'forgot-password':
+        return <ForgotPassword />;
+      default:
+        return <CheckAuthAndNavigate />;
     }
   }
 
-  return (
+  return isValidUser ? (
+    <CheckAuthAndNavigate />
+  ) : (
     <section>
       <Helmet>
         <title>Homepage</title>

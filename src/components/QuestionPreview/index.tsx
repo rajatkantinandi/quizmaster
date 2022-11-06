@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Question as IQuestion } from '../../types';
 import { Title, Card, Badge, ActionIcon, Text, List, Group, Button, Box } from '@mantine/core';
 import Icon from '../Icon';

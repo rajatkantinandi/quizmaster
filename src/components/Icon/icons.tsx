@@ -28,7 +28,7 @@ import { ReactComponent as quiz_13 } from '../../images/icons/quiz_13.svg';
 import { ReactComponent as search } from '../../images/icons/search.svg';
 
 /* eslint-disable @typescript-eslint/naming-convention */
-export default {
+const icons = {
   trash: Trash,
   pencil: Pencil,
   collapse: Collapse,
@@ -50,3 +50,5 @@ export default {
   quiz_13,
   search,
 };
+
+export default icons;

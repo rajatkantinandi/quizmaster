@@ -5,8 +5,7 @@ import AppLayout from './routes/AppLayout';
 import { useStore } from './useStore';
 import Modal from './components/Modal';
 import Alert from './components/Alert';
-import NavigateToQuizzesIfLoggedIn from './components/NavigateToQuizzesIfLoggedIn';
-import { appPaths } from './constants';
+import CheckAuthAndNavigate from './components/CheckAuthAndNavigate';
 
 function App() {
   const { modal, alert } = useStore();
@@ -15,16 +14,10 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <NavigateToQuizzesIfLoggedIn>
-                <HomePage />
-              </NavigateToQuizzesIfLoggedIn>
-            }
-          />
+          <Route path="/:viewType" element={<HomePage />} />
           <Route path=":viewType/:userName" element={<AppLayout />} />
           <Route path=":viewType/:userName/:id" element={<AppLayout />} />
+          <Route path="*" element={<CheckAuthAndNavigate />} />
         </Routes>
       </BrowserRouter>
       {!!modal && <Modal {...modal} />}

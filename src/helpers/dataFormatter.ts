@@ -1,6 +1,5 @@
-import { getEmptyQuestion, getEmptyCategory, getEmptyOptions } from './dataCreator';
-import { Category, Quiz } from '../types';
-import { MIN_NUM_OF_CATEGORIES } from '../constants';
+import { getEmptyCategory, getEmptyOptions } from './dataCreator';
+import { Category } from '../types';
 
 const quizDataSchema = {
   _meta: {

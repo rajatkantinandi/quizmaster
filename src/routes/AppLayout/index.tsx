@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AppShell, Tabs, Header, Group, Button, TextInput } from '@mantine/core';
+import React, { useState, useEffect } from 'react';
+import { AppShell, Tabs, Header, Group, Button, TextInput, Menu, Avatar } from '@mantine/core';
 import { Helmet } from 'react-helmet';
 import Quizzes from '../Quizzes';
 import ConfigureQuiz from '../ConfigureQuiz';
@@ -10,12 +10,22 @@ import styles from './styles.module.css';
 import { useNavigate, useParams } from 'react-router';
 import { useStore } from '../../useStore';
 import Icon from '../../components/Icon';
+import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
+import { isValidUser } from '../../helpers/authHelper';
 
 function AppLayout() {
-  const [activeTab, setActiveTab] = useState<string | null>('my-quizzes');
-  const navigate = useNavigate();
   const { userName, viewType, id } = useParams();
-  const { showCreateQuizButton, searchQuiz } = useStore();
+  const [activeTab, setActiveTab] = useState<string | null>('');
+  const navigate = useNavigate();
+  const { showCreateQuizButton, searchQuiz, logout } = useStore();
+
+  useEffect(() => {
+    if (viewType === 'quizzes') {
+      setActiveTab('my-quizzes');
+    } else {
+      setActiveTab('');
+    }
+  }, [viewType]);
 
   function onTabChange(value) {
     setActiveTab(value);
@@ -38,11 +48,11 @@ function AppLayout() {
       case 'play-game':
         return <PlayQuiz />;
       default:
-        <></>;
+        return <CheckAuthAndNavigate />;
     }
   }
 
-  return (
+  return isValidUser ? (
     <>
       <Helmet>
         <title>AppLayout</title>
@@ -59,31 +69,44 @@ function AppLayout() {
                   <Tabs.Tab value="my-quizzes">My Quizzes</Tabs.Tab>
                 </Tabs.List>
               </Tabs>
-              {showCreateQuizButton && (
-                <Group>
-                  <TextInput
-                    mr="xl"
-                    type="text"
-                    placeholder="Search by quiz name"
-                    variant="filled"
-                    radius="md"
-                    size="md"
-                    onChange={(ev) => searchQuiz(ev.target.value)}
-                    icon={<Icon name="search" width={16} />}
-                  />
-                  <Button onClick={() => navigate(`/configure-quiz/${userName}`)} variant="filled">
-                    + Create Quiz
-                  </Button>
-                </Group>
-              )}
+              <Group>
+                {showCreateQuizButton && (
+                  <>
+                    <TextInput
+                      mr="xl"
+                      type="text"
+                      placeholder="Search by quiz name"
+                      variant="filled"
+                      radius="md"
+                      size="md"
+                      onChange={(ev) => searchQuiz(ev.target.value)}
+                      icon={<Icon name="search" width={16} />}
+                    />
+                    <Button onClick={() => navigate(`/configure-quiz/${userName}`)} variant="filled">
+                      + Create Quiz
+                    </Button>
+                  </>
+                )}
+                <Menu shadow="md" width={200}>
+                  <Menu.Target>
+                    <Avatar color="cyan" radius="xl">
+                      {userName?.charAt(0)?.toUpperCase()}
+                    </Avatar>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Label>Hi, {userName}</Menu.Label>
+                    <Menu.Item onClick={logout}>Sign out</Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              </Group>
             </Group>
           </Header>
         }>
-        <Tabs value={activeTab}>
-          <Tabs.Panel value="my-quizzes">{getTabsView()}</Tabs.Panel>
-        </Tabs>
+        <Tabs value={activeTab}>{getTabsView()}</Tabs>
       </AppShell>
     </>
+  ) : (
+    <CheckAuthAndNavigate />
   );
 }
 
