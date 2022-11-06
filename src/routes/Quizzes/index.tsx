@@ -1,55 +1,114 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Card } from 'semantic-ui-react';
 import { useStore } from '../../useStore';
 import { Helmet } from 'react-helmet';
+import { Text, Button, Grid, Card, Group, Badge } from '@mantine/core';
+import styles from './styles.module.css';
+import { plural } from '../../helpers/textHelpers';
+import Icon from '../../components/Icon';
+import { tilesBGColors } from '../../constants';
+import PageLoader from '../../components/PageLoader';
 
 export default function Quizzes() {
   const { userName } = useParams();
-  const [quizzes, setQuizzes] = useState<any>([]);
-  const { getQuizzes } = useStore();
+  const [loading, setLoading] = useState(true);
+  const { getQuizzes, setShowCreateQuizButton, setQuizzes, ...rest } = useStore();
+  const quizzes = rest.searchResults.length > 0 ? rest.searchResults : rest.quizzes;
   const navigate = useNavigate();
 
   useEffect(() => {
     getQuizzes().then((quizzes) => {
       setQuizzes(quizzes);
+      setLoading(false);
+      setShowCreateQuizButton(quizzes.length > 0);
     });
+
+    return () => {
+      setShowCreateQuizButton(false);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function getQuestionsCount(categories): number {
+    return categories.reduce((count, category) => {
+      count += category.questions.length;
+
+      return count;
+    }, 0);
+  }
 
   return (
     <>
       <Helmet>
         <title>Quizzes</title>
       </Helmet>
-      <h1>Welcome: {userName}</h1>
-      <h2>Quizzes</h2>
-      <section className="mb-xl flex flexWrap">
-        {quizzes.map((quiz) => (
-          <Card
-            key={quiz.quizId}
-            className="flex alignCenter"
-            onClick={() => {
-              if (quiz.isDraft) {
-                navigate(`/configure-quiz/${userName}/${quiz.quizId}`);
-              } else {
-                navigate(`/configure-game/${userName}/${quiz.quizId}`);
-              }
-            }}>
-            <div className="title">{quiz.name}</div>
-            <div className="details">
-              {quiz.categories.length} Categories
-              <br />
-              {quiz.numberOfQuestionsPerCategory} Questions per category.
-              {quiz.isDraft && <div className="badge">Draft</div>}
-            </div>
-            <div className="action">{quiz.isDraft ? 'Edit' : 'Play'}</div>
-          </Card>
-        ))}
-      </section>
-      <Button onClick={() => navigate(`/configure-quiz/${userName}`)} size="large" color="green">
-        + Create Quiz
-      </Button>
+      {loading ? (
+        <PageLoader />
+      ) : quizzes.length === 0 ? (
+        <Grid align="center" mt="xl" pt="xl">
+          <Grid.Col span={4} offset={4} className="textAlignCenter" mt="xl" pt="xl">
+            <Text color="gray" size="md" mb="sm">
+              Nothing here! Please create a quiz to get start.
+            </Text>
+            <Button onClick={() => navigate(`/configure-quiz/${userName}`)} variant="filled">
+              + Create Quiz
+            </Button>
+          </Grid.Col>
+        </Grid>
+      ) : (
+        <Group>
+          {quizzes.map((quiz, index) => (
+            <Card shadow="sm" p="lg" radius="md" withBorder className={styles.quizCard}>
+              <Card.Section style={{ backgroundColor: tilesBGColors[index % 13] }}>
+                <Icon name={`quiz_${(index % 13) + 1}`} width="100%" height={150} className="my-lg" />
+              </Card.Section>
+
+              <Group position="apart" mt="md" mb="xs">
+                <Text weight="bold" className={styles.truncate}>
+                  {quiz.name}
+                </Text>
+                {quiz.isDraft && (
+                  <Badge color="pink" variant="light">
+                    Draft
+                  </Badge>
+                )}
+              </Group>
+              <Text>
+                {plural(quiz.categories.length, '%count Category', '%count Categories')},{' '}
+                {plural(getQuestionsCount(quiz.categories), '%count Question', '%count Questions')}
+              </Text>
+
+              {quiz.isDraft ? (
+                <Button
+                  color="pink"
+                  fullWidth
+                  radius="md"
+                  className={styles.cardButton}
+                  onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
+                  Edit
+                </Button>
+              ) : (
+                <Group position="apart" className={styles.cardButton}>
+                  <Button
+                    color="pink"
+                    radius="md"
+                    className={styles.playCardButton}
+                    onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
+                    Edit
+                  </Button>
+                  <Button
+                    color="teal"
+                    radius="md"
+                    className={styles.playCardButton}
+                    onClick={() => navigate(`/configure-game/${userName}/${quiz.quizId}`)}>
+                    Play
+                  </Button>
+                </Group>
+              )}
+            </Card>
+          ))}
+        </Group>
+      )}
     </>
   );
 }

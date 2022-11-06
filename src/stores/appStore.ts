@@ -1,31 +1,33 @@
 export const getAppStore = (set: Function, get: Function) => ({
-  confirmationModal: null,
-  setConfirmationModal: (confirmationModal: ConfirmationModalState | null) => {
-    set((state: AppState) => {
-      state.confirmationModal = confirmationModal;
-    }, false, 'setConfirmationModal');
+  modal: null,
+  alert: null,
+  showCreateQuizButton: false,
+  showModal: (modalState: ModalState) => {
+    set(
+      (state: AppState) => {
+        state.modal = modalState;
+      },
+      false,
+      'showModal',
+    );
   },
-  showAlertModal: ({
-    title,
-    message,
-    ...rest
-  }: Omit<ConfirmationModalState, 'body'> & { title: string; message: React.ReactNode }) => {
-    set((state: AppState) => {
-      state.confirmationModal = { title, body: message, cancelText: '', isAlert: true, ...rest };
-    }, false, 'showAlertModal');
+  showAlert: (alertState: AlertState | null) => {
+    set(
+      (state: AppState) => {
+        state.alert = alertState;
+      },
+      false,
+      'showAlert',
+    );
   },
-  showErrorModal: ({
-    title = 'Error!',
-    message,
-    ...rest
-  }: Omit<Omit<ConfirmationModalState, 'body'>, 'title'> & { title?: string; message: React.ReactNode }) => {
+  setShowCreateQuizButton: (value: boolean) => {
     set((state: AppState) => {
-      state.confirmationModal = { title, body: message, cancelText: '', isAlert: true, ...rest };
-    }, false, 'showErrorModal');
+      state.showCreateQuizButton = value;
+    });
   },
 });
 
-export interface ConfirmationModalState {
+export interface ModalState {
   title: string;
   body: React.ReactNode;
   okText?: string;
@@ -37,6 +39,17 @@ export interface ConfirmationModalState {
   doNotShowAgainKey?: string;
 }
 
-export interface AppState extends Omit<ReturnType<typeof getAppStore>, 'confirmationModal'> {
-  confirmationModal: ConfirmationModalState | null;
-};
+export interface AlertState {
+  message: string;
+  type?: 'error' | 'success' | 'warning' | 'info';
+  autoClose?: boolean;
+}
+
+export interface AppState {
+  modal: ModalState | null;
+  alert: AlertState | null;
+  showCreateQuizButton: boolean;
+  showAlert: (data: AlertState | null) => void;
+  showModal: Function;
+  setShowCreateQuizButton: Function;
+}

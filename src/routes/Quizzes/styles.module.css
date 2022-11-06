@@ -1,0 +1,23 @@
+.quizCard {
+  width: 340px;
+  height: 348px;
+}
+
+.cardButton {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  width: calc(100% - 40px);
+}
+
+.playCardButton {
+  width: 47%;
+}
+
+.truncate {
+  display: -webkit-box;
+  max-width: 200px;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

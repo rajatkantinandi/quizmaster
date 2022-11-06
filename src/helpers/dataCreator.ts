@@ -4,22 +4,16 @@ import { Category, Option } from '../types';
 export const getEmptyQuestion = (categoryId: number | string) => ({
   questionId: nanoid(),
   text: '',
-  options: [] as Option[],
+  options: getEmptyOptions(2) as Option[],
   points: 0,
   categoryId,
 });
 
-export const getEmptyCategory = (numberOfQuestionsPerCategory: number): Category => {
-  const categoryId = nanoid();
-
-  return {
-    categoryId,
-    categoryName: '',
-    questions: Array(numberOfQuestionsPerCategory)
-      .fill(1)
-      .map((val, idx) => getEmptyQuestion(categoryId)),
-  };
-};
+export const getEmptyCategory = (): Category => ({
+  categoryId: nanoid(),
+  categoryName: '',
+  questions: [],
+});
 
 export const getEmptyTeam = () => ({
   name: '',
@@ -34,5 +28,5 @@ export const getEmptyOptions = (count: number) =>
     .map((val, idx) => ({
       optionId: nanoid(),
       text: '',
-      isCorrect: false,
+      isCorrect: idx === 0,
     }));

@@ -11,34 +11,23 @@ const gamesC = db.collection('games');
 export const generateRandomNumber = () => parseInt(`${Math.random() * 10000}`);
 
 export const saveQuiz = async (data: QuizParams) => {
-  data.quizId = data.quizId || generateRandomNumber();
-  let existing = (await quizzesC.findOne({ quizId: data.quizId })) as Quiz;
+  const existing = (await quizzesC.findOne({ quizId: parseInt(data.quizId) })) as Quiz;
 
   if (existing) {
-    data.categories = data.categories.map((category) => {
-      category.categoryId = category.categoryId || generateRandomNumber();
-      category.questions = category.questions.map((q) => {
-        q.questionId = q.questionId || generateRandomNumber();
-        q.categoryId = category.categoryId;
-
-        return q;
-      });
-
-      const existingCategory = existing.categories.find((x) => x.categoryId === category.categoryId);
-
-      if (existingCategory) {
-        category.questions = category.questions.map((q) => {
-          const existingQuestion = existingCategory.questions.find((x) => x.questionId === q.questionId);
-
-          return existingQuestion ? { ...existingQuestion, points: q.points } : q;
-        });
-      }
-
-      return category;
-    });
-    await quizzesC.update({ quizId: data.quizId }, data);
+    await quizzesC.update({ quizId: parseInt(data.quizId) }, data);
   } else {
     await quizzesC.insert(data);
+  }
+
+  return data;
+};
+
+export const updateQuizName = async (data: QuizParams) => {
+  const existing = (await quizzesC.findOne({ quizId: parseInt(data.quizId) })) as Quiz;
+
+  if (existing) {
+    existing.name = data.name;
+    await quizzesC.update({ quizId: parseInt(data.quizId) }, existing);
   }
 
   return data;
@@ -70,17 +59,7 @@ export const saveQuestion = async (questionData: Question, quizId: string | numb
     quiz.categories[categoryIndex].questions.push(questionData);
   }
 
-  await quizzesC.update(
-    { quizId },
-    {
-      categories: quiz.categories,
-      isDraft: quiz.isDraft,
-      name: quiz.name,
-      numberOfQuestionsPerCategory: quiz.numberOfQuestionsPerCategory,
-      quizId: quiz.quizId,
-      userId: quiz.userId,
-    },
-  );
+  await quizzesC.update({ quizId }, quiz);
 };
 
 export const getQuizzes = async (userId: number): Promise<Object[]> => {

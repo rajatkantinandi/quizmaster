@@ -24,6 +24,10 @@
   --legend-bg: #65e;
   --legend-color: #fef;
   --shadow-color-dark: rgba(0, 0, 0, 0.5);
+  --qm-card-bg: #f5f6e6;
+  --qm-card-border: #adc3c7;
+  --qm-color: #014751;
+  --qm-button-color: #ffeeb4;
 
   /* fonts */
   --comfortaa: 'Comfortaa';

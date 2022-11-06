@@ -34,10 +34,9 @@ export interface User {
 export interface Quiz {
   name: string;
   categories: Category[];
-  isDraft: boolean;
+  isDraft?: boolean;
   userName: string;
   quizId: any;
-  numberOfQuestionsPerCategory: number;
 }
 
 export interface GameInfo {

@@ -1,66 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'semantic-ui-react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
-import FormInput from '../../components/FormInput';
-import { useNavigate, useParams } from 'react-router';
-import { QuizInfo as IQuizInfo, Quiz, Category } from '../../types';
+import { FormInput } from '../../components/FormInputs';
+import { Quiz, Category, Question as IQuestion } from '../../types';
 import { nanoid } from 'nanoid';
-import { getEmptyQuestion, getEmptyCategory, isInt, insertCategoryAndQuestionsData } from '../../helpers';
+import { getEmptyQuestion, isInt } from '../../helpers';
 import { Helmet } from 'react-helmet';
-import { MIN_NUM_OF_CATEGORIES } from '../../constants';
+import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge } from '@mantine/core';
+import styles from './styles.module.css';
+import Icon from '../../components/Icon';
+import classNames from 'classnames';
+import QuestionEdit from '../../components/QuestionEdit';
+import QuestionPreview from '../../components/QuestionPreview';
+import { plural } from '../../helpers/textHelpers';
+import UpdateQuizName from '../../components/UpdateQuizName';
 
-const getFormDefaultValues = (categoryIds: (string | number)[]) => {
-  return {
-    name: '',
-    numberOfQuestionsPerCategory: '5',
-    categories: categoryIds.map((categoryId) => ({
-      categoryId,
-      categoryName: '',
-      questions: Array(5)
-        .fill(1)
-        .map((val, idx) => getEmptyQuestion(categoryId)),
-    })),
-  };
-};
-
-export default function ConfigureQuiz() {
-  const { userName = 'guest', ...rest } = useParams();
-  const navigate = useNavigate();
-  const [quizInfo, setQuizInfo] = useState<IQuizInfo>({
-    quizId: rest.quizId || nanoid(),
-    categoryIds: [nanoid(), nanoid(), nanoid()],
-    numberOfQuestionsPerCategory: 5,
-  });
-  const [refreshComponent, setRefreshComponent] = useState(0);
-  const { createOrUpdateQuiz, getQuiz, sendBeaconPost } = useStore();
+export default function ConfigureQuiz({ quizId }: { quizId: string }) {
+  const [quizName, setQuizName] = useState('');
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
+  const [expandedPreviewQuestionIndex, setExpandedPreviewQuestionIndex] = useState<number | null>(null);
+  const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal } = useStore();
+  const [refresh, setRefresh] = useState(0);
   const {
-    control,
     handleSubmit,
     formState: { errors },
     reset,
     getValues,
     setValue,
-  } = useForm({ defaultValues: getFormDefaultValues(quizInfo.categoryIds) });
-  let saveQuizNameTimer: NodeJS.Timeout;
+    register,
+    watch,
+  } = useForm();
+  const watchCategories = watch('categories') || [];
 
   useEffect(() => {
-    if (isInt(quizInfo.quizId)) {
-      getQuiz(parseInt(`${quizInfo.quizId}`)).then((quiz: Quiz) => {
-        insertCategoryAndQuestionsData(quiz);
-        const categoryIds = quiz.categories.map((category: Category) => category.categoryId);
+    if (isInt(quizId)) {
+      getQuiz(parseInt(`${quizId}`)).then((quiz: Quiz) => {
+        setQuizName(quiz.name);
+        let activeQuestionIndex: any = null;
+        const activeCategoryIndex = quiz.categories.findIndex((category) => {
+          const idx = category.questions.findIndex((question) => !isValidQuestion(question));
+          activeQuestionIndex = idx >= 0 ? idx : null;
 
-        setQuizInfo({
-          quizId: quiz.quizId,
-          categoryIds,
+          return idx >= 0;
         });
-        setTimeout(() => {
-          reset({
-            name: quiz.name,
-            numberOfQuestionsPerCategory: quiz.numberOfQuestionsPerCategory.toString(),
-            categories: quiz.categories,
-          });
-        }, 0);
+
+        setActiveCategoryIndex(Math.max(activeCategoryIndex, 0));
+        setActiveQuestionIndex(activeQuestionIndex);
+        setTimeout(() => reset(quiz), 0);
       });
     }
 
@@ -70,126 +57,184 @@ export default function ConfigureQuiz() {
   }, []);
 
   useEffect(() => {
-    window.onbeforeunload = function () {
-      const { quizId } = quizInfo;
-
-      if (isInt(quizId)) {
-        sendBeaconPost({
-          name: getValues('name'),
-          numberOfQuestionsPerCategory: parseInt(getValues('numberOfQuestionsPerCategory')),
-          quizId,
-          categories: getCategoryData(getValues()),
-          isDraft: true,
-        });
-      }
-    };
-  }, [quizInfo]);
-
-  async function onFormSubmit(formData: FieldValues) {
-    const response = await createOrUpdateQuiz({
-      categories: getCategoryData(formData),
-      quizId: quizInfo.quizId,
-      name: formData.name,
-      isDraft: true,
-      numberOfQuestionsPerCategory: parseInt(formData.numberOfQuestionsPerCategory),
-    });
-
-    navigate(`/edit-quiz/${userName}/${response.quizId}`);
-  }
-
-  const getCategoryData = (formData: FieldValues): Category[] => {
-    return formData.categories
-      .filter((category) => category.categoryName && quizInfo.categoryIds.includes(category.categoryId))
-      .map((category) => {
-        const categoryData: any = {
-          categoryName: category.categoryName,
-          questions: Array(parseInt(formData.numberOfQuestionsPerCategory))
-            .fill(1)
-            .map((val, index) => {
-              const question = category.questions[index];
-              const data: any = {
-                points: parseInt(question.points) || 0,
-                options: question.options || [],
-              };
-
-              if (isInt(question.questionId)) {
-                data.questionId = question.questionId;
-              } else if (isInt(question.categoryId)) {
-                data.categoryId = question.categoryId;
-              }
-
-              return data;
-            }),
-        };
-
-        if (isInt(category.categoryId)) {
-          categoryData.categoryId = category.categoryId;
-        }
-
-        return categoryData;
-      });
-  };
-
-  const addCategory = () => {
-    const newCategory = getEmptyCategory(5);
-    const categories = getValues('categories');
-    categories.push(newCategory);
-    setValue('categories', categories);
-    setQuizInfo({
-      ...quizInfo,
-      categoryIds: [...quizInfo.categoryIds, newCategory.categoryId],
-    });
-  };
-
-  function reRenderComponent() {
-    setRefreshComponent(Math.random());
-  }
-
-  function getQuestionsForCategory(categoryId: string | number) {
-    const categories = getValues('categories') || [];
-    const questions = categories.find((category: Category) => category.categoryId === categoryId)?.questions || [];
-    const numberOfQuestionsPerCategory = parseInt(getValues('numberOfQuestionsPerCategory')) || questions.length;
-
-    return Array(numberOfQuestionsPerCategory)
-      .fill(1)
-      .map((val, index) => questions[index] || getEmptyQuestion(categoryId));
-  }
-
-  async function handleAddQuizName(ev: React.ChangeEvent, inputData: { value: string }) {
-    if (saveQuizNameTimer) {
-      clearTimeout(saveQuizNameTimer);
+    if (watchCategories.length > 0 && watchCategories.length < activeCategoryIndex + 1) {
+      setActiveCategory(watchCategories.length - 1);
     }
 
-    saveQuizNameTimer = setTimeout(async () => {
-      const data: any = {
-        name: inputData.value,
-        categories: [],
+    window.onbeforeunload = function () {
+      sendBeaconPost({
+        name: quizName,
+        quizId,
+        categories: watchCategories,
         isDraft: true,
-        numberOfQuestionsPerCategory: 5,
-      };
-
-      if (isInt(quizInfo.quizId)) {
-        data.quizId = quizInfo.quizId;
-      }
-
-      const resp = await createOrUpdateQuiz(data);
-      setQuizInfo({
-        ...quizInfo,
-        quizId: resp.quizId,
       });
+    };
+  }, [watchCategories, quizName]);
 
-      navigate(`/configure-quiz/${userName}/${resp.quizId}`);
-    }, 1000);
+  function onQuestionChange(data) {
+    const categories = getValues('categories');
+
+    categories[activeCategoryIndex].questions[activeQuestionIndex as number] = data;
+    setValue('categories', categories);
   }
 
-  const removeLastCategory = () => {
+  async function onFormSubmit(formData: FieldValues) {
+    let index = formData.categories.findIndex((category) =>
+      category.questions.some((question) => !isValidQuestion(question)),
+    );
+
+    if (index >= 0) {
+      showAlert({
+        message: 'Some questions are not completed. Either complete them or remove them.',
+        type: 'error',
+      });
+      setActiveCategory(index);
+
+      return;
+    }
+
+    index = formData.categories.findIndex((category) => category.questions.length === 0);
+
+    if (index >= 0) {
+      showAlert({
+        message: 'All categories must have atleast 1 question',
+        type: 'error',
+      });
+      setActiveCategory(index);
+
+      return;
+    }
+
+    try {
+      const response = await createOrUpdateQuiz({
+        categories: formData.categories,
+        quizId,
+        name: quizName,
+        isDraft: false,
+      });
+
+      showAlert({
+        message: 'Quiz has been saved successfully.',
+        type: 'success',
+      });
+    } catch (err) {
+      showAlert({
+        message: 'Something went wrong while saving the quiz data. Please try again later.',
+        type: 'error',
+      });
+    }
+
+    // navigate(`/edit-quiz/${userName}/${response.quizId}`);
+  }
+
+  const addCategory = () => {
+    const newCategory = {
+      categoryId: nanoid(),
+      categoryName: '',
+      questions: [],
+    };
     const categories = getValues('categories');
-    categories.pop();
+
+    categories.push(newCategory);
     setValue('categories', categories);
-    setQuizInfo({
-      ...quizInfo,
-      categoryIds: quizInfo.categoryIds.slice(0, -1),
+    setRefresh(Math.random());
+  };
+
+  const confirmRemoveCategory = (index, hasQuestion) => {
+    if (hasQuestion) {
+      showModal({
+        title: 'Delete Category',
+        body: 'This category has questions. Are you sure you want to delete it?',
+        okCallback: () => removeCategory(index),
+        okText: 'Delete Category',
+        cancelText: 'Cancel',
+      });
+    } else {
+      removeCategory(index);
+    }
+  };
+
+  const removeCategory = (index) => {
+    const categories = getValues('categories');
+
+    categories.splice(index, 1);
+    setValue('categories', categories);
+    setRefresh(Math.random());
+  };
+
+  const setActiveCategory = (value) => {
+    setActiveCategoryIndex(parseInt(value));
+    setActiveQuestionIndex(null);
+    setExpandedPreviewQuestionIndex(null);
+  };
+
+  const addQuestion = () => {
+    const question = getEmptyQuestion(watchCategories[activeCategoryIndex].categoryId);
+    const categories = getValues('categories');
+    categories[activeCategoryIndex].questions.push(question);
+    setValue('categories', categories);
+
+    const length = categories[activeCategoryIndex].questions.length;
+    setActiveQuestionIndex(length - 1);
+  };
+
+  function isValidQuestion(question) {
+    const { options, text, points } = question;
+
+    return (
+      !!text &&
+      points > 0 &&
+      options.length > 0 &&
+      options.some((option) => option.isCorrect) &&
+      !options.some((option) => !option.text)
+    );
+  }
+
+  function deleteQuestion(index: number) {
+    const questionIndex = index >= 0 ? index : (activeQuestionIndex as number);
+    const categories = getValues('categories');
+    const question = categories[activeCategoryIndex].questions[questionIndex];
+
+    if (isValidQuestion(question)) {
+      showModal({
+        title: 'Delete Question',
+        body: 'Are you sure you want to delete this question?',
+        okCallback: () => removeQuestion(questionIndex),
+        okText: 'Delete Question',
+        cancelText: 'Cancel',
+      });
+    } else {
+      removeQuestion(questionIndex);
+    }
+  }
+
+  function removeQuestion(questionIndex) {
+    const categories = getValues('categories');
+
+    delete categories[activeCategoryIndex].questions[questionIndex];
+    setValue('categories', categories);
+
+    if (questionIndex === activeQuestionIndex) {
+      setActiveQuestionIndex(null);
+    } else {
+      setRefresh(Math.random());
+    }
+  }
+
+  function changeQuizName() {
+    showModal({
+      title: 'Edit quiz name',
+      body: <UpdateQuizName name={quizName} quizId={quizId} callback={setQuizName} />,
+      okCallback: () => {
+        document.getElementById('btnUpdateQuizNameForm')?.click();
+      },
+      okText: 'Update',
+      cancelText: 'Cancel',
     });
+  }
+
+  const submitQuizForm = () => {
+    document.getElementById('btnQuizFormSubmit')?.click();
   };
 
   return (
@@ -197,90 +242,152 @@ export default function ConfigureQuiz() {
       <Helmet>
         <title>Create Quiz</title>
       </Helmet>
-      <Form className="flex flexCol" onSubmit={handleSubmit(onFormSubmit)}>
-        <div className="container-md">
-          <FormInput
-            name="name"
-            id="name"
-            control={control}
-            rules={{ required: 'Please enter quiz name' }}
-            errorMessage={errors.name?.message || ''}
-            label="Quiz name"
-            inputProps={{
-              type: 'text',
-              onChange: handleAddQuizName,
-            }}
-          />
-          <FormInput
-            name="numberOfQuestionsPerCategory"
-            id="numberOfQuestionsPerCategory"
-            control={control}
-            rules={{
-              required: 'Please enter number of questions per category',
-            }}
-            errorMessage={errors.numberOfQuestionsPerCategory?.message || ''}
-            label="Number of questions per category"
-            inputProps={{
-              type: 'number',
-              min: MIN_NUM_OF_CATEGORIES,
-              onChange: reRenderComponent,
-            }}
-          />
-        </div>
-        <hr />
-        <div className="flex">
-          <Button type="button" color="blue" onClick={addCategory} className="mr-lg">
-            Add one more category
-          </Button>
-          {quizInfo.categoryIds.length > MIN_NUM_OF_CATEGORIES && (
-            <Button type="button" color="red" onClick={removeLastCategory}>
-              Remove last category
-            </Button>
-          )}
-        </div>
-        <hr />
-        <h2>Categories</h2>
-        <div className="flex flexWrap">
-          {quizInfo.categoryIds.map((categoryId: string | number, idx: number) => (
-            <div className="flex flexCol mr-xl mb-xl" key={categoryId}>
-              <h3>Category {idx + 1}</h3>
-              <FormInput
-                name={`categories[${idx}].categoryName`}
-                id={`categories${idx}categoryName`}
-                control={control}
-                rules={{ required: 'Please enter category name' }}
-                errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
-                label="Name"
-                inputProps={{
-                  type: 'text',
-                  className: 'fullWidth',
-                  size: 'small',
-                }}
-              />
-              <h4>Question points</h4>
-              {getQuestionsForCategory(categoryId).map((q, index) => (
-                <FormInput
-                  key={q.questionId}
-                  name={`categories[${idx}].questions[${index}].points`}
-                  id={`categories${idx}questions${index}points`}
-                  control={control}
-                  rules={{ required: 'Please enter question pointes' }}
-                  errorMessage={errors.categories?.[idx]?.questions?.[index]?.points?.message || ''}
-                  label={`Q${index + 1} points`}
-                  inputProps={{
-                    type: 'number',
-                    className: 'fullWidth',
-                    size: 'small',
-                  }}
-                />
+      <Grid columns={24} gutter={0} className={styles.wrapper}>
+        <Grid.Col span={7}>
+          <form onSubmit={handleSubmit(onFormSubmit)}>
+            <Title order={2} mb="xl" pb="lg" className="flex" align="end">
+              {quizName}
+              <ActionIcon ml="sm" className="mt-md" onClick={changeQuizName}>
+                <Icon name="pencil" width={16} />
+              </ActionIcon>
+            </Title>
+            <Title order={4}>Categories</Title>
+            <Radio.Group
+              className={styles.scrollAble}
+              name="activeCategory"
+              value={`${activeCategoryIndex}`}
+              onChange={setActiveCategory}>
+              {watchCategories.map((category: Category, idx: number) => (
+                <Card
+                  shadow={idx === activeCategoryIndex ? 'sm' : ''}
+                  withBorder={idx === activeCategoryIndex}
+                  key={category.categoryId}
+                  className={classNames({
+                    [styles.activeCategory]: idx === activeCategoryIndex,
+                    [styles.nonActiveCard]: idx !== activeCategoryIndex,
+                    primaryCard: true,
+                  })}>
+                  <Radio
+                    mr="md"
+                    value={`${idx}`}
+                    label={
+                      <div className="flex alignCenter">
+                        <Text weight="bold" mr="md">
+                          {idx + 1}.
+                        </Text>
+                        <div>
+                          <FormInput
+                            name={`categories[${idx}].categoryName`}
+                            id={`categories${idx}categoryName`}
+                            rules={{ required: 'Please enter category name' }}
+                            errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
+                            type="text"
+                            placeholder="Enter category name"
+                            variant={idx === activeCategoryIndex ? 'filled' : 'unstyled'}
+                            size="md"
+                            readOnly={idx !== activeCategoryIndex}
+                            radius="md"
+                            onClick={() => {
+                              if (idx !== activeCategoryIndex) {
+                                setActiveCategory(idx);
+                              }
+                            }}
+                            className={classNames({
+                              [styles.categoryNameInput]: idx !== activeCategoryIndex,
+                            })}
+                            register={register}
+                          />
+                          {!errors.categories?.[idx]?.categoryName?.message && (
+                            <Text
+                              weight="bold"
+                              color="dimmed"
+                              align="left"
+                              size="xs"
+                              className={classNames({
+                                absolute: true,
+                                'mt-md': idx === activeCategoryIndex,
+                              })}>
+                              {category.questions.length > 0 && (
+                                <Text component="span" mr="sm">
+                                  {plural(category.questions.length, '%count question', '%count questions')}
+                                </Text>
+                              )}
+                              {(category.questions.length === 0 ||
+                                category.questions.some((question) => !isValidQuestion(question))) &&
+                                idx !== activeCategoryIndex && (
+                                  <Badge color="red" variant="filled">
+                                    Incomplete
+                                  </Badge>
+                                )}
+                            </Text>
+                          )}
+                        </div>
+                        {watchCategories.length > 1 && (
+                          <ActionIcon
+                            variant="transparent"
+                            ml="md"
+                            onClick={() => confirmRemoveCategory(idx, category.questions.length > 0)}>
+                            <Icon width={20} name="trash" />
+                          </ActionIcon>
+                        )}
+                      </div>
+                    }
+                  />
+                </Card>
               ))}
-            </div>
-          ))}
-        </div>
-        <Button type="submit" color="orange" size="large">
-          Continue
-        </Button>
-      </Form>
+            </Radio.Group>
+            <Button mt="xl" onClick={addCategory} radius="sm" variant="default">
+              + Add Category
+            </Button>
+            <button className="displayNone" id="btnQuizFormSubmit" type="submit">
+              Submit
+            </button>
+          </form>
+        </Grid.Col>
+        <Grid.Col span={14}>
+          <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsCard}`}>
+            <Title order={5} mb="xl">
+              {watchCategories[activeCategoryIndex]?.categoryName || 'Unnamed Category'}
+            </Title>
+            {(watchCategories[activeCategoryIndex]?.questions || []).map((question: IQuestion, idx) =>
+              activeQuestionIndex === idx ? (
+                <QuestionEdit
+                  questionNum={idx + 1}
+                  question={question}
+                  key={question.questionId}
+                  saveQuestion={() => {
+                    setActiveQuestionIndex(null);
+                    setExpandedPreviewQuestionIndex(idx);
+                  }}
+                  onQuestionChange={onQuestionChange}
+                  deleteQuestion={deleteQuestion}
+                />
+              ) : (
+                <QuestionPreview
+                  questionNum={idx + 1}
+                  question={question}
+                  key={question.questionId}
+                  isValidQuestion={isValidQuestion(question)}
+                  setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
+                  deleteQuestion={() => deleteQuestion(idx)}
+                  expandedPreviewQuestionIndex={expandedPreviewQuestionIndex === idx}
+                  setExpandedPreviewQuestionIndex={setExpandedPreviewQuestionIndex}
+                />
+              ),
+            )}
+            <Button mt="xl" onClick={addQuestion} radius="sm" variant="default">
+              + Add Question
+            </Button>
+          </Card>
+        </Grid.Col>
+      </Grid>
+      <Grid columns={24} className={styles.btnCompleteQuiz}>
+        <Grid.Col span={10} offset={7} py="xl">
+          <Button variant="gradient" size="lg" fullWidth radius="md" onClick={submitQuizForm}>
+            Complete Quiz
+          </Button>
+        </Grid.Col>
+      </Grid>
     </>
   );
 }
