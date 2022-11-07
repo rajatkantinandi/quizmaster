@@ -1,3 +1,5 @@
 .loginCardWrapper {
   height: 100%;
+  background-image: url('../../images/loginPageBg.png');
+  background-size: 20%;
 }

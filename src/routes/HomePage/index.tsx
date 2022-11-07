@@ -33,9 +33,8 @@ export default function HomePage() {
         <title>Homepage</title>
       </Helmet>
       <AppShell
-        className={styles.homePage}
         styles={(theme) => ({
-          main: { backgroundColor: theme.colors['qm-primary'] },
+          main: { backgroundColor: theme.colors['qm-primary'], padding: 0 },
         })}>
         <Grid align="center" className={styles.loginCardWrapper}>
           <Grid.Col span={4} offset={4}>
