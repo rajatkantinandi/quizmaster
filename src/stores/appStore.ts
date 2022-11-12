@@ -1,7 +1,6 @@
 export const getAppStore = (set: Function, get: Function) => ({
   modal: null,
   alert: null,
-  showCreateQuizButton: false,
   showModal: (modalState: ModalState) => {
     set(
       (state: AppState) => {
@@ -19,11 +18,6 @@ export const getAppStore = (set: Function, get: Function) => ({
       false,
       'showAlert',
     );
-  },
-  setShowCreateQuizButton: (value: boolean) => {
-    set((state: AppState) => {
-      state.showCreateQuizButton = value;
-    });
   },
 });
 
@@ -43,13 +37,12 @@ export interface AlertState {
   message: string;
   type?: 'error' | 'success' | 'warning' | 'info';
   autoClose?: boolean;
+  callback?: Function;
 }
 
 export interface AppState {
   modal: ModalState | null;
   alert: AlertState | null;
-  showCreateQuizButton: boolean;
   showAlert: (data: AlertState | null) => void;
   showModal: Function;
-  setShowCreateQuizButton: Function;
 }

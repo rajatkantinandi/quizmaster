@@ -30,7 +30,7 @@ export default function HomePage() {
   ) : (
     <section>
       <Helmet>
-        <title>Homepage</title>
+        <title>Homepage - Quizmaster</title>
       </Helmet>
       <AppShell
         styles={(theme) => ({

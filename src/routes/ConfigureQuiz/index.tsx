@@ -13,14 +13,14 @@ import classNames from 'classnames';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuestionPreview from '../../components/QuestionPreview';
 import { plural } from '../../helpers/textHelpers';
-import UpdateQuizName from '../../components/UpdateQuizName';
+import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
 
 export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   const [quizName, setQuizName] = useState('');
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedPreviewQuestionIndex, setExpandedPreviewQuestionIndex] = useState<number | null>(null);
-  const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal } = useStore();
+  const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
   const [refresh, setRefresh] = useState(0);
   const {
     handleSubmit,
@@ -224,13 +224,24 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   function changeQuizName() {
     showModal({
       title: 'Edit quiz name',
-      body: <UpdateQuizName name={quizName} quizId={quizId} callback={setQuizName} />,
+      body: (
+        <AddOrUpdateQuizName
+          name={quizName}
+          hideSubmitButton
+          handleFormSubmit={(data) => handleQuizName(data, quizId)}
+        />
+      ),
       okCallback: () => {
         document.getElementById('btnUpdateQuizNameForm')?.click();
       },
       okText: 'Update',
       cancelText: 'Cancel',
     });
+  }
+
+  async function handleQuizName(data, quizId) {
+    await updateQuizName({ ...data, quizId });
+    setQuizName(data.name);
   }
 
   const submitQuizForm = () => {

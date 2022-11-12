@@ -1,24 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ModalState } from '../../stores/appStore';
 import { useStore } from '../../useStore';
 import { Modal as MTModal, Button, Group, Checkbox, Text } from '@mantine/core';
 
-interface Props extends ModalState {}
-
-function Modal({
-  body,
-  title,
-  okText = 'OK',
-  cancelText = 'Cancel',
-  className = '',
-  okCallback,
-  size = 'tiny',
-  isAlert = false,
-  doNotShowAgainKey,
-}: Props) {
-  const { showModal } = useStore();
+function Modal() {
+  const { modal, showModal } = useStore();
   const okRef = useRef<any>();
   const [shouldNotShowAgain, setShouldNotShowAgain] = useState(false);
+  const {
+    body,
+    title,
+    okText = 'OK',
+    cancelText = 'Cancel',
+    className = '',
+    okCallback,
+    size = 'tiny',
+    isAlert = false,
+    doNotShowAgainKey,
+  } = modal || {};
 
   function hideModal() {
     showModal(null);

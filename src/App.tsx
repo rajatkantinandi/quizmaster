@@ -20,8 +20,8 @@ function App() {
           <Route path="*" element={<CheckAuthAndNavigate />} />
         </Routes>
       </BrowserRouter>
-      {!!modal && <Modal {...modal} />}
-      {!!alert && <Alert {...alert} />}
+      {!!modal && <Modal />}
+      {!!alert && <Alert />}
     </div>
   );
 }

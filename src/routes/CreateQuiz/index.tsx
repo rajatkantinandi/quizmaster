@@ -1,20 +1,14 @@
 import React from 'react';
 import { useStore } from '../../useStore';
-import { useForm, FieldValues } from 'react-hook-form';
-import { FormInput } from '../../components/FormInputs';
+import { FieldValues } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { Helmet } from 'react-helmet';
-import { Button, Grid } from '@mantine/core';
+import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
 
 export default function ConfigureQuiz() {
   const { userName = 'guest' } = useParams();
   const navigate = useNavigate();
   const { createOrUpdateQuiz } = useStore();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
   async function handleAddQuizName(formData: FieldValues) {
     const data: any = {
@@ -32,27 +26,9 @@ export default function ConfigureQuiz() {
       <Helmet>
         <title>Create Quiz</title>
       </Helmet>
-      <form onSubmit={handleSubmit(handleAddQuizName)} style={{ paddingTop: '150px' }}>
-        <Grid align="center" pt="xl" mt="xl">
-          <Grid.Col span={4} offset={4} pt="xl" mt="xl">
-            <FormInput
-              name="name"
-              id="name"
-              register={register}
-              rules={{ required: 'Please enter quiz name' }}
-              errorMessage={errors.name?.message || ''}
-              type="text"
-              placeholder="Please enter quiz name"
-              variant="filled"
-              radius="md"
-              size="md"
-            />
-            <Button mt="xl" radius="sm" size="md" fullWidth type="submit" variant="filled">
-              Create Quiz
-            </Button>
-          </Grid.Col>
-        </Grid>
-      </form>
+      <div style={{ paddingTop: '150px' }}>
+        <AddOrUpdateQuizName handleFormSubmit={handleAddQuizName} />
+      </div>
     </>
   );
 }

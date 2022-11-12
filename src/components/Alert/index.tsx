@@ -1,16 +1,20 @@
 import React, { useEffect } from 'react';
-import { AlertState } from '../../stores/appStore';
 import { Alert as MTAlert, Text } from '@mantine/core';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 
-function Alert({ message, type = 'info', autoClose = true }: AlertState) {
-  const { showAlert } = useStore();
+function Alert() {
+  const { showAlert, alert } = useStore();
+  const { message, type = 'info', autoClose = true, callback } = alert || {};
 
   useEffect(() => {
     if (autoClose) {
       setTimeout(() => {
         showAlert(null);
+
+        if (callback) {
+          callback();
+        }
       }, 4000);
     }
   });

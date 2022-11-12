@@ -5,9 +5,10 @@ import { FormInput } from '../FormInputs';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router';
 import { Card, Button, Title, Text, Divider } from '@mantine/core';
+import { Link } from 'react-router-dom';
 
 export default function LoginCard() {
-  const { logIn, showModal } = useStore();
+  const { logIn, showModal, showAlert } = useStore();
   const navigate = useNavigate();
   const {
     register,
@@ -24,10 +25,10 @@ export default function LoginCard() {
     const params = new URLSearchParams(window.location.search);
 
     if (params.get('error')) {
-      showModal({
-        body: params.get('error'),
-        title: '',
-        okCallback: () => navigate('/login'),
+      showAlert({
+        message: params.get('error') || '',
+        type: 'error',
+        callback: () => navigate('/login'),
       });
     }
   }, []);
@@ -58,14 +59,14 @@ export default function LoginCard() {
   return (
     <Card shadow="xs" p="lg" radius="xs" withBorder className="primaryCard">
       <Title align="center" order={4}>
-        Log in on Quizmaster
+        Log in
       </Title>
       <form onSubmit={handleSubmit(handleLogin)}>
         <FormInput
           name="userName"
           id="userName"
           register={register}
-          rules={{ required: 'Please enter username' }}
+          rules={{ required: 'Please enter your username' }}
           errorMessage={errors.userName?.message}
           label="Username"
           type="text"
@@ -75,29 +76,24 @@ export default function LoginCard() {
           name="password"
           id="password"
           register={register}
-          rules={{ required: 'Please enter password' }}
+          rules={{ required: 'Please enter your password' }}
           errorMessage={errors.password?.message}
           label="Password"
           type="password"
         />
         <Text size="sm" align="right" mt="sm">
-          <Button compact color="transparent" variant="subtle" onClick={() => navigate('/forgot-password')}>
-            Forgot password ?
-          </Button>
+          <Link to="/forgot-password">Forgot password ?</Link>
         </Text>
         <Button mt="xs" size="md" radius="sm" type="submit" fullWidth variant="filled">
           Login
         </Button>
         <Divider my="sm" labelProps={{ weight: 'bold', size: 'md' }} label="OR" labelPosition="center" color="black" />
         <Button mt="xs" size="md" radius="sm" fullWidth variant="default" onClick={loginAsGuest}>
-          Login as guest
+          Login as a guest
         </Button>
       </form>
       <Text size="sm" align="center" mt="sm">
-        Don't have an account?
-        <Button compact color="transparent" variant="subtle" onClick={() => navigate('/signup')}>
-          Sign up
-        </Button>
+        Don't have an account? <Link to="/signup">Sign up</Link>
       </Text>
     </Card>
   );

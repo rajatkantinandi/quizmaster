@@ -12,12 +12,13 @@ import { useStore } from '../../useStore';
 import Icon from '../../components/Icon';
 import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
 import { isValidUser } from '../../helpers/authHelper';
+import { capitalizeFirstLetter } from '../../helpers/textHelpers';
 
 function AppLayout() {
   const { userName, viewType, id } = useParams();
   const [activeTab, setActiveTab] = useState<string | null>('');
   const navigate = useNavigate();
-  const { showCreateQuizButton, searchQuiz, logout } = useStore();
+  const { searchQuiz, logout, quizzes } = useStore();
 
   useEffect(() => {
     if (viewType === 'quizzes') {
@@ -55,7 +56,7 @@ function AppLayout() {
   return isValidUser ? (
     <>
       <Helmet>
-        <title>AppLayout</title>
+        <title>{capitalizeFirstLetter(viewType).replace('-', ' ')} - Quizmaster</title>
       </Helmet>
       <AppShell
         styles={(theme) => ({
@@ -70,22 +71,17 @@ function AppLayout() {
                 </Tabs.List>
               </Tabs>
               <Group>
-                {showCreateQuizButton && (
-                  <>
-                    <TextInput
-                      mr="xl"
-                      type="text"
-                      placeholder="Search by quiz name"
-                      variant="filled"
-                      radius="md"
-                      size="md"
-                      onChange={(ev) => searchQuiz(ev.target.value)}
-                      icon={<Icon name="search" width={16} />}
-                    />
-                    <Button onClick={() => navigate(`/configure-quiz/${userName}`)} variant="filled">
-                      + Create Quiz
-                    </Button>
-                  </>
+                {quizzes.length > 0 && (
+                  <TextInput
+                    mr="xl"
+                    type="text"
+                    placeholder="Search by quiz name"
+                    variant="filled"
+                    radius="md"
+                    size="md"
+                    onChange={(ev) => searchQuiz(ev.target.value)}
+                    icon={<Icon name="search" width={16} />}
+                  />
                 )}
                 <Menu shadow="md" width={200}>
                   <Menu.Target>

@@ -1,21 +1,20 @@
 import React from 'react';
-import { Button, Form } from 'semantic-ui-react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
 import { Helmet } from 'react-helmet';
-import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
+import { Card, Button, Title } from '@mantine/core';
 
 export default function Login() {
   const { sendForgotPasswordLink, showAlert } = useStore();
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  async function handleLogin(data: FieldValues) {
+  async function handleForgotPassword(data: FieldValues) {
     try {
       await sendForgotPasswordLink(data);
       showAlert({ message: 'Please check your email' });
@@ -25,28 +24,31 @@ export default function Login() {
   }
 
   return (
-    <div className="flex flexCol">
+    <Card shadow="xs" p="lg" radius="xs" withBorder className="primaryCard">
       <Helmet>
         <title>Forgot password</title>
       </Helmet>
-      <Form className="flex flexCol container-md" onSubmit={handleSubmit(handleLogin)}>
+      <Title align="center" order={4}>
+        Forgot Password?
+      </Title>
+      <form onSubmit={handleSubmit(handleForgotPassword)}>
         <FormInput
           name="emailId"
           id="emailId"
+          register={register}
           rules={{ required: 'Please enter email' }}
           errorMessage={errors.emailId?.message}
           label="EmailId"
           type="email"
           autoFocus
-          register={register}
         />
-        <Button type="submit" color="blue" className="textAlignCenter" size="large">
+        <Button mt="xl" size="md" radius="sm" type="submit" fullWidth variant="filled">
           Email me a reset link
         </Button>
-      </Form>
-      <div className="mt-lg">
-        Remember your password? <button onClick={() => navigate('/login')}>Log in</button>
+      </form>
+      <div className="mt-lg textAlignCenter">
+        Remember your password? <Link to="/login">Log in</Link>
       </div>
-    </div>
+    </Card>
   );
 }
