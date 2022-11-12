@@ -18,7 +18,14 @@ export interface IconProps extends HTMLAttributes<HTMLOrSVGElement> {
   svgClassName?: string;
 }
 
-function Icon({ name, width = 26, height = 26, color = '#014751', className = '', ...rest }: IconProps): JSX.Element {
+function Icon({
+  name,
+  width = 26,
+  height = 26,
+  color = 'var(--qm-primary)',
+  className = '',
+  ...rest
+}: IconProps): JSX.Element {
   const IconComponent = icons[name];
 
   return <IconComponent width={width} height={height} fill={color} className={className} {...rest} />;

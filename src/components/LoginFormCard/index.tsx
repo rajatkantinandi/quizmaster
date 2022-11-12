@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 import { Card, Button, Title, Text, Divider } from '@mantine/core';
 import { Link } from 'react-router-dom';
 
-export default function LoginCard() {
+export default function LoginFormCard() {
   const { logIn, showModal, showAlert } = useStore();
   const navigate = useNavigate();
   const {

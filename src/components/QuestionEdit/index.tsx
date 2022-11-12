@@ -212,7 +212,7 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
               </Group>
             ))}
             <Button radius="sm" mt="lg" variant="default" onClick={addOption}>
-              + Add Option
+              + Add option
             </Button>
           </Tabs.Panel>
           <Tabs.Panel value="withoutOptions">

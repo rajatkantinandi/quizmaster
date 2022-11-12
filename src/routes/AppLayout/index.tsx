@@ -18,7 +18,7 @@ function AppLayout() {
   const { userName, viewType, id } = useParams();
   const [activeTab, setActiveTab] = useState<string | null>('');
   const navigate = useNavigate();
-  const { searchQuiz, logout, quizzes } = useStore();
+  const { searchQuiz, logout, quizzes, userData } = useStore();
 
   useEffect(() => {
     if (viewType === 'quizzes') {
@@ -53,6 +53,12 @@ function AppLayout() {
     }
   }
 
+  function getNameInitials() {
+    const firstNameLastNameArr = userData.name.split(' ');
+
+    return `${firstNameLastNameArr[0]?.charAt(0)?.toUpperCase()}${firstNameLastNameArr[1]?.charAt(0)?.toUpperCase()}`;
+  }
+
   return isValidUser ? (
     <>
       <Helmet>
@@ -60,7 +66,7 @@ function AppLayout() {
       </Helmet>
       <AppShell
         styles={(theme) => ({
-          main: window.location.pathname.includes('/quizzes') ? { backgroundColor: '#f3f3f3' } : {},
+          main: window.location.pathname.includes('/quizzes') ? { backgroundColor: 'var(--off-white)' } : {},
         })}
         header={
           <Header height={70}>
@@ -71,7 +77,7 @@ function AppLayout() {
                 </Tabs.List>
               </Tabs>
               <Group>
-                {quizzes.length > 0 && (
+                {quizzes.length > 0 && viewType === 'quizzes' && (
                   <TextInput
                     mr="xl"
                     type="text"
@@ -86,7 +92,7 @@ function AppLayout() {
                 <Menu shadow="md" width={200}>
                   <Menu.Target>
                     <Avatar color="cyan" radius="xl">
-                      {userName?.charAt(0)?.toUpperCase()}
+                      {getNameInitials()}
                     </Avatar>
                   </Menu.Target>
                   <Menu.Dropdown>

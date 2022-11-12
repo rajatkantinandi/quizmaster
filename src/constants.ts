@@ -16,19 +16,11 @@ export const defaultGameInfo: GameInfo = {
 };
 
 export const tilesBGColors = [
-  '#f5866c',
-  '#e756cc',
-  '#4b8ef6',
-  '#bea798',
-  '#00bfe1',
-  '#a5db00',
-  '#fbd103',
-  '#7ecfcf',
-  '#95a5b5',
-  '#47ff76',
-  '#fb8065',
-  '#5151fa',
-  '#9c4afb',
+  'var(--quiz-card-bg-1)',
+  'var(--quiz-card-bg-2)',
+  'var(--quiz-card-bg-3)',
+  'var(--quiz-card-bg-4)',
+  'var(--quiz-card-bg-5)',
 ];
 
 export const appPaths = [

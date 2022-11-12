@@ -25,3 +25,7 @@
 .notingHere {
   margin: 10px auto;
 }
+
+.tileIcon {
+  opacity: 0.5;
+}

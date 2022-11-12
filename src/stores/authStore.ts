@@ -35,5 +35,6 @@ export interface AuthState extends Omit<ReturnType<typeof getAuthStore>, 'userDa
     userId: number;
     emailId: string;
     token: string;
+    name: string;
   };
 }

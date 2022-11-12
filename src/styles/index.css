@@ -90,11 +90,11 @@ legend {
 }
 
 .primaryCard {
-  background-color: #f5f6e6;
+  background-color: var(--primary-card-bg);
 }
 
 .secondaryCard {
-  background-color: #afd0d4;
+  background-color: var(--secondary-card-bg);
 }
 
 .arrow {
@@ -105,11 +105,11 @@ legend {
 }
 
 .arrowDown {
-  border-top: 10px solid #014751;
+  border-top: 10px solid var(--qm-primary);
 }
 
 .arrowUp {
-  border-bottom: 10px solid #014751;
+  border-bottom: 10px solid var(--qm-primary);
 }
 
 .displayNone {

@@ -9,7 +9,7 @@ function PageLoader() {
         variant: 'bars',
         size: 'xl',
         sx: (theme) => ({
-          fill: theme.colors['qm-primary'][0],
+          fill: 'var(--qm-primary)',
         }),
       }}
     />

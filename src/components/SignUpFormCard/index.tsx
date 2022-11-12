@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import { Card, Button, Title, Text } from '@mantine/core';
 import { Link } from 'react-router-dom';
 
-export default function SignUpCard() {
+export default function SignUpFormCard() {
   const {
     register,
     getValues,

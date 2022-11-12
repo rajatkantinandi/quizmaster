@@ -21,7 +21,7 @@ export default function ExpandedPreview({
   setExpandedPreviewQuestionIndex,
 }: Props) {
   const getCss = (theme, isCorrect = false) => ({
-    backgroundColor: isCorrect ? theme.colors.green[2] : theme.colors.background[2],
+    backgroundColor: isCorrect ? theme.colors.green[2] : '#AFD0D4',
     borderRadius: theme.radius.xs,
   });
 

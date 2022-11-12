@@ -28,5 +28,5 @@ export const getEmptyOptions = (count: number) =>
     .map((val, idx) => ({
       optionId: nanoid(),
       text: '',
-      isCorrect: idx === 0,
+      isCorrect: false,
     }));

@@ -2,8 +2,8 @@ import React from 'react';
 import styles from './styles.module.css';
 import { Helmet } from 'react-helmet';
 import { Grid, AppShell } from '@mantine/core';
-import LoginCard from '../../components/LoginCard';
-import SignUpCard from '../../components/SignUpCard';
+import LoginFormCard from '../../components/LoginFormCard';
+import SignUpFormCard from '../../components/SignUpFormCard';
 import ForgotPassword from '../../components/ForgotPassword';
 import { useParams } from 'react-router';
 import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
@@ -15,9 +15,9 @@ export default function HomePage() {
   function getViewType() {
     switch (viewType) {
       case 'login':
-        return <LoginCard />;
+        return <LoginFormCard />;
       case 'signup':
-        return <SignUpCard />;
+        return <SignUpFormCard />;
       case 'forgot-password':
         return <ForgotPassword />;
       default:
@@ -34,7 +34,7 @@ export default function HomePage() {
       </Helmet>
       <AppShell
         styles={(theme) => ({
-          main: { backgroundColor: theme.colors['qm-primary'], padding: 0 },
+          main: { backgroundColor: 'var(--qm-primary)', padding: 0 },
         })}>
         <Grid align="center" className={styles.loginCardWrapper}>
           <Grid.Col span={4} offset={4}>

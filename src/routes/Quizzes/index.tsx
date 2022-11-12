@@ -54,17 +54,23 @@ export default function Quizzes() {
         </Grid>
       ) : (
         <>
-          <Group>
-            <Title>My Quizzes</Title>
+          <Group mb="xl" pb="xl" position="apart">
+            <Title order={2}>My Quizzes</Title>
             <Button onClick={() => navigate(`/configure-quiz/${userName}`)} variant="filled">
               + Create Quiz
             </Button>
           </Group>
           <Group>
             {quizzes.map((quiz, index) => (
-              <Card shadow="sm" p="lg" radius="md" withBorder className={styles.quizCard}>
-                <Card.Section style={{ backgroundColor: tilesBGColors[index % 13] }}>
-                  <Icon name={`quiz_${(index % 13) + 1}`} width="100%" height={150} className="my-lg" />
+              <Card shadow="sm" p="lg" mx="xs" my="sm" radius="md" withBorder className={styles.quizCard}>
+                <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
+                  <Icon
+                    name={`quiz_${(index % 13) + 1}`}
+                    width="100%"
+                    height={150}
+                    color="#ffffff"
+                    className={`my-lg ${styles.tileIcon}`}
+                  />
                 </Card.Section>
 
                 <Group position="apart" mt="md" mb="xs">

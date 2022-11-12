@@ -9,8 +9,8 @@ function PrimaryTabs(props: TabsProps) {
         tab: {
           ...theme.fn.focusStyles(),
           backgroundColor: 'transparent',
-          color: theme.colors['qm-primary'][0],
-          border: `2px solid ${theme.colors['qm-primary'][0]}`,
+          color: 'var(--qm-primary)',
+          border: '2px solid var(--qm-primary)',
           padding: '5px 5px',
           cursor: 'pointer',
           fontSize: theme.fontSizes.md,
@@ -28,8 +28,8 @@ function PrimaryTabs(props: TabsProps) {
           },
 
           '&[data-active]': {
-            backgroundColor: theme.colors['qm-primary'][0],
-            borderColor: theme.colors['qm-primary'][0],
+            backgroundColor: 'var(--qm-primary)',
+            borderColor: 'var(--qm-primary)',
             color: theme.white,
           },
         },
