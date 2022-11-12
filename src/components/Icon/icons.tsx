@@ -26,6 +26,7 @@ import { ReactComponent as quiz_11 } from '../../images/icons/quiz_11.svg';
 import { ReactComponent as quiz_12 } from '../../images/icons/quiz_12.svg';
 import { ReactComponent as quiz_13 } from '../../images/icons/quiz_13.svg';
 import { ReactComponent as search } from '../../images/icons/search.svg';
+import { ReactComponent as logo } from '../../images/icons/logo.svg';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const icons = {
@@ -49,6 +50,7 @@ const icons = {
   quiz_12,
   quiz_13,
   search,
+  logo,
 };
 
 export default icons;

@@ -87,16 +87,16 @@ function getButtonCss(params) {
           backgroundColor: 'var(--qm-primary)',
 
           '&:hover': {
-            backgroundColor: 'ver(--primary-button-bg-hover)',
+            backgroundColor: 'var(--primary-button-bg-hover)',
           },
         };
       case 'default':
         return {
-          backgroundColor: 'ver(--default-button-bg)',
+          backgroundColor: 'var(--default-button-bg)',
           border: 'none',
 
           '&:hover': {
-            backgroundColor: 'ver(--default-button-bg-hover)',
+            backgroundColor: 'var(--default-button-bg-hover)',
           },
         };
       case 'outline':

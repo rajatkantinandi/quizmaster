@@ -13,25 +13,12 @@ import Icon from '../../components/Icon';
 import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
 import { isValidUser } from '../../helpers/authHelper';
 import { capitalizeFirstLetter } from '../../helpers/textHelpers';
+import { Link } from 'react-router-dom';
 
 function AppLayout() {
   const { userName, viewType, id } = useParams();
   const [activeTab, setActiveTab] = useState<string | null>('');
-  const navigate = useNavigate();
   const { searchQuiz, logout, quizzes, userData } = useStore();
-
-  useEffect(() => {
-    if (viewType === 'quizzes') {
-      setActiveTab('my-quizzes');
-    } else {
-      setActiveTab('');
-    }
-  }, [viewType]);
-
-  function onTabChange(value) {
-    setActiveTab(value);
-    navigate(`/quizzes/${userName}`);
-  }
 
   function getTabsView() {
     switch (viewType) {
@@ -71,11 +58,9 @@ function AppLayout() {
         header={
           <Header height={70}>
             <Group position="apart" className={styles.headerTabs} pr="xl">
-              <Tabs value={activeTab} onTabChange={onTabChange} className={styles.headerTabs}>
-                <Tabs.List className={styles.headerTabs}>
-                  <Tabs.Tab value="my-quizzes">My Quizzes</Tabs.Tab>
-                </Tabs.List>
-              </Tabs>
+              <Link to={`/quizzes/${userName}`}>
+                <Icon name="logo" className="ml-lg" width={150} height={50} />
+              </Link>
               <Group>
                 {quizzes.length > 0 && viewType === 'quizzes' && (
                   <TextInput
@@ -104,7 +89,7 @@ function AppLayout() {
             </Group>
           </Header>
         }>
-        <Tabs value={activeTab}>{getTabsView()}</Tabs>
+        {getTabsView()}
       </AppShell>
     </>
   ) : (

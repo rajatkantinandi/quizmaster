@@ -54,7 +54,7 @@ export default function Quizzes() {
         </Grid>
       ) : (
         <>
-          <Group mb="xl" pb="xl" position="apart">
+          <Group mb="xl" position="apart">
             <Title order={2}>My Quizzes</Title>
             <Button onClick={() => navigate(`/configure-quiz/${userName}`)} variant="filled">
               + Create Quiz
