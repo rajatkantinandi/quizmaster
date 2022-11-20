@@ -9,6 +9,7 @@ import Icon from '../../components/Icon';
 import { tilesBGColors } from '../../constants';
 import PageLoader from '../../components/PageLoader';
 import noContent from '../../images/no_content.png';
+import CreateQuizButton from '../../components/CreateQuizButton';
 
 export default function Quizzes() {
   const { userName } = useParams();
@@ -47,18 +48,14 @@ export default function Quizzes() {
             <Text color="gray" size="md" mb="sm">
               Nothing here! Please create a quiz to get started.
             </Text>
-            <Button onClick={() => navigate(`/configure-quiz/${userName}`)} variant="filled">
-              + Create Quiz
-            </Button>
+            <CreateQuizButton userName={userName} />
           </Grid.Col>
         </Grid>
       ) : (
         <>
-          <Group mb="xl" position="apart">
+          <Group mb="xl" mt="md">
             <Title order={2}>My Quizzes</Title>
-            <Button onClick={() => navigate(`/configure-quiz/${userName}`)} variant="filled">
-              + Create Quiz
-            </Button>
+            <CreateQuizButton userName={userName} />
           </Group>
           <Group>
             {quizzes.map((quiz, index) => (
@@ -94,6 +91,7 @@ export default function Quizzes() {
                     radius="md"
                     fullWidth={quiz.isDraft}
                     className={quiz.isDraft ? '' : styles.playCardButton}
+                    leftIcon={<Icon color="#ffffff" name="pencil" width={16} />}
                     onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
                     Edit
                   </Button>
@@ -102,6 +100,7 @@ export default function Quizzes() {
                       color="teal"
                       radius="md"
                       className={styles.playCardButton}
+                      leftIcon={<Icon color="#ffffff" name="play" width={16} />}
                       onClick={() => navigate(`/configure-game/${userName}/${quiz.quizId}`)}>
                       Play
                     </Button>

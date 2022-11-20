@@ -20,7 +20,7 @@ export default function ExpandedPreview({
   deleteQuestion,
   setExpandedPreviewQuestionIndex,
 }: Props) {
-  const getCss = (theme, isCorrect = false) => ({
+  const getQuestionTextStyles = (theme, isCorrect = false) => ({
     backgroundColor: isCorrect ? theme.colors.green[2] : '#AFD0D4',
     borderRadius: theme.radius.xs,
   });
@@ -44,14 +44,14 @@ export default function ExpandedPreview({
             Delete
           </Button>
           <ActionIcon variant="transparent" onClick={setActiveQuestion}>
-            <Icon name="pencil" width={14} />
+            <Icon name="pencil" width={22} />
           </ActionIcon>
           <ActionIcon variant="transparent" onClick={() => setExpandedPreviewQuestionIndex(null)}>
-            <span className="arrow arrowDown"></span>
+            <Icon name="caretDown" />
           </ActionIcon>
         </Group>
       </Group>
-      <Box p="xs" my="xs" sx={getCss}>
+      <Box p="xs" my="xs" sx={getQuestionTextStyles}>
         {question.text || (
           <Text italic size="sm" span>
             (No question text)
@@ -69,7 +69,7 @@ export default function ExpandedPreview({
             px="xs"
             mb="md"
             key={option.optionId}
-            sx={(theme) => getCss(theme, !!option.text && option.isCorrect)}>
+            sx={(theme) => getQuestionTextStyles(theme, !!option.text && option.isCorrect)}>
             {option.text || (
               <Text italic size="sm" span>
                 (No option text)

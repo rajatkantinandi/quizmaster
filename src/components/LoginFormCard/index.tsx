@@ -82,7 +82,7 @@ export default function LoginFormCard() {
           type="password"
         />
         <Text size="sm" align="right" mt="sm">
-          <Link to="/forgot-password">Forgot password ?</Link>
+          <Link to="/forgot-password">Forgot password?</Link>
         </Text>
         <Button mt="xs" size="md" radius="sm" type="submit" fullWidth variant="filled">
           Login

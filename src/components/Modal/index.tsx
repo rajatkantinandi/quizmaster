@@ -13,7 +13,7 @@ function Modal() {
     cancelText = 'Cancel',
     className = '',
     okCallback,
-    size = 'tiny',
+    size = 'lg',
     isAlert = false,
     doNotShowAgainKey,
   } = modal || {};

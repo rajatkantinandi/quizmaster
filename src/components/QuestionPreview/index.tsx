@@ -2,7 +2,7 @@ import React from 'react';
 import { Question as IQuestion } from '../../types';
 import { Card } from '@mantine/core';
 import ExpandedPreview from './ExpandedPreview';
-import CompressedPreview from './CompressedPreview';
+import CollapsedPreview from './CollapsedPreview';
 
 interface Props {
   questionNum: number;
@@ -35,7 +35,7 @@ export default function QuestionPreview({
           setExpandedPreviewQuestionIndex={setExpandedPreviewQuestionIndex}
         />
       ) : (
-        <CompressedPreview
+        <CollapsedPreview
           questionNum={questionNum}
           question={question}
           isValidQuestion={isValidQuestion}

@@ -259,7 +259,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
             <Title order={2} mb="xl" pb="lg" className="flex" align="end">
               {quizName}
               <ActionIcon ml="sm" className="mt-md" onClick={changeQuizName}>
-                <Icon name="pencil" width={16} />
+                <Icon name="pencil" width={22} />
               </ActionIcon>
             </Title>
             <Title order={4}>Categories</Title>
@@ -347,8 +347,13 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                 </Card>
               ))}
             </Radio.Group>
-            <Button mt="xl" onClick={addCategory} radius="sm" variant="default">
-              + Add Category
+            <Button
+              mt="xl"
+              onClick={addCategory}
+              radius="sm"
+              variant="default"
+              leftIcon={<Icon name="plus" width={18} />}>
+              Add Category
             </Button>
             <button className="displayNone" id="btnQuizFormSubmit" type="submit">
               Submit
@@ -386,15 +391,26 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                 />
               ),
             )}
-            <Button mt="xl" onClick={addQuestion} radius="sm" variant="default">
-              + Add Question
+            <Button
+              mt="xl"
+              onClick={addQuestion}
+              radius="sm"
+              variant="default"
+              leftIcon={<Icon name="plus" width={18} />}>
+              Add Question
             </Button>
           </Card>
         </Grid.Col>
       </Grid>
       <Grid columns={24} className={styles.btnCompleteQuiz}>
         <Grid.Col span={10} offset={7} py="xl">
-          <Button variant="gradient" size="lg" fullWidth radius="md" onClick={submitQuizForm}>
+          <Button
+            variant="gradient"
+            size="lg"
+            fullWidth
+            radius="md"
+            leftIcon={<Icon name="done" color="#ffffff" />}
+            onClick={submitQuizForm}>
             Complete Quiz
           </Button>
         </Grid.Col>

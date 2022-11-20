@@ -35,7 +35,7 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
     question.options.length === 1 && question.options[0].isCorrect ? 'withoutOptions' : 'withOptions',
   );
   const { showAlert } = useStore();
-  const watchOptions = watch('options');
+  const options = watch('options');
 
   function onFormSubmit(data: FieldValues) {
     const validationError = getValidationError();
@@ -50,21 +50,21 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
   }
 
   function setCorrectOption(optionId: string | number, ev: any) {
-    const options = watchOptions.map((option) => ({
+    const optionsData = options.map((option) => ({
       ...option,
       isCorrect: ev.target.checked && option.optionId === optionId,
     }));
 
-    setValue('options', options);
+    setValue('options', optionsData);
     setRefresh(Math.random());
     onQuestionChange(getValues());
   }
 
   function removeOption(optionId: string | number) {
-    if (watchOptions.length === 2) {
+    if (options.length === 2) {
       showAlert({ message: 'At least 2 options are mandatory!', type: 'error' });
     } else {
-      const remainingOptions = watchOptions.filter((o) => o.optionId !== optionId);
+      const remainingOptions = options.filter((o) => o.optionId !== optionId);
       setValue('options', remainingOptions);
       setRefresh(Math.random());
       onQuestionChange(getValues());
@@ -73,23 +73,23 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
 
   function addOption(ev: React.MouseEvent) {
     ev.preventDefault();
-    const options = watchOptions.concat({
+    const optionsData = options.concat({
       optionId: nanoid(),
       text: '',
       isCorrect: false,
     });
 
-    setValue('options', options);
+    setValue('options', optionsData);
     setRefresh(Math.random());
     onQuestionChange(getValues());
   }
 
   function getValidationError() {
-    if (watchOptions.length === 1 && watchOptions[0].isCorrect) {
+    if (options.length === 1 && options[0].isCorrect) {
       return '';
-    } else if (!watchOptions.some((option) => option.isCorrect)) {
+    } else if (!options.some((option) => option.isCorrect)) {
       return 'Please select 1 correct option!';
-    } else if (watchOptions.length < 2) {
+    } else if (options.length < 2) {
       return 'At least 2 options are mandatory!';
     }
 
@@ -100,15 +100,15 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
     setOptionType(value);
 
     if (value === 'withoutOptions') {
-      const option = watchOptions[0];
-      option.isCorrect = true;
+      const optionData = options[0];
+      optionData.isCorrect = true;
 
-      setValue('options', [option]);
-    } else if (watchOptions.length === 1) {
-      const options = watchOptions.concat(getEmptyOptions(1));
+      setValue('options', [optionData]);
+    } else if (options.length === 1) {
+      const optionData = options.concat(getEmptyOptions(1));
 
-      options[1].isCorrect = false;
-      setValue('options', options);
+      optionData[1].isCorrect = false;
+      setValue('options', optionData);
     }
 
     setRefresh(Math.random());
@@ -148,7 +148,12 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
               register={register}
             />
           </Group>
-          <Button variant="filled" radius="sm" compact onClick={saveQuestion}>
+          <Button
+            leftIcon={<Icon name="preview" color="#ffffff" width={16} />}
+            variant="filled"
+            radius="sm"
+            compact
+            onClick={saveQuestion}>
             Preview
           </Button>
         </Group>
@@ -177,7 +182,7 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
             <Tabs.Tab value="withoutOptions">Without Options</Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="withOptions">
-            {watchOptions.map((option, idx) => (
+            {options.map((option, idx) => (
               <Group pt="sm" pb="sm">
                 <Checkbox
                   radius="xl"
@@ -211,8 +216,13 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
                 </ActionIcon>
               </Group>
             ))}
-            <Button radius="sm" mt="lg" variant="default" onClick={addOption}>
-              + Add option
+            <Button
+              radius="sm"
+              mt="lg"
+              variant="default"
+              onClick={addOption}
+              leftIcon={<Icon name="plus" width={18} />}>
+              Add option
             </Button>
           </Tabs.Panel>
           <Tabs.Panel value="withoutOptions">

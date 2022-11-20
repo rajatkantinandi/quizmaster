@@ -7,6 +7,7 @@ export const getAuthStore = (set: Function, get: Function) => ({
     userId: null,
     emailId: '',
     token: '',
+    name: '',
   },
   signUp: async (data) => {
     await postRedirect('user/signup', data);

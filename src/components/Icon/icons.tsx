@@ -6,12 +6,12 @@
  *
  * */
 
-import { ReactComponent as Trash } from '../../images/icons/trash.svg';
-import { ReactComponent as Pencil } from '../../images/icons/pencil.svg';
-import { ReactComponent as Collapse } from '../../images/icons/collapse.svg';
-import { ReactComponent as Expand } from '../../images/icons/expand.svg';
-import { ReactComponent as Preview } from '../../images/icons/preview.svg';
-import { ReactComponent as MarkdownLogo } from '../../images/icons/markdown.svg';
+import { ReactComponent as trash } from '../../images/icons/trash.svg';
+import { ReactComponent as pencil } from '../../images/icons/pencil.svg';
+import { ReactComponent as collapse } from '../../images/icons/collapse.svg';
+import { ReactComponent as expand } from '../../images/icons/expand.svg';
+import { ReactComponent as preview } from '../../images/icons/preview.svg';
+import { ReactComponent as markdown } from '../../images/icons/markdown.svg';
 import { ReactComponent as quiz_1 } from '../../images/icons/quiz_1.svg';
 import { ReactComponent as quiz_2 } from '../../images/icons/quiz_2.svg';
 import { ReactComponent as quiz_3 } from '../../images/icons/quiz_3.svg';
@@ -27,15 +27,20 @@ import { ReactComponent as quiz_12 } from '../../images/icons/quiz_12.svg';
 import { ReactComponent as quiz_13 } from '../../images/icons/quiz_13.svg';
 import { ReactComponent as search } from '../../images/icons/search.svg';
 import { ReactComponent as logo } from '../../images/icons/logo.svg';
+import { ReactComponent as plus } from '../../images/icons/plus.svg';
+import { ReactComponent as caretUp } from '../../images/icons/caret-up.svg';
+import { ReactComponent as caretDown } from '../../images/icons/caret-down.svg';
+import { ReactComponent as play } from '../../images/icons/play.svg';
+import { ReactComponent as done } from '../../images/icons/done.svg';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const icons = {
-  trash: Trash,
-  pencil: Pencil,
-  collapse: Collapse,
-  expand: Expand,
-  preview: Preview,
-  markdown: MarkdownLogo,
+  trash,
+  pencil,
+  collapse,
+  expand,
+  preview,
+  markdown,
   quiz_1,
   quiz_2,
   quiz_3,
@@ -51,6 +56,11 @@ const icons = {
   quiz_13,
   search,
   logo,
+  plus,
+  caretUp,
+  caretDown,
+  play,
+  done,
 };
 
 export default icons;

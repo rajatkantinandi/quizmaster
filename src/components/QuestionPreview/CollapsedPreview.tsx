@@ -12,7 +12,7 @@ interface Props {
   setExpandedPreviewQuestionIndex: Function;
 }
 
-export default function CompressedPreview({
+export default function CollapsedPreview({
   questionNum,
   question,
   isValidQuestion,
@@ -43,10 +43,10 @@ export default function CompressedPreview({
             Delete
           </Button>
           <ActionIcon variant="transparent" onClick={setActiveQuestion}>
-            <Icon name="pencil" width={14} />
+            <Icon name="pencil" width={22} />
           </ActionIcon>
           <ActionIcon variant="transparent" onClick={() => setExpandedPreviewQuestionIndex(questionNum - 1)}>
-            <span className="arrow arrowUp"></span>
+            <Icon name="caretUp" />
           </ActionIcon>
         </Group>
       </Group>

@@ -3,7 +3,9 @@ import { useStore } from '../../useStore';
 import { FieldValues } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { Helmet } from 'react-helmet';
+import { Grid } from '@mantine/core';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
+import styles from './styles.module.css';
 
 export default function ConfigureQuiz() {
   const { userName = 'guest' } = useParams();
@@ -26,9 +28,11 @@ export default function ConfigureQuiz() {
       <Helmet>
         <title>Create Quiz</title>
       </Helmet>
-      <div style={{ paddingTop: '150px' }}>
-        <AddOrUpdateQuizName handleFormSubmit={handleAddQuizName} />
-      </div>
+      <Grid align="center" pt="xl" className={styles.formWrapper}>
+        <Grid.Col span={4} offset={4} pt="xl" mt="xl">
+          <AddOrUpdateQuizName handleFormSubmit={handleAddQuizName} />
+        </Grid.Col>
+      </Grid>
     </>
   );
 }
