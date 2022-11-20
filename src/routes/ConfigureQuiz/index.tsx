@@ -350,7 +350,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
             <Button
               mt="xl"
               onClick={addCategory}
-              radius="sm"
+              radius="md"
               variant="default"
               leftIcon={<Icon name="plus" width={18} />}>
               Add Category
@@ -394,7 +394,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
             <Button
               mt="xl"
               onClick={addQuestion}
-              radius="sm"
+              radius="md"
               variant="default"
               leftIcon={<Icon name="plus" width={18} />}>
               Add Question

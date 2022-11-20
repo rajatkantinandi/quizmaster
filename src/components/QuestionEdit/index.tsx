@@ -151,7 +151,7 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
           <Button
             leftIcon={<Icon name="preview" color="#ffffff" width={16} />}
             variant="filled"
-            radius="sm"
+            radius="md"
             compact
             onClick={saveQuestion}>
             Preview
@@ -217,7 +217,7 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
               </Group>
             ))}
             <Button
-              radius="sm"
+              radius="md"
               mt="lg"
               variant="default"
               onClick={addOption}
@@ -248,10 +248,10 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
           </Tabs.Panel>
         </Tabs>
         <Group position="right">
-          <Button radius="sm" variant="light" onClick={onCancelClick}>
+          <Button radius="md" variant="light" onClick={onCancelClick}>
             Cancel
           </Button>
-          <Button radius="sm" variant="filled" type="submit">
+          <Button radius="md" variant="filled" type="submit">
             Save
           </Button>
         </Group>

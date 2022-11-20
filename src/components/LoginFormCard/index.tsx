@@ -84,11 +84,11 @@ export default function LoginFormCard() {
         <Text size="sm" align="right" mt="sm">
           <Link to="/forgot-password">Forgot password?</Link>
         </Text>
-        <Button mt="xs" size="md" radius="sm" type="submit" fullWidth variant="filled">
+        <Button mt="xs" size="md" radius="md" type="submit" fullWidth variant="filled">
           Login
         </Button>
         <Divider my="sm" labelProps={{ weight: 'bold', size: 'md' }} label="OR" labelPosition="center" color="black" />
-        <Button mt="xs" size="md" radius="sm" fullWidth variant="default" onClick={loginAsGuest}>
+        <Button mt="xs" size="md" radius="md" fullWidth variant="default" onClick={loginAsGuest}>
           Login as a guest
         </Button>
       </form>

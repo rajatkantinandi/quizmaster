@@ -52,7 +52,7 @@ function Modal() {
       )}
       <Group mt="xl" pt="xl" position="right">
         {!!cancelText && (
-          <Button color="dark" variant="outline" onClick={hideModal} radius="sm">
+          <Button color="dark" variant="outline" onClick={hideModal} radius="md">
             {cancelText}
           </Button>
         )}
@@ -60,7 +60,7 @@ function Modal() {
           <Button
             ref={okRef}
             variant="filled"
-            radius="sm"
+            radius="md"
             onClick={() => {
               if (okCallback) {
                 okCallback();
