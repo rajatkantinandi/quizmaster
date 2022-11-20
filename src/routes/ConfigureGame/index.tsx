@@ -4,7 +4,7 @@ import { Button, Checkbox, Icon, Input } from 'semantic-ui-react';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 import { useForm, FieldValues } from 'react-hook-form';
-import FormInput from '../../components/FormInput';
+import { FormInput } from '../../components/FormInputs';
 import { useParams, useNavigate } from 'react-router';
 import { Team } from '../../types';
 import { getEmptyTeam } from '../../helpers';
@@ -19,7 +19,7 @@ export default function ConfigureGame() {
   const { quizId, userName } = useParams();
   const navigate = useNavigate();
   const {
-    control,
+    register,
     handleSubmit,
     formState: { errors },
     getValues,
@@ -74,7 +74,7 @@ export default function ConfigureGame() {
               <FormInput
                 id={`teams${idx}name`}
                 name={`teams[${idx}].name`}
-                control={control}
+                register={register}
                 rules={{ required: 'Team names cannot be empty!' }}
                 errorMessage={errors?.teams?.[idx]?.name?.message || ''}
                 label={`Team ${idx + 1} name`}

@@ -13,6 +13,10 @@ body {
   align-items: flex-start;
 }
 
+.grow {
+  flex: 1;
+}
+
 .justifyCenter {
   justify-content: center;
 }
@@ -57,20 +61,6 @@ body {
   width: 100%;
 }
 
-h4 {
-  margin: 10px 0 !important;
-}
-
-.ui.input {
-  margin: 10px 0;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.ui.input input {
-  width: auto !important;
-}
-
 fieldset {
   border: 1px solid var(--border-gray);
   padding: 15px 20px;
@@ -99,57 +89,31 @@ legend {
   text-align: center;
 }
 
-li.task-list-item {
-  list-style-type: none;
+.primaryCard {
+  background-color: var(--primary-card-bg);
 }
 
-ul.contains-task-list {
-  padding-left: 15px;
+.secondaryCard {
+  background-color: var(--secondary-card-bg);
 }
 
-.react-markdown td,
-.react-markdown th {
-  border: 1px solid var(--gray-dark);
-  padding: 2px 8px;
+.displayNone {
+  display: none;
 }
 
-.react-markdown th {
-  background-color: var(--gray-dark);
-  color: white;
-  border: 1px solid var(--border-gray);
+.container-md {
+  width: 40%;
+  min-width: 500px;
 }
 
-.react-markdown tr:nth-last-of-type(2n) {
-  background-color: var(--option-background);
-}
-
-.react-markdown tr:nth-last-of-type(2n + 1) {
-  background-color: white;
-}
-
-.react-markdown tr {
-  color: black;
-}
-
-.react-markdown table {
-  border-collapse: collapse;
-}
-
-.react-markdown img {
-  max-width: 100%;
-  max-height: 400px;
-}
-
-.react-markdown code {
-  background-color: var(--card-hover-bg);
-  color: white;
-  padding: 2px 5px;
-  border-radius: 5px;
-}
-
-.react-markdown pre code {
-  background-color: var(--gray-dark);
-  padding: 10px;
+.container-md .input {
   width: 100%;
-  display: block;
+}
+
+.textAlignCenter {
+  text-align: center;
+}
+
+.fullHeight {
+  height: 100%;
 }

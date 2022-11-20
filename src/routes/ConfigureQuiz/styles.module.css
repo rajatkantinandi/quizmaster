@@ -1,0 +1,42 @@
+.activeCategory {
+  border-right: 0;
+  z-index: 1;
+  clip-path: inset(-2px 0px -5px -5px);
+  right: -1px;
+  width: 100%;
+  padding-bottom: 30px;
+}
+
+.nonActiveCard {
+  background-color: white;
+  padding-bottom: 30px;
+}
+
+.scrollAble {
+  max-height: calc(100vh - 360px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-right: -1px;
+}
+
+.btnCompleteQuiz {
+  background-color: white;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.wrapper {
+  padding-bottom: 100px;
+}
+
+.categoryNameInput input {
+  margin-right: 27px;
+  font-weight: bold;
+}
+
+.questionsCard {
+  padding-left: 80px;
+  padding-right: 80px;
+}

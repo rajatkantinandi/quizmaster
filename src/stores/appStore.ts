@@ -1,31 +1,27 @@
 export const getAppStore = (set: Function, get: Function) => ({
-  confirmationModal: null,
-  setConfirmationModal: (confirmationModal: ConfirmationModalState | null) => {
-    set((state: AppState) => {
-      state.confirmationModal = confirmationModal;
-    }, false, 'setConfirmationModal');
+  modal: null,
+  alert: null,
+  showModal: (modalState: ModalState) => {
+    set(
+      (state: AppState) => {
+        state.modal = modalState;
+      },
+      false,
+      'showModal',
+    );
   },
-  showAlertModal: ({
-    title,
-    message,
-    ...rest
-  }: Omit<ConfirmationModalState, 'body'> & { title: string; message: React.ReactNode }) => {
-    set((state: AppState) => {
-      state.confirmationModal = { title, body: message, cancelText: '', isAlert: true, ...rest };
-    }, false, 'showAlertModal');
-  },
-  showErrorModal: ({
-    title = 'Error!',
-    message,
-    ...rest
-  }: Omit<Omit<ConfirmationModalState, 'body'>, 'title'> & { title?: string; message: React.ReactNode }) => {
-    set((state: AppState) => {
-      state.confirmationModal = { title, body: message, cancelText: '', isAlert: true, ...rest };
-    }, false, 'showErrorModal');
+  showAlert: (alertState: AlertState | null) => {
+    set(
+      (state: AppState) => {
+        state.alert = alertState;
+      },
+      false,
+      'showAlert',
+    );
   },
 });
 
-export interface ConfirmationModalState {
+export interface ModalState {
   title: string;
   body: React.ReactNode;
   okText?: string;
@@ -37,6 +33,16 @@ export interface ConfirmationModalState {
   doNotShowAgainKey?: string;
 }
 
-export interface AppState extends Omit<ReturnType<typeof getAppStore>, 'confirmationModal'> {
-  confirmationModal: ConfirmationModalState | null;
-};
+export interface AlertState {
+  message: string;
+  type?: 'error' | 'success' | 'warning' | 'info';
+  autoClose?: boolean;
+  callback?: Function;
+}
+
+export interface AppState {
+  modal: ModalState | null;
+  alert: AlertState | null;
+  showAlert: (data: AlertState | null) => void;
+  showModal: Function;
+}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useNavigate, useParams } from 'react-router';
 import { Button } from 'semantic-ui-react';
-import Question from '../../components/Question';
+import Question from '../../components/Question1';
 import QuizGrid from '../../components/QuizGrid';
 import { Category, Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
 import styles from './styles.module.css';
@@ -38,7 +38,7 @@ export default function PlayQuiz() {
   const attemptedQuestionIds = selectedOptionsData.map((x) => x.questionId);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.questionId);
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
-  const { showAlertModal, getGameData, updateGame } = useStore();
+  const { showModal, getGameData, updateGame } = useStore();
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -71,11 +71,11 @@ export default function PlayQuiz() {
     setWinner(winnerIds);
 
     if (winners.length > 1) {
-      showAlertModal({ title: 'Match drawn!', message: 'Well played! It is a draw!', okCallback: callback });
+      showModal({ title: 'Match drawn!', body: 'Well played! It is a draw!', okCallback: callback });
     } else {
-      showAlertModal({
+      showModal({
         title: `Congrats ${winners[0].name}!`,
-        message: `Team '${winners[0].name}' has won the game with ${winners[0].score} points.`,
+        body: `Team '${winners[0].name}' has won the game with ${winners[0].score} points.`,
         okCallback: callback,
       });
     }

@@ -1,0 +1,46 @@
+.reactMarkdown td,
+.reactMarkdown th {
+  border: 1px solid var(--gray-dark);
+  padding: 2px 8px;
+}
+
+.reactMarkdown th {
+  background-color: var(--gray-dark);
+  color: white;
+  border: 1px solid var(--border-gray);
+}
+
+.reactMarkdown tr:nth-last-of-type(2n) {
+  background-color: var(--option-background);
+}
+
+.reactMarkdown tr:nth-last-of-type(2n + 1) {
+  background-color: white;
+}
+
+.reactMarkdown tr {
+  color: black;
+}
+
+.reactMarkdown table {
+  border-collapse: collapse;
+}
+
+.reactMarkdown img {
+  max-width: 100%;
+  max-height: 400px;
+}
+
+.reactMarkdown code {
+  background-color: var(--card-hover-bg);
+  color: white;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.reactMarkdown pre code {
+  background-color: var(--gray-dark);
+  padding: 10px;
+  width: 100%;
+  display: block;
+}

@@ -1,69 +1,27 @@
 import React from 'react';
-import './styles/app.css';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import HomePage from './routes/HomePage';
-import Login from './routes/Login';
-import Signup from './routes/Signup';
-import ForgotPassword from './routes/ForgotPassword';
-import Quizzes from './routes/Quizzes';
-import AddEditQuiz from './routes/AddEditQuiz';
-import ConfigureQuiz from './routes/ConfigureQuiz';
-import ConfigureGame from './routes/ConfigureGame';
-import PlayQuiz from './routes/PlayQuiz';
+import AppLayout from './routes/AppLayout';
 import { useStore } from './useStore';
-import ConfirmationModal from './components/ConfirmationModal';
-import Header from './components/Header';
-import NavigateToQuizzesIfLoggedIn from './components/NavigateToQuizzesIfLoggedIn';
+import Modal from './components/Modal';
+import Alert from './components/Alert';
+import CheckAuthAndNavigate from './components/CheckAuthAndNavigate';
 
 function App() {
-  const { confirmationModal } = useStore();
+  const { modal, alert } = useStore();
 
   return (
-    <div className="App">
+    <div>
       <BrowserRouter>
-        <Header />
         <Routes>
-          <Route
-            path="/"
-            element={
-              <NavigateToQuizzesIfLoggedIn>
-                <HomePage />
-              </NavigateToQuizzesIfLoggedIn>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <NavigateToQuizzesIfLoggedIn>
-                <Login />
-              </NavigateToQuizzesIfLoggedIn>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <NavigateToQuizzesIfLoggedIn>
-                <Signup />
-              </NavigateToQuizzesIfLoggedIn>
-            }
-          />
-          <Route
-            path="/forgotpassword"
-            element={
-              <NavigateToQuizzesIfLoggedIn>
-                <ForgotPassword />
-              </NavigateToQuizzesIfLoggedIn>
-            }
-          />
-          <Route path="/quizzes/:userName" element={<Quizzes />} />
-          <Route path="/configure-quiz/:userName" element={<ConfigureQuiz />} />
-          <Route path="/configure-quiz/:userName/:quizId" element={<ConfigureQuiz />} />
-          <Route path="/edit-quiz/:userName/:quizId" element={<AddEditQuiz />} />
-          <Route path="/configure-game/:userName/:quizId" element={<ConfigureGame />} />
-          <Route path="/play-game/:userName/:gameId" element={<PlayQuiz />} />
+          <Route path="/:viewType" element={<HomePage />} />
+          <Route path=":viewType/:userName" element={<AppLayout />} />
+          <Route path=":viewType/:userName/:id" element={<AppLayout />} />
+          <Route path="*" element={<CheckAuthAndNavigate />} />
         </Routes>
       </BrowserRouter>
-      {!!confirmationModal && <ConfirmationModal {...confirmationModal} />}
+      {!!modal && <Modal />}
+      {!!alert && <Alert />}
     </div>
   );
 }
