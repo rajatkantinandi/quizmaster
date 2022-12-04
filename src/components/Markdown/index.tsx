@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import styles from './styles.module.css';
 
 interface Props {
   children: string;
@@ -11,10 +10,7 @@ interface Props {
 
 export default function Markdown({ children, className = '' }: Props) {
   return (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      linkTarget="_blank"
-      className={classNames(className, styles.reactMarkdown)}>
+    <ReactMarkdown remarkPlugins={[remarkGfm]} linkTarget="_blank" className={classNames(className, 'react-markdown')}>
       {children}
     </ReactMarkdown>
   );

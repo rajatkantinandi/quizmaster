@@ -37,6 +37,8 @@ export interface Quiz {
   isDraft?: boolean;
   userName: string;
   quizId: any;
+  createDate: string;
+  updateDate: string;
 }
 
 export interface GameInfo {

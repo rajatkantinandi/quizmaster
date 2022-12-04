@@ -23,17 +23,25 @@ import { GameData, Quiz } from '../types';
 export const getQuizStore = (set: Function, get: Function) => ({
   quizzes: [],
   searchResults: [],
+  searchQuery: '',
   getQuizzes: async () => {
     if (isGuestUser()) {
-      const response = await getQuizzes(-1);
+      const response: any = await getQuizzes(-1);
+      const sortedData = response.sort(
+        (quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime(),
+      );
 
-      return response;
+      return sortedData;
     } else {
       const response = await getReq('quiz/userQuizzes');
       const data = formatQuizzesData(response);
-      await saveQuizzes(data);
+      const sortedData = data.sort(
+        (quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime(),
+      );
 
-      return data;
+      await saveQuizzes(sortedData);
+
+      return sortedData;
     }
   },
   getQuiz: async (quizId: number) => {
@@ -53,8 +61,9 @@ export const getQuizStore = (set: Function, get: Function) => ({
     if (isGuestUser()) {
       data.userId = -1;
       data.quizId = data.quizId || nanoid();
+      data.updateDate = new Date().toISOString();
 
-      const response = await saveQuiz(data);
+      const response: any = await saveQuiz(data);
 
       return response;
     } else {
@@ -72,6 +81,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return response;
     } else {
       await post('quiz/edit', data);
+      data.updateDate = new Date().toISOString();
       await saveQuiz(data);
 
       return data;
@@ -85,6 +95,8 @@ export const getQuizStore = (set: Function, get: Function) => ({
     } else {
       if ('sendBeacon' in navigator) {
         await postBeaconReq('quiz/createOrUpdate', data);
+
+        data.updateDate = new Date().toISOString();
         await saveQuiz(data);
       } else {
         const response = await post('quiz/createOrUpdate', data);
@@ -164,6 +176,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   searchQuiz: (queryString) => {
     set((state: QuizState) => {
+      state.searchQuery = queryString;
       state.searchResults = queryString ? state.quizzes.filter((quiz) => quiz.name.startsWith(queryString)) : [];
     });
   },
@@ -172,4 +185,5 @@ export const getQuizStore = (set: Function, get: Function) => ({
 export interface QuizState extends Omit<Omit<ReturnType<typeof getQuizStore>, 'quizzes'>, 'searchResults'> {
   quizzes: Quiz[];
   searchResults: Quiz[];
+  searchQuery: string;
 }

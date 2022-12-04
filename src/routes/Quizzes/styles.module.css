@@ -1,6 +1,42 @@
-.quizCard {
-  width: 340px;
+.quizCardWrapper {
+  width: 23%;
   height: 348px;
+  padding: 10px 12px;
+}
+
+.pageTitleWrapper {
+  padding: 0 12px;
+  width: 95%;
+}
+
+@media only screen and (max-width: 1240px) {
+  .quizCardWrapper {
+    width: 32%;
+  }
+
+  .pageTitleWrapper {
+    width: 98.5%;
+  }
+}
+
+@media only screen and (max-width: 850px) {
+  .quizCardWrapper {
+    width: 42%;
+  }
+
+  .pageTitleWrapper {
+    width: 86%;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .quizCardWrapper {
+    width: 60%;
+  }
+}
+
+.quizCardWrapper > div {
+  height: inherit;
 }
 
 .cardButton {
@@ -28,4 +64,12 @@
 
 .tileIcon {
   opacity: 0.5;
+}
+
+.deleteButton {
+  background-color: #c10606 !important;
+}
+
+.publishQuiz {
+  background-color: #2e7d32 !important;
 }

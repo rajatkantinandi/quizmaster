@@ -1,7 +1,8 @@
 import React from 'react';
 import { Question as IQuestion } from '../../types';
-import { Title, Badge, ActionIcon, Text, List, Group, Button } from '@mantine/core';
+import { Badge, ActionIcon, Text, List, Group, Button } from '@mantine/core';
 import Icon from '../Icon';
+import Markdown from '../Markdown';
 
 interface Props {
   questionNum: number;
@@ -24,14 +25,14 @@ export default function CollapsedPreview({
     <>
       <Group position="apart">
         <Group>
-          <Title order={4}>
+          <div>
             {questionNum}.{' '}
-            {question.text || (
+            {<Markdown>{question.text}</Markdown> || (
               <Text italic size="sm" span>
                 (No question text)
               </Text>
             )}
-          </Title>
+          </div>
           {!isValidQuestion && (
             <Badge variant="filled" color="red">
               Incomplete

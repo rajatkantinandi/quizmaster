@@ -12,13 +12,6 @@
   padding-bottom: 30px;
 }
 
-.scrollAble {
-  max-height: calc(100vh - 360px);
-  overflow-y: scroll;
-  overflow-x: hidden;
-  margin-right: -1px;
-}
-
 .btnCompleteQuiz {
   background-color: white;
   position: fixed;
@@ -39,4 +32,7 @@
 .questionsCard {
   padding-left: 80px;
   padding-right: 80px;
+  max-height: calc(100vh - 180px);
+  overflow-y: scroll;
+  overflow-x: hidden;
 }

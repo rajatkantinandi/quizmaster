@@ -15,9 +15,19 @@ interface Props {
   saveQuestion: any;
   onQuestionChange: Function;
   deleteQuestion: Function;
+  resetQuestion: Function;
+  showPreview: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-export default function QuestionEdit({ questionNum, question, saveQuestion, onQuestionChange, deleteQuestion }: Props) {
+export default function QuestionEdit({
+  questionNum,
+  question,
+  saveQuestion,
+  onQuestionChange,
+  deleteQuestion,
+  resetQuestion,
+  showPreview,
+}: Props) {
   const formDefaultValues = {
     ...question,
     options: question.options.length > 0 ? question.options : getEmptyOptions(2),
@@ -117,6 +127,11 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
 
   function onCancelClick(ev) {
     ev.preventDefault();
+    resetQuestion();
+  }
+
+  function onDeleteClick(ev) {
+    ev.preventDefault();
     deleteQuestion();
   }
 
@@ -153,7 +168,7 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
             variant="filled"
             radius="md"
             compact
-            onClick={saveQuestion}>
+            onClick={showPreview}>
             Preview
           </Button>
         </Group>
@@ -183,7 +198,7 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
           </Tabs.List>
           <Tabs.Panel value="withOptions">
             {options.map((option, idx) => (
-              <Group pt="sm" pb="sm">
+              <Group pt="sm" pb="sm" key={option.optionId}>
                 <Checkbox
                   radius="xl"
                   size="md"
@@ -247,13 +262,18 @@ export default function QuestionEdit({ questionNum, question, saveQuestion, onQu
             />
           </Tabs.Panel>
         </Tabs>
-        <Group position="right">
-          <Button radius="md" variant="light" onClick={onCancelClick}>
-            Cancel
+        <Group position="apart" mt="xl">
+          <Button radius="md" color="red" variant="white" onClick={onDeleteClick}>
+            Delete
           </Button>
-          <Button radius="md" variant="filled" type="submit">
-            Save
-          </Button>
+          <div>
+            <Button mr="sm" radius="md" variant="light" onClick={onCancelClick}>
+              Cancel
+            </Button>
+            <Button radius="md" variant="filled" type="submit">
+              Save
+            </Button>
+          </div>
         </Group>
       </form>
     </Card>

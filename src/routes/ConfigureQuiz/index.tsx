@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
 import { Quiz, Category, Question as IQuestion } from '../../types';
 import { nanoid } from 'nanoid';
-import { getEmptyQuestion, isInt } from '../../helpers';
+import { getEmptyQuestion, isInt, saveQuestion } from '../../helpers';
 import { Helmet } from 'react-helmet';
 import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge } from '@mantine/core';
 import styles from './styles.module.css';
@@ -14,14 +14,18 @@ import QuestionEdit from '../../components/QuestionEdit';
 import QuestionPreview from '../../components/QuestionPreview';
 import { plural } from '../../helpers/textHelpers';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
+import { useNavigate, useParams } from 'react-router';
 
 export default function ConfigureQuiz({ quizId }: { quizId: string }) {
+  const { userName = 'guest' } = useParams();
   const [quizName, setQuizName] = useState('');
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
+  const [activeCategoryName, setActiveCategoryName] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedPreviewQuestionIndex, setExpandedPreviewQuestionIndex] = useState<number | null>(null);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
   const [refresh, setRefresh] = useState(0);
+  const navigate = useNavigate();
   const {
     handleSubmit,
     formState: { errors },
@@ -31,7 +35,11 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     register,
     watch,
   } = useForm();
-  const watchCategories = watch('categories') || [];
+  const categories = watch('categories') || [];
+  const categoriesRef = useRef([]);
+  const quizNameRef = useRef('');
+  categoriesRef.current = categories;
+  quizNameRef.current = quizName;
 
   useEffect(() => {
     if (isInt(quizId)) {
@@ -45,7 +53,9 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
           return idx >= 0;
         });
 
-        setActiveCategoryIndex(Math.max(activeCategoryIndex, 0));
+        const index = Math.max(activeCategoryIndex, 0);
+        setActiveCategoryIndex(index);
+        setActiveCategoryName(quiz.categories[index].categoryName);
         setActiveQuestionIndex(activeQuestionIndex);
         setTimeout(() => reset(quiz), 0);
       });
@@ -53,23 +63,29 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
 
     return () => {
       window.onbeforeunload = null;
+      sendBeaconPost({
+        name: quizNameRef.current,
+        quizId,
+        categories: categoriesRef.current,
+        isDraft: true,
+      });
     };
   }, []);
 
   useEffect(() => {
-    if (watchCategories.length > 0 && watchCategories.length < activeCategoryIndex + 1) {
-      setActiveCategory(watchCategories.length - 1);
+    if (categories.length > 0 && categories.length < activeCategoryIndex + 1) {
+      setActiveCategory(categories.length - 1);
     }
 
     window.onbeforeunload = function () {
       sendBeaconPost({
         name: quizName,
         quizId,
-        categories: watchCategories,
+        categories,
         isDraft: true,
       });
     };
-  }, [watchCategories, quizName]);
+  }, [categories, quizName]);
 
   function onQuestionChange(data) {
     const categories = getValues('categories');
@@ -117,14 +133,14 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
         message: 'Quiz has been saved successfully.',
         type: 'success',
       });
+
+      navigate(`/quizzes/${userName}`);
     } catch (err) {
       showAlert({
         message: 'Something went wrong while saving the quiz data. Please try again later.',
         type: 'error',
       });
     }
-
-    // navigate(`/edit-quiz/${userName}/${response.quizId}`);
   }
 
   const addCategory = () => {
@@ -163,19 +179,34 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   };
 
   const setActiveCategory = (value) => {
-    setActiveCategoryIndex(parseInt(value));
+    const index = parseInt(value);
+    setActiveCategoryIndex(index);
+    setActiveCategoryName(categories[index].categoryName);
     setActiveQuestionIndex(null);
     setExpandedPreviewQuestionIndex(null);
   };
 
   const addQuestion = () => {
-    const question = getEmptyQuestion(watchCategories[activeCategoryIndex].categoryId);
-    const categories = getValues('categories');
-    categories[activeCategoryIndex].questions.push(question);
-    setValue('categories', categories);
+    const question = getEmptyQuestion(categories[activeCategoryIndex].categoryId);
+    const categoriesData = getValues('categories');
+    categoriesData[activeCategoryIndex].questions.push(question);
+    setValue('categories', categoriesData);
 
-    const length = categories[activeCategoryIndex].questions.length;
+    const length = categoriesData[activeCategoryIndex].questions.length;
     setActiveQuestionIndex(length - 1);
+  };
+
+  const resetQuestion = () => {
+    if (activeQuestionIndex) {
+      getQuiz(parseInt(`${quizId}`)).then((quiz: Quiz) => {
+        const categories = getValues('categories');
+        categories[activeCategoryIndex].questions[activeQuestionIndex] =
+          quiz.categories[activeCategoryIndex].questions[activeQuestionIndex];
+
+        setValue('categories', categories);
+        setActiveQuestionIndex(null);
+      });
+    }
   };
 
   function isValidQuestion(question) {
@@ -190,7 +221,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     );
   }
 
-  function deleteQuestion(index: number) {
+  function handleDeleteQuestion(index: number) {
     const questionIndex = index >= 0 ? index : (activeQuestionIndex as number);
     const categories = getValues('categories');
     const question = categories[activeCategoryIndex].questions[questionIndex];
@@ -199,19 +230,19 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
       showModal({
         title: 'Delete Question',
         body: 'Are you sure you want to delete this question?',
-        okCallback: () => removeQuestion(questionIndex),
+        okCallback: () => deleteQuestion(questionIndex),
         okText: 'Delete Question',
         cancelText: 'Cancel',
       });
     } else {
-      removeQuestion(questionIndex);
+      deleteQuestion(questionIndex);
     }
   }
 
-  function removeQuestion(questionIndex) {
+  function deleteQuestion(questionIndex) {
     const categories = getValues('categories');
 
-    delete categories[activeCategoryIndex].questions[questionIndex];
+    categories[activeCategoryIndex].questions.splice(questionIndex, 1);
     setValue('categories', categories);
 
     if (questionIndex === activeQuestionIndex) {
@@ -239,6 +270,16 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     });
   }
 
+  function handleSaveQuestion(idx) {
+    setActiveQuestionIndex(null);
+    setExpandedPreviewQuestionIndex(idx);
+
+    showAlert({
+      message: 'Question has been saved successfully.',
+      type: 'success',
+    });
+  }
+
   async function handleQuizName(data, quizId) {
     await updateQuizName({ ...data, quizId });
     setQuizName(data.name);
@@ -263,12 +304,8 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
               </ActionIcon>
             </Title>
             <Title order={4}>Categories</Title>
-            <Radio.Group
-              className={styles.scrollAble}
-              name="activeCategory"
-              value={`${activeCategoryIndex}`}
-              onChange={setActiveCategory}>
-              {watchCategories.map((category: Category, idx: number) => (
+            <Radio.Group name="activeCategory" value={`${activeCategoryIndex}`} onChange={setActiveCategory}>
+              {categories.map((category: Category, idx: number) => (
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : ''}
                   withBorder={idx === activeCategoryIndex}
@@ -303,6 +340,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                                 setActiveCategory(idx);
                               }
                             }}
+                            onKeyUp={(ev) => setActiveCategoryName((ev.target as any).value)}
                             className={classNames({
                               [styles.categoryNameInput]: idx !== activeCategoryIndex,
                             })}
@@ -333,7 +371,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                             </Text>
                           )}
                         </div>
-                        {watchCategories.length > 1 && (
+                        {categories.length > 1 && (
                           <ActionIcon
                             variant="transparent"
                             ml="md"
@@ -363,29 +401,32 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
         <Grid.Col span={14}>
           <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsCard}`}>
             <Title order={5} mb="xl">
-              {watchCategories[activeCategoryIndex]?.categoryName || 'Unnamed Category'}
+              {activeCategoryName || 'Unnamed Category'}
             </Title>
-            {(watchCategories[activeCategoryIndex]?.questions || []).map((question: IQuestion, idx) =>
+            {(categories[activeCategoryIndex]?.questions || []).map((question: IQuestion, idx) =>
               activeQuestionIndex === idx ? (
                 <QuestionEdit
                   questionNum={idx + 1}
                   question={question}
                   key={question.questionId}
-                  saveQuestion={() => {
+                  saveQuestion={() => handleSaveQuestion(idx)}
+                  onQuestionChange={onQuestionChange}
+                  deleteQuestion={handleDeleteQuestion}
+                  resetQuestion={resetQuestion}
+                  showPreview={() => {
                     setActiveQuestionIndex(null);
                     setExpandedPreviewQuestionIndex(idx);
                   }}
-                  onQuestionChange={onQuestionChange}
-                  deleteQuestion={deleteQuestion}
                 />
               ) : (
                 <QuestionPreview
                   questionNum={idx + 1}
                   question={question}
                   key={question.questionId}
+                  saveQuestion={() => handleSaveQuestion(idx)}
                   isValidQuestion={isValidQuestion(question)}
                   setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
-                  deleteQuestion={() => deleteQuestion(idx)}
+                  deleteQuestion={() => handleDeleteQuestion(idx)}
                   expandedPreviewQuestionIndex={expandedPreviewQuestionIndex === idx}
                   setExpandedPreviewQuestionIndex={setExpandedPreviewQuestionIndex}
                 />

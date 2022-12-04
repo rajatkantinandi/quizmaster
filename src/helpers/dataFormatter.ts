@@ -9,6 +9,8 @@ const quizDataSchema = {
   quizId: 'QuizId',
   name: 'Name',
   isDraft: 'IsDraft',
+  createDate: 'CreateDate',
+  updateDate: 'UpdateDate',
   categories: {
     _meta: {
       dataKey: 'categoryId',

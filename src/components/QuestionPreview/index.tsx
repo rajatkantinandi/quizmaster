@@ -12,6 +12,7 @@ interface Props {
   deleteQuestion: any;
   expandedPreviewQuestionIndex: boolean;
   setExpandedPreviewQuestionIndex: Function;
+  saveQuestion: Function;
 }
 
 export default function QuestionPreview({
@@ -22,6 +23,7 @@ export default function QuestionPreview({
   deleteQuestion,
   expandedPreviewQuestionIndex,
   setExpandedPreviewQuestionIndex,
+  saveQuestion,
 }: Props) {
   return (
     <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
@@ -33,6 +35,7 @@ export default function QuestionPreview({
           setActiveQuestion={setActiveQuestion}
           deleteQuestion={deleteQuestion}
           setExpandedPreviewQuestionIndex={setExpandedPreviewQuestionIndex}
+          saveQuestion={saveQuestion}
         />
       ) : (
         <CollapsedPreview

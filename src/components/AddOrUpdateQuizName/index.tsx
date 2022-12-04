@@ -24,7 +24,7 @@ export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = fals
         variant="filled"
         label={
           <Text mb="xs" weight="bold">
-            Quiz name
+            Enter quiz name
           </Text>
         }
         radius="md"
@@ -37,10 +37,9 @@ export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = fals
         radius="xl"
         size="md"
         fullWidth
-        leftIcon={<Icon name="plus" color="#ffffff" width={22} />}
         type="submit"
         variant="filled">
-        Create new quiz
+        Continue
       </Button>
     </form>
   );

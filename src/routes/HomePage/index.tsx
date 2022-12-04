@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.module.css';
 import { Helmet } from 'react-helmet';
-import { Grid, AppShell, Header } from '@mantine/core';
+import { Grid, AppShell } from '@mantine/core';
 import LoginFormCard from '../../components/LoginFormCard';
 import SignUpFormCard from '../../components/SignUpFormCard';
 import ForgotPassword from '../../components/ForgotPassword';

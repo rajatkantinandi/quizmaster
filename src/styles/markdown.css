@@ -1,3 +1,7 @@
+.react-markdown {
+  display: inline-block;
+}
+
 .reactMarkdown td,
 .reactMarkdown th {
   border: 1px solid var(--gray-dark);

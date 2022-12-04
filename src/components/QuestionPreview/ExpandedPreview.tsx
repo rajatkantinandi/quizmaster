@@ -2,6 +2,7 @@ import React from 'react';
 import { Question as IQuestion } from '../../types';
 import { Title, Badge, ActionIcon, Text, List, Group, Button, Box } from '@mantine/core';
 import Icon from '../Icon';
+import Markdown from '../Markdown';
 
 interface Props {
   questionNum: number;
@@ -10,6 +11,7 @@ interface Props {
   setActiveQuestion: any;
   deleteQuestion: any;
   setExpandedPreviewQuestionIndex: Function;
+  saveQuestion: Function;
 }
 
 export default function ExpandedPreview({
@@ -19,6 +21,7 @@ export default function ExpandedPreview({
   setActiveQuestion,
   deleteQuestion,
   setExpandedPreviewQuestionIndex,
+  saveQuestion,
 }: Props) {
   const getQuestionTextStyles = (theme, isCorrect = false) => ({
     backgroundColor: isCorrect ? theme.colors.green[2] : '#AFD0D4',
@@ -51,8 +54,10 @@ export default function ExpandedPreview({
           </ActionIcon>
         </Group>
       </Group>
-      <Box p="xs" my="xs" sx={getQuestionTextStyles}>
-        {question.text || (
+      <Box my="xs" sx={getQuestionTextStyles}>
+        {question.text ? (
+          <Markdown>{question.text}</Markdown>
+        ) : (
           <Text italic size="sm" span>
             (No question text)
           </Text>
@@ -70,7 +75,9 @@ export default function ExpandedPreview({
             mb="md"
             key={option.optionId}
             sx={(theme) => getQuestionTextStyles(theme, !!option.text && option.isCorrect)}>
-            {option.text || (
+            {option.text ? (
+              <Markdown>{option.text}</Markdown>
+            ) : (
               <Text italic size="sm" span>
                 (No option text)
               </Text>
@@ -78,6 +85,13 @@ export default function ExpandedPreview({
           </Box>
         ))}
       </List>
+      {isValidQuestion && (
+        <Group position="right" mt="xl">
+          <Button radius="md" variant="filled" onClick={() => saveQuestion()}>
+            Save
+          </Button>
+        </Group>
+      )}
     </>
   );
 }
