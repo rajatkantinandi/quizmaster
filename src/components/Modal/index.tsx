@@ -13,6 +13,7 @@ function Modal() {
     cancelText = 'Cancel',
     className = '',
     okCallback,
+    cancelCallback,
     size = 'lg',
     isAlert = false,
     doNotShowAgainKey,
@@ -52,7 +53,17 @@ function Modal() {
       )}
       <Group mt="xl" pt="xl" position="right">
         {!!cancelText && (
-          <Button color="dark" variant="outline" onClick={hideModal} radius="md">
+          <Button
+            color="dark"
+            variant="outline"
+            onClick={() => {
+              hideModal();
+
+              if (cancelCallback) {
+                cancelCallback();
+              }
+            }}
+            radius="md">
             {cancelText}
           </Button>
         )}

@@ -17,6 +17,8 @@ import {
   unDraftQuiz,
   isGuestUser,
   fixQuizData,
+  deleteQuizzes,
+  publishQuizzes,
 } from '../helpers';
 import { GameData, Quiz } from '../types';
 
@@ -31,6 +33,10 @@ export const getQuizStore = (set: Function, get: Function) => ({
         (quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime(),
       );
 
+      set((state: QuizState) => {
+        state.quizzes = sortedData;
+      });
+
       return sortedData;
     } else {
       const response = await getReq('quiz/userQuizzes');
@@ -40,6 +46,9 @@ export const getQuizStore = (set: Function, get: Function) => ({
       );
 
       await saveQuizzes(sortedData);
+      set((state: QuizState) => {
+        state.quizzes = sortedData;
+      });
 
       return sortedData;
     }
@@ -168,19 +177,56 @@ export const getQuizStore = (set: Function, get: Function) => ({
 
     await unDraftQuiz(quizId);
   },
-
-  setQuizzes: (data) => {
-    set((state: QuizState) => {
-      state.quizzes = data;
-    });
-  },
   searchQuiz: (queryString) => {
     set((state: QuizState) => {
       state.searchQuery = queryString;
       state.searchResults = queryString ? state.quizzes.filter((quiz) => quiz.name.startsWith(queryString)) : [];
     });
   },
+  deleteQuizzes: async (quizIds) => {
+    if (!isGuestUser()) {
+      await post('quiz/delete', { quizIds });
+    }
+
+    await deleteQuizzes(quizIds);
+    set((state: QuizState) => {
+      state.quizzes = state.quizzes.filter((quiz) => !quizIds.includes(quiz.quizId));
+    });
+  },
+  publishQuizzes: async (quizIds) => {
+    if (!isGuestUser()) {
+      await post('quiz/publish', { quizIds });
+    }
+
+    await publishQuizzes(quizIds);
+    set((state: QuizState) => {
+      state.quizzes = state.quizzes.map((quiz) => {
+        if (quizIds.includes(quiz.quizId)) {
+          quiz.isPublished = true;
+        }
+
+        return quiz;
+      });
+    });
+  },
+  sortQuizzes: (sortBy) => {
+    set((state: QuizState) => {
+      state.quizzes = getSortedQuizzes(sortBy, state.quizzes);
+    });
+  },
 });
+
+function getSortedQuizzes(sortBy, data) {
+  switch (sortBy) {
+    case 'createDate':
+      return data.sort((quiz1, quiz2) => new Date(quiz2.createDate).getTime() - new Date(quiz1.createDate).getTime());
+    case 'name':
+      return data.sort((quiz1, quiz2) => quiz1.name.localeCompare(quiz2.name));
+    case 'recency':
+    default:
+      return data.sort((quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime());
+  }
+}
 
 export interface QuizState extends Omit<Omit<ReturnType<typeof getQuizStore>, 'quizzes'>, 'searchResults'> {
   quizzes: Quiz[];

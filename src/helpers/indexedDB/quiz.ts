@@ -22,6 +22,19 @@ export const saveQuiz = async (data: QuizParams) => {
   return data;
 };
 
+export const deleteQuizzes = async (quizIds: number[]) => {
+  await quizzesC.remove({ quizId: { $in: quizIds } });
+};
+
+export const publishQuizzes = async (quizIds: number[]) => {
+  const existing = await quizzesC.find({ quizId: { $in: quizIds } });
+
+  existing.forEach(async (quiz) => {
+    quiz.isPublished = true;
+    await quizzesC.update({ quizId: quiz.quizId }, quiz);
+  });
+};
+
 export const updateQuizName = async (data: QuizParams) => {
   const existing = (await quizzesC.findOne({ quizId: parseInt(data.quizId) })) as Quiz;
 
@@ -70,6 +83,7 @@ export const getQuizzes = async (userId: number): Promise<Object[]> => {
 
 export const saveQuizzes = async (quizzes: Quiz[]) => {
   if (quizzes.length > 0) {
+    await quizzesC.remove({ quizId: { $in: quizzes.map((qz) => qz.quizId) } });
     await quizzesC.insert(quizzes);
   }
 };

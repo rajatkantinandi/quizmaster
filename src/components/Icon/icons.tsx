@@ -32,6 +32,10 @@ import { ReactComponent as caretUp } from '../../images/icons/caret-up.svg';
 import { ReactComponent as caretDown } from '../../images/icons/caret-down.svg';
 import { ReactComponent as play } from '../../images/icons/play.svg';
 import { ReactComponent as done } from '../../images/icons/done.svg';
+import { ReactComponent as sort } from '../../images/icons/sort.svg';
+import { ReactComponent as publish } from '../../images/icons/publish.svg';
+import { ReactComponent as checkmarkFilled } from '../../images/icons/checkmark-filled.svg';
+import { ReactComponent as checkmarkOutline } from '../../images/icons/checkmark-outline.svg';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const icons = {
@@ -61,6 +65,10 @@ const icons = {
   caretDown,
   play,
   done,
+  sort,
+  publish,
+  checkmarkFilled,
+  checkmarkOutline,
 };
 
 export default icons;

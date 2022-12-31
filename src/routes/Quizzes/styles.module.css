@@ -2,6 +2,16 @@
   width: 23%;
   height: 348px;
   padding: 10px 12px;
+  position: relative;
+}
+
+.cardSelectBtn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .pageTitleWrapper {
@@ -72,4 +82,8 @@
 
 .publishQuiz {
   background-color: #2e7d32 !important;
+}
+
+.sort {
+  max-width: 190px;
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useStore } from '../../useStore';
 import { Helmet } from 'react-helmet';
-import { Text, Button, Grid, Card, Group, Badge, Image, Title } from '@mantine/core';
+import { Text, Button, Grid, Card, Group, Badge, Image, Title, Select, ActionIcon } from '@mantine/core';
 import styles from './styles.module.css';
 import { plural } from '../../helpers/textHelpers';
 import Icon from '../../components/Icon';
@@ -10,17 +10,29 @@ import { tilesBGColors } from '../../constants';
 import PageLoader from '../../components/PageLoader';
 import noContent from '../../images/no_content.png';
 import CreateQuizButton from '../../components/CreateQuizButton';
+import QuizSelectorAlert from '../../components/QuizSelectorAlert';
 
 export default function Quizzes() {
   const { userName } = useParams();
   const [loading, setLoading] = useState(true);
-  const { getQuizzes, setQuizzes, ...rest } = useStore();
+  const [sortBy, setSortBy] = useState('recency');
+  const {
+    getQuizzes,
+    quizzesSelector,
+    setQuizzesSelectorState,
+    deleteQuizzes,
+    publishQuizzes,
+    toggleSelectedQuizzes,
+    showModal,
+    showAlert,
+    sortQuizzes,
+    ...rest
+  } = useStore();
   const quizzes = rest.searchQuery ? rest.searchResults : rest.quizzes;
   const navigate = useNavigate();
 
   useEffect(() => {
     getQuizzes().then((quizzes) => {
-      setQuizzes(quizzes);
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -32,6 +44,115 @@ export default function Quizzes() {
 
       return count;
     }, 0);
+  }
+
+  function handleDeleteQuizzes() {
+    setQuizzesSelectorState({
+      action: 'delete',
+      message: 'Select quizzes to delete',
+      show: true,
+      selectedQuizzes: [],
+      onNextClick: (selectedQuizzes) => {
+        showModal({
+          title: 'Delete Quizzes',
+          body: (
+            <>
+              <p>Are you sure you want to delete following quizzes ?</p>
+              <ol>
+                {selectedQuizzes.map((quizId) => (
+                  <li key={quizId}>{quizzes.find((quiz) => quiz.quizId === quizId)?.name}</li>
+                ))}
+              </ol>
+            </>
+          ),
+          okCallback: async () => {
+            await deleteQuizzes(selectedQuizzes);
+            setQuizzesSelectorState({
+              action: '',
+              message: '',
+              show: false,
+              selectedQuizzes: [],
+            });
+          },
+          cancelCallback: () => {
+            setQuizzesSelectorState({
+              action: '',
+              message: '',
+              show: false,
+              selectedQuizzes: [],
+            });
+          },
+          okText: 'Delete Quizzes',
+          cancelText: 'Cancel',
+        });
+      },
+      onCancelClick: () => {
+        setQuizzesSelectorState({
+          action: '',
+          message: '',
+          show: false,
+          selectedQuizzes: [],
+        });
+      },
+    });
+  }
+
+  function handlePublishQuizzes() {
+    if (quizzes.some((quiz) => !quiz.isDraft && !quiz.isPublished)) {
+      setQuizzesSelectorState({
+        action: 'publish',
+        message: 'Select quizzes to publish',
+        show: true,
+        selectedQuizzes: [],
+        onNextClick: (selectedQuizzes) => {
+          showModal({
+            title: 'Publish Quizzes',
+            body: (
+              <>
+                <p>Are you sure you want to publish following quizzes ?</p>
+                <ol>
+                  {selectedQuizzes.map((quizId) => (
+                    <li key={quizId}>{quizzes.find((quiz) => quiz.quizId === quizId)?.name}</li>
+                  ))}
+                </ol>
+              </>
+            ),
+            okCallback: async () => {
+              await publishQuizzes(selectedQuizzes);
+              setQuizzesSelectorState({
+                action: '',
+                message: '',
+                show: false,
+                selectedQuizzes: [],
+              });
+            },
+            cancelCallback: () => {
+              setQuizzesSelectorState({
+                action: '',
+                message: '',
+                show: false,
+                selectedQuizzes: [],
+              });
+            },
+            okText: 'Publish Quizzes',
+            cancelText: 'Cancel',
+          });
+        },
+        onCancelClick: () => {
+          setQuizzesSelectorState({
+            action: '',
+            message: '',
+            show: false,
+            selectedQuizzes: [],
+          });
+        },
+      });
+    } else {
+      showAlert({
+        message: 'No quiz to publish. Please complete the quizzes before publish if they are in draft state.',
+        type: 'info',
+      });
+    }
   }
 
   return (
@@ -61,18 +182,44 @@ export default function Quizzes() {
         </Grid>
       ) : (
         <>
+          <QuizSelectorAlert {...quizzesSelector} />
           <Group position="apart" className={styles.pageTitleWrapper}>
             <Group mb="xl" mt="md">
               <Title order={2}>My Quizzes</Title>
               <CreateQuizButton userName={userName} />
             </Group>
-            <Button.Group>
-              <Button className={styles.deleteButton} leftIcon={<Icon color="white" width="16" name="trash" />}>
+            <Group>
+              <Button
+                onClick={handleDeleteQuizzes}
+                className={styles.deleteButton}
+                leftIcon={<Icon color="white" width="16" name="trash" />}>
                 Delete Quizzes
               </Button>
-              <Button variant="outline">Second</Button>
-              <Button className={styles.publishQuiz}>Publish Quizzes</Button>
-            </Button.Group>
+              <Button
+                onClick={handlePublishQuizzes}
+                className={styles.publishQuiz}
+                leftIcon={<Icon color="white" width="16" name="publish" />}>
+                Publish Quizzes
+              </Button>
+              <Select
+                placeholder="Sort by"
+                className={styles.sort}
+                onChange={(val) => {
+                  setSortBy(val || 'recency');
+                  sortQuizzes(val || 'recency');
+                }}
+                data={[
+                  { value: 'recency', label: 'Recently Updated' },
+                  { value: 'createDate', label: 'Create Date' },
+                  { value: 'name', label: 'Name' },
+                ]}
+                icon={<Icon width="16" name="sort" />}
+                value={sortBy}
+                transition="pop-top-left"
+                transitionDuration={100}
+                transitionTimingFunction="ease"
+              />
+            </Group>
           </Group>
           <Group>
             {quizzes.map((quiz, index) => (
@@ -95,6 +242,11 @@ export default function Quizzes() {
                     {quiz.isDraft && (
                       <Badge color="pink" variant="light">
                         Draft
+                      </Badge>
+                    )}
+                    {quiz.isPublished && (
+                      <Badge color="green" variant="light">
+                        Published
                       </Badge>
                     )}
                   </Group>
@@ -132,6 +284,29 @@ export default function Quizzes() {
                       </Button>
                     )}
                   </Group>
+                  {quizzesSelector.show && (
+                    <ActionIcon
+                      variant="transparent"
+                      className={styles.cardSelectBtn}
+                      onClick={() => {
+                        if (quizzesSelector.action === 'publish' && quiz.isDraft) {
+                          showAlert({
+                            message: 'Quiz in draft state is not allowed to publish.',
+                            type: 'info',
+                          });
+                        } else {
+                          toggleSelectedQuizzes(quiz.quizId);
+                        }
+                      }}>
+                      <Icon
+                        name={
+                          quizzesSelector.selectedQuizzes.includes(quiz.quizId) ? 'checkmarkFilled' : 'checkmarkOutline'
+                        }
+                        width={200}
+                        height={200}
+                      />
+                    </ActionIcon>
+                  )}
                 </Card>
               </div>
             ))}

@@ -10,6 +10,7 @@ const quizDataSchema = {
   name: 'Name',
   isDraft: 'IsDraft',
   createDate: 'CreateDate',
+  isPublished: 'IsPublished',
   updateDate: 'UpdateDate',
   categories: {
     _meta: {

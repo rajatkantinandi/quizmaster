@@ -38,6 +38,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   const categories = watch('categories') || [];
   const categoriesRef = useRef([]);
   const quizNameRef = useRef('');
+  const isDraftRef = useRef(true);
   categoriesRef.current = categories;
   quizNameRef.current = quizName;
 
@@ -45,6 +46,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     if (isInt(quizId)) {
       getQuiz(parseInt(`${quizId}`)).then((quiz: Quiz) => {
         setQuizName(quiz.name);
+        isDraftRef.current = !!quiz.isDraft;
         let activeQuestionIndex: any = null;
         const activeCategoryIndex = quiz.categories.findIndex((category) => {
           const idx = category.questions.findIndex((question) => !isValidQuestion(question));
@@ -67,7 +69,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
         name: quizNameRef.current,
         quizId,
         categories: categoriesRef.current,
-        isDraft: true,
+        isDraft: isDraftRef.current,
       });
     };
   }, []);
@@ -82,7 +84,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
         name: quizName,
         quizId,
         categories,
-        isDraft: true,
+        isDraft: isDraftRef.current,
       });
     };
   }, [categories, quizName]);
@@ -122,6 +124,8 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     }
 
     try {
+      isDraftRef.current = false;
+
       await createOrUpdateQuiz({
         categories: formData.categories,
         quizId,
