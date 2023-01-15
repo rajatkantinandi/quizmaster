@@ -1,8 +1,9 @@
 import React from 'react';
 import { Dialog, Text, Button, Group } from '@mantine/core';
 import { plural } from '../../helpers/textHelpers';
+import { QuizzesSelectorState } from '../../stores/appStore';
 
-function QuizSelectorAlert({ show, message, selectedQuizzes, onNextClick, onCancelClick }) {
+function QuizSelectorAlert({ show, message, selectedQuizzes, onNextClick, onCancelClick }: QuizzesSelectorState) {
   return (
     <Dialog
       opened={show}
@@ -32,17 +33,21 @@ function QuizSelectorAlert({ show, message, selectedQuizzes, onNextClick, onCanc
           )}
         </Text>
         <Group position="left">
-          <Button
-            variant="light"
-            size="sm"
-            radius="sm"
-            disabled={selectedQuizzes.length === 0}
-            onClick={() => onNextClick(selectedQuizzes)}>
-            Next
-          </Button>
-          <Button variant="light" size="sm" radius="sm" onClick={onCancelClick}>
-            Cancel
-          </Button>
+          {!!onNextClick && (
+            <Button
+              variant="light"
+              size="sm"
+              radius="sm"
+              disabled={selectedQuizzes.length === 0}
+              onClick={() => onNextClick(selectedQuizzes)}>
+              Next
+            </Button>
+          )}
+          {!!onCancelClick && (
+            <Button variant="light" size="sm" radius="sm" onClick={() => onCancelClick()}>
+              Cancel
+            </Button>
+          )}
         </Group>
       </Group>
     </Dialog>
