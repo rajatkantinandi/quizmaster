@@ -4,7 +4,7 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
 import { Quiz, Category, Question as IQuestion } from '../../types';
 import { nanoid } from 'nanoid';
-import { getEmptyQuestion, isInt, saveQuestion } from '../../helpers';
+import { getEmptyQuestion, isInt } from '../../helpers';
 import { Helmet } from 'react-helmet';
 import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge } from '@mantine/core';
 import styles from './styles.module.css';
@@ -24,7 +24,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedPreviewQuestionIndex, setExpandedPreviewQuestionIndex] = useState<number | null>(null);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
-  const [refresh, setRefresh] = useState(0);
+  const [, setRefresh] = useState(0);
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -72,6 +72,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
         isDraft: isDraftRef.current,
       });
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -87,6 +88,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
         isDraft: isDraftRef.current,
       });
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categories, quizName]);
 
   function onQuestionChange(data) {

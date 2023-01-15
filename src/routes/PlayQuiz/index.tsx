@@ -63,6 +63,7 @@ export default function PlayQuiz() {
         setIsLoading(false);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameId]);
 
   function showWinner(teams: Team[], callback?: Function) {

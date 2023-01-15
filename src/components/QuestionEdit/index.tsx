@@ -40,7 +40,7 @@ export default function QuestionEdit({
     getValues,
     watch,
   } = useForm({ defaultValues: formDefaultValues });
-  const [refresh, setRefresh] = useState(0);
+  const [, setRefresh] = useState(0);
   const [optionType, setOptionType] = useState<TabsValue>(
     question.options.length === 1 && question.options[0].isCorrect ? 'withoutOptions' : 'withOptions',
   );

@@ -12,7 +12,7 @@ import TeamGenerator from '../../components/TeamGenerator';
 import { Helmet } from 'react-helmet';
 
 const formDefaultValues: { teams: Team[] } = {
-  teams: [0, 1].map((index) => getEmptyTeam()),
+  teams: [0, 1].map(() => getEmptyTeam()),
 };
 
 export default function ConfigureGame() {
@@ -26,7 +26,7 @@ export default function ConfigureGame() {
     setValue,
   } = useForm({ defaultValues: formDefaultValues });
 
-  const [teamCount, setTeamCount] = useState(0);
+  const [, setTeamCount] = useState(0);
   const [showTeamGenerator, setShowTeamGenerator] = useState(false);
   const [questionTimer, setQuestionTimer] = useState(0);
   const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);

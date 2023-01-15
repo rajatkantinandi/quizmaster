@@ -13,7 +13,7 @@ export default function SignUpFormCard() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { signUp, showModal, showAlert } = useStore();
+  const { signUp, showAlert } = useStore();
   const navigate = useNavigate();
 
   async function handleSignUp(data: FieldValues) {
@@ -30,6 +30,7 @@ export default function SignUpFormCard() {
         callback: () => navigate('/login'),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const shouldMatchWithPassword = (value: string) => value === getValues('password') || 'Should match with password';

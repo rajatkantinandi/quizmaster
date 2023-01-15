@@ -2,7 +2,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
 import { Button, Text } from '@mantine/core';
-import Icon from '../Icon';
 
 export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = false, handleFormSubmit }) {
   const {

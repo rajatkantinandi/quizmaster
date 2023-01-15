@@ -45,7 +45,7 @@ export default function Question({
 
   useEffect(() => {
     setRemainingTime(duration);
-  }, [selectedQuestionId]);
+  }, [selectedQuestionId, duration]);
 
   return (
     <div className={classNames(styles.timer, { [styles.running]: running })}>

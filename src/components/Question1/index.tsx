@@ -46,7 +46,7 @@ export default function Question({
 
   useEffect(() => {
     setIsAnswerRevealed(isPreview);
-  }, [questionId]);
+  }, [questionId, isPreview]);
 
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();

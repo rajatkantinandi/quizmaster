@@ -223,7 +223,7 @@ export default function Quizzes() {
           </Group>
           <Group>
             {quizzes.map((quiz, index) => (
-              <div className={styles.quizCardWrapper}>
+              <div className={styles.quizCardWrapper} key={quiz.quizId}>
                 <Card shadow="sm" p="lg" radius="md" withBorder>
                   <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
                     <Icon

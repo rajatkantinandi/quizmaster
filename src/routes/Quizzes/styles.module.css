@@ -45,7 +45,7 @@
   }
 }
 
-.quizCardWrapper > div {
+.quizCardWrapper>div {
   height: inherit;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .playCardButton {
-  width: 47%;
+  width: calc(50% - 10px);
 }
 
 .truncate2Lines {

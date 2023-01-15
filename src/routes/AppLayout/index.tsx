@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AppShell, Header, Group, TextInput, Menu, Avatar, Aside, Text, MediaQuery } from '@mantine/core';
+import React from 'react';
+import { AppShell, Header, Group, TextInput, Menu, Avatar } from '@mantine/core';
 import { Helmet } from 'react-helmet';
 import Quizzes from '../Quizzes';
 import ConfigureQuiz from '../ConfigureQuiz';

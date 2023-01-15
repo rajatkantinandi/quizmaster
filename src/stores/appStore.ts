@@ -1,5 +1,3 @@
-import { Quiz } from '../types';
-
 export const getAppStore = (set: Function, get: Function) => ({
   modal: null,
   alert: null,

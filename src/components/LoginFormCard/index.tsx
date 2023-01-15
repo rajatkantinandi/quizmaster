@@ -31,6 +31,7 @@ export default function LoginFormCard() {
         callback: () => navigate('/login'),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function loginAsGuest() {
