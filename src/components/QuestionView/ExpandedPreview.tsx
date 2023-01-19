@@ -8,9 +8,10 @@ interface Props {
   questionNum: number;
   question: IQuestion;
   isValidQuestion: boolean;
+  isPreview: boolean;
   setActiveQuestion: any;
   deleteQuestion: any;
-  setExpandedPreviewQuestionIndex: Function;
+  setExpandedQuestionIndex: Function;
   saveQuestion: Function;
 }
 
@@ -18,9 +19,10 @@ export default function ExpandedPreview({
   questionNum,
   question,
   isValidQuestion,
+  isPreview,
   setActiveQuestion,
   deleteQuestion,
-  setExpandedPreviewQuestionIndex,
+  setExpandedQuestionIndex,
   saveQuestion,
 }: Props) {
   const getQuestionTextStyles = (theme, isCorrect = false) => ({
@@ -43,13 +45,15 @@ export default function ExpandedPreview({
           )}
         </Group>
         <Group>
-          <Button variant="light" compact radius="xl" color="rgb(193, 6, 6)" onClick={deleteQuestion}>
-            Delete
-          </Button>
-          <ActionIcon variant="transparent" onClick={setActiveQuestion}>
+          {!isPreview && (
+            <Button variant="light" compact radius="xl" color="rgb(193, 6, 6)" onClick={deleteQuestion}>
+              Delete
+            </Button>
+          )}
+          <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
             <Icon name="pencil" width={22} />
           </ActionIcon>
-          <ActionIcon variant="transparent" onClick={() => setExpandedPreviewQuestionIndex(null)}>
+          <ActionIcon variant="transparent" onClick={() => setExpandedQuestionIndex(null)}>
             <Icon name="caretDown" />
           </ActionIcon>
         </Group>
@@ -85,7 +89,7 @@ export default function ExpandedPreview({
           </Box>
         ))}
       </List>
-      {isValidQuestion && (
+      {isValidQuestion && isPreview && (
         <Group position="right" mt="xl">
           <Button radius="md" variant="filled" onClick={() => saveQuestion()}>
             Save

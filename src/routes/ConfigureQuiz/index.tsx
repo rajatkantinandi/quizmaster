@@ -11,7 +11,7 @@ import styles from './styles.module.css';
 import Icon from '../../components/Icon';
 import classNames from 'classnames';
 import QuestionEdit from '../../components/QuestionEdit';
-import QuestionPreview from '../../components/QuestionPreview';
+import QuestionView from '../../components/QuestionView';
 import { plural } from '../../helpers/textHelpers';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
 import { useNavigate, useParams } from 'react-router';
@@ -22,7 +22,8 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeCategoryName, setActiveCategoryName] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
-  const [expandedPreviewQuestionIndex, setExpandedPreviewQuestionIndex] = useState<number | null>(null);
+  const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null>(null);
+  const [previewQuestionIndex, setPreviewQuestionIndex] = useState<number | null>(null);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
   const [, setRefresh] = useState(0);
   const navigate = useNavigate();
@@ -189,7 +190,8 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     setActiveCategoryIndex(index);
     setActiveCategoryName(categories[index].categoryName);
     setActiveQuestionIndex(null);
-    setExpandedPreviewQuestionIndex(null);
+    setExpandedQuestionIndex(null);
+    setPreviewQuestionIndex(null);
   };
 
   const addQuestion = () => {
@@ -211,6 +213,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
 
         setValue('categories', categories);
         setActiveQuestionIndex(null);
+        setPreviewQuestionIndex(null);
       });
     }
   };
@@ -253,6 +256,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
 
     if (questionIndex === activeQuestionIndex) {
       setActiveQuestionIndex(null);
+      setPreviewQuestionIndex(null);
     } else {
       setRefresh(Math.random());
     }
@@ -278,7 +282,8 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
 
   function handleSaveQuestion(idx) {
     setActiveQuestionIndex(null);
-    setExpandedPreviewQuestionIndex(idx);
+    setExpandedQuestionIndex(null);
+    setPreviewQuestionIndex(null);
 
     showAlert({
       message: 'Question has been saved successfully.',
@@ -421,11 +426,12 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                   resetQuestion={resetQuestion}
                   showPreview={() => {
                     setActiveQuestionIndex(null);
-                    setExpandedPreviewQuestionIndex(idx);
+                    setExpandedQuestionIndex(idx);
+                    setPreviewQuestionIndex(idx);
                   }}
                 />
               ) : (
-                <QuestionPreview
+                <QuestionView
                   questionNum={idx + 1}
                   question={question}
                   key={question.questionId}
@@ -433,8 +439,9 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                   isValidQuestion={isValidQuestion(question)}
                   setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
                   deleteQuestion={() => handleDeleteQuestion(idx)}
-                  expandedPreviewQuestionIndex={expandedPreviewQuestionIndex === idx}
-                  setExpandedPreviewQuestionIndex={setExpandedPreviewQuestionIndex}
+                  isExpanded={expandedQuestionIndex === idx}
+                  isPreview={previewQuestionIndex === idx}
+                  setExpandedQuestionIndex={setExpandedQuestionIndex}
                 />
               ),
             )}

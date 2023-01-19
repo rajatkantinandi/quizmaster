@@ -22,7 +22,7 @@ interface Props {
   isAttempted: boolean;
 }
 
-export default function Question({
+export default function QuestionPlay({
   submitResponse,
   onClose,
   isPreview = false,
