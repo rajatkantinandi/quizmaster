@@ -8,18 +8,20 @@ interface Props {
   questionNum: number;
   question: IQuestion;
   isValidQuestion: boolean;
+  isPreview: boolean;
   setActiveQuestion: any;
   deleteQuestion: any;
-  setExpandedPreviewQuestionIndex: Function;
+  setExpandedQuestionIndex: Function;
 }
 
 export default function CollapsedPreview({
   questionNum,
   question,
   isValidQuestion,
+  isPreview,
   setActiveQuestion,
   deleteQuestion,
-  setExpandedPreviewQuestionIndex,
+  setExpandedQuestionIndex,
 }: Props) {
   return (
     <>
@@ -40,13 +42,15 @@ export default function CollapsedPreview({
           )}
         </Group>
         <Group>
-          <Button variant="light" radius="xl" compact color="rgb(193, 6, 6)" onClick={deleteQuestion}>
-            Delete
-          </Button>
-          <ActionIcon variant="transparent" onClick={setActiveQuestion}>
+          {!isPreview && (
+            <Button variant="light" radius="xl" compact color="rgb(193, 6, 6)" onClick={deleteQuestion}>
+              Delete
+            </Button>
+          )}
+          <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
             <Icon name="pencil" width={22} />
           </ActionIcon>
-          <ActionIcon variant="transparent" onClick={() => setExpandedPreviewQuestionIndex(questionNum - 1)}>
+          <ActionIcon variant="transparent" onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
             <Icon name="caretUp" />
           </ActionIcon>
         </Group>

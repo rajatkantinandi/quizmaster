@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useNavigate, useParams } from 'react-router';
 import { Button } from 'semantic-ui-react';
-import Question from '../../components/Question1';
+import QuestionPlay from '../../components/QuestionPlay';
 import QuizGrid from '../../components/QuizGrid';
 import { Category, Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
 import styles from './styles.module.css';
@@ -189,7 +189,7 @@ export default function PlayQuiz() {
           selectedQuestionId={selectedQuestion?.questionId || ''}
         />
         {!!selectedQuestion && (
-          <Question
+          <QuestionPlay
             submitResponse={(optionId: string) => handleSubmitResponse(optionId)}
             selectedQuestion={selectedQuestion}
             onClose={() => {
