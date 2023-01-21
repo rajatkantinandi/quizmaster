@@ -205,11 +205,16 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   };
 
   const resetQuestion = () => {
-    if (activeQuestionIndex) {
+    if (activeQuestionIndex !== null && activeQuestionIndex >= 0) {
       getQuiz(parseInt(`${quizId}`)).then((quiz: Quiz) => {
         const categories = getValues('categories');
-        categories[activeCategoryIndex].questions[activeQuestionIndex] =
-          quiz.categories[activeCategoryIndex].questions[activeQuestionIndex];
+        const originalQuestion = quiz.categories[activeCategoryIndex].questions[activeQuestionIndex];
+
+        if (originalQuestion) {
+          categories[activeCategoryIndex].questions[activeQuestionIndex] = originalQuestion;
+        } else {
+          categories[activeCategoryIndex].questions.splice(activeQuestionIndex, 1);
+        }
 
         setValue('categories', categories);
         setActiveQuestionIndex(null);
@@ -280,7 +285,13 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     });
   }
 
-  function handleSaveQuestion(idx) {
+  async function handleSaveQuestion(idx) {
+    await createOrUpdateQuiz({
+      categories: categoriesRef.current,
+      quizId,
+      name: quizNameRef.current,
+      isDraft: isDraftRef.current,
+    });
     setActiveQuestionIndex(null);
     setExpandedQuestionIndex(null);
     setPreviewQuestionIndex(null);
