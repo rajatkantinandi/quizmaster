@@ -31,9 +31,9 @@ function AppLayout() {
         }
       }
       case 'configure-game':
-        return <ConfigureGame />;
+        return <ConfigureGame quizId={id} />;
       case 'play-game':
-        return <PlayQuiz />;
+        return <PlayQuiz gameId={id} />;
       default:
         return <CheckAuthAndNavigate />;
     }

@@ -1,38 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { useNavigate, useParams } from 'react-router';
-import { Button } from 'semantic-ui-react';
+import { Button, Text, Grid, Accordion, Group, Badge, Title } from '@mantine/core';
 import QuestionPlay from '../../components/QuestionPlay';
-import QuizGrid from '../../components/QuizGrid';
-import { Category, Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
+import { Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
 import styles from './styles.module.css';
 import Timer from '../../components/Timer';
 import { useStore } from '../../useStore';
-import { formatCategoryInfo } from '../../helpers';
 import { defaultGameInfo } from '../../constants';
 import { Helmet } from 'react-helmet';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
   name: '',
-  categoryIds: [],
-  numberOfQuestionsPerCategory: 5,
+  categories: [],
 };
 
-const defaultCategoryInfo: { [key: string]: Category } = {};
 const defaultSelectedQuestion: IQuestion | null = null;
 
-export default function PlayQuiz() {
-  const { gameId, userName } = useParams();
+export default function PlayQuiz({ gameId }) {
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
-  const [categoriesInfo, setCategoriesInfo] = useState(defaultCategoryInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
   const { timeLimit, selectionTimeLimit } = gameInfo;
   const [isPlaying, setIsPlaying] = useState(false);
   const [winner, setWinner] = useState('');
   const selectedOptionsData = gameInfo.teams.reduce(
-    (acc, team) => acc.concat(team.selectedOptions),
+    (acc, team) => acc.concat(team.selectedOptions || []),
     [] as SelectedOptions[],
   );
   const attemptedQuestionIds = selectedOptionsData.map((x) => x.questionId);
@@ -40,26 +33,39 @@ export default function PlayQuiz() {
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
   const { showModal, getGameData, updateGame } = useStore();
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (gameId) {
       getGameData(parseInt(gameId)).then((game) => {
         const { quiz, ...restData } = game;
         const quizData = quiz[0];
-        const categoryIds = quizData.categories.map((category) => category.categoryId);
-        setQuizInfo({
-          quizId: quizData.quizId,
-          name: quizData.name,
-          categoryIds,
-          numberOfQuestionsPerCategory: quizData.numberOfQuestionsPerCategory,
+        let questionNum = 1;
+        let allQuestionsCount = 0;
+
+        quizData.categories.forEach((category) => {
+          category.questions.forEach((q) => {
+            q.questionNum = questionNum;
+            questionNum += 1;
+            allQuestionsCount++;
+          });
         });
 
-        if (categoryIds.length > 0) {
-          setCategoriesInfo(formatCategoryInfo(quizData.categories, categoryIds));
+        setQuizInfo(quizData);
+        setGameInfo(restData);
+        const attemptedQuestionsCount = restData.teams.reduce((count, team) => {
+          count += team.selectedOptions.length;
+          return count;
+        }, 0);
+        const isCompleted = allQuestionsCount === attemptedQuestionsCount;
+
+        if (isCompleted) {
+          const winners = getWinners(restData.teams);
+          const winnerIds = winners.map((winner) => winner.teamId).join(',');
+          setWinner(winnerIds);
+        } else {
+          setIsPlaying(!!restData.selectionTimeLimit);
         }
 
-        setGameInfo(restData);
         setIsLoading(false);
       });
     }
@@ -89,14 +95,14 @@ export default function PlayQuiz() {
     return teams.filter((team) => team.score === maxScore);
   }
 
-  async function handleSubmitResponse(optionId?: string) {
+  async function handleSubmitResponse(optionId: number | null) {
     if (selectedQuestion) {
       const isCorrect = selectedQuestion.options.find((o) => o.optionId === optionId)?.isCorrect;
       const currentTeamIndex = gameInfo.teams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
       const nextTeamIndex = (currentTeamIndex + 1) % gameInfo.teams.length;
       const clonedTeams = [...gameInfo.teams];
-      const allQuestionCount = quizInfo.categoryIds.reduce((count: number, catId) => {
-        count += categoriesInfo[catId].questions.length;
+      const allQuestionCount = quizInfo.categories.reduce((count: number, category) => {
+        count += category.questions.length;
 
         return count;
       }, 0);
@@ -106,7 +112,7 @@ export default function PlayQuiz() {
         currentTeam.score += isCorrect ? selectedQuestion.points : 0;
         currentTeam.selectedOptions.push({
           questionId: selectedQuestion.questionId,
-          selectedOptionId: optionId ? parseInt(optionId) : null,
+          selectedOptionId: optionId,
         });
 
         setGameInfo({
@@ -127,17 +133,20 @@ export default function PlayQuiz() {
         nextTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
         currentTeam: {
           score: clonedTeams[currentTeamIndex].score,
-          selectedOptionId: optionId ? parseInt(optionId) : null,
+          selectedOptionId: optionId,
           questionId: parseInt(selectedQuestion.questionId),
           teamId: parseInt(`${clonedTeams[currentTeamIndex].teamId}`),
         },
       });
+
+      setSelectedQuestion(null);
+      setIsPlaying(!!gameInfo.selectionTimeLimit && !winner);
     }
   }
 
   function selectRandomQuestion() {
-    const allQuestions = quizInfo.categoryIds.reduce(
-      (acc, catId) => acc.concat(categoriesInfo[catId].questions),
+    const allQuestions = quizInfo.categories.reduce(
+      (acc, category) => acc.concat(category.questions),
       [] as IQuestion[],
     );
 
@@ -152,8 +161,10 @@ export default function PlayQuiz() {
   }
 
   function showQuestion(questionId: string | number, categoryId: string | number) {
-    if (categoryId) {
-      const question = categoriesInfo[categoryId].questions.find((q) => q.questionId === questionId);
+    const category = quizInfo.categories.find((x) => x.categoryId === categoryId);
+
+    if (category) {
+      const question = category.questions.find((q) => q.questionId === questionId);
 
       setSelectedQuestion(question || null);
       setIsPlaying(true);
@@ -164,6 +175,53 @@ export default function PlayQuiz() {
     return ((!selectedQuestion && !!selectionTimeLimit) || (selectedQuestion && showQuestionTimer)) && !winner;
   }
 
+  function getSelectedOptionId(selectedQuestion) {
+    const selectedOptionData = selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId);
+
+    if (selectedOptionData) {
+      return selectedOptionData.selectedOptionId;
+    } else {
+      return '';
+    }
+  }
+
+  function getQuestionColor(question: IQuestion): string {
+    if (attemptedQuestionIds.includes(question.questionId)) {
+      const correctOptionId = question.options.find((x) => x.isCorrect)?.optionId;
+      const selectedOptionId = selectedOptionsData.find((x) => x.questionId === question.questionId)?.selectedOptionId;
+
+      return correctOptionId === selectedOptionId ? 'green' : 'red';
+    } else {
+      return 'blue';
+    }
+  }
+
+  function getNameInitials(name) {
+    const arr = name.split(' ');
+
+    return arr[0][0].toUpperCase() + (arr[1] ? arr[1][0].toUpperCase() : '');
+  }
+
+  function getTeamAvatar(question) {
+    if (attemptedQuestionIds.includes(question.questionId)) {
+      const team = gameInfo.teams.find((team) =>
+        team.selectedOptions.some((x) => x.questionId === question.questionId),
+      );
+
+      return team ? (
+        <div
+          className={`flex justifyCenter alignCenter ${styles.small} ${styles.avatar}`}
+          style={{ backgroundColor: team.avatarColor }}>
+          {getNameInitials(team.name)}
+        </div>
+      ) : (
+        <div className={`${styles.small} ${styles.avatar}`}></div>
+      );
+    } else {
+      return <div className={`${styles.small} ${styles.avatar}`}></div>;
+    }
+  }
+
   return isLoading ? (
     <></>
   ) : (
@@ -171,93 +229,132 @@ export default function PlayQuiz() {
       <Helmet>
         <title>Play Quiz</title>
       </Helmet>
-      <div className="flex justifyCenter">
-        <QuizGrid
-          categoriesInfo={categoriesInfo}
-          showQuestion={showQuestion}
-          gameInfo={gameInfo}
-          isExpanded={!selectedQuestion}
-          quizInfo={quizInfo}
-          mode="play"
-          setIsExpanded={(expanded: boolean) => {
-            // Upon expanding grid deselect question & resume play
-            if (expanded) {
-              setSelectedQuestion(null);
-              setIsPlaying(!winner);
-            }
-          }}
-          selectedQuestionId={selectedQuestion?.questionId || ''}
-        />
-        {!!selectedQuestion && (
-          <QuestionPlay
-            submitResponse={(optionId: string) => handleSubmitResponse(optionId)}
-            selectedQuestion={selectedQuestion}
-            onClose={() => {
-              setIsPlaying(!winner);
-              setSelectedQuestion(null);
-            }}
-            isWithoutOptions={selectedQuestion.options.length === 1}
-            isAttempted={isQuestionAttempted}
-            pauseTimer={() => setIsPlaying(false)}
-            selectedOptionId={
-              selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId)?.selectedOptionId
-            }
-          />
-        )}
-        <div className={classNames(styles.scoreContainer, 'ml-lg')}>
-          {shouldShowTimer() && (
-            <Timer
-              duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
-              title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
-              handleTimeUp={() => {
-                if (showQuestionTimer) {
-                  handleSubmitResponse('');
-                } else if (selectionTimeLimit) {
-                  selectRandomQuestion();
-                }
-              }}
-              key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
-              running={isPlaying}
-              setIsRunning={setIsPlaying}
-              selectedQuestionId={selectedQuestion?.questionId}
+      {quizInfo.name && (
+        <Title order={2} mb="xl" pb="xl">
+          Play game for {quizInfo.name}
+        </Title>
+      )}
+      <Grid columns={12}>
+        <Grid.Col span="content" className={styles.categoryGrid}>
+          <Accordion multiple defaultValue={quizInfo.categories.map((x) => `${x.categoryId}`)} variant="separated">
+            {quizInfo.categories.map((category) => (
+              <Accordion.Item key={category.categoryId} value={`${category.categoryId}`}>
+                <Accordion.Control>
+                  <Title order={6}>{category.categoryName}</Title>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <Button.Group orientation="vertical">
+                    {category.questions.map((question) => (
+                      <Button
+                        leftIcon={getTeamAvatar(question)}
+                        my="sm"
+                        radius="md"
+                        variant={selectedQuestion?.questionId === question.questionId ? 'filled' : 'light'}
+                        color={getQuestionColor(question)}
+                        fullWidth
+                        onClick={() => showQuestion(question.questionId, category.categoryId)}
+                        key={question.questionId}>
+                        <Group position="apart">
+                          <Text>Question {question.questionNum}</Text>
+                          <Badge variant="filled" color="red" size="sm">
+                            Points {question.points}
+                          </Badge>
+                        </Group>
+                      </Button>
+                    ))}
+                  </Button.Group>
+                </Accordion.Panel>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </Grid.Col>
+        <Grid.Col span="auto">
+          {!!selectedQuestion && (
+            <QuestionPlay
+              submitResponse={handleSubmitResponse}
+              selectedQuestion={selectedQuestion}
+              isAttempted={isQuestionAttempted}
+              pauseTimer={() => setIsPlaying(false)}
+              selectedOptionId={getSelectedOptionId(selectedQuestion)}
             />
           )}
-          <table className="mt-lg">
-            <tbody>
-              <tr>
-                <th>Team</th>
-                <th>Score</th>
-              </tr>
-              {gameInfo.teams.map((t: Team) => (
-                <tr key={t.teamId} className={classNames({ [styles.active]: t.teamId === gameInfo.currentTeamId })}>
-                  <td>
-                    {t.name}
+        </Grid.Col>
+        <Grid.Col span="content" className={styles.categoryGrid}>
+          {shouldShowTimer() && (
+            <>
+              {showQuestionTimer ? (
+                <Title order={6}>Answer the question before timer ends</Title>
+              ) : (
+                <Title order={6}>Select a question before timer ends</Title>
+              )}
+              <Timer
+                duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
+                title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
+                handleTimeUp={() => {
+                  if (showQuestionTimer) {
+                    handleSubmitResponse(null);
+                  } else if (selectionTimeLimit) {
+                    selectRandomQuestion();
+                  }
+                }}
+                key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
+                running={isPlaying}
+                setIsRunning={setIsPlaying}
+                selectedQuestionId={selectedQuestion?.questionId}
+              />
+            </>
+          )}
+          <div>
+            <Group position="apart" mt="xl" mx="xl" pt="xl">
+              <Title order={4}>Team</Title>
+              <Title order={4}>Score</Title>
+            </Group>
+            {gameInfo.teams.some((x) => x.players) ? (
+              <Accordion multiple variant="separated">
+                {gameInfo.teams.map((team) => (
+                  <Accordion.Item key={team.teamId} value={`${team.teamId}`}>
+                    <Accordion.Control>
+                      <Text>{team.name}</Text>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                      <ol>
+                        {team.players.split(',').map((player) => (
+                          <li key={player}>{player}</li>
+                        ))}
+                      </ol>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+            ) : (
+              gameInfo.teams.map((t: Team) => (
+                <Group
+                  position="apart"
+                  my="xl"
+                  mx="xl"
+                  key={t.teamId}
+                  className={classNames({
+                    [styles.currentTeam]: t.teamId === gameInfo.currentTeamId,
+                    [styles.team]: true,
+                  })}>
+                  <Group>
+                    <div
+                      className={`flex justifyCenter alignCenter ${styles.avatar}`}
+                      style={{ backgroundColor: t.avatarColor }}>
+                      {getNameInitials(t.name)}
+                    </div>
+                    <Text size="lg">{t.name}</Text>
+                  </Group>
+                  <div>
+                    {t.score}
                     {t.teamId && winner.includes(`${t.teamId}`) && <span title="winner"> 👑</span>}
-                  </td>
-                  <td>{t.score}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <Button
-            color="purple"
-            className="mt-xl"
-            onClick={async () => {
-              const winners = getWinners(gameInfo.teams);
-
-              await updateGame({
-                gameId: parseInt(`${gameId}`),
-                isComplete: true,
-                winnerTeamId: winners.map((winner) => winner.teamId).join(','),
-                nextTeamId: gameInfo.currentTeamId,
-              });
-
-              navigate(`/configure-game/${userName}/${quizInfo.quizId}`);
-            }}>
-            Start a new Game
-          </Button>
-        </div>
-      </div>
+                  </div>
+                </Group>
+              ))
+            )}
+          </div>
+        </Grid.Col>
+      </Grid>
     </>
   );
 }

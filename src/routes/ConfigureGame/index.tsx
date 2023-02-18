@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import classNames from 'classnames';
-import { Button, Checkbox, Icon, Input } from 'semantic-ui-react';
+import React, { useState, useEffect } from 'react';
+import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container } from '@mantine/core';
 import { useStore } from '../../useStore';
-import styles from './styles.module.css';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
 import { useParams, useNavigate } from 'react-router';
@@ -10,50 +8,80 @@ import { Team } from '../../types';
 import { getEmptyTeam } from '../../helpers';
 import TeamGenerator from '../../components/TeamGenerator';
 import { Helmet } from 'react-helmet';
+import Icon from '../../components/Icon';
+import styles from './styles.module.css';
+import classNames from 'classnames';
 
-const formDefaultValues: { teams: Team[] } = {
+interface DefaultValue {
+  teams: Team[];
+  timeLimit: null | number;
+  selectionTimeLimit: null | number;
+  isQuestionPointsHidden: boolean;
+  mode: string;
+  players: string[];
+}
+
+const formDefaultValues: DefaultValue = {
   teams: [0, 1].map(() => getEmptyTeam()),
+  timeLimit: null,
+  selectionTimeLimit: null,
+  isQuestionPointsHidden: false,
+  mode: 'manual',
+  players: [],
 };
 
-export default function ConfigureGame() {
-  const { quizId, userName } = useParams();
+export default function ConfigureGame({ quizId }) {
+  const { userName } = useParams();
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
     setValue,
+    getValues,
+    watch,
   } = useForm({ defaultValues: formDefaultValues });
+  const [, setRefresh] = useState(0);
+  const [quizName, setQuizName] = useState('');
+  const teams = watch('teams');
+  const timeLimit = watch('timeLimit');
+  const selectionTimeLimit = watch('selectionTimeLimit');
+  const isQuestionPointsHidden = watch('isQuestionPointsHidden');
+  const mode = watch('mode');
+  const players = watch('players');
+  const { getQuiz, addGame, showModal } = useStore();
 
-  const [, setTeamCount] = useState(0);
-  const [showTeamGenerator, setShowTeamGenerator] = useState(false);
-  const [questionTimer, setQuestionTimer] = useState(0);
-  const [questionSelectionTimer, setQuestionSelectionTimer] = useState(0);
-  const [isQuestionPointsHidden, setIsQuestionPointsHidden] = useState(false);
-  const teams = getValues('teams');
-  const { addGame } = useStore();
+  useEffect(() => {
+    getQuiz(parseInt(quizId)).then((x) => {
+      setQuizName(x.name);
+    });
+  }, []);
 
   function addTeam() {
-    setValue('teams', teams.concat(getEmptyTeam()));
-    setTeamCount(teams.length + 1);
+    setValue('teams', [...getValues('teams'), getEmptyTeam()]);
+    setRefresh(Math.random());
   }
 
-  function removeTeam() {
-    setValue('teams', teams.slice(0, -1));
-    setTeamCount(teams.length - 1);
+  function removeTeam(index) {
+    setValue(
+      'teams',
+      getValues('teams').filter((team, idx) => idx !== index),
+    );
+    setRefresh(Math.random());
   }
 
   async function handleGameConfig(data: FieldValues) {
     if (quizId) {
+      const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden } = data;
       const { gameId } = await addGame({
-        teams: data.teams.map((team: Team) => {
-          delete team.teamId;
-          return team;
+        teams: teams.map((x) => {
+          x.players = x.players || '';
+
+          return x;
         }),
         quizId: parseInt(quizId),
-        timeLimit: questionTimer,
-        selectionTimeLimit: questionSelectionTimer,
+        timeLimit: timeLimit || 0,
+        selectionTimeLimit: selectionTimeLimit || 0,
         isQuestionPointsHidden,
       });
 
@@ -61,105 +89,225 @@ export default function ConfigureGame() {
     }
   }
 
+  function submitGameForm() {
+    document.getElementById('btnGameFormSubmit')?.click();
+  }
+
+  function showTeamGenerator() {
+    showModal({
+      title: 'Generate team randomly',
+      body: (
+        <TeamGenerator
+          players={players.length > 0 ? players.join(',').replaceAll(',', '\n') : ''}
+          teams={teams}
+          teamCount={teams.length > 0 ? teams.length : 2}
+          createTeams={({ teams, players, mode }) => {
+            setValue('teams', teams);
+            setValue('players', players);
+            setValue('mode', mode);
+            showModal(null);
+            setRefresh(Math.random());
+          }}
+        />
+      ),
+      okText: 'Continue',
+      hideOnOkClick: false,
+      okCallback: () => document.getElementById('teamNameFormSubmit')?.click(),
+    });
+  }
+
+  const shouldBeMoreThanZero = (value: number) => value > 0 || 'Should be more than 0';
+
   return (
-    <>
+    <Grid columns={12}>
       <Helmet>
         <title>Create Game</title>
       </Helmet>
-      <form className="flex flexCol" onSubmit={handleSubmit(handleGameConfig)}>
-        <div className="flex flexWrap">
-          <fieldset className="container-md mr-xl mb-lg">
-            <legend>Teams</legend>
-            {teams.map((team, idx) => (
-              <FormInput
-                id={`teams${idx}name`}
-                name={`teams[${idx}].name`}
-                register={register}
-                rules={{ required: 'Team names cannot be empty!' }}
-                errorMessage={errors?.teams?.[idx]?.name?.message || ''}
-                label={`Team ${idx + 1} name`}
-                key={team.teamId}
-              />
-            ))}
-            <div className="flex mb-lg">
-              <Button onClick={addTeam} color="blue" className="mr-lg">
-                Add team
-              </Button>
-              {teams.length > 2 && (
-                <Button onClick={removeTeam} color="red">
-                  Remove last team
-                </Button>
-              )}
-            </div>
-            <Button
-              className="mt-lg"
-              size="large"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowTeamGenerator(true);
-              }}
-              color="facebook">
-              <Icon name="random" /> Random team generator
-            </Button>
-          </fieldset>
-          <fieldset className={classNames('container-md', styles.settings)}>
-            <legend>Timing</legend>
-            <div className="flex alignCenter">
-              <Checkbox
-                label="Limited time per question (in seconds)"
-                checked={!!questionTimer}
-                onChange={() => setQuestionTimer(questionTimer ? 0 : 120)}
-              />
-              <Input
-                type="number"
-                value={questionTimer}
-                disabled={!questionTimer}
-                onChange={(ev) => setQuestionTimer(parseInt(ev.target.value, 10))}
-                size="mini"
-                className={classNames('ml-lg', styles.settingsInput)}
-              />
-            </div>
-            <div className="flex alignCenter">
-              <Checkbox
-                label="Limited for choosing a question (in seconds)"
-                checked={!!questionSelectionTimer}
-                onChange={(ev) => {
-                  setQuestionSelectionTimer(questionSelectionTimer ? 0 : 120);
-                }}
-              />
-              <Input
-                type="number"
-                value={questionSelectionTimer}
-                disabled={!questionSelectionTimer}
-                onChange={(ev) => setQuestionSelectionTimer(parseInt(ev.target.value, 10))}
-                size="mini"
-                className={classNames('ml-lg', styles.settingsInput)}
-              />
-            </div>
-          </fieldset>
-          <fieldset className={classNames('container-md mt-lg', styles.settings)}>
-            <legend>Points</legend>
-            <Checkbox
-              label="Hide question points until revealed"
-              checked={isQuestionPointsHidden}
-              onChange={() => setIsQuestionPointsHidden(!isQuestionPointsHidden)}
-            />
-          </fieldset>
-        </div>
-        <Button color="orange" className="mb-lg mt-xl ml-lg" size="large" type="submit">
-          Play
-        </Button>
-        {showTeamGenerator && (
-          <TeamGenerator
-            okCallback={(teams) => {
-              setValue('teams', teams);
-              setTeamCount(teams.length);
-            }}
-            numOfTeams={teams.length}
-            hideModal={() => setShowTeamGenerator(false)}
-          />
+      <Grid.Col span={4} px="lg" mx="lg" pb="xl" mb="xl">
+        {quizName && (
+          <Title order={2} mb="xl">
+            Configure game for {quizName}
+          </Title>
         )}
-      </form>
-    </>
+        <form onSubmit={handleSubmit(handleGameConfig)}>
+          <Title order={4}>Team names</Title>
+          {teams.map((team, idx) => (
+            <Group position="left" grow key={idx} className={styles.teamInputWrapper}>
+              <Text weight="bold" className={styles.teamInputCount}>
+                {idx + 1}.
+              </Text>
+              <FormInput
+                name={`teams[${idx}].name`}
+                id={`teams[${idx}].name`}
+                rules={{ required: 'Please enter team name' }}
+                errorMessage={errors.teams?.[idx]?.name?.message || ''}
+                type="text"
+                variant="filled"
+                placeholder="Enter team name"
+                className={classNames({
+                  [styles.teamInput]: true,
+                  [styles.inputWithPlayerNames]: mode === 'automatic',
+                })}
+                size="md"
+                radius="md"
+                register={register}
+                my="md"
+              />
+              {mode === 'automatic' && (
+                <Text color="dimmed" size="sm" className={styles.playerNames}>
+                  {players[idx]}
+                </Text>
+              )}
+              {teams.length > 2 ? (
+                <ActionIcon variant="transparent" className={styles.teamInputCount} onClick={() => removeTeam(idx)}>
+                  <Icon width={20} name="trash" />
+                </ActionIcon>
+              ) : (
+                <div className={styles.teamInputCount}></div>
+              )}
+            </Group>
+          ))}
+          <Container my="xl">
+            {mode !== 'automatic' && (
+              <>
+                <Button
+                  mt="xl"
+                  onClick={addTeam}
+                  radius="md"
+                  className={styles.button}
+                  variant="default"
+                  leftIcon={<Icon name="plus" width={18} />}>
+                  Add team
+                </Button>
+                <Divider
+                  my="xl"
+                  labelProps={{ weight: 'bold', size: 'md' }}
+                  label="OR"
+                  labelPosition="center"
+                  color="black"
+                />
+              </>
+            )}
+            <Button
+              radius="md"
+              variant="filled"
+              className={styles.button}
+              leftIcon={<Icon color="white" name="plus" width={18} />}
+              onClick={showTeamGenerator}>
+              Random team generator
+            </Button>
+          </Container>
+          <Title pt="xl" mb="sm" order={4}>
+            Points
+          </Title>
+          <Checkbox
+            radius="xl"
+            size="md"
+            mb="xl"
+            ml="md"
+            name="isQuestionPointsHidden"
+            checked={isQuestionPointsHidden}
+            label="Hide points until the question is revealed"
+            onChange={() => {
+              setValue('isQuestionPointsHidden', !isQuestionPointsHidden);
+              setRefresh(Math.random());
+            }}
+          />
+          <Title pt="xl" mb="sm" order={4}>
+            Time limits
+          </Title>
+          <Group position="apart" mb="xl">
+            <Checkbox
+              radius="xl"
+              size="md"
+              mb="xs"
+              ml="md"
+              label="Time limit per question (in seconds)"
+              checked={timeLimit !== null}
+              onChange={() => {
+                if (getValues('timeLimit') === null) {
+                  setValue('timeLimit', 0);
+                } else {
+                  setValue('timeLimit', null);
+                }
+
+                setRefresh(Math.random());
+              }}
+            />
+            <FormInput
+              name="timeLimit"
+              id="timeLimit"
+              disabled={timeLimit === null}
+              rules={
+                getValues('timeLimit') === null
+                  ? {}
+                  : {
+                      required: 'Please enter time limit',
+                      validate: shouldBeMoreThanZero,
+                    }
+              }
+              errorMessage={errors.timeLimit?.message || ''}
+              type="number"
+              size="md"
+              radius="md"
+              className={styles.timeInput}
+              register={register}
+            />
+          </Group>
+          <Group position="apart">
+            <Checkbox
+              radius="xl"
+              size="md"
+              mb="xs"
+              ml="md"
+              label="Time limit to choose a question (in seconds)"
+              checked={selectionTimeLimit !== null}
+              onChange={() => {
+                if (selectionTimeLimit === null) {
+                  setValue('selectionTimeLimit', 0);
+                } else {
+                  setValue('selectionTimeLimit', null);
+                }
+
+                setRefresh(Math.random());
+              }}
+            />
+            <FormInput
+              name="selectionTimeLimit"
+              id="selectionTimeLimit"
+              disabled={selectionTimeLimit === null}
+              rules={
+                selectionTimeLimit === null
+                  ? {}
+                  : {
+                      required: 'Please enter time limit',
+                      validate: shouldBeMoreThanZero,
+                    }
+              }
+              errorMessage={errors.selectionTimeLimit?.message || ''}
+              type="number"
+              size="md"
+              radius="md"
+              className={styles.timeInput}
+              register={register}
+            />
+          </Group>
+          <button className="displayNone" id="btnGameFormSubmit" type="submit">
+            Submit
+          </button>
+        </form>
+      </Grid.Col>
+      <Grid.Col span={6} offset={3} mt="xl" pt="xl">
+        <Button
+          onClick={submitGameForm}
+          variant="gradient"
+          size="lg"
+          fullWidth
+          radius="md"
+          leftIcon={<Icon name="done" color="#ffffff" />}>
+          Play Game
+        </Button>
+      </Grid.Col>
+    </Grid>
   );
 }

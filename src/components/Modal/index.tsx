@@ -17,6 +17,7 @@ function Modal() {
     size = 'lg',
     isAlert = false,
     doNotShowAgainKey,
+    hideOnOkClick = true,
   } = modal || {};
 
   function hideModal() {
@@ -80,7 +81,9 @@ function Modal() {
                 localStorage.setItem('DoNotShow' + doNotShowAgainKey, 'true');
               }
 
-              hideModal();
+              if (hideOnOkClick) {
+                hideModal();
+              }
             }}>
             {okText}
           </Button>

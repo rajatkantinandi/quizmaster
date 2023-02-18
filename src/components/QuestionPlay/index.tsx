@@ -1,135 +1,156 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import { Button, Divider } from 'semantic-ui-react';
+import { Title, Card, Button, Text, Checkbox, Group, Box } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import Markdown from '../Markdown';
-import Option from './Option';
 import styles from './styles.module.css';
+import { useForm } from 'react-hook-form';
 
 interface Props {
   submitResponse: Function;
-  onClose: Function;
-  isPreview?: boolean;
-  isQuestionSaved?: boolean;
   pauseTimer?: Function;
-  selectedOptionId: number | null | undefined | string;
+  selectedOptionId: number | null | string;
   selectedQuestion: {
     questionId?: string;
     text: string;
     options: IOption[];
+    points: number;
+    questionNum?: number;
   };
-  isWithoutOptions: boolean;
   isAttempted: boolean;
 }
 
 export default function QuestionPlay({
   submitResponse,
-  onClose,
-  isPreview = false,
-  isQuestionSaved = true,
   pauseTimer,
   selectedOptionId,
   selectedQuestion,
-  isWithoutOptions,
   isAttempted,
 }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState('');
-  const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
-  const { options, questionId, text } = selectedQuestion;
+  const [selectedChoice, setSelectedChoice] = useState(selectedOptionId);
+  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
+  const { options, text, points } = selectedQuestion;
+  const getQuestionTextStyles = (theme, isCorrect = false) => ({
+    backgroundColor: isCorrect ? theme.colors.green[2] : '#AFD0D4',
+    borderRadius: theme.radius.xs,
+  });
+  const { handleSubmit } = useForm();
 
   useEffect(() => {
-    if (isAttempted && !isPreview) {
+    if (isAttempted) {
       // reveal answer when question is attempted due to timeout
       setIsAnswerRevealed(true);
     }
-  }, [isAttempted, isPreview]);
+  }, [isAttempted]);
 
   useEffect(() => {
-    setIsAnswerRevealed(isPreview);
-  }, [questionId, isPreview]);
+    setSelectedChoice(selectedOptionId);
+  }, [selectedOptionId]);
 
-  function handleSubmit(ev: React.FormEvent) {
-    ev.preventDefault();
+  function submitQuestionResponse() {
+    document.getElementById('btnSubmitResponse')?.click();
+  }
 
-    // submit response or save question on clicking submit or save button
-    submitResponse(selectedChoice);
+  function handleSelectedChoice(choice) {
+    setSelectedChoice(choice);
+
+    setTimeout(() => {
+      submitQuestionResponse();
+    }, 100);
   }
 
   return (
-    <form className={styles.container} onSubmit={handleSubmit}>
-      <Markdown>{text}</Markdown>
-      <Divider />
-      <div className="flex flexWrap">
-        {isWithoutOptions
-          ? // Show correct answer for question without options when answer is revealed
-            isAnswerRevealed && (
-              <div className={styles.correctAns}>
-                <div className={styles.heading}>Correct answer</div>
+    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
+      <form onSubmit={handleSubmit(() => submitResponse(selectedChoice === '' ? null : selectedChoice))}>
+        <Group>
+          <Title mr="xl" order={4}>
+            Question {selectedQuestion.questionNum}
+          </Title>
+          <Text weight="bold" component="span" size="sm">
+            Points: {points}
+          </Text>
+        </Group>
+        <Box my="xs" sx={getQuestionTextStyles}>
+          <Markdown>{text}</Markdown>
+        </Box>
+        {options.length === 1 ? (
+          // Show correct answer for question without options when answer is revealed
+          isAnswerRevealed ? (
+            <>
+              <Title mt="xl" order={6}>
+                Correct Answer
+              </Title>
+              <Box
+                className="py-md mt-md"
+                px="xs"
+                mb="md"
+                key={options[0].optionId}
+                sx={(theme) => getQuestionTextStyles(theme, !!options[0].text && options[0].isCorrect)}>
                 <Markdown>{options[0].text}</Markdown>
-              </div>
-            )
-          : options.map((option) => (
-              <Option
-                optionId={option.optionId}
-                checked={selectedChoice === option.optionId}
-                onChange={(value: string) => setSelectedChoice(value)}
-                optionText={option.text}
-                key={option.optionId}
-                className={classNames({
-                  [styles.isAttempted]: isAttempted,
-                  [styles.correct]: option.isCorrect && selectedOptionId === option.optionId,
-                  [styles.inCorrect]: !option.isCorrect && selectedOptionId === option.optionId,
-                  [styles.isPreview]: isPreview,
-                })}
-                disabled={isAttempted}
-              />
-            ))}
-      </div>
-      {/* show reveal answer button for question without options in non preview mode when playing */}
-      {isWithoutOptions && !isPreview && !isAnswerRevealed && (
-        <Button
-          type="button"
-          color="blue"
-          onClick={() => {
-            setIsAnswerRevealed(true);
-
-            // pause timer when the answer is revealed
-            if (pauseTimer) {
-              pauseTimer();
-            }
-          }}>
-          Reveal answer
-        </Button>
-      )}
-      <Divider />
-      {isAttempted && (!isPreview || isQuestionSaved) ? (
-        <Button size="large" onClick={() => onClose()} type="button" color="blue">
-          Close
-        </Button>
-      ) : isWithoutOptions && !isPreview ? (
-        // Show correct & incorrect button in non preview mode when playing
-        // When answer is revealed by quiz host show correct or incorrect button, clicking on which will add points accordingly
-        isAnswerRevealed && (
-          <div className="flex">
-            <Button type="button" size="large" className="fullWidth" color="red" onClick={() => submitResponse(null)}>
-              Incorrect
-            </Button>
+              </Box>
+              {selectedOptionId === '' && (
+                <Group>
+                  <Button radius="md" color="red" onClick={() => handleSelectedChoice('')}>
+                    Incorrect
+                  </Button>
+                  <Button radius="md" color="green" onClick={() => handleSelectedChoice(options[0].optionId)}>
+                    Correct
+                  </Button>
+                </Group>
+              )}
+            </>
+          ) : (
             <Button
-              type="button"
-              size="large"
-              className="ml-lg fullWidth"
               color="green"
-              onClick={() => submitResponse(options[0].optionId)}>
-              Correct
+              radius="md"
+              onClick={() => {
+                setIsAnswerRevealed(true);
+
+                // pause timer when the answer is revealed
+                if (pauseTimer) {
+                  pauseTimer();
+                }
+              }}>
+              Reveal answer
             </Button>
-          </div>
-        )
-      ) : (
-        // for preview mode show save button & while playing show submit button for mcq
-        <Button type="submit" size="large" color="green">
-          {isPreview ? 'Save' : 'Submit'}
-        </Button>
-      )}
-    </form>
+          )
+        ) : (
+          <>
+            <Checkbox.Group
+              value={selectedChoice === null ? undefined : [selectedChoice.toString()]}
+              orientation="vertical"
+              label={<Title order={6}>Options</Title>}
+              size="md"
+              my="lg"
+              onChange={(value: string[]) => setSelectedChoice(value[value.length - 1])}>
+              {options.map((option) => (
+                <Checkbox
+                  key={option.optionId}
+                  label={<Markdown>{option.text}</Markdown>}
+                  className={classNames({
+                    [styles.isAttempted]: isAttempted,
+                    [styles.correct]: option.isCorrect && selectedOptionId === option.optionId,
+                    [styles.inCorrect]: !option.isCorrect && selectedOptionId === option.optionId,
+                  })}
+                  value={option.optionId.toString()}
+                  disabled={isAttempted}
+                  radius="xl"
+                  color="red"
+                  size="lg"
+                />
+              ))}
+            </Checkbox.Group>
+            {!isAttempted && (
+              <Button radius="md" color="green" onClick={submitQuestionResponse}>
+                Submit
+              </Button>
+            )}
+          </>
+        )}
+        <button className="displayNone" id="btnSubmitResponse" type="submit">
+          Submit
+        </button>
+      </form>
+    </Card>
   );
 }

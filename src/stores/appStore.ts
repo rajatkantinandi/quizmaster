@@ -62,6 +62,7 @@ export interface ModalState {
   size?: 'mini' | 'tiny' | 'small' | 'large' | 'fullscreen';
   isAlert?: boolean;
   doNotShowAgainKey?: string;
+  hideOnOkClick?: boolean;
 }
 
 export interface AlertState {

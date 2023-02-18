@@ -16,18 +16,12 @@
   flex-direction: column;
 }
 
-.isAttempted[class*='checkbox'].correct label {
-  background-color: var(--correct-color) !important;
+.isAttempted.correct {
+  background-color: var(--correct-color);
 }
 
-.isAttempted[class*='checkbox'].inCorrect label {
+.isAttempted.inCorrect {
   background-color: var(--incorrect-color) !important;
-}
-
-.isPreview[class*='checkbox'] label,
-.isAttempted[class*='checkbox'].correct label,
-.isAttempted[class*='checkbox'].inCorrect label {
-  opacity: 1 !important;
 }
 
 .correctAns {
