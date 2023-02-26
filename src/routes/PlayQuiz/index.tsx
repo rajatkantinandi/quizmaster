@@ -382,23 +382,21 @@ export default function PlayQuiz({ gameId }) {
         <ResizeHandle />
         <Panel defaultSize={20} minSize={20}>
           {shouldShowTimer() && (
-            <>
-              <Timer
-                duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
-                title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
-                handleTimeUp={() => {
-                  if (showQuestionTimer) {
-                    handleSubmitResponse(null);
-                  } else if (selectionTimeLimit) {
-                    selectRandomQuestion();
-                  }
-                }}
-                key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
-                running={isPlaying}
-                setIsRunning={setIsPlaying}
-                selectedQuestionId={selectedQuestion?.questionId}
-              />
-            </>
+            <Timer
+              duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
+              title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
+              handleTimeUp={() => {
+                if (showQuestionTimer) {
+                  handleSubmitResponse(null);
+                } else if (selectionTimeLimit) {
+                  selectRandomQuestion();
+                }
+              }}
+              key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
+              running={isPlaying}
+              setIsRunning={setIsPlaying}
+              selectedQuestionId={selectedQuestion?.questionId}
+            />
           )}
           <div>
             <Group position="apart" mt="xl" mx="xl" pt="xl">
