@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
 import { Divider, Button, Text, Checkbox, Group } from '@mantine/core';
-import { getCommaSeparatedStringWithAndBeforeTheLastItem } from '../../helpers';
+import {
+  getCommaSeparatedStringWithAndBeforeTheLastItem,
+  getRandomColor,
+  getValidValuesFromColumns,
+} from '../../helpers';
 import { FormTextArea, FormInput } from '../FormInputs';
 import { useForm } from 'react-hook-form';
 import Icon from '../../components/Icon';
 import styles from './styles.module.css';
 import { useStore } from '../../useStore';
+import { Team } from '../../types';
 
-export default function TeamGenerator({ createTeams, ...rest }) {
-  const [editTeams, setEditTeams] = useState(!!rest.players);
-  const [showTeams, setShowTeams] = useState(!!rest.players);
+interface Props {
+  createTeams: Function;
+  players: string;
+  teams: Team[];
+  teamCount: number;
+}
+
+export default function TeamGenerator({ createTeams, ...rest }: Props) {
+  const [isEditingTeams, setIsEditingTeams] = useState(!!rest.players);
+  const [shouldShowTeams, setShouldShowTeams] = useState(!!rest.players);
   const [players, setPlayers] = useState<string[]>(rest.teams.map((x) => x.players));
   const { showAlert } = useStore();
   const [, setRefresh] = useState(0);
@@ -17,13 +29,14 @@ export default function TeamGenerator({ createTeams, ...rest }) {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
+    watch,
   } = useForm({
     defaultValues: {
       playerNames: rest.players,
       teamCount: rest.teamCount,
     },
   });
+  const teamCount = watch('teamCount');
   const teamsForm = useForm({
     defaultValues: {
       teams:
@@ -35,20 +48,14 @@ export default function TeamGenerator({ createTeams, ...rest }) {
           : '',
     },
   });
-  const teamList = teamsForm
-    .getValues('teams')
-    .split('\n')
-    .filter((x) => !!x);
+  const teamList = getValidValuesFromColumns(teamsForm.getValues('teams'));
 
   function generateTeams(data) {
     const { teamCount, playerNames } = data;
     const count = parseInt(teamCount);
     const teamsPlayers = new Array<string[]>(count);
 
-    let validPlayerNames = playerNames
-      .split('\n')
-      .map((name) => name.trim())
-      .filter((name) => !!name);
+    let validPlayerNames = getValidValuesFromColumns(playerNames);
 
     if (validPlayerNames.length < count) {
       showAlert({
@@ -80,7 +87,7 @@ export default function TeamGenerator({ createTeams, ...rest }) {
       teamsPlayers.map((playerNames) => getCommaSeparatedStringWithAndBeforeTheLastItem(playerNames)).join('\n'),
     );
     setPlayers(teamsPlayers.map((playerList) => playerList.join(',')));
-    setShowTeams(true);
+    setShouldShowTeams(true);
   }
 
   function submitTeamNamesForm({ teams }) {
@@ -88,7 +95,7 @@ export default function TeamGenerator({ createTeams, ...rest }) {
       teams: teams.split('\n').map((name, idx) => ({
         name,
         players: players[idx],
-        avatarColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+        avatarColor: getRandomColor(),
       })),
       players,
       mode: 'automatic',
@@ -97,16 +104,15 @@ export default function TeamGenerator({ createTeams, ...rest }) {
 
   const shouldBeMoreThanOne = (value: number) => value >= 2 || 'Should be more than 1';
   const validateNumberOfTeams = (value: string) =>
-    value.split('\n').length === parseInt(getValues('teamCount').toString()) ||
-    `Number of teams should not be more than ${getValues('teamCount')}`;
+    value.split('\n').length === parseInt(`${teamCount}`) || `Number of teams should not be more than ${teamCount}`;
 
   return (
     <>
       <form
         onSubmit={handleSubmit(generateTeams)}
         onChange={() => {
-          if (showTeams) {
-            setShowTeams(false);
+          if (shouldShowTeams) {
+            setShouldShowTeams(false);
           }
         }}>
         <Text mt="lg" mb="md">
@@ -144,20 +150,26 @@ export default function TeamGenerator({ createTeams, ...rest }) {
               register={register}
             />
           </Group>
-          <Button mb="xl" type="submit" radius="md" variant="default" leftIcon={<Icon name="plus" width={18} />}>
+          <Button
+            disabled={isEditingTeams}
+            mb="xl"
+            type="submit"
+            radius="md"
+            variant="default"
+            leftIcon={<Icon name="team" width={20} />}>
             Generate team
           </Button>
         </Group>
       </form>
-      {showTeams && (
+      {shouldShowTeams && (
         <>
           <Checkbox
             radius="xl"
             size="md"
             mb="xl"
-            checked={editTeams}
+            checked={isEditingTeams}
             label="Edit team names?"
-            onChange={() => setEditTeams(!editTeams)}
+            onChange={() => setIsEditingTeams(!isEditingTeams)}
           />
           <Text my="xl">
             Edit team names one team per line or paste team names from a spreadsheet column (Excel, Google sheet, etc.).
@@ -172,7 +184,7 @@ export default function TeamGenerator({ createTeams, ...rest }) {
               name="teams"
               id="teams"
               variant="filled"
-              disabled={!editTeams}
+              disabled={!isEditingTeams}
               size="md"
               radius="md"
               minRows={5}
@@ -188,15 +200,11 @@ export default function TeamGenerator({ createTeams, ...rest }) {
               <Divider my="xl" />
               <Text>Teams</Text>
               <ol>
-                {teamsForm
-                  .getValues('teams')
-                  .split('\n')
-                  .filter((x) => !!x)
-                  .map((team, idx) => (
-                    <li key={idx}>
-                      {team} {players[idx] ? `(${players[idx]})` : ''}
-                    </li>
-                  ))}
+                {getValidValuesFromColumns(teamsForm.getValues('teams')).map((team, idx) => (
+                  <li key={idx}>
+                    {team} {players[idx] ? `(${players[idx]})` : ''}
+                  </li>
+                ))}
               </ol>
             </>
           )}

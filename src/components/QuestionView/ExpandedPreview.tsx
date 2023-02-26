@@ -25,10 +25,14 @@ export default function ExpandedPreview({
   setExpandedQuestionIndex,
   saveQuestion,
 }: Props) {
-  const getQuestionTextStyles = (theme, isCorrect = false) => ({
-    backgroundColor: isCorrect ? theme.colors.green[2] : '#AFD0D4',
-    borderRadius: theme.radius.xs,
-  });
+  const isWithoutOptions = question.options.length === 1;
+  const getQuestionTextStyles = (theme, isCorrect = false) =>
+    isCorrect
+      ? {
+          backgroundColor: isCorrect ? theme.colors.green[2] : '',
+          borderRadius: theme.radius.xs,
+        }
+      : {};
 
   return (
     <>
@@ -58,7 +62,7 @@ export default function ExpandedPreview({
           </ActionIcon>
         </Group>
       </Group>
-      <Box my="xs" sx={getQuestionTextStyles}>
+      <Box my="xs">
         {question.text ? (
           <Markdown>{question.text}</Markdown>
         ) : (
@@ -68,7 +72,7 @@ export default function ExpandedPreview({
         )}
       </Box>
       <Title mt="xl" order={6}>
-        {question.options.length === 1 ? 'Correct Answer' : 'Options'}
+        {isWithoutOptions ? 'Correct Answer' : 'Options'}
       </Title>
       <List type="ordered">
         {question.options.map((option) => (

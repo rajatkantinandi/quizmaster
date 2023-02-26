@@ -93,8 +93,6 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   }, [categories, quizName]);
 
   function onQuestionChange(data) {
-    const categories = getValues('categories');
-
     categories[activeCategoryIndex].questions[activeQuestionIndex as number] = data;
     setValue('categories', categories);
   }
@@ -156,10 +154,8 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
       categoryName: '',
       questions: [],
     };
-    const categories = getValues('categories');
 
-    categories.push(newCategory);
-    setValue('categories', categories);
+    setValue('categories', [...categories, newCategory]);
     setRefresh(Math.random());
   };
 
@@ -178,10 +174,10 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   };
 
   const removeCategory = (index) => {
-    const categories = getValues('categories');
-
-    categories.splice(index, 1);
-    setValue('categories', categories);
+    setValue(
+      'categories',
+      categories.filter((x, idx) => idx === index),
+    );
     setRefresh(Math.random());
   };
 
@@ -232,7 +228,6 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
 
   function handleDeleteQuestion(index: number) {
     const questionIndex = index >= 0 ? index : (activeQuestionIndex as number);
-    const categories = getValues('categories');
     const question = categories[activeCategoryIndex].questions[questionIndex];
 
     if (isValidQuestion(question)) {

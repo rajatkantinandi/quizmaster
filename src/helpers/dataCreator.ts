@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { Category, Option } from '../types';
+import { getRandomColor } from './common';
 
 export const getEmptyQuestion = (categoryId: number | string) => ({
   questionId: nanoid(),
@@ -21,7 +22,7 @@ export const getEmptyTeam = () => ({
   score: 0,
   selectedOptions: [],
   players: '',
-  avatarColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+  avatarColor: getRandomColor(),
 });
 
 export const getEmptyOptions = (count: number) =>

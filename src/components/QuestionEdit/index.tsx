@@ -46,6 +46,7 @@ export default function QuestionEdit({
   );
   const { showAlert } = useStore();
   const options = watch('options');
+  const isWithoutOptions = options.length === 1;
 
   function onFormSubmit(data: FieldValues) {
     const validationError = getValidationError();
@@ -95,7 +96,7 @@ export default function QuestionEdit({
   }
 
   function getValidationError() {
-    if (options.length === 1 && options[0].isCorrect) {
+    if (isWithoutOptions && options[0].isCorrect) {
       return '';
     } else if (!options.some((option) => option.isCorrect)) {
       return 'Please select 1 correct option!';
@@ -114,7 +115,7 @@ export default function QuestionEdit({
       optionData.isCorrect = true;
 
       setValue('options', [optionData]);
-    } else if (options.length === 1) {
+    } else if (isWithoutOptions) {
       const optionData = options.concat(getEmptyOptions(1));
 
       optionData[1].isCorrect = false;

@@ -23,8 +23,8 @@ interface DefaultValue {
 
 const formDefaultValues: DefaultValue = {
   teams: [0, 1].map(() => getEmptyTeam()),
-  timeLimit: null,
-  selectionTimeLimit: null,
+  timeLimit: 30,
+  selectionTimeLimit: 30,
   isQuestionPointsHidden: false,
   mode: 'manual',
   players: [],
@@ -38,7 +38,6 @@ export default function ConfigureGame({ quizId }) {
     handleSubmit,
     formState: { errors },
     setValue,
-    getValues,
     watch,
   } = useForm({ defaultValues: formDefaultValues });
   const [, setRefresh] = useState(0);
@@ -55,17 +54,17 @@ export default function ConfigureGame({ quizId }) {
     getQuiz(parseInt(quizId)).then((x) => {
       setQuizName(x.name);
     });
-  }, []);
+  }, [getQuiz, quizId]);
 
   function addTeam() {
-    setValue('teams', [...getValues('teams'), getEmptyTeam()]);
+    setValue('teams', [...teams, getEmptyTeam()]);
     setRefresh(Math.random());
   }
 
   function removeTeam(index) {
     setValue(
       'teams',
-      getValues('teams').filter((team, idx) => idx !== index),
+      teams.filter((team, idx) => idx !== index),
     );
     setRefresh(Math.random());
   }
@@ -111,7 +110,7 @@ export default function ConfigureGame({ quizId }) {
         />
       ),
       okText: 'Continue',
-      hideOnOkClick: false,
+      closeOnOkClick: false,
       okCallback: () => document.getElementById('teamNameFormSubmit')?.click(),
     });
   }
@@ -192,7 +191,7 @@ export default function ConfigureGame({ quizId }) {
               radius="md"
               variant="filled"
               className={styles.button}
-              leftIcon={<Icon color="white" name="plus" width={18} />}
+              leftIcon={<Icon color="white" name="randomTeam" width={20} />}
               onClick={showTeamGenerator}>
               Random team generator
             </Button>
@@ -225,8 +224,8 @@ export default function ConfigureGame({ quizId }) {
               label="Time limit per question (in seconds)"
               checked={timeLimit !== null}
               onChange={() => {
-                if (getValues('timeLimit') === null) {
-                  setValue('timeLimit', 0);
+                if (timeLimit === null) {
+                  setValue('timeLimit', 30);
                 } else {
                   setValue('timeLimit', null);
                 }
@@ -239,7 +238,7 @@ export default function ConfigureGame({ quizId }) {
               id="timeLimit"
               disabled={timeLimit === null}
               rules={
-                getValues('timeLimit') === null
+                timeLimit === null
                   ? {}
                   : {
                       required: 'Please enter time limit',
@@ -264,7 +263,7 @@ export default function ConfigureGame({ quizId }) {
               checked={selectionTimeLimit !== null}
               onChange={() => {
                 if (selectionTimeLimit === null) {
-                  setValue('selectionTimeLimit', 0);
+                  setValue('selectionTimeLimit', 30);
                 } else {
                   setValue('selectionTimeLimit', null);
                 }

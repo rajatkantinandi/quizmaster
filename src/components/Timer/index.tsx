@@ -1,6 +1,8 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import styles from './styles.module.css';
+import { ActionIcon } from '@mantine/core';
+import Icon from '../../components/Icon';
 
 interface Props {
   duration: number;
@@ -89,6 +91,14 @@ export default function Question({
         </g>
       </svg>
       <span className={styles.baseTimerLabel}>{formatTimeLeft(remainingTime)}</span>
+      <ActionIcon
+        className={classNames({
+          [styles.playButton]: !running,
+          [styles.pauseButton]: true,
+        })}
+        onClick={() => setIsRunning(!running)}>
+        <Icon color="rgba(0,0,0,0.7)" name={running ? 'pause' : 'play'} width={70} height={70} />
+      </ActionIcon>
     </div>
   );
 }

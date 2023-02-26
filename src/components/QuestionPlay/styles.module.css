@@ -17,11 +17,17 @@
 }
 
 .isAttempted.correct {
-  background-color: var(--correct-color);
+  background-color: rgb(121, 211, 137);
+  border-radius: 3px;
+  margin-left: -10px;
+  padding: 5px 10px;
 }
 
 .isAttempted.inCorrect {
-  background-color: var(--incorrect-color) !important;
+  padding: 5px 10px;
+  background-color: rgb(251, 133, 133) !important;
+  border-radius: 3px;
+  margin-left: -10px;
 }
 
 .correctAns {

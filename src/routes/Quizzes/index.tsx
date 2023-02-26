@@ -278,7 +278,7 @@ export default function Quizzes() {
                         color="teal"
                         radius="md"
                         className={styles.playCardButton}
-                        leftIcon={<Icon color="#ffffff" name="play" width={16} />}
+                        leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
                         onClick={() => navigate(`/configure-game/${userName}/${quiz.quizId}`)}>
                         Play
                       </Button>

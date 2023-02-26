@@ -17,7 +17,7 @@ function Modal() {
     size = 'lg',
     isAlert = false,
     doNotShowAgainKey,
-    hideOnOkClick = true,
+    closeOnOkClick = true,
   } = modal || {};
 
   function hideModal() {
@@ -81,7 +81,7 @@ function Modal() {
                 localStorage.setItem('DoNotShow' + doNotShowAgainKey, 'true');
               }
 
-              if (hideOnOkClick) {
+              if (closeOnOkClick) {
                 hideModal();
               }
             }}>

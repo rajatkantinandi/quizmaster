@@ -52,3 +52,23 @@
 .yellow {
   color: var(--warning);
 }
+
+.pauseButton {
+  position: absolute;
+  left: 13px;
+  top: 13px;
+  border-radius: 50%;
+  height: 124px;
+  width: 124px;
+  background-color: transparent !important;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.pauseButton:hover {
+  opacity: 1;
+}
+
+.playButton {
+  opacity: 1;
+}

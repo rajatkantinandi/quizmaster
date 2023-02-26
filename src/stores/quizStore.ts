@@ -140,6 +140,10 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return response;
     } else {
       const response = await post('game/add', data);
+      response.teams.forEach((x) => {
+        x.selectedOptions = [];
+      });
+
       await addGame(response);
 
       return response;
