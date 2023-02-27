@@ -17,7 +17,7 @@
 }
 
 .isAttempted.correct {
-  background-color: rgb(121, 211, 137);
+  background-color: #79d389;
   border-radius: 3px;
   margin-left: -10px;
   padding: 5px 10px;
@@ -25,7 +25,7 @@
 
 .isAttempted.inCorrect {
   padding: 5px 10px;
-  background-color: rgb(251, 133, 133) !important;
+  background-color: #fb8585 !important;
   border-radius: 3px;
   margin-left: -10px;
 }

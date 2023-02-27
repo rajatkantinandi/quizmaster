@@ -8,7 +8,7 @@ import WithOptions from './WithOptions';
 
 interface Props {
   submitResponse: Function;
-  setIsPlaying: Function;
+  setIsTimerRunning: Function;
   continueGame: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   selectedOptionId: number | null | string;
   selectedQuestion: {
@@ -19,17 +19,17 @@ interface Props {
     questionNum?: number;
   };
   isAttempted: boolean;
-  isPlaying: boolean;
+  isTimerRunning: boolean;
   winner: string;
 }
 
 export default function QuestionPlay({
   submitResponse,
-  setIsPlaying,
+  setIsTimerRunning,
   selectedOptionId,
   selectedQuestion,
   isAttempted,
-  isPlaying,
+  isTimerRunning,
   winner,
   continueGame,
 }: Props) {
@@ -52,7 +52,8 @@ export default function QuestionPlay({
 
   return (
     <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
-      <form onSubmit={handleSubmit(() => submitResponse(selectedChoice === '' ? null : selectedChoice))}>
+      <form
+        onSubmit={handleSubmit(() => submitResponse(selectedChoice === '' ? null : parseInt(selectedChoice as any)))}>
         <Group>
           <Title mr="xl" order={4}>
             Question {selectedQuestion.questionNum}
@@ -67,7 +68,7 @@ export default function QuestionPlay({
         {isWithoutOptions ? (
           <WithoutOptions
             isAnswerRevealed={isAnswerRevealed}
-            setIsPlaying={setIsPlaying}
+            setIsTimerRunning={setIsTimerRunning}
             options={options}
             setIsAnswerRevealed={setIsAnswerRevealed}
             setSelectedChoice={setSelectedChoice}
@@ -80,7 +81,7 @@ export default function QuestionPlay({
             selectedOptionId={selectedOptionId}
             selectedChoice={selectedChoice}
             isAttempted={isAttempted}
-            isPlaying={isPlaying}
+            isTimerRunning={isTimerRunning}
           />
         )}
         {isAttempted && !winner && (

@@ -11,7 +11,7 @@ interface Props {
   options: IOption[];
   selectedChoice: number | null | string;
   isAttempted: boolean;
-  isPlaying: Boolean;
+  isTimerRunning: Boolean;
 }
 
 export default function WithOptions({
@@ -20,7 +20,7 @@ export default function WithOptions({
   selectedOptionId,
   selectedChoice,
   isAttempted,
-  isPlaying,
+  isTimerRunning,
 }: Props) {
   console.log('selectedOptionId', selectedOptionId);
   return (
@@ -44,14 +44,13 @@ export default function WithOptions({
                 !option.isCorrect && selectedOptionId && parseInt(selectedOptionId.toString()) === option.optionId,
             })}
             value={option.optionId.toString()}
-            disabled={isAttempted || !isPlaying}
+            disabled={isAttempted || !isTimerRunning}
             radius="xl"
-            color="red"
             size="lg"
           />
         ))}
       </Checkbox.Group>
-      {!isAttempted && isPlaying && (
+      {!isAttempted && isTimerRunning && (
         <Button radius="md" color="green" onClick={() => document.getElementById('btnSubmitResponse')?.click()}>
           Submit
         </Button>

@@ -25,7 +25,7 @@ export default function PlayQuiz({ gameId }) {
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
   const { timeLimit, selectionTimeLimit, isQuestionPointsHidden } = gameInfo;
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [winner, setWinner] = useState('');
   const selectedOptionsData: any = gameInfo.teams.reduce(
@@ -41,7 +41,6 @@ export default function PlayQuiz({ gameId }) {
   useEffect(() => {
     if (gameId) {
       getGameData(parseInt(gameId)).then((game) => {
-        debugger;
         const { quiz, ...restData } = game;
         const quizData = quiz[0];
         let questionNum = 1;
@@ -71,7 +70,7 @@ export default function PlayQuiz({ gameId }) {
           setSelectedQuestion(getLastAttemptedQuestion(restData.teams, quizData.categories));
         }
 
-        setIsGameStarted(attemptedQuestionsCount > 0);
+        setIsGameStarted(attemptedQuestionsCount > 0 || !restData.selectionTimeLimit);
         setIsLoading(false);
       });
     }
@@ -79,7 +78,7 @@ export default function PlayQuiz({ gameId }) {
   }, [gameId]);
 
   function startGame() {
-    setIsPlaying(!!gameInfo.selectionTimeLimit);
+    setIsTimerRunning(!!gameInfo.selectionTimeLimit);
     setIsGameStarted(true);
   }
 
@@ -113,7 +112,7 @@ export default function PlayQuiz({ gameId }) {
 
     if (winners.length > 1) {
       showModal({ title: 'Match drawn!', body: 'Well played! It is a draw!', okCallback: callback });
-    } else {
+    } else if (winners[0]) {
       showModal({
         title: `Congrats ${winners[0].name}!`,
         body: `Team '${winners[0].name}' has won the game with ${winners[0].score} points.`,
@@ -139,7 +138,7 @@ export default function PlayQuiz({ gameId }) {
 
       if (currentTeamIndex >= 0) {
         const currentTeam = clonedTeams[currentTeamIndex];
-        currentTeam.score += isCorrect ? selectedQuestion.points : 0;
+        currentTeam.score = (currentTeam.score || 0) + (isCorrect ? selectedQuestion.points : 0);
         currentTeam.selectedOptions.push({
           questionId: selectedQuestion.questionId,
           selectedOptionId: optionId,
@@ -152,7 +151,7 @@ export default function PlayQuiz({ gameId }) {
         });
       }
 
-      setIsPlaying(false);
+      setIsTimerRunning(false);
       const isComplete = allQuestionCount === selectedOptionsData.length + 1;
       const winner = isComplete ? showWinner(clonedTeams) : null;
 
@@ -180,7 +179,7 @@ export default function PlayQuiz({ gameId }) {
 
     if (allUnattemptedQuestions.length > 0) {
       setSelectedQuestion(allUnattemptedQuestions[Math.floor(Math.random() * allUnattemptedQuestions.length)]);
-      setIsPlaying(true);
+      setIsTimerRunning(true);
     }
   }
 
@@ -195,13 +194,13 @@ export default function PlayQuiz({ gameId }) {
       const question = category.questions.find((q) => q.questionId === questionId);
 
       setSelectedQuestion(question || null);
-      setIsPlaying(true);
+      setIsTimerRunning(true);
     }
   }
 
   function shouldShowTimer() {
-    return (
-      ((!selectedQuestion && !!selectionTimeLimit) || (selectedQuestion && showQuestionTimer)) &&
+    return !!(
+      ((!selectedQuestion && !!selectionTimeLimit) || (selectedQuestion && !!showQuestionTimer)) &&
       !winner &&
       isGameStarted
     );
@@ -231,6 +230,10 @@ export default function PlayQuiz({ gameId }) {
   function getNameInitials(name) {
     const arr = name.split(' ');
 
+    // If team name has two words then take 1st character of each word
+    // else take first two characters to first word
+    // ex. Team Name - John Doe than name Initials are JD
+    // Team Name - John than name Initials are JO
     return arr[0][0].toUpperCase() + (arr[1] ? arr[1][0].toUpperCase() : arr[0][1].toUpperCase());
   }
 
@@ -309,8 +312,9 @@ export default function PlayQuiz({ gameId }) {
                           !winner &&
                           !attemptedQuestionIds.includes(question.questionId) &&
                           (!isGameStarted ||
+                            !!selectionTimeLimit ||
                             (!!selectedQuestion && selectedQuestion?.questionId !== question.questionId) ||
-                            (!selectedQuestion && !isPlaying))
+                            (shouldShowTimer() && !isTimerRunning))
                         }
                         variant={selectedQuestion?.questionId === question.questionId ? 'filled' : 'light'}
                         color={getQuestionColor(question)}
@@ -343,7 +347,8 @@ export default function PlayQuiz({ gameId }) {
                   {getWinnerMessage()}
                 </Title>
               )
-            : isPlaying &&
+            : shouldShowTimer() &&
+              isTimerRunning &&
               (showQuestionTimer ? (
                 <Title mb="lg" color="grey" align="center" order={3}>
                   Answer the question before timer ends
@@ -358,11 +363,11 @@ export default function PlayQuiz({ gameId }) {
               submitResponse={handleSubmitResponse}
               selectedQuestion={selectedQuestion}
               isAttempted={isQuestionAttempted}
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
+              isTimerRunning={isTimerRunning}
+              setIsTimerRunning={setIsTimerRunning}
               continueGame={() => {
                 setSelectedQuestion(null);
-                setIsPlaying(true);
+                setIsTimerRunning(true);
               }}
               winner={winner}
               selectedOptionId={getSelectedOptionId(selectedQuestion)}
@@ -384,7 +389,6 @@ export default function PlayQuiz({ gameId }) {
           {shouldShowTimer() && (
             <Timer
               duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
-              title={showQuestionTimer ? 'Timer' : 'Selection Timer'}
               handleTimeUp={() => {
                 if (showQuestionTimer) {
                   handleSubmitResponse(null);
@@ -393,8 +397,8 @@ export default function PlayQuiz({ gameId }) {
                 }
               }}
               key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
-              running={isPlaying}
-              setIsRunning={setIsPlaying}
+              isTimerRunning={isTimerRunning}
+              setIsTimerRunning={setIsTimerRunning}
               selectedQuestionId={selectedQuestion?.questionId}
             />
           )}

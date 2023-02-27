@@ -4,21 +4,20 @@ import styles from './styles.module.css';
 import { ActionIcon } from '@mantine/core';
 import Icon from '../../components/Icon';
 
+// Source: https://css-tricks.com/how-to-create-an-animated-countdown-timer-with-html-css-and-javascript/
 interface Props {
   duration: number;
-  running?: boolean;
-  title: string;
+  isTimerRunning?: boolean;
   handleTimeUp: Function;
-  setIsRunning: Function;
+  setIsTimerRunning: Function;
   selectedQuestionId: string | undefined;
 }
 
-export default function Question({
+export default function Timer({
   duration,
-  running = false,
-  title,
+  isTimerRunning = false,
   handleTimeUp,
-  setIsRunning,
+  setIsTimerRunning,
   selectedQuestionId,
 }: Props) {
   const [remainingTime, setRemainingTime] = useState(duration);
@@ -29,11 +28,11 @@ export default function Question({
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
-    if (running) {
+    if (isTimerRunning) {
       timer = setTimeout(() => {
         // allow 3s grace time to click the submit button by host
         if (remainingTime === 0) {
-          setIsRunning(false);
+          setIsTimerRunning(false);
           handleTimeUp();
         } else {
           const timeLeft = remainingTime - 1;
@@ -51,7 +50,7 @@ export default function Question({
       clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [running, remainingTime]);
+  }, [isTimerRunning, remainingTime]);
 
   useEffect(() => {
     setRemainingTime(duration);
@@ -93,11 +92,11 @@ export default function Question({
       <span className={styles.baseTimerLabel}>{formatTimeLeft(remainingTime)}</span>
       <ActionIcon
         className={classNames({
-          [styles.playButton]: !running,
+          [styles.playButton]: !isTimerRunning,
           [styles.pauseButton]: true,
         })}
-        onClick={() => setIsRunning(!running)}>
-        <Icon color="rgba(0,0,0,0.7)" name={running ? 'pause' : 'play'} width={70} height={70} />
+        onClick={() => setIsTimerRunning(!isTimerRunning)}>
+        <Icon color="rgba(0,0,0,0.7)" name={isTimerRunning ? 'pause' : 'play'} width={70} height={70} />
       </ActionIcon>
     </div>
   );

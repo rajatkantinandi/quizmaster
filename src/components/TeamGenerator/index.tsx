@@ -23,7 +23,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const [isEditingTeams, setIsEditingTeams] = useState(!!rest.players);
   const [shouldShowTeams, setShouldShowTeams] = useState(!!rest.players);
   const [players, setPlayers] = useState<string[]>(rest.teams.map((x) => x.players));
-  const { showAlert } = useStore();
+  const { showAlert, enableOkButton } = useStore();
   const [, setRefresh] = useState(0);
   const {
     register,
@@ -88,6 +88,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
     );
     setPlayers(teamsPlayers.map((playerList) => playerList.join(',')));
     setShouldShowTeams(true);
+    enableOkButton();
   }
 
   function submitTeamNamesForm({ teams }) {
@@ -113,6 +114,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
         onChange={() => {
           if (shouldShowTeams) {
             setShouldShowTeams(false);
+            setIsEditingTeams(false);
           }
         }}>
         <Text mt="lg" mb="md">

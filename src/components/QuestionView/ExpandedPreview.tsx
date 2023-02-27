@@ -50,7 +50,7 @@ export default function ExpandedPreview({
         </Group>
         <Group>
           {!isPreview && (
-            <Button variant="light" compact radius="xl" color="rgb(193, 6, 6)" onClick={deleteQuestion}>
+            <Button variant="light" compact radius="xl" color="red" onClick={deleteQuestion}>
               Delete
             </Button>
           )}

@@ -18,6 +18,7 @@ function Modal() {
     isAlert = false,
     doNotShowAgainKey,
     closeOnOkClick = true,
+    disableOkButton = false,
   } = modal || {};
 
   function hideModal() {
@@ -73,6 +74,7 @@ function Modal() {
             ref={okRef}
             variant="filled"
             radius="md"
+            disabled={disableOkButton}
             onClick={() => {
               if (okCallback) {
                 okCallback();

@@ -23,8 +23,8 @@ interface DefaultValue {
 
 const formDefaultValues: DefaultValue = {
   teams: [0, 1].map(() => getEmptyTeam()),
-  timeLimit: 30,
-  selectionTimeLimit: 30,
+  timeLimit: null,
+  selectionTimeLimit: null,
   isQuestionPointsHidden: false,
   mode: 'manual',
   players: [],
@@ -45,6 +45,7 @@ export default function ConfigureGame({ quizId }) {
   const teams = watch('teams');
   const timeLimit = watch('timeLimit');
   const selectionTimeLimit = watch('selectionTimeLimit');
+  console.log('timeLimit', timeLimit, selectionTimeLimit);
   const isQuestionPointsHidden = watch('isQuestionPointsHidden');
   const mode = watch('mode');
   const players = watch('players');
@@ -109,6 +110,7 @@ export default function ConfigureGame({ quizId }) {
           }}
         />
       ),
+      disableOkButton: true,
       okText: 'Continue',
       closeOnOkClick: false,
       okCallback: () => document.getElementById('teamNameFormSubmit')?.click(),
@@ -122,7 +124,7 @@ export default function ConfigureGame({ quizId }) {
       <Helmet>
         <title>Create Game</title>
       </Helmet>
-      <Grid.Col span={4} px="lg" mx="lg" pb="xl" mb="xl">
+      <Grid.Col lg={6} md={8} sm={10} px="lg" mx="lg" pb="xl" mb="xl">
         {quizName && (
           <Title order={2} mb="xl">
             Configure game for {quizName}

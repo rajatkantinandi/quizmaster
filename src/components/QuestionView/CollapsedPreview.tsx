@@ -45,7 +45,7 @@ export default function CollapsedPreview({
         </Group>
         <Group>
           {!isPreview && (
-            <Button variant="light" radius="xl" compact color="rgb(193, 6, 6)" onClick={deleteQuestion}>
+            <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
               Delete
             </Button>
           )}

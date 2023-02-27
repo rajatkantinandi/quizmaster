@@ -5,7 +5,7 @@ import Markdown from '../Markdown';
 
 interface Props {
   isAnswerRevealed: boolean;
-  setIsPlaying: Function;
+  setIsTimerRunning: Function;
   options: IOption[];
   setIsAnswerRevealed: Function;
   setSelectedChoice: Function;
@@ -14,7 +14,7 @@ interface Props {
 
 export default function WithoutOptions({
   isAnswerRevealed,
-  setIsPlaying,
+  setIsTimerRunning,
   options,
   isAttempted,
   setIsAnswerRevealed,
@@ -67,8 +67,8 @@ export default function WithoutOptions({
         setIsAnswerRevealed(true);
 
         // pause timer when the answer is revealed
-        if (setIsPlaying) {
-          setIsPlaying(false);
+        if (setIsTimerRunning) {
+          setIsTimerRunning(false);
         }
       }}>
       Reveal answer

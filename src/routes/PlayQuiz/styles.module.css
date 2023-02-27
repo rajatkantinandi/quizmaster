@@ -33,7 +33,7 @@
 }
 
 .ResizeHandleOuter {
-  flex: 0 0 1.2em;
+  flex: 0 0 1em;
   position: relative;
   margin: 0 5px;
   --background-color: rgba(0, 0, 0, 0.1);
@@ -49,9 +49,9 @@
 }
 
 .Icon {
-  width: 1em;
-  height: 1em;
+  width: 14px;
+  height: 14px;
   position: absolute;
-  left: calc(50% - 0.5rem);
+  left: calc(50% - 0.45rem);
   top: calc(50% - 0.5rem);
 }
