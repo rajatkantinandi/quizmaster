@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import classNames from 'classnames';
-import { Button, Text, Accordion, Group, Badge, Title, Container } from '@mantine/core';
+import { Button, Title, Container } from '@mantine/core';
 import QuestionPlay from '../../components/QuestionPlay';
 import { Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
-import styles from './styles.module.css';
 import Timer from '../../components/Timer';
 import { useStore } from '../../useStore';
 import { defaultGameInfo } from '../../constants';
 import { Helmet } from 'react-helmet';
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import ResizeHandle from './ResizeHandle';
-import { pickTextColorBasedOnBgColorSimple } from '../../helpers';
+import TeamsView from './TeamsView';
+import QuestionsView from './QuestionsView';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -187,18 +186,10 @@ export default function PlayQuiz({ gameId }) {
     return categories.reduce((acc, category) => acc.concat(category.questions), [] as IQuestion[]);
   }
 
-  function showQuestion(questionId: string | number, categoryId: string | number) {
-    const category = quizInfo.categories.find((x) => x.categoryId === categoryId);
-
-    if (category) {
-      const question = category.questions.find((q) => q.questionId === questionId);
-
-      setSelectedQuestion(question || null);
-      setIsTimerRunning(true);
-    }
-  }
-
   function shouldShowTimer() {
+    // show timer when game is running and
+    // (question is selected and question timer exists) or
+    // (question is not selected and question selection timer exists)
     return !!(
       ((!selectedQuestion && !!selectionTimeLimit) || (selectedQuestion && !!showQuestionTimer)) &&
       !winner &&
@@ -216,57 +207,6 @@ export default function PlayQuiz({ gameId }) {
     }
   }
 
-  function getQuestionColor(question: IQuestion): string {
-    if (attemptedQuestionIds.includes(question.questionId)) {
-      const correctOptionId = question.options.find((x) => x.isCorrect)?.optionId;
-      const selectedOptionId = selectedOptionsData.find((x) => x.questionId === question.questionId)?.selectedOptionId;
-
-      return correctOptionId === parseInt(selectedOptionId) ? 'green' : 'red';
-    } else {
-      return 'blue';
-    }
-  }
-
-  function getNameInitials(name) {
-    const arr = name.split(' ');
-
-    // If team name has two words then take 1st character of each word
-    // else take first two characters to first word
-    // ex. Team Name - John Doe than name Initials are JD
-    // Team Name - John than name Initials are JO
-    return arr[0][0].toUpperCase() + (arr[1] ? arr[1][0].toUpperCase() : arr[0][1].toUpperCase());
-  }
-
-  function getTeamAvatar(question) {
-    if (attemptedQuestionIds.includes(question.questionId)) {
-      const team = gameInfo.teams.find((team) =>
-        team.selectedOptions.some((x) => x.questionId === question.questionId),
-      );
-
-      return team ? (
-        <div
-          className={`flex justifyCenter alignCenter ${styles.small} ${styles.avatar}`}
-          style={getAvatarStyles(team.avatarColor)}>
-          {getNameInitials(team.name)}
-        </div>
-      ) : (
-        <div className={`${styles.small} ${styles.avatar}`}></div>
-      );
-    } else {
-      return <div className={`${styles.small} ${styles.avatar}`}></div>;
-    }
-  }
-
-  function getAvatarStyles(avatarColor) {
-    const color = pickTextColorBasedOnBgColorSimple(avatarColor);
-
-    return {
-      backgroundColor: avatarColor,
-      color,
-      border: `1px solid ${color}`,
-    };
-  }
-
   function getWinnerMessage() {
     if (winner.split(',').length > 1) {
       const winnerTeams = gameInfo.teams.filter((x) => winner.includes(x.teamId.toString()));
@@ -278,6 +218,45 @@ export default function PlayQuiz({ gameId }) {
     } else {
       const winnerTeam = gameInfo.teams.find((x) => x.teamId === parseInt(winner));
       return winnerTeam ? `${winnerTeam.name} has won the game with ${winnerTeam.score} points.` : '';
+    }
+  }
+
+  function shouldEnableQuestion(question) {
+    if (isGameStarted) {
+      if (shouldShowTimer()) {
+        if (isTimerRunning) {
+          // if user selected a question, enable only attempted or selected questions
+          // else enable all questions
+          return !!selectedQuestion ? isQuestionAttemptedOrSelected(question.questionId) : true;
+        } else {
+          // if timer is paused
+          // 1. user already selected a question, enable only attempted or selected questions
+          // 2. user not selected any question, enable only attempted questions only
+          return !!selectedQuestion
+            ? isQuestionAttemptedOrSelected(question.questionId)
+            : attemptedQuestionIds.includes(question.questionId);
+        }
+      } else {
+        // Same case when timer is running
+        return !!selectedQuestion ? isQuestionAttemptedOrSelected(question.questionId) : true;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  function isQuestionAttemptedOrSelected(questionId) {
+    return attemptedQuestionIds.includes(questionId) || selectedQuestion?.questionId === questionId;
+  }
+
+  function showQuestion(questionId: string | number, categoryId: string | number) {
+    const category = quizInfo.categories.find((x) => x.categoryId === categoryId);
+
+    if (category) {
+      const question = category.questions.find((q) => q.questionId === questionId);
+
+      setSelectedQuestion(question || null);
+      setIsTimerRunning(true);
     }
   }
 
@@ -295,49 +274,16 @@ export default function PlayQuiz({ gameId }) {
       )}
       <PanelGroup autoSaveId="playQuizPanel" direction="horizontal">
         <Panel defaultSize={20} minSize={20}>
-          <Accordion multiple defaultValue={quizInfo.categories.map((x) => `${x.categoryId}`)} variant="separated">
-            {quizInfo.categories.map((category) => (
-              <Accordion.Item key={category.categoryId} value={`${category.categoryId}`}>
-                <Accordion.Control>
-                  <Title order={6}>{category.categoryName}</Title>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <Button.Group orientation="vertical">
-                    {category.questions.map((question) => (
-                      <Button
-                        leftIcon={getTeamAvatar(question)}
-                        my="sm"
-                        radius="md"
-                        disabled={
-                          !winner &&
-                          !attemptedQuestionIds.includes(question.questionId) &&
-                          (!isGameStarted ||
-                            !!selectionTimeLimit ||
-                            (!!selectedQuestion && selectedQuestion?.questionId !== question.questionId) ||
-                            (shouldShowTimer() && !isTimerRunning))
-                        }
-                        variant={selectedQuestion?.questionId === question.questionId ? 'filled' : 'light'}
-                        color={getQuestionColor(question)}
-                        fullWidth
-                        onClick={() => showQuestion(question.questionId, category.categoryId)}
-                        key={question.questionId}>
-                        {isQuestionPointsHidden ? (
-                          <Text>Question {question.questionNum}</Text>
-                        ) : (
-                          <Group position="apart">
-                            <Text>Question {question.questionNum}</Text>
-                            <Badge variant="filled" color="red" size="sm">
-                              Points {question.points}
-                            </Badge>
-                          </Group>
-                        )}
-                      </Button>
-                    ))}
-                  </Button.Group>
-                </Accordion.Panel>
-              </Accordion.Item>
-            ))}
-          </Accordion>
+          <QuestionsView
+            categories={quizInfo.categories}
+            selectedOptionsData={selectedOptionsData}
+            teams={gameInfo.teams}
+            attemptedQuestionIds={attemptedQuestionIds}
+            selectedQuestion={selectedQuestion}
+            isQuestionPointsHidden={isQuestionPointsHidden}
+            shouldEnableQuestion={shouldEnableQuestion}
+            showQuestion={showQuestion}
+          />
         </Panel>
         <ResizeHandle />
         <Panel defaultSize={60} maxSize={60}>
@@ -402,75 +348,7 @@ export default function PlayQuiz({ gameId }) {
               selectedQuestionId={selectedQuestion?.questionId}
             />
           )}
-          <div>
-            <Group position="apart" mt="xl" mx="xl" pt="xl">
-              <Title order={4}>Team</Title>
-              <Title order={4}>Score</Title>
-            </Group>
-            {gameInfo.teams.some((x) => x.players) ? (
-              <Accordion my="xl" multiple variant="separated">
-                {gameInfo.teams.map((team) => (
-                  <Accordion.Item
-                    className={classNames({
-                      [styles.currentTeam]: team.teamId === gameInfo.currentTeamId,
-                      [styles.team]: true,
-                    })}
-                    key={team.teamId}
-                    value={`${team.teamId}`}>
-                    <Accordion.Control
-                      icon={
-                        <div
-                          className={`flex justifyCenter alignCenter ${styles.avatar}`}
-                          style={getAvatarStyles(team.avatarColor)}>
-                          {getNameInitials(team.name)}
-                        </div>
-                      }>
-                      <Group position="apart" key={team.teamId}>
-                        <Text>{team.name}</Text>
-                        <div>
-                          {team.score || 0}
-                          {team.teamId && winner.includes(`${team.teamId}`) && <span title="winner"> 👑</span>}
-                        </div>
-                      </Group>
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                      <ol>
-                        {team.players.split(',').map((player) => (
-                          <li key={player}>{player}</li>
-                        ))}
-                      </ol>
-                    </Accordion.Panel>
-                  </Accordion.Item>
-                ))}
-              </Accordion>
-            ) : (
-              gameInfo.teams.map((t: Team) => (
-                <Group
-                  position="apart"
-                  my="xl"
-                  mx="xl"
-                  key={t.teamId}
-                  className={classNames({
-                    [styles.currentTeam]: t.teamId === gameInfo.currentTeamId,
-                    [styles.team]: true,
-                    [styles.teamWithoutPlayer]: true,
-                  })}>
-                  <Group>
-                    <div
-                      className={`flex justifyCenter alignCenter ${styles.avatar}`}
-                      style={getAvatarStyles(t.avatarColor)}>
-                      {getNameInitials(t.name)}
-                    </div>
-                    <Text size="lg">{t.name}</Text>
-                  </Group>
-                  <div>
-                    {t.score}
-                    {t.teamId && winner.includes(`${t.teamId}`) && <span title="winner"> 👑</span>}
-                  </div>
-                </Group>
-              ))
-            )}
-          </div>
+          <TeamsView teams={gameInfo.teams} currentTeamId={gameInfo.currentTeamId} winner={winner} />
         </Panel>
       </PanelGroup>
     </>
