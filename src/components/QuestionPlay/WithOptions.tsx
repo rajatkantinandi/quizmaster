@@ -22,7 +22,6 @@ export default function WithOptions({
   isAttempted,
   isTimerRunning,
 }: Props) {
-  console.log('selectedOptionId', selectedOptionId);
   return (
     <>
       <Checkbox.Group

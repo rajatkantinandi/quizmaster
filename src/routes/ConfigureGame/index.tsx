@@ -40,12 +40,10 @@ export default function ConfigureGame({ quizId }) {
     setValue,
     watch,
   } = useForm({ defaultValues: formDefaultValues });
-  const [, setRefresh] = useState(0);
   const [quizName, setQuizName] = useState('');
   const teams = watch('teams');
   const timeLimit = watch('timeLimit');
   const selectionTimeLimit = watch('selectionTimeLimit');
-  console.log('timeLimit', timeLimit, selectionTimeLimit);
   const isQuestionPointsHidden = watch('isQuestionPointsHidden');
   const mode = watch('mode');
   const players = watch('players');
@@ -59,7 +57,6 @@ export default function ConfigureGame({ quizId }) {
 
   function addTeam() {
     setValue('teams', [...teams, getEmptyTeam()]);
-    setRefresh(Math.random());
   }
 
   function removeTeam(index) {
@@ -67,7 +64,6 @@ export default function ConfigureGame({ quizId }) {
       'teams',
       teams.filter((team, idx) => idx !== index),
     );
-    setRefresh(Math.random());
   }
 
   async function handleGameConfig(data: FieldValues) {
@@ -102,11 +98,10 @@ export default function ConfigureGame({ quizId }) {
           teams={teams}
           teamCount={teams.length > 0 ? teams.length : 2}
           createTeams={({ teams, players, mode }) => {
-            setValue('teams', teams);
             setValue('players', players);
             setValue('mode', mode);
+            setValue('teams', teams);
             showModal(null);
-            setRefresh(Math.random());
           }}
         />
       ),
@@ -211,7 +206,6 @@ export default function ConfigureGame({ quizId }) {
             label="Hide points until the question is revealed"
             onChange={() => {
               setValue('isQuestionPointsHidden', !isQuestionPointsHidden);
-              setRefresh(Math.random());
             }}
           />
           <Title pt="xl" mb="sm" order={4}>
@@ -231,8 +225,6 @@ export default function ConfigureGame({ quizId }) {
                 } else {
                   setValue('timeLimit', null);
                 }
-
-                setRefresh(Math.random());
               }}
             />
             <FormInput
@@ -269,8 +261,6 @@ export default function ConfigureGame({ quizId }) {
                 } else {
                   setValue('selectionTimeLimit', null);
                 }
-
-                setRefresh(Math.random());
               }}
             />
             <FormInput

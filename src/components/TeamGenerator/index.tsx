@@ -24,7 +24,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const [shouldShowTeams, setShouldShowTeams] = useState(!!rest.players);
   const [players, setPlayers] = useState<string[]>(rest.teams.map((x) => x.players));
   const { showAlert, enableOkButton } = useStore();
-  const [, setRefresh] = useState(0);
   const {
     register,
     handleSubmit,
@@ -176,7 +175,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
           <Text my="xl">
             Edit team names one team per line or paste team names from a spreadsheet column (Excel, Google sheet, etc.).
           </Text>
-          <form onSubmit={teamsForm.handleSubmit(submitTeamNamesForm)} onChange={() => setRefresh(Math.random())}>
+          <form onSubmit={teamsForm.handleSubmit(submitTeamNamesForm)}>
             <FormTextArea
               placeholder="Enter team names"
               rules={{
