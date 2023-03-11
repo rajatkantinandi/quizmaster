@@ -8,8 +8,8 @@ import { defaultGameInfo } from '../../constants';
 import { Helmet } from 'react-helmet';
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import ResizeHandle from './ResizeHandle';
-import TeamsView from './TeamsView';
-import QuestionsView from './QuestionsView';
+import Scorecard from './Scorecard';
+import QuestionsList from './QuestionsList';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -82,22 +82,11 @@ export default function PlayQuiz({ gameId }) {
   }
 
   function getLastAttemptedQuestion(teams: Team[], categories) {
-    const clonedTeams = JSON.parse(JSON.stringify(teams));
-    const teamsWithMaxAttemptedQuestion = clonedTeams.reduce((acc, data) => {
-      const length = acc.length;
-      if (length === 0) {
-        acc.push(data);
-      } else if (acc[length - 1].selectedOptions.length < data.selectedOptions.length) {
-        acc[acc.length - 1] = data;
-      } else if (acc[length - 1].selectedOptions.length === data.selectedOptions.length) {
-        acc.push(data);
-      }
-
-      return acc;
-    }, [] as Team[]);
-
-    const teamWithMaxAttemptedQuestion = teamsWithMaxAttemptedQuestion.pop();
-    const lastAttemptedQuestionOption = teamWithMaxAttemptedQuestion?.selectedOptions.pop();
+    const clonedTeams: Team[] = JSON.parse(JSON.stringify(teams));
+    const maxAttemptedQuestions = Math.max(...clonedTeams.map((x) => x.selectedOptions.length));
+    const teamsWithMaxAttemptedQuestion = clonedTeams.filter((x) => x.selectedOptions.length === maxAttemptedQuestions);
+    const lastTeamWhoAttemptedQuestion = teamsWithMaxAttemptedQuestion.pop();
+    const lastAttemptedQuestionOption = lastTeamWhoAttemptedQuestion?.selectedOptions.pop();
     const questionId = lastAttemptedQuestionOption?.questionId;
     const allQuestions = getAllQuestions(categories);
 
@@ -274,7 +263,7 @@ export default function PlayQuiz({ gameId }) {
       )}
       <PanelGroup autoSaveId="playQuizPanel" direction="horizontal">
         <Panel defaultSize={20} minSize={20}>
-          <QuestionsView
+          <QuestionsList
             categories={quizInfo.categories}
             selectedOptionsData={selectedOptionsData}
             teams={gameInfo.teams}
@@ -348,7 +337,7 @@ export default function PlayQuiz({ gameId }) {
               selectedQuestionId={selectedQuestion?.questionId}
             />
           )}
-          <TeamsView teams={gameInfo.teams} currentTeamId={gameInfo.currentTeamId} winner={winner} />
+          <Scorecard teams={gameInfo.teams} currentTeamId={gameInfo.currentTeamId} winner={winner} />
         </Panel>
       </PanelGroup>
     </>

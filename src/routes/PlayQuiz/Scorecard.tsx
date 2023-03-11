@@ -5,7 +5,7 @@ import TeamAvatar from '../../components/TeamAvatar';
 import classNames from 'classnames';
 import { Team } from '../../types';
 
-export default function TeamsView({ teams, currentTeamId, winner }) {
+export default function Scorecard({ teams, currentTeamId, winner }) {
   return (
     <div>
       <Group position="apart" mt="xl" mx="xl" pt="xl">

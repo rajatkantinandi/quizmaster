@@ -3,7 +3,7 @@ import TeamAvatar from '../../components/TeamAvatar';
 import { Button, Text, Accordion, Group, Badge, Title } from '@mantine/core';
 import { Question as IQuestion } from '../../types';
 
-export default function QuestionsView({
+export default function QuestionsList({
   categories,
   selectedOptionsData,
   teams,
