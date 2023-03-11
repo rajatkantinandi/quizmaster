@@ -92,13 +92,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   }
 
   function submitTeamNamesForm({ teams }) {
-    console.log(
-      teams.split('\n').map((name, idx) => ({
-        name,
-        players: players[idx],
-        avatarColor: getRandomColor(),
-      })),
-    );
     createTeams({
       teams: teams.split('\n').map((name, idx) => ({
         name,

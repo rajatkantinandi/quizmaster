@@ -113,7 +113,6 @@ export default function ConfigureGame({ quizId }) {
   }
 
   const shouldBeMoreThanZero = (value: number) => value > 0 || 'Should be more than 0';
-  console.log('fieldsfields', fields);
 
   return (
     <Grid columns={12}>
