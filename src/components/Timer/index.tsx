@@ -13,6 +13,8 @@ interface Props {
   selectedQuestionId: string | undefined;
 }
 
+const timerCircleCircumference = Math.round(2 * Math.PI * 45);
+
 export default function Timer({
   duration,
   isTimerRunning = false,
@@ -21,7 +23,7 @@ export default function Timer({
   selectedQuestionId,
 }: Props) {
   const [remainingTime, setRemainingTime] = useState(duration);
-  const [circleDasharray, setCircleDasharray] = useState('283');
+  const [circleDasharray, setCircleDasharray] = useState(`${timerCircleCircumference}`);
   const [alert, setAlert] = useState(false);
   const [warning, setWarning] = useState(false);
 
@@ -39,7 +41,11 @@ export default function Timer({
           const rawTimeFraction = timeLeft / duration;
 
           setRemainingTime(timeLeft);
-          setCircleDasharray(`${((rawTimeFraction - (1 / duration) * (1 - rawTimeFraction)) * 283).toFixed(0)} 283`);
+          setCircleDasharray(
+            `${((rawTimeFraction - (1 / duration) * (1 - rawTimeFraction)) * timerCircleCircumference).toFixed(
+              0,
+            )} ${timerCircleCircumference}`,
+          );
           setWarning(timeLeft <= duration / 2 && timeLeft > duration / 5);
           setAlert(timeLeft <= duration / 5);
         }
