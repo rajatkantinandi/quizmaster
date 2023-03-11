@@ -47,7 +47,8 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
           : '',
     },
   });
-  const teamList = getValidValuesFromColumns(teamsForm.getValues('teams'));
+  const teamsData = teamsForm.watch('teams');
+  const teamList = getValidValuesFromColumns(teamsData);
 
   function generateTeams(data) {
     const { teamCount, playerNames } = data;
@@ -91,6 +92,13 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   }
 
   function submitTeamNamesForm({ teams }) {
+    console.log(
+      teams.split('\n').map((name, idx) => ({
+        name,
+        players: players[idx],
+        avatarColor: getRandomColor(),
+      })),
+    );
     createTeams({
       teams: teams.split('\n').map((name, idx) => ({
         name,
@@ -201,7 +209,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               <Divider my="xl" />
               <Text>Teams</Text>
               <ol>
-                {getValidValuesFromColumns(teamsForm.getValues('teams')).map((team, idx) => (
+                {getValidValuesFromColumns(teamsData).map((team, idx) => (
                   <li key={idx}>
                     {team} {players[idx] ? `(${players[idx]})` : ''}
                   </li>

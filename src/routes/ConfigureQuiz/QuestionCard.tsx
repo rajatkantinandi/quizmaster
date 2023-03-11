@@ -101,7 +101,7 @@ export default function QuestionCard({
             saveQuestion={handleSaveQuestion}
             onQuestionChange={(data) => updateQuestionData(idx, data)}
             deleteQuestion={() => handleDeleteQuestion(idx)}
-            resetQuestion={(idx) => resetQuestion(idx)}
+            resetQuestion={() => resetQuestion(idx)}
             showPreview={() => {
               setActiveQuestionIndex(null);
               setExpandedQuestionIndex(idx);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container } from '@mantine/core';
 import { useStore } from '../../useStore';
-import { useForm, FieldValues } from 'react-hook-form';
+import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
 import { useParams, useNavigate } from 'react-router';
 import { Team } from '../../types';
@@ -39,7 +39,12 @@ export default function ConfigureGame({ quizId }) {
     formState: { errors },
     setValue,
     watch,
+    control,
   } = useForm({ defaultValues: formDefaultValues });
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: 'teams',
+  });
   const [quizName, setQuizName] = useState('');
   const teams = watch('teams');
   const timeLimit = watch('timeLimit');
@@ -54,17 +59,6 @@ export default function ConfigureGame({ quizId }) {
       setQuizName(x.name);
     });
   }, [getQuiz, quizId]);
-
-  function addTeam() {
-    setValue('teams', [...teams, getEmptyTeam()]);
-  }
-
-  function removeTeam(index) {
-    setValue(
-      'teams',
-      teams.filter((team, idx) => idx !== index),
-    );
-  }
 
   async function handleGameConfig(data: FieldValues) {
     if (quizId) {
@@ -100,7 +94,13 @@ export default function ConfigureGame({ quizId }) {
           createTeams={({ teams, players, mode }) => {
             setValue('players', players);
             setValue('mode', mode);
-            setValue('teams', teams);
+            replace([]); // Removing empty teams data
+            replace(
+              teams.map((x) => ({
+                ...getEmptyTeam(),
+                ...x,
+              })),
+            ); // Adding new teams data
             showModal(null);
           }}
         />
@@ -113,6 +113,7 @@ export default function ConfigureGame({ quizId }) {
   }
 
   const shouldBeMoreThanZero = (value: number) => value > 0 || 'Should be more than 0';
+  console.log('fieldsfields', fields);
 
   return (
     <Grid columns={12}>
@@ -127,14 +128,14 @@ export default function ConfigureGame({ quizId }) {
         )}
         <form onSubmit={handleSubmit(handleGameConfig)}>
           <Title order={4}>Team names</Title>
-          {teams.map((team, idx) => (
+          {fields.map((team, idx) => (
             <Group position="left" grow key={idx} className={styles.teamInputWrapper}>
               <Text weight="bold" className={styles.teamInputCount}>
                 {idx + 1}.
               </Text>
               <FormInput
-                name={`teams[${idx}].name`}
-                id={`teams[${idx}].name`}
+                name={`teams.${idx}.name`}
+                id={`teams.${idx}.name`}
                 rules={{ required: 'Please enter team name' }}
                 errorMessage={errors.teams?.[idx]?.name?.message || ''}
                 type="text"
@@ -154,8 +155,8 @@ export default function ConfigureGame({ quizId }) {
                   {players[idx]}
                 </Text>
               )}
-              {teams.length > 2 ? (
-                <ActionIcon variant="transparent" className={styles.teamInputCount} onClick={() => removeTeam(idx)}>
+              {fields.length > 2 ? (
+                <ActionIcon variant="transparent" className={styles.teamInputCount} onClick={() => remove(idx)}>
                   <Icon width={20} name="trash" />
                 </ActionIcon>
               ) : (
@@ -168,7 +169,7 @@ export default function ConfigureGame({ quizId }) {
               <>
                 <Button
                   mt="xl"
-                  onClick={addTeam}
+                  onClick={() => append(getEmptyTeam())}
                   radius="md"
                   className={styles.button}
                   variant="default"
