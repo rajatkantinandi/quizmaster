@@ -44,6 +44,7 @@ export default function ConfigureQuiz({
   const categoriesRef = useRef([]);
   const quizNameRef = useRef('');
   const isDraftRef = useRef(true);
+  const isQuizAlreadySaved = useRef(false);
   categoriesRef.current = categories;
   quizNameRef.current = quizName;
 
@@ -69,12 +70,15 @@ export default function ConfigureQuiz({
 
     return () => {
       window.onbeforeunload = null;
-      sendBeaconPost({
-        name: quizNameRef.current,
-        quizId,
-        categories: categoriesRef.current,
-        isDraft: isDraftRef.current,
-      });
+
+      if (!isQuizAlreadySaved.current) {
+        sendBeaconPost({
+          name: quizNameRef.current,
+          quizId,
+          categories: categoriesRef.current,
+          isDraft: isDraftRef.current,
+        });
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -124,7 +128,7 @@ export default function ConfigureQuiz({
 
     try {
       isDraftRef.current = false;
-
+      isQuizAlreadySaved.current = true;
       await createOrUpdateQuiz({
         categories: formData.categories,
         quizId,

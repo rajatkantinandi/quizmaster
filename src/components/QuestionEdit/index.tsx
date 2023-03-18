@@ -3,8 +3,7 @@ import styles from './styles.module.css';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput, FormTextArea } from '../FormInputs';
-import { getEmptyOptions } from '../../helpers';
-import { nanoid } from 'nanoid';
+import { getEmptyOptions, getEmptyOption } from '../../helpers';
 import { Title, Card, Button, ActionIcon, Text, Checkbox, Tabs, Group, TabsValue } from '@mantine/core';
 import Icon from '../Icon';
 
@@ -82,11 +81,7 @@ export default function QuestionEdit({
   function addOption(ev: React.MouseEvent) {
     ev.preventDefault();
 
-    append({
-      optionId: nanoid(),
-      text: '',
-      isCorrect: false,
-    });
+    append(getEmptyOption());
   }
 
   function getValidationError() {

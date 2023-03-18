@@ -11,6 +11,7 @@ const gamesC = db.collection('games');
 export const generateRandomNumber = () => parseInt(`${Math.random() * 10000}`);
 
 export const saveQuiz = async (data: QuizParams) => {
+  data.quizId = data.quizId || generateRandomNumber();
   const existing = (await quizzesC.findOne({ quizId: data.quizId })) as Quiz;
 
   if (existing) {
@@ -77,7 +78,7 @@ export const saveQuizzes = async (quizzes: Quiz[]) => {
   }
 };
 
-export const getQuiz = async (quizId: string) => {
+export const getQuiz = async (quizId: number) => {
   const quiz = await quizzesC.findOne({ quizId });
 
   if (quiz) {

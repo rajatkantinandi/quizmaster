@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import {
   getQuizzes,
   post,
@@ -19,7 +18,6 @@ import {
   fixQuizData,
   deleteQuizzes,
   publishQuizzes,
-  isInt,
 } from '../helpers';
 import { GameData, Quiz } from '../types';
 
@@ -55,31 +53,25 @@ export const getQuizStore = (set: Function, get: Function) => ({
     }
   },
   getQuiz: async (quizId: number | string) => {
-    try {
-      if (isInt(quizId)) {
-        const response = await getReq('quiz/data', { quizId: parseInt(quizId.toString()) });
+    const quizIdNum = parseInt(quizId.toString());
+
+    if (isGuestUser()) {
+      return getQuizFromLocalDB(quizIdNum);
+    } else {
+      try {
+        const response = await getReq('quiz/data', { quizId: quizIdNum });
         const data = formatQuizzesData(response)[0];
 
         await saveQuiz(data);
         return fixQuizData(data);
-      } else {
-        const response = await getQuiz(quizId.toString());
-
-        return fixQuizData(response);
+      } catch (err) {
+        return getQuizFromLocalDB(quizIdNum);
       }
-    } catch (err) {
-      const response = await getQuiz(quizId.toString());
-
-      return fixQuizData(response);
     }
   },
   createOrUpdateQuiz: async (data) => {
     if (isGuestUser()) {
-      data.userId = -1;
-      data.quizId = data.quizId || nanoid();
-      data.updateDate = new Date().toISOString();
-
-      const response: any = await saveQuiz(data);
+      const response: any = await saveQuizInLocalDB(data);
 
       return response;
     } else {
@@ -91,9 +83,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   updateQuizName: async (data) => {
     if (isGuestUser()) {
-      data.userId = -1;
-      const response = await saveQuiz(data);
-
+      const response: any = await saveQuizInLocalDB(data);
       return response;
     } else {
       await post('quiz/edit', data);
@@ -105,11 +95,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   sendBeaconPost: async (data) => {
     if (isGuestUser()) {
-      data.userId = -1;
-      data.quizId = data.quizId || nanoid();
-      data.updateDate = new Date().toISOString();
-
-      const response: any = await saveQuiz(data);
+      const response: any = await saveQuizInLocalDB(data);
 
       return response;
     } else {
@@ -241,6 +227,25 @@ function getSortedQuizzes(sortBy, data) {
     default:
       return data.sort((quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime());
   }
+}
+
+async function getQuizFromLocalDB(quizId) {
+  const response = await getQuiz(quizId);
+
+  return fixQuizData(response);
+}
+
+async function saveQuizInLocalDB(data) {
+  data.userId = -1;
+  data.updateDate = new Date().toISOString();
+
+  if (data.quizId) {
+    data.quizId = parseInt(data.quizId.toString());
+  }
+
+  const response: any = await saveQuiz(data);
+
+  return response;
 }
 
 export interface QuizState extends Omit<Omit<ReturnType<typeof getQuizStore>, 'quizzes'>, 'searchResults'> {
