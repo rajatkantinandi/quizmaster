@@ -19,6 +19,7 @@ import {
   fixQuizData,
   deleteQuizzes,
   publishQuizzes,
+  isInt,
 } from '../helpers';
 import { GameData, Quiz } from '../types';
 
@@ -53,15 +54,21 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return sortedData;
     }
   },
-  getQuiz: async (quizId: number) => {
+  getQuiz: async (quizId: number | string) => {
     try {
-      const response = await getReq('quiz/data', { quizId });
-      const data = formatQuizzesData(response)[0];
+      if (isInt(quizId)) {
+        const response = await getReq('quiz/data', { quizId: parseInt(quizId.toString()) });
+        const data = formatQuizzesData(response)[0];
 
-      await saveQuiz(data);
-      return fixQuizData(data);
+        await saveQuiz(data);
+        return fixQuizData(data);
+      } else {
+        const response = await getQuiz(quizId.toString());
+
+        return fixQuizData(response);
+      }
     } catch (err) {
-      const response = await getQuiz(quizId);
+      const response = await getQuiz(quizId.toString());
 
       return fixQuizData(response);
     }
@@ -99,8 +106,12 @@ export const getQuizStore = (set: Function, get: Function) => ({
   sendBeaconPost: async (data) => {
     if (isGuestUser()) {
       data.userId = -1;
+      data.quizId = data.quizId || nanoid();
+      data.updateDate = new Date().toISOString();
 
-      return data;
+      const response: any = await saveQuiz(data);
+
+      return response;
     } else {
       if ('sendBeacon' in navigator) {
         await postBeaconReq('quiz/createOrUpdate', data);

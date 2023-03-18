@@ -65,7 +65,7 @@ export default function QuestionCard({
   }
 
   const resetQuestion = (index) => {
-    getQuiz(parseInt(`${quizId}`)).then((quiz: Quiz) => {
+    getQuiz(quizId).then((quiz: Quiz) => {
       updateQuestionData(index, quiz.categories[activeCategoryIndex].questions[index]);
       setActiveQuestionIndex(null);
       setPreviewQuestionIndex(null);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useStore } from '../../useStore';
 import { Helmet } from 'react-helmet';
 import { Text, Button, Grid, Card, Group, Badge, Image, Title, Select, ActionIcon } from '@mantine/core';
@@ -12,8 +12,7 @@ import noContent from '../../images/no_content.png';
 import CreateQuizButton from '../../components/CreateQuizButton';
 import QuizSelectorAlert from '../../components/QuizSelectorAlert';
 
-export default function Quizzes() {
-  const { userName } = useParams();
+export default function Quizzes({ userName }) {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('recency');
   const {

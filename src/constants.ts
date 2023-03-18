@@ -24,7 +24,7 @@ export const tilesBGColors = [
 ];
 
 export const appPaths = [
-  '/quizzes/:userName',
+  '/my-quizzes/:userName',
   '/configure-quiz/:userName',
   '/configure-quiz/:userName/:quizId',
   '/configure-game/:userName/:quizId',

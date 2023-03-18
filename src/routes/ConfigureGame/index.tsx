@@ -3,7 +3,7 @@ import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Contai
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
-import { useParams, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Team } from '../../types';
 import { getEmptyTeam } from '../../helpers';
 import TeamGenerator from '../../components/TeamGenerator';
@@ -30,8 +30,7 @@ const formDefaultValues: DefaultValue = {
   players: [],
 };
 
-export default function ConfigureGame({ quizId }) {
-  const { userName } = useParams();
+export default function ConfigureGame({ quizId, userName = 'guest' }) {
   const navigate = useNavigate();
   const {
     register,
@@ -50,7 +49,7 @@ export default function ConfigureGame({ quizId }) {
   const { getQuiz, addGame, showModal } = useStore();
 
   useEffect(() => {
-    getQuiz(parseInt(quizId)).then((x) => {
+    getQuiz(quizId).then((x) => {
       setQuizName(x.name);
     });
   }, [getQuiz, quizId]);

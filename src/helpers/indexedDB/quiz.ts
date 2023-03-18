@@ -11,10 +11,10 @@ const gamesC = db.collection('games');
 export const generateRandomNumber = () => parseInt(`${Math.random() * 10000}`);
 
 export const saveQuiz = async (data: QuizParams) => {
-  const existing = (await quizzesC.findOne({ quizId: parseInt(data.quizId) })) as Quiz;
+  const existing = (await quizzesC.findOne({ quizId: data.quizId })) as Quiz;
 
   if (existing) {
-    await quizzesC.update({ quizId: parseInt(data.quizId) }, data);
+    await quizzesC.update({ quizId: data.quizId }, data);
   } else {
     await quizzesC.insert(data);
   }
@@ -33,17 +33,6 @@ export const publishQuizzes = async (quizIds: number[]) => {
     quiz.isPublished = true;
     await quizzesC.update({ quizId: quiz.quizId }, quiz);
   });
-};
-
-export const updateQuizName = async (data: QuizParams) => {
-  const existing = (await quizzesC.findOne({ quizId: parseInt(data.quizId) })) as Quiz;
-
-  if (existing) {
-    existing.name = data.name;
-    await quizzesC.update({ quizId: parseInt(data.quizId) }, existing);
-  }
-
-  return data;
 };
 
 export const unDraftQuiz = async (quizId: string | number) => {
@@ -88,7 +77,7 @@ export const saveQuizzes = async (quizzes: Quiz[]) => {
   }
 };
 
-export const getQuiz = async (quizId: number) => {
+export const getQuiz = async (quizId: string) => {
   const quiz = await quizzesC.findOne({ quizId });
 
   if (quiz) {

@@ -3,7 +3,6 @@ import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
 import { Quiz } from '../../types';
-import { isInt } from '../../helpers';
 import { Helmet } from 'react-helmet';
 import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge } from '@mantine/core';
 import styles from './styles.module.css';
@@ -11,11 +10,16 @@ import Icon from '../../components/Icon';
 import classNames from 'classnames';
 import { plural } from '../../helpers/textHelpers';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import QuestionCard from './QuestionCard';
 
-export default function ConfigureQuiz({ quizId }: { quizId: string }) {
-  const { userName = 'guest' } = useParams();
+export default function ConfigureQuiz({
+  quizId,
+  userName = 'guest',
+}: {
+  quizId: string;
+  userName: string | undefined;
+}) {
   const [quizName, setQuizName] = useState('');
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeCategoryName, setActiveCategoryName] = useState('');
@@ -44,26 +48,24 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   quizNameRef.current = quizName;
 
   useEffect(() => {
-    if (isInt(quizId)) {
-      getQuiz(parseInt(`${quizId}`)).then((quiz: Quiz) => {
-        setQuizName(quiz.name);
-        isDraftRef.current = !!quiz.isDraft;
-        let activeQuestionIndex: any = null;
-        const activeCategoryIndex = quiz.categories.findIndex((category) => {
-          const idx = category.questions.findIndex((question) => !isValidQuestion(question));
-          activeQuestionIndex = idx >= 0 ? idx : null;
+    getQuiz(quizId).then((quiz: Quiz) => {
+      setQuizName(quiz.name);
+      isDraftRef.current = !!quiz.isDraft;
+      let activeQuestionIndex: any = null;
+      const activeCategoryIndex = quiz.categories.findIndex((category) => {
+        const idx = category.questions.findIndex((question) => !isValidQuestion(question));
+        activeQuestionIndex = idx >= 0 ? idx : null;
 
-          return idx >= 0;
-        });
-
-        const index = Math.max(activeCategoryIndex, 0);
-        setActiveCategoryIndex(index);
-        setActiveCategoryName(quiz.categories[index].categoryName);
-        setActiveQuestionIndex(activeQuestionIndex);
-        replace(quiz.categories);
-        setTimeout(() => reset(quiz), 0);
+        return idx >= 0;
       });
-    }
+
+      const index = Math.max(activeCategoryIndex, 0);
+      setActiveCategoryIndex(index);
+      setActiveCategoryName(quiz.categories[index].categoryName);
+      setActiveQuestionIndex(activeQuestionIndex);
+      replace(quiz.categories);
+      setTimeout(() => reset(quiz), 0);
+    });
 
     return () => {
       window.onbeforeunload = null;
@@ -135,7 +137,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
         type: 'success',
       });
 
-      navigate(`/quizzes/${userName}`);
+      navigate(`/my-quizzes/${userName}`);
     } catch (err) {
       showAlert({
         message: 'Something went wrong while saving the quiz data. Please try again later.',
