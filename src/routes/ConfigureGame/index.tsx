@@ -46,12 +46,7 @@ export default function ConfigureGame({ quizId }) {
     name: 'teams',
   });
   const [quizName, setQuizName] = useState('');
-  const teams = watch('teams');
-  const timeLimit = watch('timeLimit');
-  const selectionTimeLimit = watch('selectionTimeLimit');
-  const isQuestionPointsHidden = watch('isQuestionPointsHidden');
-  const mode = watch('mode');
-  const players = watch('players');
+  const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, mode, players } = watch();
   const { getQuiz, addGame, showModal } = useStore();
 
   useEffect(() => {
