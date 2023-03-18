@@ -1,20 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../useStore';
-import { useForm, FieldValues } from 'react-hook-form';
+import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
-import { Quiz, Category, Question as IQuestion } from '../../types';
-import { nanoid } from 'nanoid';
-import { getEmptyQuestion, isInt } from '../../helpers';
+import { Quiz } from '../../types';
+import { isInt } from '../../helpers';
 import { Helmet } from 'react-helmet';
 import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge } from '@mantine/core';
 import styles from './styles.module.css';
 import Icon from '../../components/Icon';
 import classNames from 'classnames';
-import QuestionEdit from '../../components/QuestionEdit';
-import QuestionView from '../../components/QuestionView';
 import { plural } from '../../helpers/textHelpers';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
 import { useNavigate, useParams } from 'react-router';
+import QuestionCard from './QuestionCard';
 
 export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   const { userName = 'guest' } = useParams();
@@ -25,17 +23,19 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null>(null);
   const [previewQuestionIndex, setPreviewQuestionIndex] = useState<number | null>(null);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
-  const [, setRefresh] = useState(0);
   const navigate = useNavigate();
   const {
     handleSubmit,
     formState: { errors },
     reset,
-    getValues,
-    setValue,
     register,
     watch,
+    control,
   } = useForm();
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: 'categories',
+  });
   const categories = watch('categories') || [];
   const categoriesRef = useRef([]);
   const quizNameRef = useRef('');
@@ -60,6 +60,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
         setActiveCategoryIndex(index);
         setActiveCategoryName(quiz.categories[index].categoryName);
         setActiveQuestionIndex(activeQuestionIndex);
+        replace(quiz.categories);
         setTimeout(() => reset(quiz), 0);
       });
     }
@@ -91,13 +92,6 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categories, quizName]);
-
-  function onQuestionChange(data) {
-    const categories = getValues('categories');
-
-    categories[activeCategoryIndex].questions[activeQuestionIndex as number] = data;
-    setValue('categories', categories);
-  }
 
   async function onFormSubmit(formData: FieldValues) {
     let index = formData.categories.findIndex((category) =>
@@ -150,39 +144,18 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     }
   }
 
-  const addCategory = () => {
-    const newCategory = {
-      categoryId: nanoid(),
-      categoryName: '',
-      questions: [],
-    };
-    const categories = getValues('categories');
-
-    categories.push(newCategory);
-    setValue('categories', categories);
-    setRefresh(Math.random());
-  };
-
   const confirmRemoveCategory = (index, hasQuestion) => {
     if (hasQuestion) {
       showModal({
         title: 'Delete Category',
         body: 'This category has questions. Are you sure you want to delete it?',
-        okCallback: () => removeCategory(index),
+        okCallback: () => remove(index),
         okText: 'Delete Category',
         cancelText: 'Cancel',
       });
     } else {
-      removeCategory(index);
+      remove(index);
     }
-  };
-
-  const removeCategory = (index) => {
-    const categories = getValues('categories');
-
-    categories.splice(index, 1);
-    setValue('categories', categories);
-    setRefresh(Math.random());
   };
 
   const setActiveCategory = (value) => {
@@ -194,72 +167,16 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
     setPreviewQuestionIndex(null);
   };
 
-  const addQuestion = () => {
-    const question = getEmptyQuestion(categories[activeCategoryIndex].categoryId);
-    const categoriesData = getValues('categories');
-    categoriesData[activeCategoryIndex].questions.push(question);
-    setValue('categories', categoriesData);
-
-    const length = categoriesData[activeCategoryIndex].questions.length;
-    setActiveQuestionIndex(length - 1);
-  };
-
-  const resetQuestion = () => {
-    if (activeQuestionIndex) {
-      getQuiz(parseInt(`${quizId}`)).then((quiz: Quiz) => {
-        const categories = getValues('categories');
-        categories[activeCategoryIndex].questions[activeQuestionIndex] =
-          quiz.categories[activeCategoryIndex].questions[activeQuestionIndex];
-
-        setValue('categories', categories);
-        setActiveQuestionIndex(null);
-        setPreviewQuestionIndex(null);
-      });
-    }
-  };
-
   function isValidQuestion(question) {
     const { options, text, points } = question;
 
     return (
       !!text &&
-      points > 0 &&
+      parseInt(points) > 0 &&
       options.length > 0 &&
       options.some((option) => option.isCorrect) &&
       !options.some((option) => !option.text)
     );
-  }
-
-  function handleDeleteQuestion(index: number) {
-    const questionIndex = index >= 0 ? index : (activeQuestionIndex as number);
-    const categories = getValues('categories');
-    const question = categories[activeCategoryIndex].questions[questionIndex];
-
-    if (isValidQuestion(question)) {
-      showModal({
-        title: 'Delete Question',
-        body: 'Are you sure you want to delete this question?',
-        okCallback: () => deleteQuestion(questionIndex),
-        okText: 'Delete Question',
-        cancelText: 'Cancel',
-      });
-    } else {
-      deleteQuestion(questionIndex);
-    }
-  }
-
-  function deleteQuestion(questionIndex) {
-    const categories = getValues('categories');
-
-    categories[activeCategoryIndex].questions.splice(questionIndex, 1);
-    setValue('categories', categories);
-
-    if (questionIndex === activeQuestionIndex) {
-      setActiveQuestionIndex(null);
-      setPreviewQuestionIndex(null);
-    } else {
-      setRefresh(Math.random());
-    }
   }
 
   function changeQuizName() {
@@ -277,17 +194,6 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
       },
       okText: 'Update',
       cancelText: 'Cancel',
-    });
-  }
-
-  function handleSaveQuestion(idx) {
-    setActiveQuestionIndex(null);
-    setExpandedQuestionIndex(null);
-    setPreviewQuestionIndex(null);
-
-    showAlert({
-      message: 'Question has been saved successfully.',
-      type: 'success',
     });
   }
 
@@ -316,11 +222,11 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
             </Title>
             <Title order={4}>Categories</Title>
             <Radio.Group name="activeCategory" value={`${activeCategoryIndex}`} onChange={setActiveCategory}>
-              {categories.map((category: Category, idx: number) => (
+              {fields.map((item: any, idx: number) => (
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : ''}
                   withBorder={idx === activeCategoryIndex}
-                  key={category.categoryId}
+                  key={item.id}
                   className={classNames({
                     [styles.activeCategory]: idx === activeCategoryIndex,
                     [styles.nonActiveCard]: idx !== activeCategoryIndex,
@@ -336,8 +242,8 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                         </Text>
                         <div>
                           <FormInput
-                            name={`categories[${idx}].categoryName`}
-                            id={`categories${idx}categoryName`}
+                            name={`categories.${idx}.categoryName`}
+                            id={`categories.${idx}.categoryName`}
                             rules={{ required: 'Please enter category name' }}
                             errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
                             type="text"
@@ -367,13 +273,13 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                                 absolute: true,
                                 'mt-md': idx === activeCategoryIndex,
                               })}>
-                              {category.questions.length > 0 && (
+                              {item.questions.length > 0 && (
                                 <Text component="span" mr="sm">
-                                  {plural(category.questions.length, '%count question', '%count questions')}
+                                  {plural(item.questions.length, '%count question', '%count questions')}
                                 </Text>
                               )}
-                              {(category.questions.length === 0 ||
-                                category.questions.some((question) => !isValidQuestion(question))) &&
+                              {(item.questions.length === 0 ||
+                                item.questions.some((question) => !isValidQuestion(question))) &&
                                 idx !== activeCategoryIndex && (
                                   <Badge color="red" variant="filled">
                                     Incomplete
@@ -386,7 +292,7 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
                           <ActionIcon
                             variant="transparent"
                             ml="md"
-                            onClick={() => confirmRemoveCategory(idx, category.questions.length > 0)}>
+                            onClick={() => confirmRemoveCategory(idx, item.questions.length > 0)}>
                             <Icon width={20} name="trash" />
                           </ActionIcon>
                         )}
@@ -398,7 +304,12 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
             </Radio.Group>
             <Button
               mt="xl"
-              onClick={addCategory}
+              onClick={() => {
+                append({
+                  categoryName: '',
+                  questions: [],
+                });
+              }}
               radius="md"
               variant="default"
               leftIcon={<Icon name="plus" width={18} />}>
@@ -410,50 +321,21 @@ export default function ConfigureQuiz({ quizId }: { quizId: string }) {
           </form>
         </Grid.Col>
         <Grid.Col span={14}>
-          <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsCard}`}>
-            <Title order={5} mb="xl">
-              {activeCategoryName || 'Unnamed Category'}
-            </Title>
-            {(categories[activeCategoryIndex]?.questions || []).map((question: IQuestion, idx) =>
-              activeQuestionIndex === idx ? (
-                <QuestionEdit
-                  questionNum={idx + 1}
-                  question={question}
-                  key={question.questionId}
-                  saveQuestion={() => handleSaveQuestion(idx)}
-                  onQuestionChange={onQuestionChange}
-                  deleteQuestion={handleDeleteQuestion}
-                  resetQuestion={resetQuestion}
-                  showPreview={() => {
-                    setActiveQuestionIndex(null);
-                    setExpandedQuestionIndex(idx);
-                    setPreviewQuestionIndex(idx);
-                  }}
-                />
-              ) : (
-                <QuestionView
-                  questionNum={idx + 1}
-                  question={question}
-                  key={question.questionId}
-                  saveQuestion={() => handleSaveQuestion(idx)}
-                  isValidQuestion={isValidQuestion(question)}
-                  setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
-                  deleteQuestion={() => handleDeleteQuestion(idx)}
-                  isExpanded={expandedQuestionIndex === idx}
-                  isPreview={previewQuestionIndex === idx}
-                  setExpandedQuestionIndex={setExpandedQuestionIndex}
-                />
-              ),
-            )}
-            <Button
-              mt="xl"
-              onClick={addQuestion}
-              radius="md"
-              variant="default"
-              leftIcon={<Icon name="plus" width={18} />}>
-              Add Question
-            </Button>
-          </Card>
+          <QuestionCard
+            activeCategoryName={activeCategoryName}
+            questions={(fields[activeCategoryIndex] as any)?.questions || []}
+            activeCategoryIndex={activeCategoryIndex}
+            activeCategoryId={fields[activeCategoryIndex]?.id}
+            activeQuestionIndex={activeQuestionIndex}
+            expandedQuestionIndex={expandedQuestionIndex}
+            previewQuestionIndex={previewQuestionIndex}
+            control={control}
+            setActiveQuestionIndex={setActiveQuestionIndex}
+            isValidQuestion={isValidQuestion}
+            setPreviewQuestionIndex={setPreviewQuestionIndex}
+            quizId={quizId}
+            setExpandedQuestionIndex={setExpandedQuestionIndex}
+          />
         </Grid.Col>
       </Grid>
       <Grid columns={24} className={styles.btnCompleteQuiz}>

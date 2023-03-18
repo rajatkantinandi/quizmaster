@@ -16,18 +16,18 @@
   flex-direction: column;
 }
 
-.isAttempted[class*='checkbox'].correct label {
-  background-color: var(--correct-color) !important;
+.isAttempted.correct {
+  background-color: #79d389;
+  border-radius: 3px;
+  margin-left: -10px;
+  padding: 5px 10px;
 }
 
-.isAttempted[class*='checkbox'].inCorrect label {
-  background-color: var(--incorrect-color) !important;
-}
-
-.isPreview[class*='checkbox'] label,
-.isAttempted[class*='checkbox'].correct label,
-.isAttempted[class*='checkbox'].inCorrect label {
-  opacity: 1 !important;
+.isAttempted.inCorrect {
+  padding: 5px 10px;
+  background-color: #fb8585 !important;
+  border-radius: 3px;
+  margin-left: -10px;
 }
 
 .correctAns {

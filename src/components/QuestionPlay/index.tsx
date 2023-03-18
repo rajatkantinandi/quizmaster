@@ -1,135 +1,98 @@
-import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import { Button, Divider } from 'semantic-ui-react';
+import { Title, Card, Text, Group, Box, Button } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import Markdown from '../Markdown';
-import Option from './Option';
-import styles from './styles.module.css';
+import { useForm } from 'react-hook-form';
+import WithoutOptions from './WithoutOptions';
+import WithOptions from './WithOptions';
 
 interface Props {
   submitResponse: Function;
-  onClose: Function;
-  isPreview?: boolean;
-  isQuestionSaved?: boolean;
-  pauseTimer?: Function;
-  selectedOptionId: number | null | undefined | string;
+  setIsTimerRunning: Function;
+  continueGame: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  selectedOptionId: number | null | string;
   selectedQuestion: {
     questionId?: string;
     text: string;
     options: IOption[];
+    points: number;
+    questionNum?: number;
   };
-  isWithoutOptions: boolean;
   isAttempted: boolean;
+  isTimerRunning: boolean;
+  winner: string;
 }
 
 export default function QuestionPlay({
   submitResponse,
-  onClose,
-  isPreview = false,
-  isQuestionSaved = true,
-  pauseTimer,
+  setIsTimerRunning,
   selectedOptionId,
   selectedQuestion,
-  isWithoutOptions,
   isAttempted,
+  isTimerRunning,
+  winner,
+  continueGame,
 }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState('');
-  const [isAnswerRevealed, setIsAnswerRevealed] = useState(isPreview);
-  const { options, questionId, text } = selectedQuestion;
+  const [selectedChoice, setSelectedChoice] = useState(selectedOptionId);
+  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
+  const { options, text, points } = selectedQuestion;
+  const isWithoutOptions = options.length === 1;
+  const { handleSubmit } = useForm();
 
   useEffect(() => {
-    if (isAttempted && !isPreview) {
+    if (isAttempted) {
       // reveal answer when question is attempted due to timeout
       setIsAnswerRevealed(true);
     }
-  }, [isAttempted, isPreview]);
+  }, [isAttempted]);
 
   useEffect(() => {
-    setIsAnswerRevealed(isPreview);
-  }, [questionId, isPreview]);
-
-  function handleSubmit(ev: React.FormEvent) {
-    ev.preventDefault();
-
-    // submit response or save question on clicking submit or save button
-    submitResponse(selectedChoice);
-  }
+    setSelectedChoice(selectedOptionId);
+  }, [selectedOptionId]);
 
   return (
-    <form className={styles.container} onSubmit={handleSubmit}>
-      <Markdown>{text}</Markdown>
-      <Divider />
-      <div className="flex flexWrap">
-        {isWithoutOptions
-          ? // Show correct answer for question without options when answer is revealed
-            isAnswerRevealed && (
-              <div className={styles.correctAns}>
-                <div className={styles.heading}>Correct answer</div>
-                <Markdown>{options[0].text}</Markdown>
-              </div>
-            )
-          : options.map((option) => (
-              <Option
-                optionId={option.optionId}
-                checked={selectedChoice === option.optionId}
-                onChange={(value: string) => setSelectedChoice(value)}
-                optionText={option.text}
-                key={option.optionId}
-                className={classNames({
-                  [styles.isAttempted]: isAttempted,
-                  [styles.correct]: option.isCorrect && selectedOptionId === option.optionId,
-                  [styles.inCorrect]: !option.isCorrect && selectedOptionId === option.optionId,
-                  [styles.isPreview]: isPreview,
-                })}
-                disabled={isAttempted}
-              />
-            ))}
-      </div>
-      {/* show reveal answer button for question without options in non preview mode when playing */}
-      {isWithoutOptions && !isPreview && !isAnswerRevealed && (
-        <Button
-          type="button"
-          color="blue"
-          onClick={() => {
-            setIsAnswerRevealed(true);
-
-            // pause timer when the answer is revealed
-            if (pauseTimer) {
-              pauseTimer();
-            }
-          }}>
-          Reveal answer
-        </Button>
-      )}
-      <Divider />
-      {isAttempted && (!isPreview || isQuestionSaved) ? (
-        <Button size="large" onClick={() => onClose()} type="button" color="blue">
-          Close
-        </Button>
-      ) : isWithoutOptions && !isPreview ? (
-        // Show correct & incorrect button in non preview mode when playing
-        // When answer is revealed by quiz host show correct or incorrect button, clicking on which will add points accordingly
-        isAnswerRevealed && (
-          <div className="flex">
-            <Button type="button" size="large" className="fullWidth" color="red" onClick={() => submitResponse(null)}>
-              Incorrect
-            </Button>
-            <Button
-              type="button"
-              size="large"
-              className="ml-lg fullWidth"
-              color="green"
-              onClick={() => submitResponse(options[0].optionId)}>
-              Correct
-            </Button>
-          </div>
-        )
-      ) : (
-        // for preview mode show save button & while playing show submit button for mcq
-        <Button type="submit" size="large" color="green">
-          {isPreview ? 'Save' : 'Submit'}
-        </Button>
-      )}
-    </form>
+    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
+      <form
+        onSubmit={handleSubmit(() => submitResponse(selectedChoice === '' ? null : parseInt(selectedChoice as any)))}>
+        <Group>
+          <Title mr="xl" order={4}>
+            Question {selectedQuestion.questionNum}
+          </Title>
+          <Text weight="bold" component="span" size="sm">
+            Points: {points}
+          </Text>
+        </Group>
+        <Box my="xs">
+          <Markdown>{text}</Markdown>
+        </Box>
+        {isWithoutOptions ? (
+          <WithoutOptions
+            isAnswerRevealed={isAnswerRevealed}
+            setIsTimerRunning={setIsTimerRunning}
+            options={options}
+            setIsAnswerRevealed={setIsAnswerRevealed}
+            setSelectedChoice={setSelectedChoice}
+            isAttempted={isAttempted}
+          />
+        ) : (
+          <WithOptions
+            options={options}
+            setSelectedChoice={setSelectedChoice}
+            selectedOptionId={selectedOptionId}
+            selectedChoice={selectedChoice}
+            isAttempted={isAttempted}
+            isTimerRunning={isTimerRunning}
+          />
+        )}
+        {isAttempted && !winner && (
+          <Button mt="xl" variant="default" radius="md" onClick={continueGame}>
+            Continue
+          </Button>
+        )}
+        <button className="displayNone" id="btnSubmitResponse" type="submit">
+          Submit
+        </button>
+      </form>
+    </Card>
   );
 }

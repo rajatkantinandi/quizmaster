@@ -17,6 +17,8 @@ function Modal() {
     size = 'lg',
     isAlert = false,
     doNotShowAgainKey,
+    closeOnOkClick = true,
+    disableOkButton = false,
   } = modal || {};
 
   function hideModal() {
@@ -72,6 +74,7 @@ function Modal() {
             ref={okRef}
             variant="filled"
             radius="md"
+            disabled={disableOkButton}
             onClick={() => {
               if (okCallback) {
                 okCallback();
@@ -80,7 +83,9 @@ function Modal() {
                 localStorage.setItem('DoNotShow' + doNotShowAgainKey, 'true');
               }
 
-              hideModal();
+              if (closeOnOkClick) {
+                hideModal();
+              }
             }}>
             {okText}
           </Button>

@@ -16,6 +16,17 @@ export const getAppStore = (set: Function, get: Function) => ({
       'showModal',
     );
   },
+  enableOkButton: () => {
+    set(
+      (state: AppState) => {
+        if (state.modal) {
+          state.modal.disableOkButton = false;
+        }
+      },
+      false,
+      'showModal',
+    );
+  },
   showAlert: (alertState: AlertState | null) => {
     set(
       (state: AppState) => {
@@ -62,6 +73,8 @@ export interface ModalState {
   size?: 'mini' | 'tiny' | 'small' | 'large' | 'fullscreen';
   isAlert?: boolean;
   doNotShowAgainKey?: string;
+  closeOnOkClick?: boolean;
+  disableOkButton?: boolean;
 }
 
 export interface AlertState {
@@ -85,6 +98,7 @@ export interface AppState {
   alert: AlertState | null;
   quizzesSelector: QuizzesSelectorState;
   showAlert: (data: AlertState | null) => void;
+  enableOkButton: Function;
   showModal: Function;
   setQuizzesSelectorState: (data: QuizzesSelectorState) => void;
   toggleSelectedQuizzes: (quizId: number) => void;

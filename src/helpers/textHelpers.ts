@@ -3,3 +3,9 @@ export const plural = (count: number, singular: string, pluralValue: string): st
 };
 
 export const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
+export const getValidValuesFromColumns = (string) =>
+  string
+    .split('\n')
+    .map((x) => x.trim())
+    .filter((x) => !!x);

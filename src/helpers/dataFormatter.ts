@@ -58,6 +58,8 @@ const gameSchema = {
     teamId: 'TeamId',
     name: 'TeamName',
     score: 'Score',
+    avatarColor: 'AvatarColor',
+    players: 'Players',
     selectedOptions: {
       _meta: {
         dataKey: 'teamQuestionMapId',
