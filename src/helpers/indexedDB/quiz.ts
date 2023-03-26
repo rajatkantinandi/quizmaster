@@ -139,13 +139,16 @@ export const getGame = async (gameId: number) => {
 
 export const updateGame = async (gameData: GameData) => {
   const game: any = await gamesC.findOne({ gameId: gameData.gameId });
+
   game.isComplete = gameData.isComplete;
   game.winnerTeamId = gameData.winnerTeamId;
   game.currentTeamId = gameData.nextTeamId;
+
   const { currentTeam } = gameData;
 
   if (currentTeam) {
     const index = game.teams.findIndex((team) => team.teamId === currentTeam.teamId);
+
     game.teams[index].score = currentTeam.score;
     game.teams[index].selectedOptions.push({
       selectedOptionId: currentTeam.selectedOptionId,
