@@ -27,6 +27,17 @@ export const getAppStore = (set: Function, get: Function) => ({
       'showModal',
     );
   },
+  disableOkButton: () => {
+    set(
+      (state: AppState) => {
+        if (state.modal) {
+          state.modal.disableOkButton = true;
+        }
+      },
+      false,
+      'showModal',
+    );
+  },
   showAlert: (alertState: AlertState | null) => {
     set(
       (state: AppState) => {
@@ -99,6 +110,7 @@ export interface AppState {
   quizzesSelector: QuizzesSelectorState;
   showAlert: (data: AlertState | null) => void;
   enableOkButton: Function;
+  disableOkButton: Function;
   showModal: Function;
   setQuizzesSelectorState: (data: QuizzesSelectorState) => void;
   toggleSelectedQuizzes: (quizId: number) => void;

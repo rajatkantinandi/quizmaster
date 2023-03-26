@@ -24,7 +24,7 @@ export default function Scorecard({ teams, currentTeamId, winner }) {
               value={`${team.teamId}`}>
               <Accordion.Control icon={<TeamAvatar team={team} />}>
                 <Group position="apart" key={team.teamId}>
-                  <Text>{team.name}</Text>
+                  <Text color={team.teamId === currentTeamId ? 'white' : ''}>{team.name}</Text>
                   <div>
                     {team.score || 0}
                     {team.teamId && winner.includes(`${team.teamId}`) && <span title="winner"> 👑</span>}
@@ -55,7 +55,9 @@ export default function Scorecard({ teams, currentTeamId, winner }) {
             })}>
             <Group>
               <TeamAvatar team={t} />
-              <Text size="lg">{t.name}</Text>
+              <Text size="lg" color={t.teamId === currentTeamId ? 'white' : ''}>
+                {t.name}
+              </Text>
             </Group>
             <div>
               {t.score}

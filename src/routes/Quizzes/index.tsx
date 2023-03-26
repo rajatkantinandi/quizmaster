@@ -25,6 +25,7 @@ export default function Quizzes({ userName }) {
     showModal,
     showAlert,
     sortQuizzes,
+    getInCompletedGame,
     ...rest
   } = useStore();
   const quizzes = rest.searchQuery ? rest.searchResults : rest.quizzes;
@@ -154,6 +155,16 @@ export default function Quizzes({ userName }) {
     }
   }
 
+  async function handlePlayGame(quizId) {
+    const gameId = await getInCompletedGame(quizId);
+
+    if (gameId) {
+      navigate(`/play-game/${userName}/${gameId}`);
+    } else {
+      navigate(`/configure-game/${userName}/${quizId}`);
+    }
+  }
+
   return (
     <>
       <Helmet>
@@ -278,7 +289,7 @@ export default function Quizzes({ userName }) {
                         radius="md"
                         className={styles.playCardButton}
                         leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
-                        onClick={() => navigate(`/configure-game/${userName}/${quiz.quizId}`)}>
+                        onClick={() => handlePlayGame(quiz.quizId)}>
                         Play
                       </Button>
                     )}

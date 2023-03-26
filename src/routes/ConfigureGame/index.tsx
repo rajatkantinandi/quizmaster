@@ -106,7 +106,9 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
     });
   }
 
-  const shouldBeMoreThanZero = (value: number) => value > 0 || 'Should be more than 0';
+  const shouldBeMoreThanZero = (value: number) => {
+    return value === null || value > 0 || 'Should be more than 0';
+  };
 
   return (
     <Grid columns={12}>
@@ -225,14 +227,9 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               name="timeLimit"
               id="timeLimit"
               disabled={timeLimit === null}
-              rules={
-                timeLimit === null
-                  ? {}
-                  : {
-                      required: 'Please enter time limit',
-                      validate: shouldBeMoreThanZero,
-                    }
-              }
+              rules={{
+                validate: shouldBeMoreThanZero,
+              }}
               errorMessage={errors.timeLimit?.message || ''}
               type="number"
               size="md"
@@ -261,14 +258,9 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               name="selectionTimeLimit"
               id="selectionTimeLimit"
               disabled={selectionTimeLimit === null}
-              rules={
-                selectionTimeLimit === null
-                  ? {}
-                  : {
-                      required: 'Please enter time limit',
-                      validate: shouldBeMoreThanZero,
-                    }
-              }
+              rules={{
+                validate: shouldBeMoreThanZero,
+              }}
               errorMessage={errors.selectionTimeLimit?.message || ''}
               type="number"
               size="md"

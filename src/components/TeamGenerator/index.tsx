@@ -23,7 +23,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const [isEditingTeams, setIsEditingTeams] = useState(!!rest.players);
   const [shouldShowTeams, setShouldShowTeams] = useState(!!rest.players);
   const [players, setPlayers] = useState<string[]>(rest.teams.map((x) => x.players));
-  const { showAlert, enableOkButton } = useStore();
+  const { showAlert, enableOkButton, disableOkButton } = useStore();
   const {
     register,
     handleSubmit,
@@ -115,6 +115,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
           if (shouldShowTeams) {
             setShouldShowTeams(false);
             setIsEditingTeams(false);
+            disableOkButton();
           }
         }}>
         <Text mt="lg" mb="md">

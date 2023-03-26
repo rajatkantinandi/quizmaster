@@ -20,7 +20,11 @@
 }
 
 .team.currentTeam {
-  background: rgba(134, 142, 150, 0.5);
+  background: rgb(34, 139, 230);
+}
+
+.team.currentTeam div {
+  color: white;
 }
 
 .team {

@@ -99,12 +99,18 @@ export default function PlayQuiz({ gameId }) {
     setWinner(winnerIds);
 
     if (winners.length > 1) {
-      showModal({ title: 'Match drawn!', body: 'Well played! It is a draw!', okCallback: callback });
+      showModal({
+        title: 'Match drawn!',
+        body: 'Well played! It is a draw!',
+        okCallback: callback,
+        cancelText: '',
+      });
     } else if (winners[0]) {
       showModal({
         title: `Congrats ${winners[0].name}!`,
         body: `Team '${winners[0].name}' has won the game with ${winners[0].score} points.`,
         okCallback: callback,
+        cancelText: '',
       });
     }
 
@@ -262,7 +268,7 @@ export default function PlayQuiz({ gameId }) {
         </Title>
       )}
       <PanelGroup autoSaveId="playQuizPanel" direction="horizontal">
-        <Panel defaultSize={20} minSize={20}>
+        <Panel defaultSize={20} minSize={20} style={{ minWidth: '290px' }}>
           <QuestionsList
             categories={quizInfo.categories}
             selectedOptionsData={selectedOptionsData}
@@ -320,7 +326,7 @@ export default function PlayQuiz({ gameId }) {
           )}
         </Panel>
         <ResizeHandle />
-        <Panel defaultSize={20} minSize={20}>
+        <Panel defaultSize={20} minSize={20} style={{ minWidth: '320px' }}>
           {shouldShowTimer() && (
             <Timer
               duration={showQuestionTimer ? timeLimit : selectionTimeLimit}

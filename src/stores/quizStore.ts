@@ -18,6 +18,7 @@ import {
   fixQuizData,
   deleteQuizzes,
   publishQuizzes,
+  getInCompletedGameByQuizId,
 } from '../helpers';
 import { GameData, Quiz } from '../types';
 
@@ -132,6 +133,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   addGame: async (data) => {
     if (isGuestUser()) {
+      data.isComplete = false;
       const response = await addGame(data);
 
       return response;
@@ -214,6 +216,17 @@ export const getQuizStore = (set: Function, get: Function) => ({
     set((state: QuizState) => {
       state.quizzes = getSortedQuizzes(sortBy, state.quizzes);
     });
+  },
+  getInCompletedGame: async (quizId) => {
+    if (isGuestUser()) {
+      const response = await getInCompletedGameByQuizId(quizId);
+
+      return response;
+    } else {
+      const response = await getReq('game/getincompletedgamebyquizid', { quizId });
+
+      return response;
+    }
   },
 });
 

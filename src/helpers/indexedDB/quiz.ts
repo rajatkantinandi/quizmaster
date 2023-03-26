@@ -175,3 +175,9 @@ export const saveGame = async (gameData) => {
     await gamesC.insert(restData);
   }
 };
+
+export const getInCompletedGameByQuizId = async (quizId) => {
+  const data: any = await gamesC.findOne({ quizId, isComplete: false });
+
+  return data?.gameId || null;
+};
