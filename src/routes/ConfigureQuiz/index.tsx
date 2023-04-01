@@ -346,6 +346,14 @@ export default function ConfigureQuiz({
             setPreviewQuestionIndex={setPreviewQuestionIndex}
             quizId={quizId}
             setExpandedQuestionIndex={setExpandedQuestionIndex}
+            updateQuizData={() =>
+              createOrUpdateQuiz({
+                categories,
+                quizId,
+                name: quizName,
+                isDraft: isDraftRef.current,
+              })
+            }
           />
         </Grid.Col>
       </Grid>

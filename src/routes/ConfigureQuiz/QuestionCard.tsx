@@ -23,6 +23,7 @@ export default function QuestionCard({
   setPreviewQuestionIndex,
   setExpandedQuestionIndex,
   quizId,
+  updateQuizData,
 }) {
   const { append, remove, update } = useFieldArray({
     control,
@@ -90,7 +91,8 @@ export default function QuestionCard({
     update(index, data);
   }
 
-  function handleSaveQuestion() {
+  async function handleSaveQuestion() {
+    await updateQuizData();
     setActiveQuestionIndex(null);
     setExpandedQuestionIndex(null);
     setPreviewQuestionIndex(null);
