@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styles from './styles.module.css';
 import { Title, Card, Button } from '@mantine/core';
 import Icon from '../../components/Icon';
@@ -24,23 +24,28 @@ export default function QuestionCard({
   setExpandedQuestionIndex,
   quizId,
 }) {
-  const { fields, append, remove, replace, update } = useFieldArray({
+  const { append, remove, update } = useFieldArray({
     control,
     name: `categories[${activeCategoryIndex}].questions`,
   });
   const { getQuiz, showAlert, showModal } = useStore();
+
   const addQuestion = () => {
+    if (!activeCategoryName) {
+      showAlert({
+        message: 'Please enter a category name before adding a new question!',
+        type: 'warning',
+      });
+      return;
+    }
+
     const question = getEmptyQuestion(activeCategoryId);
     append(question);
-    setActiveQuestionIndex(fields.length);
+    setActiveQuestionIndex(questions.length);
   };
 
-  useEffect(() => {
-    replace(questions);
-  }, [activeCategoryIndex]);
-
   function handleDeleteQuestion(index: number) {
-    const question = fields[index];
+    const question = questions[index];
 
     if (isValidQuestion(question)) {
       showModal({
@@ -101,7 +106,7 @@ export default function QuestionCard({
       <Title order={5} mb="xl">
         {activeCategoryName || 'Unnamed Category'}
       </Title>
-      {fields.map((item: any, idx) =>
+      {questions.map((item: any, idx) =>
         activeQuestionIndex === idx ? (
           <QuestionEdit
             questionNum={idx + 1}
