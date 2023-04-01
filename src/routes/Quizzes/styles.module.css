@@ -1,0 +1,89 @@
+.quizCardWrapper {
+  width: 23%;
+  height: 348px;
+  padding: 10px 12px;
+  position: relative;
+}
+
+.cardSelectBtn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.pageTitleWrapper {
+  padding: 0 12px;
+  width: 95%;
+}
+
+@media only screen and (max-width: 1240px) {
+  .quizCardWrapper {
+    width: 32%;
+  }
+
+  .pageTitleWrapper {
+    width: 98.5%;
+  }
+}
+
+@media only screen and (max-width: 850px) {
+  .quizCardWrapper {
+    width: 42%;
+  }
+
+  .pageTitleWrapper {
+    width: 86%;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .quizCardWrapper {
+    width: 60%;
+  }
+}
+
+.quizCardWrapper>div {
+  height: inherit;
+}
+
+.cardButton {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  width: calc(100% - 40px);
+}
+
+.playCardButton {
+  width: calc(50% - 10px);
+}
+
+.truncate2Lines {
+  display: -webkit-box;
+  max-width: 200px;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.notingHere {
+  margin: 10px auto;
+}
+
+.tileIcon {
+  opacity: 0.5;
+}
+
+.deleteButton {
+  background-color: #c10606 !important;
+}
+
+.publishQuiz {
+  background-color: #2e7d32 !important;
+}
+
+.sort {
+  max-width: 190px;
+}

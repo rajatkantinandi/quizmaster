@@ -4,6 +4,7 @@ export interface Question {
   options: Option[];
   points: number;
   categoryId: string | number;
+  questionNum?: number;
 }
 
 export interface Option {
@@ -21,8 +22,7 @@ export interface Category {
 export interface QuizInfo {
   quizId: string | number;
   name?: string;
-  categoryIds: (string | number)[];
-  numberOfQuestionsPerCategory?: number;
+  categories: Category[];
 }
 
 export interface User {
@@ -34,10 +34,13 @@ export interface User {
 export interface Quiz {
   name: string;
   categories: Category[];
-  isDraft: boolean;
+  isDraft?: boolean;
+  isPublished?: boolean;
   userName: string;
   quizId: any;
-  numberOfQuestionsPerCategory: number;
+  createDate: string;
+  updateDate: string;
+  isDeleted: boolean;
 }
 
 export interface GameInfo {
@@ -52,10 +55,12 @@ export interface GameInfo {
 }
 
 export interface Team {
-  teamId?: number | string;
+  teamId: number | string;
   name: string;
   score: number;
   selectedOptions: SelectedOptions[];
+  avatarColor: string;
+  players: string;
 }
 
 export interface SelectedOptions {

@@ -102,7 +102,9 @@ label.correctAns {
 }
 
 .markdownImg {
-  background-color: var(--card-background);
-  height: 14px;
-  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.pointsInput {
+  width: 75px;
 }

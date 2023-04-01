@@ -15,40 +15,64 @@ import {
   updateGame,
   unDraftQuiz,
   isGuestUser,
+  fixQuizData,
+  deleteQuizzes,
+  publishQuizzes,
+  getInCompletedGameByQuizId,
 } from '../helpers';
-import { GameData } from '../types';
+import { GameData, Quiz } from '../types';
 
 export const getQuizStore = (set: Function, get: Function) => ({
+  quizzes: [],
+  searchResults: [],
+  searchQuery: '',
   getQuizzes: async () => {
     if (isGuestUser()) {
-      const response = await getQuizzes(-1);
+      const response: any = await getQuizzes(-1);
+      const sortedData = response.sort(
+        (quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime(),
+      );
 
-      return response;
+      set((state: QuizState) => {
+        state.quizzes = sortedData;
+      });
+
+      return sortedData;
     } else {
       const response = await getReq('quiz/userQuizzes');
       const data = formatQuizzesData(response);
-      await saveQuizzes(data);
+      const sortedData = data.sort(
+        (quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime(),
+      );
 
-      return data;
+      await saveQuizzes(sortedData);
+      set((state: QuizState) => {
+        state.quizzes = sortedData;
+      });
+
+      return sortedData;
     }
   },
-  getQuiz: async (quizId: number) => {
-    try {
-      const response = await getQuiz(quizId);
+  getQuiz: async (quizId: number | string) => {
+    const quizIdNum = parseInt(quizId.toString());
 
-      return response;
-    } catch (err) {
-      const response = await getReq('quiz/data', { quizId });
-      const data = formatQuizzesData(response)[0];
-      await saveQuiz(data);
+    if (isGuestUser()) {
+      return getQuizFromLocalDB(quizIdNum);
+    } else {
+      try {
+        const response = await getReq('quiz/data', { quizId: quizIdNum });
+        const data = formatQuizzesData(response)[0];
 
-      return data;
+        await saveQuiz(data);
+        return fixQuizData(data);
+      } catch (err) {
+        return getQuizFromLocalDB(quizIdNum);
+      }
     }
   },
   createOrUpdateQuiz: async (data) => {
     if (isGuestUser()) {
-      data.userId = -1;
-      const response = await saveQuiz(data);
+      const response: any = await saveQuizInLocalDB(data);
 
       return response;
     } else {
@@ -58,18 +82,32 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return response;
     }
   },
+  updateQuizName: async (data) => {
+    if (isGuestUser()) {
+      const response: any = await saveQuizInLocalDB(data);
+      return response;
+    } else {
+      await post('quiz/edit', data);
+      data.updateDate = new Date().toISOString();
+      await saveQuiz(data);
+
+      return data;
+    }
+  },
   sendBeaconPost: async (data) => {
     if (isGuestUser()) {
-      data.userId = -1;
-      const response = await saveQuiz(data);
+      const response: any = await saveQuizInLocalDB(data);
 
       return response;
     } else {
       if ('sendBeacon' in navigator) {
         await postBeaconReq('quiz/createOrUpdate', data);
+
+        data.updateDate = new Date().toISOString();
         await saveQuiz(data);
       } else {
         const response = await post('quiz/createOrUpdate', data);
+        await saveQuiz(response);
 
         return response;
       }
@@ -95,11 +133,16 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   addGame: async (data) => {
     if (isGuestUser()) {
+      data.isComplete = false;
       const response = await addGame(data);
 
       return response;
     } else {
       const response = await post('game/add', data);
+      response.teams.forEach((x) => {
+        x.selectedOptions = [];
+      });
+
       await addGame(response);
 
       return response;
@@ -137,6 +180,89 @@ export const getQuizStore = (set: Function, get: Function) => ({
 
     await unDraftQuiz(quizId);
   },
+  searchQuiz: (queryString) => {
+    set((state: QuizState) => {
+      state.searchQuery = queryString;
+      state.searchResults = queryString ? state.quizzes.filter((quiz) => quiz.name.startsWith(queryString)) : [];
+    });
+  },
+  deleteQuizzes: async (quizIds) => {
+    if (!isGuestUser()) {
+      await post('quiz/delete', { quizIds });
+    }
+
+    await deleteQuizzes(quizIds);
+    set((state: QuizState) => {
+      state.quizzes = state.quizzes.filter((quiz) => !quizIds.includes(quiz.quizId));
+    });
+  },
+  publishQuizzes: async (quizIds) => {
+    if (!isGuestUser()) {
+      await post('quiz/publish', { quizIds });
+    }
+
+    await publishQuizzes(quizIds);
+    set((state: QuizState) => {
+      state.quizzes = state.quizzes.map((quiz) => {
+        if (quizIds.includes(quiz.quizId)) {
+          quiz.isPublished = true;
+        }
+
+        return quiz;
+      });
+    });
+  },
+  sortQuizzes: (sortBy) => {
+    set((state: QuizState) => {
+      state.quizzes = getSortedQuizzes(sortBy, state.quizzes);
+    });
+  },
+  getInCompletedGame: async (quizId) => {
+    if (isGuestUser()) {
+      const response = await getInCompletedGameByQuizId(quizId);
+
+      return response;
+    } else {
+      const response = await getReq('game/getincompletedgamebyquizid', { quizId });
+
+      return response;
+    }
+  },
 });
 
-export type QuizState = ReturnType<typeof getQuizStore>;
+function getSortedQuizzes(sortBy, data) {
+  switch (sortBy) {
+    case 'createDate':
+      return data.sort((quiz1, quiz2) => new Date(quiz2.createDate).getTime() - new Date(quiz1.createDate).getTime());
+    case 'name':
+      return data.sort((quiz1, quiz2) => quiz1.name.localeCompare(quiz2.name));
+    case 'recency':
+    default:
+      return data.sort((quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime());
+  }
+}
+
+async function getQuizFromLocalDB(quizId) {
+  const response = await getQuiz(quizId);
+
+  return fixQuizData(response);
+}
+
+async function saveQuizInLocalDB(data) {
+  data.userId = -1;
+  data.updateDate = new Date().toISOString();
+
+  if (data.quizId) {
+    data.quizId = parseInt(data.quizId.toString());
+  }
+
+  const response: any = await saveQuiz(data);
+
+  return response;
+}
+
+export interface QuizState extends Omit<Omit<ReturnType<typeof getQuizStore>, 'quizzes'>, 'searchResults'> {
+  quizzes: Quiz[];
+  searchResults: Quiz[];
+  searchQuery: string;
+}

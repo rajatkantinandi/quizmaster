@@ -1,58 +1,51 @@
 import React from 'react';
-import { Button } from 'semantic-ui-react';
-import { useNavigate } from 'react-router-dom';
 import styles from './styles.module.css';
-import Cookies from 'js-cookie';
-import { useStore } from '../../useStore';
 import { Helmet } from 'react-helmet';
+import { Grid, AppShell } from '@mantine/core';
+import LoginFormCard from '../../components/LoginFormCard';
+import SignUpFormCard from '../../components/SignUpFormCard';
+import ForgotPassword from '../../components/ForgotPassword';
+import { useParams } from 'react-router';
+import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
+import { isValidUser } from '../../helpers/authHelper';
+import Icon from '../../components/Icon';
 
 export default function HomePage() {
-  const navigate = useNavigate();
-  const { setConfirmationModal } = useStore();
+  const { viewType } = useParams();
 
-  function loginAsGuest() {
-    if (!localStorage.getItem('DoNotShowGuestAccountWarning')) {
-      showGuestLoginWarning(guestAccountLogin);
-    } else {
-      guestAccountLogin();
+  function getViewType() {
+    switch (viewType) {
+      case 'login':
+        return <LoginFormCard />;
+      case 'signup':
+        return <SignUpFormCard />;
+      case 'forgot-password':
+        return <ForgotPassword />;
+      default:
+        return <CheckAuthAndNavigate />;
     }
   }
 
-  function guestAccountLogin() {
-    Cookies.set('userName', 'guest');
-    navigate('/quizzes/guest');
-  }
-
-  function showGuestLoginWarning(okCallback: Function) {
-    setConfirmationModal({
-      title: 'Logging in as a guest',
-      body: 'Anyone will be able to access the quizzes created in a guest account.',
-      doNotShowAgainKey: 'GuestAccountWarning',
-      okText: 'Continue',
-      okCallback,
-    });
-  }
-
-  return (
+  return isValidUser ? (
+    <CheckAuthAndNavigate />
+  ) : (
     <section>
       <Helmet>
-        <title>Homepage</title>
+        <title>Homepage - Quizmaster</title>
       </Helmet>
-      <h1>Welcome to quizmaster</h1>
-      <nav className={styles.nav}>
-        <div className="flex">
-          <Button onClick={() => navigate('/login')} color="green" size="large">
-            Login
-          </Button>
-          <Button className="ml-lg" onClick={() => navigate('/signup')} color="blue" size="large">
-            Signup
-          </Button>
-        </div>
-        <div className={styles.or}>OR</div>
-        <Button onClick={loginAsGuest} color="grey" size="big">
-          Continue as a guest
-        </Button>
-      </nav>
+      <AppShell
+        styles={(theme) => ({
+          main: { backgroundColor: 'var(--qm-primary)', padding: 0 },
+        })}>
+        <Grid align="center" className={styles.loginCardWrapper}>
+          <Grid.Col span={4} offset={4}>
+            <div className="textAlignCenter">
+              <Icon color="#ffffff" name="logo" className="mb-xl" width={200} height={60} />
+            </div>
+            {getViewType()}
+          </Grid.Col>
+        </Grid>
+      </AppShell>
     </section>
   );
 }

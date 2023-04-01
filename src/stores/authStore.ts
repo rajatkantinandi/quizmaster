@@ -1,4 +1,5 @@
-import { postRedirect, post } from '../helpers';
+import { postRedirect, post, isGuestUser } from '../helpers';
+import Cookies from 'js-cookie';
 
 export const getAuthStore = (set: Function, get: Function) => ({
   userData: {
@@ -6,6 +7,7 @@ export const getAuthStore = (set: Function, get: Function) => ({
     userId: null,
     emailId: '',
     token: '',
+    name: '',
   },
   signUp: async (data) => {
     await postRedirect('user/signup', data);
@@ -14,7 +16,14 @@ export const getAuthStore = (set: Function, get: Function) => ({
     await postRedirect('user/login', data);
   },
   logout: async () => {
-    await postRedirect('user/logout', { userId: get().userData.userId });
+    if (isGuestUser()) {
+      Cookies.remove('userToken');
+      Cookies.remove('userName');
+
+      window.location.href = '/';
+    } else {
+      await postRedirect('user/logout', { userId: get().userData.userId });
+    }
   },
   sendForgotPasswordLink: async (data) => {
     await post('user/forgotpassword', data);
@@ -27,5 +36,6 @@ export interface AuthState extends Omit<ReturnType<typeof getAuthStore>, 'userDa
     userId: number;
     emailId: string;
     token: string;
+    name: string;
   };
 }

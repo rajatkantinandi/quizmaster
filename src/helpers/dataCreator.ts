@@ -1,39 +1,38 @@
-import { nanoid } from 'nanoid';
+
 import { DEFAULT_NEW_QUESTION_POINTS } from '../constants';
 import { Category, Option } from '../types';
+import { getRandomColor } from './common';
 
 export const getEmptyQuestion = (categoryId: number | string) => ({
-  questionId: nanoid(),
+  questionId: parseInt(`${Math.random() * 10000}`),
   text: '',
-  options: [] as Option[],
   points: DEFAULT_NEW_QUESTION_POINTS,
+  options: getEmptyOptions(2) as Option[],
   categoryId,
 });
 
-export const getEmptyCategory = (numberOfQuestionsPerCategory: number): Category => {
-  const categoryId = nanoid();
-
-  return {
-    categoryId,
-    categoryName: '',
-    questions: Array(numberOfQuestionsPerCategory)
-      .fill(1)
-      .map((val, idx) => getEmptyQuestion(categoryId)),
-  };
-};
+export const getEmptyCategory = (): Category => ({
+  categoryId: parseInt(`${Math.random() * 10000}`),
+  categoryName: '',
+  questions: [],
+});
 
 export const getEmptyTeam = () => ({
   name: '',
-  teamId: nanoid(),
+  teamId: parseInt(`${Math.random() * 10000}`),
   score: 0,
   selectedOptions: [],
+  players: '',
+  avatarColor: getRandomColor(),
 });
 
 export const getEmptyOptions = (count: number) =>
   Array(count)
     .fill(1)
-    .map((val, idx) => ({
-      optionId: nanoid(),
-      text: '',
-      isCorrect: false,
-    }));
+    .map((val, idx) => getEmptyOption());
+
+export const getEmptyOption = () => ({
+  optionId: parseInt(`${Math.random() * 10000}`),
+  text: '',
+  isCorrect: false,
+});

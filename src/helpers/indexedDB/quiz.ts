@@ -12,36 +12,28 @@ export const generateRandomNumber = () => parseInt(`${Math.random() * 10000}`);
 
 export const saveQuiz = async (data: QuizParams) => {
   data.quizId = data.quizId || generateRandomNumber();
-  let existing = (await quizzesC.findOne({ quizId: data.quizId })) as Quiz;
+  const existing = (await quizzesC.findOne({ quizId: data.quizId })) as Quiz;
 
   if (existing) {
-    data.categories = data.categories.map((category) => {
-      category.categoryId = category.categoryId || generateRandomNumber();
-      category.questions = category.questions.map((q) => {
-        q.questionId = q.questionId || generateRandomNumber();
-        q.categoryId = category.categoryId;
-
-        return q;
-      });
-
-      const existingCategory = existing.categories.find((x) => x.categoryId === category.categoryId);
-
-      if (existingCategory) {
-        category.questions = category.questions.map((q) => {
-          const existingQuestion = existingCategory.questions.find((x) => x.questionId === q.questionId);
-
-          return existingQuestion ? { ...existingQuestion, points: q.points } : q;
-        });
-      }
-
-      return category;
-    });
     await quizzesC.update({ quizId: data.quizId }, data);
   } else {
     await quizzesC.insert(data);
   }
 
   return data;
+};
+
+export const deleteQuizzes = async (quizIds: number[]) => {
+  await quizzesC.remove({ quizId: { $in: quizIds } });
+};
+
+export const publishQuizzes = async (quizIds: number[]) => {
+  const existing = await quizzesC.find({ quizId: { $in: quizIds } });
+
+  existing.forEach(async (quiz) => {
+    quiz.isPublished = true;
+    await quizzesC.update({ quizId: quiz.quizId }, quiz);
+  });
 };
 
 export const unDraftQuiz = async (quizId: string | number) => {
@@ -70,17 +62,7 @@ export const saveQuestion = async (questionData: Question, quizId: string | numb
     quiz.categories[categoryIndex].questions.push(questionData);
   }
 
-  await quizzesC.update(
-    { quizId },
-    {
-      categories: quiz.categories,
-      isDraft: quiz.isDraft,
-      name: quiz.name,
-      numberOfQuestionsPerCategory: quiz.numberOfQuestionsPerCategory,
-      quizId: quiz.quizId,
-      userId: quiz.userId,
-    },
-  );
+  await quizzesC.update({ quizId }, quiz);
 };
 
 export const getQuizzes = async (userId: number): Promise<Object[]> => {
@@ -91,6 +73,7 @@ export const getQuizzes = async (userId: number): Promise<Object[]> => {
 
 export const saveQuizzes = async (quizzes: Quiz[]) => {
   if (quizzes.length > 0) {
+    await quizzesC.remove({ quizId: { $in: quizzes.map((qz) => qz.quizId) } });
     await quizzesC.insert(quizzes);
   }
 };
@@ -156,13 +139,16 @@ export const getGame = async (gameId: number) => {
 
 export const updateGame = async (gameData: GameData) => {
   const game: any = await gamesC.findOne({ gameId: gameData.gameId });
+
   game.isComplete = gameData.isComplete;
   game.winnerTeamId = gameData.winnerTeamId;
   game.currentTeamId = gameData.nextTeamId;
+
   const { currentTeam } = gameData;
 
   if (currentTeam) {
     const index = game.teams.findIndex((team) => team.teamId === currentTeam.teamId);
+
     game.teams[index].score = currentTeam.score;
     game.teams[index].selectedOptions.push({
       selectedOptionId: currentTeam.selectedOptionId,
@@ -191,4 +177,10 @@ export const saveGame = async (gameData) => {
   } else {
     await gamesC.insert(restData);
   }
+};
+
+export const getInCompletedGameByQuizId = async (quizId) => {
+  const data: any = await gamesC.findOne({ quizId, isComplete: false });
+
+  return data?.gameId || null;
 };

@@ -1,6 +1,5 @@
-import { getEmptyQuestion, getEmptyCategory } from './dataCreator';
+import { getEmptyCategory, getEmptyOptions } from './dataCreator';
 import { Category } from '../types';
-import { MIN_NUM_OF_CATEGORIES } from '../constants';
 
 const quizDataSchema = {
   _meta: {
@@ -10,7 +9,9 @@ const quizDataSchema = {
   quizId: 'QuizId',
   name: 'Name',
   isDraft: 'IsDraft',
-  numberOfQuestionsPerCategory: 'NumberOfQuestionsPerCategory',
+  createDate: 'CreateDate',
+  isPublished: 'IsPublished',
+  updateDate: 'UpdateDate',
   categories: {
     _meta: {
       dataKey: 'categoryId',
@@ -57,6 +58,8 @@ const gameSchema = {
     teamId: 'TeamId',
     name: 'TeamName',
     score: 'Score',
+    avatarColor: 'AvatarColor',
+    players: 'Players',
     selectedOptions: {
       _meta: {
         dataKey: 'teamQuestionMapId',
@@ -165,21 +168,25 @@ export const formatCategoryInfo = (categories: Category[], categoryIds: (string 
   }, {} as { [key: string]: Category });
 };
 
-export const insertCategoryAndQuestionsData = (quiz) => {
+export const fixQuizData = (data) => {
   // Need atleast 2 categories to show when user refreshes the page after adding less than 2 category
-  if (quiz.categories.length < MIN_NUM_OF_CATEGORIES) {
-    quiz.categories = [0, 1].map(
-      (index) => quiz.categories[index] || getEmptyCategory(quiz.numberOfQuestionsPerCategory),
-    );
+  if (data.categories.length === 0) {
+    data.categories = [getEmptyCategory()];
   }
 
-  quiz.categories.forEach((category) => {
-    if (category.questions.length < quiz.numberOfQuestionsPerCategory) {
-      category.questions = [...Array(quiz.numberOfQuestionsPerCategory).keys()].map(
-        (index) => category.questions[index] || getEmptyQuestion(category.categoryId),
-      );
+  data.categories.forEach((category) => {
+    if (category.questions.length > 0) {
+      category.questions.forEach((question) => {
+        const { options } = question;
+
+        if (options.length === 0) {
+          question.options = getEmptyOptions(2);
+        } else if (!(options.length === 1 && options[0].isCorrect)) {
+          question.options.concat(getEmptyOptions(1));
+        }
+      });
     }
   });
 
-  return quiz;
+  return data;
 };
