@@ -23,6 +23,8 @@ export default function CollapsedPreview({
   deleteQuestion,
   setExpandedQuestionIndex,
 }: Props) {
+  const isWithoutOptions = question.options.length === 1;
+
   return (
     <>
       <Group position="apart">
@@ -43,7 +45,7 @@ export default function CollapsedPreview({
         </Group>
         <Group>
           {!isPreview && (
-            <Button variant="light" radius="xl" compact color="rgb(193, 6, 6)" onClick={deleteQuestion}>
+            <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
               Delete
             </Button>
           )}
@@ -57,7 +59,7 @@ export default function CollapsedPreview({
       </Group>
       <List className="flex" ml="lg">
         <List.Item mr="xl">{question.points} points</List.Item>
-        <List.Item>{question.options.length === 1 ? 'Without options' : 'With Options'}</List.Item>
+        <List.Item>{isWithoutOptions ? 'Without options' : 'With Options'}</List.Item>
       </List>
     </>
   );

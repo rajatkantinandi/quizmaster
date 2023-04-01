@@ -37,14 +37,14 @@ function QuizSelectorAlert({ show, message, selectedQuizzes, onNextClick, onCanc
             <Button
               variant="light"
               size="sm"
-              radius="sm"
+              radius="md"
               disabled={selectedQuizzes.length === 0}
               onClick={() => onNextClick(selectedQuizzes)}>
               Next
             </Button>
           )}
           {!!onCancelClick && (
-            <Button variant="light" size="sm" radius="sm" onClick={() => onCancelClick()}>
+            <Button variant="light" size="sm" radius="md" onClick={() => onCancelClick()}>
               Cancel
             </Button>
           )}

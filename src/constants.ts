@@ -24,9 +24,13 @@ export const tilesBGColors = [
 ];
 
 export const appPaths = [
-  '/quizzes/:userName',
+  '/my-quizzes/:userName',
   '/configure-quiz/:userName',
   '/configure-quiz/:userName/:quizId',
   '/configure-game/:userName/:quizId',
   '/play-game/:userName/:gameId',
 ];
+
+export const MIN_NUM_OF_CATEGORIES = 2;
+
+export const DEFAULT_NEW_QUESTION_POINTS = 100;

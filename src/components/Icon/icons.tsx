@@ -30,9 +30,13 @@ import { ReactComponent as logo } from '../../images/icons/logo.svg';
 import { ReactComponent as plus } from '../../images/icons/plus.svg';
 import { ReactComponent as caretUp } from '../../images/icons/caret-up.svg';
 import { ReactComponent as caretDown } from '../../images/icons/caret-down.svg';
+import { ReactComponent as playCircle } from '../../images/icons/playCircle.svg';
 import { ReactComponent as play } from '../../images/icons/play.svg';
+import { ReactComponent as pause } from '../../images/icons/pause.svg';
 import { ReactComponent as done } from '../../images/icons/done.svg';
 import { ReactComponent as sort } from '../../images/icons/sort.svg';
+import { ReactComponent as team } from '../../images/icons/team.svg';
+import { ReactComponent as randomTeam } from '../../images/icons/randomTeam.svg';
 import { ReactComponent as publish } from '../../images/icons/publish.svg';
 import { ReactComponent as checkmarkFilled } from '../../images/icons/checkmark-filled.svg';
 import { ReactComponent as checkmarkOutline } from '../../images/icons/checkmark-outline.svg';
@@ -63,12 +67,16 @@ const icons = {
   plus,
   caretUp,
   caretDown,
+  playCircle,
+  pause,
   play,
   done,
   sort,
   publish,
   checkmarkFilled,
   checkmarkOutline,
+  team,
+  randomTeam,
 };
 
 export default icons;

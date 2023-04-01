@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { Question as IQuestion } from '../../types';
 import styles from './styles.module.css';
 import { useStore } from '../../useStore';
-import { useForm, FieldValues } from 'react-hook-form';
+import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput, FormTextArea } from '../FormInputs';
-import { getEmptyOptions } from '../../helpers';
-import { nanoid } from 'nanoid';
+import { getEmptyOptions, getEmptyOption } from '../../helpers';
 import { Title, Card, Button, ActionIcon, Text, Checkbox, Tabs, Group, TabsValue } from '@mantine/core';
 import Icon from '../Icon';
 
 interface Props {
   questionNum: number;
-  question: IQuestion;
+  question: any;
   saveQuestion: any;
   onQuestionChange: Function;
   deleteQuestion: Function;
@@ -37,15 +35,19 @@ export default function QuestionEdit({
     handleSubmit,
     formState: { errors },
     setValue,
-    getValues,
     watch,
+    control,
   } = useForm({ defaultValues: formDefaultValues });
-  const [, setRefresh] = useState(0);
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'options',
+  });
   const [optionType, setOptionType] = useState<TabsValue>(
     question.options.length === 1 && question.options[0].isCorrect ? 'withoutOptions' : 'withOptions',
   );
   const { showAlert } = useStore();
   const options = watch('options');
+  const isWithoutOptions = options.length === 1;
 
   function onFormSubmit(data: FieldValues) {
     const validationError = getValidationError();
@@ -56,7 +58,7 @@ export default function QuestionEdit({
       return;
     }
 
-    saveQuestion();
+    saveQuestion(data);
   }
 
   function setCorrectOption(optionId: string | number, ev: any) {
@@ -66,36 +68,24 @@ export default function QuestionEdit({
     }));
 
     setValue('options', optionsData);
-    setRefresh(Math.random());
-    onQuestionChange(getValues());
   }
 
-  function removeOption(optionId: string | number) {
+  function removeOption(index: number) {
     if (options.length === 2) {
       showAlert({ message: 'At least 2 options are mandatory!', type: 'error' });
     } else {
-      const remainingOptions = options.filter((o) => o.optionId !== optionId);
-      setValue('options', remainingOptions);
-      setRefresh(Math.random());
-      onQuestionChange(getValues());
+      remove(index);
     }
   }
 
   function addOption(ev: React.MouseEvent) {
     ev.preventDefault();
-    const optionsData = options.concat({
-      optionId: nanoid(),
-      text: '',
-      isCorrect: false,
-    });
 
-    setValue('options', optionsData);
-    setRefresh(Math.random());
-    onQuestionChange(getValues());
+    append(getEmptyOption());
   }
 
   function getValidationError() {
-    if (options.length === 1 && options[0].isCorrect) {
+    if (isWithoutOptions && options[0].isCorrect) {
       return '';
     } else if (!options.some((option) => option.isCorrect)) {
       return 'Please select 1 correct option!';
@@ -114,15 +104,12 @@ export default function QuestionEdit({
       optionData.isCorrect = true;
 
       setValue('options', [optionData]);
-    } else if (options.length === 1) {
+    } else if (isWithoutOptions) {
       const optionData = options.concat(getEmptyOptions(1));
 
       optionData[1].isCorrect = false;
       setValue('options', optionData);
     }
-
-    setRefresh(Math.random());
-    onQuestionChange(getValues());
   }
 
   function onCancelClick(ev) {
@@ -137,7 +124,7 @@ export default function QuestionEdit({
 
   return (
     <Card shadow="sm" p="lg" my="sm" radius="md" withBorder className="secondaryCard">
-      <form onSubmit={handleSubmit(onFormSubmit)} onChange={() => onQuestionChange(getValues())}>
+      <form onSubmit={handleSubmit(onFormSubmit)} onChange={() => onQuestionChange(watch())}>
         <Group position="apart" mb="lg">
           <Group>
             <Title mr="xl" order={4}>
@@ -197,14 +184,14 @@ export default function QuestionEdit({
             <Tabs.Tab value="withoutOptions">Without Options</Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="withOptions">
-            {options.map((option, idx) => (
-              <Group pt="sm" pb="sm" key={option.optionId}>
+            {fields.map((item, idx) => (
+              <Group pt="sm" pb="sm" key={options[idx].optionId}>
                 <Checkbox
                   radius="xl"
                   size="md"
                   mb="xs"
-                  checked={option.isCorrect}
-                  onChange={(ev) => setCorrectOption(option.optionId, ev)}
+                  checked={options[idx].isCorrect}
+                  onChange={(ev) => setCorrectOption(options[idx].optionId, ev)}
                 />
                 <FormTextArea
                   name={`options[${idx}].text`}
@@ -226,7 +213,7 @@ export default function QuestionEdit({
                   className="grow"
                   register={register}
                 />
-                <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(option.optionId)}>
+                <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(idx)}>
                   <Icon width="20" name="trash" />
                 </ActionIcon>
               </Group>
@@ -241,25 +228,28 @@ export default function QuestionEdit({
             </Button>
           </Tabs.Panel>
           <Tabs.Panel value="withoutOptions">
-            <FormTextArea
-              name="options[0].text"
-              id="options[0].text"
-              rules={{
-                required: 'The correct answer should not be empty!',
-                validate: (value: string) => !!value.trim() || 'The correct answer should not be empty!',
-              }}
-              errorMessage={errors.options?.[0]?.text?.message || ''}
-              placeholder="Enter text here"
-              variant="filled"
-              label={
-                <Text weight="bold" mt="lg" className="mb-md">
-                  Correct answer <MarkDownLogo />
-                </Text>
-              }
-              size="sm"
-              radius="sm"
-              register={register}
-            />
+            {fields.map((item, idx) => (
+              <FormTextArea
+                name={`options[${idx}].text`}
+                key={item.id}
+                id={`options[${idx}].text`}
+                rules={{
+                  required: 'The correct answer should not be empty!',
+                  validate: (value: string) => !!value.trim() || 'The correct answer should not be empty!',
+                }}
+                errorMessage={errors.options?.[idx]?.text?.message || ''}
+                placeholder="Enter text here"
+                variant="filled"
+                label={
+                  <Text weight="bold" mt="lg" className="mb-md">
+                    Correct answer <MarkDownLogo />
+                  </Text>
+                }
+                size="sm"
+                radius="sm"
+                register={register}
+              />
+            ))}
           </Tabs.Panel>
         </Tabs>
         <Group position="apart" mt="xl">

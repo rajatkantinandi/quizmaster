@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useStore } from '../../useStore';
 import { Helmet } from 'react-helmet';
 import { Text, Button, Grid, Card, Group, Badge, Image, Title, Select, ActionIcon } from '@mantine/core';
@@ -12,8 +12,7 @@ import noContent from '../../images/no_content.png';
 import CreateQuizButton from '../../components/CreateQuizButton';
 import QuizSelectorAlert from '../../components/QuizSelectorAlert';
 
-export default function Quizzes() {
-  const { userName } = useParams();
+export default function Quizzes({ userName }) {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('recency');
   const {
@@ -26,6 +25,7 @@ export default function Quizzes() {
     showModal,
     showAlert,
     sortQuizzes,
+    getInCompletedGame,
     ...rest
   } = useStore();
   const quizzes = rest.searchQuery ? rest.searchResults : rest.quizzes;
@@ -155,6 +155,16 @@ export default function Quizzes() {
     }
   }
 
+  async function handlePlayGame(quizId) {
+    const gameId = await getInCompletedGame(quizId);
+
+    if (gameId) {
+      navigate(`/play-game/${userName}/${gameId}`);
+    } else {
+      navigate(`/configure-game/${userName}/${quizId}`);
+    }
+  }
+
   return (
     <>
       <Helmet>
@@ -278,8 +288,8 @@ export default function Quizzes() {
                         color="teal"
                         radius="md"
                         className={styles.playCardButton}
-                        leftIcon={<Icon color="#ffffff" name="play" width={16} />}
-                        onClick={() => navigate(`/configure-game/${userName}/${quiz.quizId}`)}>
+                        leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
+                        onClick={() => handlePlayGame(quiz.quizId)}>
                         Play
                       </Button>
                     )}

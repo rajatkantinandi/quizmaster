@@ -11,10 +11,11 @@ const gamesC = db.collection('games');
 export const generateRandomNumber = () => parseInt(`${Math.random() * 10000}`);
 
 export const saveQuiz = async (data: QuizParams) => {
-  const existing = (await quizzesC.findOne({ quizId: parseInt(data.quizId) })) as Quiz;
+  data.quizId = data.quizId || generateRandomNumber();
+  const existing = (await quizzesC.findOne({ quizId: data.quizId })) as Quiz;
 
   if (existing) {
-    await quizzesC.update({ quizId: parseInt(data.quizId) }, data);
+    await quizzesC.update({ quizId: data.quizId }, data);
   } else {
     await quizzesC.insert(data);
   }
@@ -33,17 +34,6 @@ export const publishQuizzes = async (quizIds: number[]) => {
     quiz.isPublished = true;
     await quizzesC.update({ quizId: quiz.quizId }, quiz);
   });
-};
-
-export const updateQuizName = async (data: QuizParams) => {
-  const existing = (await quizzesC.findOne({ quizId: parseInt(data.quizId) })) as Quiz;
-
-  if (existing) {
-    existing.name = data.name;
-    await quizzesC.update({ quizId: parseInt(data.quizId) }, existing);
-  }
-
-  return data;
 };
 
 export const unDraftQuiz = async (quizId: string | number) => {
@@ -149,13 +139,16 @@ export const getGame = async (gameId: number) => {
 
 export const updateGame = async (gameData: GameData) => {
   const game: any = await gamesC.findOne({ gameId: gameData.gameId });
+
   game.isComplete = gameData.isComplete;
   game.winnerTeamId = gameData.winnerTeamId;
   game.currentTeamId = gameData.nextTeamId;
+
   const { currentTeam } = gameData;
 
   if (currentTeam) {
     const index = game.teams.findIndex((team) => team.teamId === currentTeam.teamId);
+
     game.teams[index].score = currentTeam.score;
     game.teams[index].selectedOptions.push({
       selectedOptionId: currentTeam.selectedOptionId,
@@ -184,4 +177,10 @@ export const saveGame = async (gameData) => {
   } else {
     await gamesC.insert(restData);
   }
+};
+
+export const getInCompletedGameByQuizId = async (quizId) => {
+  const data: any = await gamesC.findOne({ quizId, isComplete: false });
+
+  return data?.gameId || null;
 };

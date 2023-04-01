@@ -10,7 +10,7 @@ function CheckAuthAndNavigate() {
   const userName = isGuestUser ? 'guest' : userData.userName;
 
   if (isValidUser) {
-    return <Navigate to={`/quizzes/${userName}`} replace />;
+    return <Navigate to={`/my-quizzes/${userName}`} replace />;
   } else {
     return <Navigate to="/login" replace />;
   }

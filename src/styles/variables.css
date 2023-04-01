@@ -3,8 +3,9 @@
   --border-gray: #ccc;
   --option-background: #ededff;
   --checked-color: #ffa;
-  --correct-color: #afa;
-  --incorrect-color: #faa;
+  --correct-color: rgb(64, 192, 87);
+  --incorrect-color: rgb(250, 82, 82);
+  --warning: rgb(250, 176, 5);
   --question-container-color: #cef;
   --question-grid-background: #fee;
   --dashed-border-color: #add8e6;

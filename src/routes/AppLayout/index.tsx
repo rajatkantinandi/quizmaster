@@ -14,6 +14,7 @@ import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
 import { isValidUser } from '../../helpers/authHelper';
 import { capitalizeFirstLetter } from '../../helpers/textHelpers';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 function AppLayout() {
   const { userName, viewType, id } = useParams();
@@ -21,28 +22,33 @@ function AppLayout() {
 
   function getTabsView() {
     switch (viewType) {
-      case 'quizzes':
-        return <Quizzes />;
+      case 'my-quizzes':
+        return <Quizzes userName={userName} />;
       case 'configure-quiz': {
         if (id) {
-          return <ConfigureQuiz quizId={id} />;
+          return <ConfigureQuiz quizId={id} userName={userName} />;
         } else {
-          return <CreateQuiz />;
+          return <CreateQuiz userName={userName} />;
         }
       }
       case 'configure-game':
-        return <ConfigureGame />;
+        return <ConfigureGame quizId={id} userName={userName} />;
       case 'play-game':
-        return <PlayQuiz />;
+        return <PlayQuiz gameId={id} />;
       default:
         return <CheckAuthAndNavigate />;
     }
   }
 
   function getNameInitials() {
-    const firstNameLastNameArr = userData.name.split(' ');
+    const name = userData.name || Cookies.get('userName') || '';
+    const firstNameLastNameArr = name.split(' ');
 
-    return `${firstNameLastNameArr[0]?.charAt(0)?.toUpperCase()}${firstNameLastNameArr[1]?.charAt(0)?.toUpperCase()}`;
+    if (firstNameLastNameArr[1]) {
+      return `${firstNameLastNameArr[0]?.charAt(0)?.toUpperCase()}${firstNameLastNameArr[1]?.charAt(0)?.toUpperCase()}`;
+    } else {
+      return firstNameLastNameArr[0]?.charAt(0)?.toUpperCase();
+    }
   }
 
   return isValidUser ? (
@@ -52,12 +58,12 @@ function AppLayout() {
       </Helmet>
       <AppShell
         styles={(theme) => ({
-          main: window.location.pathname.includes('/quizzes') ? { backgroundColor: 'var(--off-white)' } : {},
+          main: window.location.pathname.includes('/my-quizzes') ? { backgroundColor: 'var(--off-white)' } : {},
         })}
         header={
           <Header height={70}>
             <Group position="apart" className={styles.headerTabs} pr="xl">
-              <Link to={`/quizzes/${userName}`}>
+              <Link to={`/my-quizzes/${userName}`}>
                 <Icon name="logo" className="ml-lg" width={150} height={50} />
               </Link>
               {quizzes.length > 0 && viewType === 'quizzes' && (

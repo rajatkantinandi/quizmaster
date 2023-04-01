@@ -1,136 +1,74 @@
-.timer {
-  width: 200px;
-  border-radius: 10px;
-  border: 1px solid var(--border-gray);
-  background-color: var(--score-bg);
-  padding: 20px 10px;
+.baseTimer {
   position: relative;
-  text-align: center;
-  z-index: 1;
-  overflow: hidden;
+  height: 150px;
+  width: 150px;
+  margin: 10px auto;
 }
 
-@keyframes heartbeat {
-  34% {
-    transform: scale(1);
-  }
-  40% {
-    transform: scale(1.02);
-  }
-  43% {
-    transform: scale(0.98);
-  }
-  47% {
-    transform: scale(1.02);
-  }
-  50% {
-    transform: scale(0.98);
-  }
-  54% {
-    transform: scale(1);
-  }
+/* Removes SVG styling that would hide the time label */
+.baseTimerCircle {
+  fill: none;
+  stroke: none;
 }
 
-.running {
-  animation: heartbeat 3s ease-in-out infinite;
+/* The SVG path that displays the timer's progress */
+.baseTimerPathElapsed {
+  stroke-width: 7px;
+  stroke: grey;
 }
 
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.blinking {
-  animation: blink 1s ease-in-out infinite;
-}
-
-.playBtn {
-  bottom: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(50%);
-  justify-content: center;
+.baseTimerLabel {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  top: 0;
+  display: flex;
   align-items: center;
-  padding: 0 !important;
-  cursor: pointer;
-  z-index: 2;
+  justify-content: center;
+  font-size: 36px;
 }
 
-.playBtn,
-button.playBtn[class*='ui'][class*='basic'][class*='button']:hover {
+.baseTimerPathRemaining {
+  stroke-width: 7px;
+  stroke-linecap: round;
+  transform: rotate(90deg);
+  transform-origin: center;
+  transition: 1s linear all;
+  stroke: currentColor;
+}
+
+.baseTimerSvg {
+  transform: scaleX(-1);
+}
+
+.green {
+  color: var(--correct-color);
+}
+
+.red {
+  color: var(--incorrect-color);
+}
+
+.yellow {
+  color: var(--warning);
+}
+
+.pauseButton {
+  position: absolute;
+  left: 13px;
+  top: 13px;
+  border-radius: 50%;
+  height: 124px;
+  width: 124px;
   background-color: transparent !important;
-  box-shadow: none !important;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
 
-.playBtn i {
-  font-size: 30px;
-  color: white;
+.pauseButton:hover {
+  opacity: 1;
 }
 
-.timer.running .playBtn {
-  display: none !important;
-}
-
-.timer:hover .playBtn {
-  display: flex !important;
-}
-
-.timer::before {
-  transition: all 0.25s ease-in;
-  content: '';
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 10px;
-  z-index: 1;
-}
-
-.timer.running::before {
-  background-color: transparent;
-}
-
-.timer::before,
-.timer.running:hover::before {
-  background-color: var(--shadow-color-dark);
-}
-
-.timerIndicator {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 0 0 10px 10px;
-  background-color: var(--incorrect-color);
-  z-index: -1;
-}
-
-.running .timerIndicator {
-  animation: wave 4s ease-out infinite;
-}
-
-@keyframes wave {
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-  20% {
-    transform: scale(1.08) rotate(2deg);
-  }
-  40% {
-    transform: scale(1.05) rotate(-1deg);
-  }
-  60% {
-    transform: scale(1.05) rotate(-1deg);
-  }
-  80% {
-    transform: scale(1.08) rotate(2deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
+.playButton {
+  opacity: 1;
 }

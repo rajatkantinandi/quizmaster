@@ -44,7 +44,7 @@ export default function LoginFormCard() {
 
   function guestAccountLogin() {
     Cookies.set('userName', 'guest');
-    window.location.href = '/quizzes/guest';
+    window.location.href = '/my-quizzes/guest';
   }
 
   function showGuestLoginWarning(okCallback: Function) {
