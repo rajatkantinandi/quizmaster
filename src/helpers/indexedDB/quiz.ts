@@ -184,3 +184,11 @@ export const getInCompletedGameByQuizId = async (quizId) => {
 
   return data?.gameId || null;
 };
+
+export const markGameCompleted = async (gameId) => {
+  const game: any = await gamesC.findOne({ gameId });
+
+  game.isComplete = true;
+  delete game._id;
+  await gamesC.update({ gameId }, game);
+};

@@ -19,6 +19,7 @@ import {
   deleteQuizzes,
   publishQuizzes,
   getInCompletedGameByQuizId,
+  markGameCompleted,
 } from '../helpers';
 import { GameData, Quiz } from '../types';
 
@@ -172,6 +173,13 @@ export const getQuizStore = (set: Function, get: Function) => ({
       await updateGame(data);
       return response;
     }
+  },
+  markGameCompleted: async (gameId: number) => {
+    if (!isGuestUser()) {
+      await post('game/markgamecompleted', { gameId });
+    }
+
+    await markGameCompleted(gameId);
   },
   unDraftQuiz: async (quizId: string | number) => {
     if (!isGuestUser()) {

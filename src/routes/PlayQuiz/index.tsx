@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Title, Container } from '@mantine/core';
+import { Button, Title, Container, Group } from '@mantine/core';
 import QuestionPlay from '../../components/QuestionPlay';
 import { Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
 import Timer from '../../components/Timer';
@@ -10,6 +10,7 @@ import { Panel, PanelGroup } from 'react-resizable-panels';
 import ResizeHandle from './ResizeHandle';
 import Scorecard from './Scorecard';
 import QuestionsList from './QuestionsList';
+import { useNavigate } from 'react-router';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -34,8 +35,9 @@ export default function PlayQuiz({ gameId }) {
   const attemptedQuestionIds = selectedOptionsData.map((x) => x.questionId);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.questionId);
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
-  const { showModal, getGameData, updateGame } = useStore();
+  const { showModal, getGameData, updateGame, markGameCompleted, userData } = useStore();
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (gameId) {
@@ -255,6 +257,19 @@ export default function PlayQuiz({ gameId }) {
     }
   }
 
+  function confirmCreateNewGame() {
+    showModal({
+      title: 'Are you sure you want to create new game ?',
+      body: 'After creating new game current game will be deleted.',
+      okCallback: async () => {
+        await markGameCompleted(parseInt(gameId));
+
+        navigate(`/configure-game/${userData.userName}/${quizInfo.quizId}`);
+      },
+      cancelText: 'Cancel',
+    });
+  }
+
   return isLoading ? (
     <></>
   ) : (
@@ -262,11 +277,14 @@ export default function PlayQuiz({ gameId }) {
       <Helmet>
         <title>Play Quiz</title>
       </Helmet>
-      {quizInfo.name && (
-        <Title order={2} mb="xl" pb="xl">
-          Play game for {quizInfo.name}
-        </Title>
-      )}
+      <Group mb="xl" pb="xl">
+        {quizInfo.name && <Title order={2}>Play game for {quizInfo.name}</Title>}
+        {gameId && getAllQuestions(quizInfo.categories).length !== selectedOptionsData.length && (
+          <Button onClick={confirmCreateNewGame} variant="outline">
+            Start a new game
+          </Button>
+        )}
+      </Group>
       <PanelGroup autoSaveId="playQuizPanel" direction="horizontal">
         <Panel defaultSize={20} minSize={20} style={{ minWidth: '290px' }}>
           <QuestionsList
@@ -324,6 +342,13 @@ export default function PlayQuiz({ gameId }) {
               </Container>
             )
           )}
+          <div className="textAlignCenter">
+            {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
+              <Button my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+                Go to home
+              </Button>
+            )}
+          </div>
         </Panel>
         <ResizeHandle />
         <Panel defaultSize={20} minSize={20} style={{ minWidth: '320px' }}>

@@ -14,7 +14,7 @@ export default function TeamAvatar({ shouldShowAvatar = true, size = '', team })
   }
 
   function getNameInitials(name) {
-    const arr = name.split(' ');
+    const arr = name.replace(/\s\s+/g, ' ').split(' ');
 
     // If team name has two words then take 1st character of each word
     // else take first two characters to first word

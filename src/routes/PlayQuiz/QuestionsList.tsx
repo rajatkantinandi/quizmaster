@@ -46,25 +46,32 @@ export default function QuestionsList({
             <Button.Group orientation="vertical">
               {category.questions.map((question) => (
                 <Button
-                  leftIcon={<TeamAvatar {...getAvatarProps(question)} />}
                   my="sm"
                   radius="md"
+                  styles={{
+                    inner: {
+                      display: 'inherit',
+                    },
+                  }}
                   disabled={!shouldEnableQuestion(question)}
                   variant={selectedQuestion?.questionId === question.questionId ? 'filled' : 'light'}
                   color={getQuestionColor(question)}
                   fullWidth
                   onClick={() => showQuestion(question.questionId, category.categoryId)}
                   key={question.questionId}>
-                  {isQuestionPointsHidden ? (
-                    <Text>Question {question.questionNum}</Text>
-                  ) : (
-                    <Group position="apart">
+                  <Group position="apart" style={{ width: '100%' }}>
+                    {isQuestionPointsHidden && !attemptedQuestionIds.includes(question.questionId) ? (
                       <Text>Question {question.questionNum}</Text>
-                      <Badge variant="filled" color="red" size="sm">
-                        Points {question.points}
-                      </Badge>
-                    </Group>
-                  )}
+                    ) : (
+                      <Group>
+                        <Text>Question {question.questionNum}</Text>
+                        <Badge variant="filled" color="red" size="sm">
+                          Points {question.points}
+                        </Badge>
+                      </Group>
+                    )}
+                    <TeamAvatar {...getAvatarProps(question)} />
+                  </Group>
                 </Button>
               ))}
             </Button.Group>
