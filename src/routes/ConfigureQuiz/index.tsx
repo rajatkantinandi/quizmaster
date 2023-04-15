@@ -36,7 +36,7 @@ export default function ConfigureQuiz({
     watch,
     control,
   } = useForm();
-  const { fields, append, remove, replace } = useFieldArray({
+  const { append, remove, replace } = useFieldArray({
     control,
     name: 'categories',
   });
@@ -69,8 +69,6 @@ export default function ConfigureQuiz({
     });
 
     return () => {
-      window.onbeforeunload = null;
-
       if (!isQuizAlreadySaved.current) {
         sendBeaconPost({
           name: quizNameRef.current,
@@ -87,7 +85,10 @@ export default function ConfigureQuiz({
     if (categories.length > 0 && categories.length < activeCategoryIndex + 1) {
       setActiveCategory(categories.length - 1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories, activeCategoryIndex]);
 
+  useEffect(() => {
     window.onbeforeunload = function () {
       sendBeaconPost({
         name: quizName,
@@ -96,8 +97,12 @@ export default function ConfigureQuiz({
         isDraft: isDraftRef.current,
       });
     };
+
+    return () => {
+      window.onbeforeunload = null;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, quizName]);
+  }, [categories, quizName, quizId]);
 
   async function onFormSubmit(formData: FieldValues) {
     let index = formData.categories.findIndex((category) =>
@@ -228,7 +233,7 @@ export default function ConfigureQuiz({
             </Title>
             <Title order={4}>Categories</Title>
             <Radio.Group name="activeCategory" value={`${activeCategoryIndex}`} onChange={setActiveCategory}>
-              {fields.map((item: any, idx: number) => (
+              {categories.map((item: any, idx: number) => (
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : ''}
                   withBorder={idx === activeCategoryIndex}
@@ -329,9 +334,9 @@ export default function ConfigureQuiz({
         <Grid.Col span={14}>
           <QuestionCard
             activeCategoryName={activeCategoryName}
-            questions={(fields[activeCategoryIndex] as any)?.questions || []}
+            questions={(categories[activeCategoryIndex] as any)?.questions || []}
             activeCategoryIndex={activeCategoryIndex}
-            activeCategoryId={fields[activeCategoryIndex]?.id}
+            activeCategoryId={categories[activeCategoryIndex]?.id}
             activeQuestionIndex={activeQuestionIndex}
             expandedQuestionIndex={expandedQuestionIndex}
             previewQuestionIndex={previewQuestionIndex}
@@ -341,6 +346,14 @@ export default function ConfigureQuiz({
             setPreviewQuestionIndex={setPreviewQuestionIndex}
             quizId={quizId}
             setExpandedQuestionIndex={setExpandedQuestionIndex}
+            updateQuizData={() =>
+              createOrUpdateQuiz({
+                categories,
+                quizId,
+                name: quizName,
+                isDraft: isDraftRef.current,
+              })
+            }
           />
         </Grid.Col>
       </Grid>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styles from './styles.module.css';
 import { Title, Card, Button } from '@mantine/core';
 import Icon from '../../components/Icon';
@@ -23,24 +23,30 @@ export default function QuestionCard({
   setPreviewQuestionIndex,
   setExpandedQuestionIndex,
   quizId,
+  updateQuizData,
 }) {
-  const { fields, append, remove, replace, update } = useFieldArray({
+  const { append, remove, update } = useFieldArray({
     control,
     name: `categories[${activeCategoryIndex}].questions`,
   });
   const { getQuiz, showAlert, showModal } = useStore();
+
   const addQuestion = () => {
+    if (!activeCategoryName) {
+      showAlert({
+        message: 'Please enter a category name before adding a new question!',
+        type: 'warning',
+      });
+      return;
+    }
+
     const question = getEmptyQuestion(activeCategoryId);
     append(question);
-    setActiveQuestionIndex(fields.length);
+    setActiveQuestionIndex(questions.length);
   };
 
-  useEffect(() => {
-    replace(questions);
-  }, [activeCategoryIndex]);
-
   function handleDeleteQuestion(index: number) {
-    const question = fields[index];
+    const question = questions[index];
 
     if (isValidQuestion(question)) {
       showModal({
@@ -64,19 +70,29 @@ export default function QuestionCard({
     }
   }
 
-  const resetQuestion = (index) => {
-    getQuiz(quizId).then((quiz: Quiz) => {
-      updateQuestionData(index, quiz.categories[activeCategoryIndex].questions[index]);
-      setActiveQuestionIndex(null);
-      setPreviewQuestionIndex(null);
-    });
+  const resetQuestion = () => {
+    if (activeQuestionIndex !== null && activeQuestionIndex >= 0) {
+      getQuiz(quizId).then((quiz: Quiz) => {
+        const originalQuestion = quiz.categories[activeCategoryIndex].questions[activeQuestionIndex];
+
+        if (originalQuestion) {
+          updateQuestionData(activeQuestionIndex, originalQuestion);
+        } else {
+          remove(activeQuestionIndex);
+        }
+
+        setActiveQuestionIndex(null);
+        setPreviewQuestionIndex(null);
+      });
+    }
   };
 
   function updateQuestionData(index, data) {
     update(index, data);
   }
 
-  function handleSaveQuestion() {
+  async function handleSaveQuestion() {
+    await updateQuizData();
     setActiveQuestionIndex(null);
     setExpandedQuestionIndex(null);
     setPreviewQuestionIndex(null);
@@ -92,7 +108,7 @@ export default function QuestionCard({
       <Title order={5} mb="xl">
         {activeCategoryName || 'Unnamed Category'}
       </Title>
-      {fields.map((item: any, idx) =>
+      {questions.map((item: any, idx) =>
         activeQuestionIndex === idx ? (
           <QuestionEdit
             questionNum={idx + 1}
@@ -101,7 +117,7 @@ export default function QuestionCard({
             saveQuestion={handleSaveQuestion}
             onQuestionChange={(data) => updateQuestionData(idx, data)}
             deleteQuestion={() => handleDeleteQuestion(idx)}
-            resetQuestion={() => resetQuestion(idx)}
+            resetQuestion={resetQuestion}
             showPreview={() => {
               setActiveQuestionIndex(null);
               setExpandedQuestionIndex(idx);

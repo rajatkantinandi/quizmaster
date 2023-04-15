@@ -1,11 +1,13 @@
+
+import { DEFAULT_NEW_QUESTION_POINTS, MIN_NUM_OF_CATEGORIES } from '../constants';
 import { Category, Option } from '../types';
 import { getRandomColor } from './common';
 
 export const getEmptyQuestion = (categoryId: number | string) => ({
   questionId: parseInt(`${Math.random() * 10000}`),
   text: '',
-  options: getEmptyOptions(2) as Option[],
-  points: 0,
+  points: DEFAULT_NEW_QUESTION_POINTS,
+  options: getEmptyOptions(MIN_NUM_OF_CATEGORIES) as Option[],
   categoryId,
 });
 
