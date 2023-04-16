@@ -29,9 +29,9 @@ export default function CollapsedPreview({
     <>
       <Group position="apart">
         <Group>
-          <div>
+          <div className="flex">
             {questionNum}.{' '}
-            {<Markdown>{question.text}</Markdown> || (
+            {<Markdown className="truncatedOneLine ml-md">{question.text}</Markdown> || (
               <Text italic size="sm" span>
                 (No question text)
               </Text>

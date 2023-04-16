@@ -117,3 +117,10 @@ legend {
 .fullHeight {
   height: 100%;
 }
+
+.truncatedOneLine {
+  display: -webkit-box !important;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
