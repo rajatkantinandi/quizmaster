@@ -45,7 +45,8 @@ export default function QuestionCard({
     setActiveQuestionIndex(questions.length);
   };
 
-  function handleDeleteQuestion(index: number) {
+  function handleDeleteQuestion(ev, index: number) {
+    ev.stopPropagation();
     const question = questions[index];
 
     if (isValidQuestion(question)) {
@@ -116,7 +117,7 @@ export default function QuestionCard({
             key={item.questionId}
             saveQuestion={handleSaveQuestion}
             onQuestionChange={(data) => updateQuestionData(idx, data)}
-            deleteQuestion={() => handleDeleteQuestion(idx)}
+            deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
             resetQuestion={resetQuestion}
             showPreview={() => {
               setActiveQuestionIndex(null);
@@ -132,7 +133,7 @@ export default function QuestionCard({
             saveQuestion={handleSaveQuestion}
             isValidQuestion={isValidQuestion(item)}
             setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
-            deleteQuestion={() => handleDeleteQuestion(idx)}
+            deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
             isExpanded={expandedQuestionIndex === idx}
             isPreview={previewQuestionIndex === idx}
             setExpandedQuestionIndex={setExpandedQuestionIndex}

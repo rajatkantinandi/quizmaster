@@ -1,6 +1,6 @@
 import React from 'react';
 import { Question as IQuestion } from '../../types';
-import { Title, Badge, ActionIcon, Text, List, Group, Button, Box } from '@mantine/core';
+import { Title, Badge, ActionIcon, Text, List, Group, Button, Box, Card } from '@mantine/core';
 import Icon from '../Icon';
 import Markdown from '../Markdown';
 
@@ -35,33 +35,35 @@ export default function ExpandedPreview({
       : {};
 
   return (
-    <>
-      <Group position="apart" mb="lg">
-        <Group>
-          <Title order={4}>Question {questionNum}</Title>
-          <Text ml="md" mr="xl">
-            {question.points} points
-          </Text>
-          {!isValidQuestion && (
-            <Badge variant="filled" color="red">
-              Incomplete
-            </Badge>
-          )}
+    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard slideDown">
+      <Card className="secondaryCard clickable" p={0} onClick={() => setExpandedQuestionIndex(null)}>
+        <Group position="apart">
+          <Group>
+            <Title order={4}>Question {questionNum}</Title>
+            <Text ml="md" mr="xl">
+              {question.points} points
+            </Text>
+            {!isValidQuestion && (
+              <Badge variant="filled" color="red">
+                Incomplete
+              </Badge>
+            )}
+          </Group>
+          <Group>
+            {!isPreview && (
+              <Button variant="light" compact radius="xl" color="red" onClick={deleteQuestion}>
+                Delete
+              </Button>
+            )}
+            <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
+              <Icon name="pencil" width={22} />
+            </ActionIcon>
+            <ActionIcon variant="transparent">
+              <Icon name="caretUp" />
+            </ActionIcon>
+          </Group>
         </Group>
-        <Group>
-          {!isPreview && (
-            <Button variant="light" compact radius="xl" color="red" onClick={deleteQuestion}>
-              Delete
-            </Button>
-          )}
-          <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
-            <Icon name="pencil" width={22} />
-          </ActionIcon>
-          <ActionIcon variant="transparent" onClick={() => setExpandedQuestionIndex(null)}>
-            <Icon name="caretDown" />
-          </ActionIcon>
-        </Group>
-      </Group>
+      </Card>
       <Box my="xs">
         {question.text ? (
           <Markdown>{question.text}</Markdown>
@@ -100,6 +102,6 @@ export default function ExpandedPreview({
           </Button>
         </Group>
       )}
-    </>
+    </Card>
   );
 }

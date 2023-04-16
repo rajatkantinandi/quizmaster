@@ -124,3 +124,35 @@ legend {
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
 }
+
+.clickable {
+  cursor: pointer;
+}
+
+@keyframes slidedown {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.slideDown {
+  transform: scaleY(0);
+  transform-origin: 50% 0%;
+  animation: slidedown 0.2s forwards ease-out;
+}
+
+.resizeVertical textarea {
+  resize: vertical !important;
+}
+
+@keyframes slideup {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.slideUp {
+  transform: scaleY(2);
+  transform-origin: 50% 0%;
+  animation: slidedown 0.2s forwards ease-in;
+}
