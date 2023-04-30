@@ -6,6 +6,7 @@ import { FormInput, FormTextArea } from '../FormInputs';
 import { getEmptyOptions, getEmptyOption } from '../../helpers';
 import { Title, Card, Button, ActionIcon, Text, Checkbox, Tabs, Group, TabsValue } from '@mantine/core';
 import Icon from '../Icon';
+import classNames from 'classnames';
 
 interface Props {
   questionNum: number;
@@ -123,7 +124,7 @@ export default function QuestionEdit({
   }
 
   return (
-    <Card shadow="sm" p="lg" my="sm" radius="md" withBorder className="secondaryCard">
+    <Card shadow="sm" p="lg" my="sm" radius="md" withBorder className="secondaryCard slideDown">
       <form onSubmit={handleSubmit(onFormSubmit)} onChange={() => onQuestionChange(watch())}>
         <Group position="apart" mb="lg">
           <Group>
@@ -176,6 +177,8 @@ export default function QuestionEdit({
           variant="filled"
           size="sm"
           radius="sm"
+          rows={10}
+          className={classNames('resizeVertical', styles.questionText)}
           register={register}
         />
         <Tabs variant="pills" pt="xl" pb="lg" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
@@ -210,7 +213,7 @@ export default function QuestionEdit({
                   variant="filled"
                   size="sm"
                   radius="sm"
-                  className="grow"
+                  className={classNames('grow resizeVertical', styles.optionText)}
                   register={register}
                 />
                 <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(idx)}>
@@ -247,6 +250,7 @@ export default function QuestionEdit({
                 }
                 size="sm"
                 radius="sm"
+                className={classNames('grow resizeVertical', styles.optionText)}
                 register={register}
               />
             ))}

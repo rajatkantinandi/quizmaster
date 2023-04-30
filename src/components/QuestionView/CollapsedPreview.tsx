@@ -1,6 +1,6 @@
 import React from 'react';
 import { Question as IQuestion } from '../../types';
-import { Badge, ActionIcon, Text, List, Group, Button } from '@mantine/core';
+import { Badge, ActionIcon, Text, List, Group, Button, Card } from '@mantine/core';
 import Icon from '../Icon';
 import Markdown from '../Markdown';
 
@@ -26,12 +26,19 @@ export default function CollapsedPreview({
   const isWithoutOptions = question.options.length === 1;
 
   return (
-    <>
+    <Card
+      shadow="sm"
+      p="lg"
+      radius="md"
+      my="sm"
+      withBorder
+      className="secondaryCard clickable slideUp"
+      onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
       <Group position="apart">
         <Group>
-          <div>
+          <div className="flex">
             {questionNum}.{' '}
-            {<Markdown>{question.text}</Markdown> || (
+            {<Markdown className="truncatedOneLine ml-md">{question.text}</Markdown> || (
               <Text italic size="sm" span>
                 (No question text)
               </Text>
@@ -52,8 +59,8 @@ export default function CollapsedPreview({
           <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
             <Icon name="pencil" width={22} />
           </ActionIcon>
-          <ActionIcon variant="transparent" onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
-            <Icon name="caretUp" />
+          <ActionIcon variant="transparent">
+            <Icon name="caretDown" />
           </ActionIcon>
         </Group>
       </Group>
@@ -61,6 +68,6 @@ export default function CollapsedPreview({
         <List.Item mr="xl">{question.points} points</List.Item>
         <List.Item>{isWithoutOptions ? 'Without options' : 'With Options'}</List.Item>
       </List>
-    </>
+    </Card>
   );
 }
