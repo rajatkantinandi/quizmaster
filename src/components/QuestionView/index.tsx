@@ -1,6 +1,5 @@
 import React from 'react';
 import { Question as IQuestion } from '../../types';
-import { Card } from '@mantine/core';
 import ExpandedPreview from './ExpandedPreview';
 import CollapsedPreview from './CollapsedPreview';
 
@@ -28,7 +27,7 @@ export default function QuestionView({
   saveQuestion,
 }: Props) {
   return (
-    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
+    <>
       {isExpanded ? (
         <ExpandedPreview
           questionNum={questionNum}
@@ -51,6 +50,6 @@ export default function QuestionView({
           isPreview={isPreview}
         />
       )}
-    </Card>
+    </>
   );
 }

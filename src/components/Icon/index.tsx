@@ -10,7 +10,7 @@ import icons from './icons';
 export type IconName = keyof typeof icons;
 
 export interface IconProps extends HTMLAttributes<HTMLOrSVGElement> {
-  name: IconName | string;
+  name: IconName;
   width?: number | string;
   height?: number | string;
   color?: string;

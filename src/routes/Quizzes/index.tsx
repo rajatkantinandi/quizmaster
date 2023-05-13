@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { Text, Button, Grid, Card, Group, Badge, Image, Title, Select, ActionIcon } from '@mantine/core';
 import styles from './styles.module.css';
 import { plural } from '../../helpers/textHelpers';
-import Icon from '../../components/Icon';
+import Icon, { IconName } from '../../components/Icon';
 import { tilesBGColors } from '../../constants';
 import PageLoader from '../../components/PageLoader';
 import noContent from '../../images/no_content.png';
@@ -237,7 +237,7 @@ export default function Quizzes({ userName }) {
                 <Card shadow="sm" p="lg" radius="md" withBorder>
                   <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
                     <Icon
-                      name={`quiz_${(index % 13) + 1}`}
+                      name={`quiz_${(index % 13) + 1}` as IconName}
                       width="100%"
                       height={150}
                       color="#ffffff"
