@@ -59,6 +59,7 @@ export default function WithOptions({
                   value={x.optionId.toString()}
                   checked
                   color="green"
+                  className="justifyCenter"
                   style={{ pointerEvents: 'none' }}
                   radius="xl"
                   size="lg"
