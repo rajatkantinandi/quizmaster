@@ -17,6 +17,7 @@ interface DefaultValue {
   timeLimit: null | number;
   selectionTimeLimit: null | number;
   isQuestionPointsHidden: boolean;
+  negativePointsForIncorrect: number;
   mode: string;
   players: string[];
 }
@@ -26,6 +27,7 @@ const formDefaultValues: DefaultValue = {
   timeLimit: null,
   selectionTimeLimit: null,
   isQuestionPointsHidden: false,
+  negativePointsForIncorrect: 0,
   mode: 'manual',
   players: [],
 };
@@ -45,7 +47,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
     name: 'teams',
   });
   const [quizName, setQuizName] = useState('');
-  const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, mode, players } = watch();
+  const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsForIncorrect, mode, players } =
+    watch();
   const { getQuiz, addGame, showModal } = useStore();
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
 
   async function handleGameConfig(data: FieldValues) {
     if (quizId) {
-      const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden } = data;
+      const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsForIncorrect } = data;
       const { gameId } = await addGame({
         teams: teams.map((x) => {
           x.players = x.players || '';
@@ -67,6 +70,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
         timeLimit: timeLimit || 0,
         selectionTimeLimit: selectionTimeLimit || 0,
         isQuestionPointsHidden,
+        negativePointsForIncorrect,
       });
 
       navigate(`/play-game/${userName}/${gameId}`);
@@ -108,6 +112,10 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
 
   const shouldBeMoreThanZero = (value: number) => {
     return value === null || value > 0 || 'Should be more than 0';
+  };
+
+  const shouldBeLessThanZero = (value: number) => {
+    return value < 0 || 'Should be less than 0';
   };
 
   return (
@@ -204,6 +212,41 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               setValue('isQuestionPointsHidden', !isQuestionPointsHidden);
             }}
           />
+          <Group position="apart" mb="xl">
+            <Checkbox
+              radius="xl"
+              size="md"
+              mb="xs"
+              ml="md"
+              label="Allow negative response for incorrect response"
+              checked={negativePointsForIncorrect !== 0}
+              onChange={() => {
+                if (negativePointsForIncorrect === 0) {
+                  setValue('negativePointsForIncorrect', -1);
+                } else {
+                  setValue('negativePointsForIncorrect', 0);
+                }
+              }}
+            />
+            <FormInput
+              name="negativePointsForIncorrect"
+              id="negativePointsForIncorrect"
+              disabled={negativePointsForIncorrect === 0}
+              rules={
+                negativePointsForIncorrect === 0
+                  ? {}
+                  : {
+                      validate: shouldBeLessThanZero,
+                    }
+              }
+              errorMessage={errors.negativePointsForIncorrect?.message || ''}
+              type="number"
+              size="md"
+              radius="md"
+              className={styles.timeInput}
+              register={register}
+            />
+          </Group>
           <Title pt="xl" mb="sm" order={4}>
             Time limits
           </Title>

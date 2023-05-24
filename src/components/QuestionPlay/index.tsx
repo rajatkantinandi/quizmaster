@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Title, Card, Text, Group, Box, Button } from '@mantine/core';
+import { Title, Card, Text, Group, Box, Button, Badge } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import Markdown from '../Markdown';
 import { useForm } from 'react-hook-form';
@@ -21,6 +21,7 @@ interface Props {
   isAttempted: boolean;
   isTimerRunning: boolean;
   winner: string;
+  negativePointsForIncorrect: number;
 }
 
 export default function QuestionPlay({
@@ -31,6 +32,7 @@ export default function QuestionPlay({
   isAttempted,
   isTimerRunning,
   winner,
+  negativePointsForIncorrect,
   continueGame,
 }: Props) {
   const [selectedChoices, setSelectedChoices] = useState(selectedOptionIds);
@@ -57,9 +59,20 @@ export default function QuestionPlay({
           <Title mr="xl" order={4}>
             Question {selectedQuestion.questionNum}
           </Title>
-          <Text weight="bold" component="span" size="sm">
-            Points: {points}
-          </Text>
+          {negativePointsForIncorrect === 0 ? (
+            <Text weight="bold" component="span" size="sm">
+              Points: {points}
+            </Text>
+          ) : (
+            <Group spacing="xl">
+              <Badge color="green" variant="filled">
+                Correct: {points} points
+              </Badge>
+              <Badge color="red" variant="filled">
+                Incorrect: {negativePointsForIncorrect} points
+              </Badge>
+            </Group>
+          )}
         </Group>
         <Box my="xs">
           <Markdown>{text}</Markdown>
