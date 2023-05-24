@@ -46,7 +46,7 @@ export default function WithOptions({
   return (
     <>
       <Group align="flex-start">
-        {(isAttempted || !isTimerRunning) && (
+        {isAttempted && (
           <Checkbox.Group
             value={options.filter((x) => x.isCorrect).map((x) => x.optionId.toString())}
             orientation="vertical"
@@ -73,7 +73,7 @@ export default function WithOptions({
         <Checkbox.Group
           value={selectedChoices ? selectedChoices.map((x) => x.toString()) : undefined}
           orientation="vertical"
-          label={<Title order={6}>{isAttempted || !isTimerRunning ? 'ME' : 'OPTIONS'}</Title>}
+          label={<Title order={6}>{isAttempted ? 'ME' : 'OPTIONS'}</Title>}
           size="md"
           my="lg"
           onChange={(value) => setSelectedChoices(value.map((x) => parseInt(x)))}>
