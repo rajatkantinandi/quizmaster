@@ -156,7 +156,15 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return response;
     } catch (err) {
       const response = await getReq('game/data', { gameId });
-      const data = formatGameData(response);
+      const data = formatGameData(
+        response.map((x) => {
+          if (x.SelectedOptionIds) {
+            x.SelectedOptionIds = x.SelectedOptionIds.split(',').map((x) => parseInt(x));
+          }
+
+          return x;
+        }),
+      );
       await saveGame(data);
 
       return data;
@@ -168,7 +176,13 @@ export const getQuizStore = (set: Function, get: Function) => ({
 
       return response;
     } else {
-      const response = await post('game/edit', data);
+      const response = await post('game/edit', {
+        ...data,
+        currentTeam: {
+          ...data.currentTeam,
+          selectedOptionIds: (data.currentTeam?.selectedOptionIds || []).join(','),
+        },
+      });
 
       await updateGame(data);
       return response;

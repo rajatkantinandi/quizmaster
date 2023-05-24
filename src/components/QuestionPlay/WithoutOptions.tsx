@@ -8,7 +8,7 @@ interface Props {
   setIsTimerRunning: Function;
   options: IOption[];
   setIsAnswerRevealed: Function;
-  setSelectedChoice: Function;
+  setSelectedChoices: Function;
   isAttempted: boolean;
 }
 
@@ -18,10 +18,10 @@ export default function WithoutOptions({
   options,
   isAttempted,
   setIsAnswerRevealed,
-  setSelectedChoice,
+  setSelectedChoices,
 }: Props) {
   function handleSelectedChoice(choice) {
-    setSelectedChoice(choice);
+    setSelectedChoices(choice);
 
     setTimeout(() => {
       document.getElementById('btnSubmitResponse')?.click();
@@ -50,10 +50,10 @@ export default function WithoutOptions({
       </Box>
       {!isAttempted && (
         <Group>
-          <Button radius="md" color="red" onClick={() => handleSelectedChoice('')}>
+          <Button radius="md" color="red" onClick={() => handleSelectedChoice([])}>
             Incorrect
           </Button>
-          <Button radius="md" color="green" onClick={() => handleSelectedChoice(options[0].optionId)}>
+          <Button radius="md" color="green" onClick={() => handleSelectedChoice([options[0].optionId])}>
             Correct
           </Button>
         </Group>

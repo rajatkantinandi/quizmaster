@@ -10,7 +10,7 @@ interface Props {
   submitResponse: Function;
   setIsTimerRunning: Function;
   continueGame: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  selectedOptionId: number | null | string;
+  selectedOptionIds: number[] | null;
   selectedQuestion: {
     questionId?: string;
     text: string;
@@ -26,14 +26,14 @@ interface Props {
 export default function QuestionPlay({
   submitResponse,
   setIsTimerRunning,
-  selectedOptionId,
+  selectedOptionIds,
   selectedQuestion,
   isAttempted,
   isTimerRunning,
   winner,
   continueGame,
 }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState(selectedOptionId);
+  const [selectedChoices, setSelectedChoices] = useState(selectedOptionIds);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
   const { options, text, points } = selectedQuestion;
   const isWithoutOptions = options.length === 1;
@@ -47,13 +47,12 @@ export default function QuestionPlay({
   }, [isAttempted]);
 
   useEffect(() => {
-    setSelectedChoice(selectedOptionId);
-  }, [selectedOptionId]);
+    setSelectedChoices(selectedOptionIds);
+  }, [selectedOptionIds]);
 
   return (
     <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
-      <form
-        onSubmit={handleSubmit(() => submitResponse(selectedChoice === '' ? null : parseInt(selectedChoice as any)))}>
+      <form onSubmit={handleSubmit(() => submitResponse(selectedChoices))}>
         <Group>
           <Title mr="xl" order={4}>
             Question {selectedQuestion.questionNum}
@@ -71,15 +70,15 @@ export default function QuestionPlay({
             setIsTimerRunning={setIsTimerRunning}
             options={options}
             setIsAnswerRevealed={setIsAnswerRevealed}
-            setSelectedChoice={setSelectedChoice}
+            setSelectedChoices={setSelectedChoices}
             isAttempted={isAttempted}
           />
         ) : (
           <WithOptions
             options={options}
-            setSelectedChoice={setSelectedChoice}
-            selectedOptionId={selectedOptionId}
-            selectedChoice={selectedChoice}
+            setSelectedChoices={setSelectedChoices}
+            selectedOptionIds={selectedOptionIds}
+            selectedChoices={selectedChoices}
             isAttempted={isAttempted}
             isTimerRunning={isTimerRunning}
           />

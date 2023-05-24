@@ -8,7 +8,7 @@ export interface Question {
 }
 
 export interface Option {
-  optionId: string | number;
+  optionId: number;
   text: string;
   isCorrect: boolean;
 }
@@ -64,7 +64,7 @@ export interface Team {
 }
 
 export interface SelectedOptions {
-  selectedOptionId: number | null;
+  selectedOptionIds: number[] | null;
   questionId: string;
 }
 
@@ -75,7 +75,7 @@ export interface GameData {
   nextTeamId: number;
   currentTeam?: {
     score: number;
-    selectedOptionId: number | null;
+    selectedOptionIds: number[] | null;
     questionId: number;
     teamId: number;
   };

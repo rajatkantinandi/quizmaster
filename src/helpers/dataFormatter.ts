@@ -66,7 +66,7 @@ const gameSchema = {
         respKey: 'TeamQuestionMapId',
       },
       teamQuestionMapId: 'TeamQuestionMapId',
-      selectedOptionId: 'SelectedOptionId',
+      selectedOptionIds: 'SelectedOptionIds',
       questionId: 'QuestionId',
     },
   },

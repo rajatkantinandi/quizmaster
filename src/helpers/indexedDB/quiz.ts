@@ -151,7 +151,7 @@ export const updateGame = async (gameData: GameData) => {
 
     game.teams[index].score = currentTeam.score;
     game.teams[index].selectedOptions.push({
-      selectedOptionId: currentTeam.selectedOptionId,
+      selectedOptionIds: currentTeam.selectedOptionIds,
       questionId: currentTeam.questionId,
     });
   }

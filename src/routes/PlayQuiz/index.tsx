@@ -124,9 +124,13 @@ export default function PlayQuiz({ gameId }) {
     return teams.filter((team) => team.score === maxScore);
   }
 
-  async function handleSubmitResponse(optionId: number | null) {
+  async function handleSubmitResponse(optionIds: number[] | null) {
     if (selectedQuestion) {
-      const isCorrect = selectedQuestion.options.find((o) => o.optionId === optionId)?.isCorrect;
+      const correctOptionIds = selectedQuestion.options.filter((o) => o.isCorrect).map((x) => x.optionId);
+      const isCorrect =
+        optionIds &&
+        correctOptionIds.length === optionIds.length &&
+        !optionIds.some((x) => !correctOptionIds.includes(x));
       const currentTeamIndex = gameInfo.teams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
       const nextTeamIndex = (currentTeamIndex + 1) % gameInfo.teams.length;
       const clonedTeams = gameInfo.teams.map((x) => ({ ...x }));
@@ -137,7 +141,7 @@ export default function PlayQuiz({ gameId }) {
         currentTeam.score = (currentTeam.score || 0) + (isCorrect ? parseInt(selectedQuestion.points.toString()) : 0);
         currentTeam.selectedOptions.push({
           questionId: selectedQuestion.questionId,
-          selectedOptionId: optionId,
+          selectedOptionIds: optionIds,
         });
 
         setGameInfo({
@@ -158,7 +162,7 @@ export default function PlayQuiz({ gameId }) {
         nextTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
         currentTeam: {
           score: clonedTeams[currentTeamIndex].score,
-          selectedOptionId: optionId,
+          selectedOptionIds: optionIds,
           questionId: parseInt(selectedQuestion.questionId),
           teamId: parseInt(`${clonedTeams[currentTeamIndex].teamId}`),
         },
@@ -194,13 +198,13 @@ export default function PlayQuiz({ gameId }) {
     );
   }
 
-  function getSelectedOptionId(selectedQuestion) {
+  function getSelectedOptionId(selectedQuestion): number[] | null {
     const selectedOptionData = selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId);
 
     if (selectedOptionData) {
-      return selectedOptionData.selectedOptionId;
+      return selectedOptionData.selectedOptionIds;
     } else {
-      return '';
+      return null;
     }
   }
 
@@ -329,7 +333,7 @@ export default function PlayQuiz({ gameId }) {
                 setIsTimerRunning(true);
               }}
               winner={winner}
-              selectedOptionId={getSelectedOptionId(selectedQuestion)}
+              selectedOptionIds={getSelectedOptionId(selectedQuestion)}
             />
           ) : (
             !winner &&
@@ -357,7 +361,7 @@ export default function PlayQuiz({ gameId }) {
               duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
               handleTimeUp={() => {
                 if (showQuestionTimer) {
-                  handleSubmitResponse(null);
+                  handleSubmitResponse([]);
                 } else if (selectionTimeLimit) {
                   selectRandomQuestion();
                 }

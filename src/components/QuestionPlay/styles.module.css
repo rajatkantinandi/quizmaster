@@ -44,3 +44,8 @@
   border-bottom: 1px solid var(--border-gray);
   margin-bottom: 5px;
 }
+
+.unSelectedCorrectOption {
+  background-color: rgb(255, 198, 198);
+  border-color: #fa5252;
+}
