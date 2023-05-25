@@ -2,7 +2,7 @@ import React from 'react';
 import { Question as IQuestion } from '../../types';
 import { Title, Badge, ActionIcon, Text, List, Group, Button, Box, Card } from '@mantine/core';
 import Icon from '../Icon';
-import Markdown from '../Markdown';
+import HTML from '../HTML';
 
 interface Props {
   questionNum: number;
@@ -66,7 +66,7 @@ export default function ExpandedPreview({
       </Card>
       <Box my="xs">
         {question.text ? (
-          <Markdown>{question.text}</Markdown>
+          <HTML>{question.text}</HTML>
         ) : (
           <Text italic size="sm" span>
             (No question text)
@@ -86,7 +86,7 @@ export default function ExpandedPreview({
             key={option.optionId}
             sx={(theme) => getQuestionTextStyles(theme, !!option.text && option.isCorrect)}>
             {option.text ? (
-              <Markdown>{option.text}</Markdown>
+              <HTML>{option.text}</HTML>
             ) : (
               <Text italic size="sm" span>
                 (No option text)

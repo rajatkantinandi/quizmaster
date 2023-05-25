@@ -92,7 +92,8 @@ export default function QuestionCard({
     update(index, data);
   }
 
-  async function handleSaveQuestion() {
+  async function handleSaveQuestion(idx, question) {
+    updateQuestionData(idx, question);
     await updateQuizData();
     setActiveQuestionIndex(null);
     setExpandedQuestionIndex(null);
@@ -115,7 +116,7 @@ export default function QuestionCard({
             questionNum={idx + 1}
             question={item}
             key={item.questionId}
-            saveQuestion={handleSaveQuestion}
+            saveQuestion={(data) => handleSaveQuestion(idx, data)}
             onQuestionChange={(data) => updateQuestionData(idx, data)}
             deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
             resetQuestion={resetQuestion}

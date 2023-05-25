@@ -1,18 +1,24 @@
 import React from 'react';
-import { Textarea, TextareaProps } from '@mantine/core';
+import { TextareaProps } from '@mantine/core';
+import { Control, Controller, UseControllerProps } from 'react-hook-form';
+import ContentEditable from './ContentEditable';
 
 interface Props extends TextareaProps {
-  rules: object;
+  rules: UseControllerProps['rules'];
   errorMessage: string;
-  register?: any;
+  control: Control<any, any>;
+  name: string;
 }
 
-export default function TextArea({ errorMessage, register, name, rules, ...rest }: Props) {
+export default function FormTextArea({ errorMessage, control, name, rules, label, autoFocus, ...rest }: Props) {
   return (
-    <Textarea
-      {...rest}
-      {...register(name, rules)}
-      error={errorMessage ? <span className="absolute">{errorMessage}</span> : false}
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field: { onChange, value } }) => (
+        <ContentEditable onChange={onChange} value={value} label={label} autofocus={autoFocus} />
+      )}
     />
   );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Question as IQuestion } from '../../types';
 import { Badge, ActionIcon, Text, List, Group, Button, Card } from '@mantine/core';
 import Icon from '../Icon';
-import Markdown from '../Markdown';
+import HTML from '../HTML';
 
 interface Props {
   questionNum: number;
@@ -38,7 +38,7 @@ export default function CollapsedPreview({
         <Group>
           <div className="flex">
             {questionNum}.{' '}
-            {<Markdown className="truncatedOneLine ml-md">{question.text}</Markdown> || (
+            {<HTML className="truncatedOneLine ml-md">{question.text}</HTML> || (
               <Text italic size="sm" span>
                 (No question text)
               </Text>

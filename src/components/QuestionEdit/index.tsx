@@ -179,7 +179,7 @@ export default function QuestionEdit({
           radius="sm"
           rows={10}
           className={classNames('resizeVertical', styles.questionText)}
-          register={register}
+          control={control}
         />
         <Tabs variant="pills" pt="xl" pb="lg" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
           <Tabs.List>
@@ -214,7 +214,7 @@ export default function QuestionEdit({
                   size="sm"
                   radius="sm"
                   className={classNames('grow resizeVertical', styles.optionText)}
-                  register={register}
+                  control={control}
                 />
                 <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(idx)}>
                   <Icon width="20" name="trash" />
@@ -248,10 +248,10 @@ export default function QuestionEdit({
                     Correct answer <MarkDownLogo />
                   </Text>
                 }
+                control={control}
                 size="sm"
                 radius="sm"
                 className={classNames('grow resizeVertical', styles.optionText)}
-                register={register}
               />
             ))}
           </Tabs.Panel>

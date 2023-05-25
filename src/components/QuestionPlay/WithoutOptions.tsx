@@ -1,7 +1,7 @@
 import React from 'react';
 import { Title, Button, Group, Box } from '@mantine/core';
 import { Option as IOption } from '../../types';
-import Markdown from '../Markdown';
+import HTML from '../HTML';
 
 interface Props {
   isAnswerRevealed: boolean;
@@ -46,7 +46,7 @@ export default function WithoutOptions({
         mb="md"
         key={options[0].optionId}
         sx={(theme) => getQuestionTextStyles(theme, !!options[0].text && options[0].isCorrect)}>
-        <Markdown>{options[0].text}</Markdown>
+        <HTML>{options[0].text}</HTML>
       </Box>
       {!isAttempted && (
         <Group>

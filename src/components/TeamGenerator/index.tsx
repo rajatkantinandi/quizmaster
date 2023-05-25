@@ -26,6 +26,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const { showAlert, enableOkButton, disableOkButton } = useStore();
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
     watch,
@@ -130,7 +131,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
           size="md"
           radius="md"
           minRows={7}
-          register={register}
+          control={control}
           errorMessage={errors.playerNames?.message || ''}
         />
         <Group position="apart" my="xl" py="sm">
@@ -191,7 +192,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               size="md"
               radius="md"
               minRows={5}
-              register={teamsForm.register}
+              control={teamsForm.control}
               errorMessage={teamsForm.formState.errors.teams?.message || ''}
             />
             <button className="displayNone" id="teamNameFormSubmit" type="submit">
