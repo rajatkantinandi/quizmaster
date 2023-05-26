@@ -20,7 +20,7 @@ export default function WithoutOptions({
   setIsAnswerRevealed,
   setSelectedChoices,
 }: Props) {
-  function handleSelectedChoice(choice) {
+  function handleSelectedChoice(choice: number[]) {
     setSelectedChoices(choice);
 
     setTimeout(() => {
