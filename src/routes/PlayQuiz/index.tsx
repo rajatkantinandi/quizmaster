@@ -124,13 +124,11 @@ export default function PlayQuiz({ gameId }) {
     return teams.filter((team) => team.score === maxScore);
   }
 
-  async function handleSubmitResponse(optionIds: number[] | null) {
+  async function handleSubmitResponse(optionIds: number[]) {
     if (selectedQuestion) {
       const correctOptionIds = selectedQuestion.options.filter((o) => o.isCorrect).map((x) => x.optionId);
       const isCorrect =
-        optionIds &&
-        correctOptionIds.length === optionIds.length &&
-        !optionIds.some((x) => !correctOptionIds.includes(x));
+        correctOptionIds.length === optionIds.length && !optionIds.some((x) => !correctOptionIds.includes(x));
       const currentTeamIndex = gameInfo.teams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
       const nextTeamIndex = (currentTeamIndex + 1) % gameInfo.teams.length;
       const clonedTeams = gameInfo.teams.map((x) => ({ ...x }));
@@ -138,7 +136,8 @@ export default function PlayQuiz({ gameId }) {
 
       if (currentTeamIndex >= 0) {
         const currentTeam = clonedTeams[currentTeamIndex];
-        currentTeam.score = (currentTeam.score || 0) + (isCorrect ? parseInt(selectedQuestion.points.toString()) : 0);
+        currentTeam.score =
+          (currentTeam.score || 0) + (isCorrect ? selectedQuestion.points : negativePointsForIncorrect);
         currentTeam.selectedOptions.push({
           questionId: selectedQuestion.questionId,
           selectedOptionIds: optionIds,

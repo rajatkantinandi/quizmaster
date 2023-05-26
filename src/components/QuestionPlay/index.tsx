@@ -5,6 +5,7 @@ import Markdown from '../Markdown';
 import { useForm } from 'react-hook-form';
 import WithoutOptions from './WithoutOptions';
 import WithOptions from './WithOptions';
+import { useStore } from '../../useStore';
 
 interface Props {
   submitResponse: Function;
@@ -33,6 +34,7 @@ export default function QuestionPlay({
   winner,
   continueGame,
 }: Props) {
+  const { showAlert } = useStore();
   const [selectedChoices, setSelectedChoices] = useState(selectedOptionIds);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
   const { options, text, points } = selectedQuestion;
@@ -52,7 +54,17 @@ export default function QuestionPlay({
 
   return (
     <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
-      <form onSubmit={handleSubmit(() => submitResponse(selectedChoices))}>
+      <form
+        onSubmit={handleSubmit(() => {
+          if (selectedChoices) {
+            submitResponse(selectedChoices);
+          } else {
+            showAlert({
+              message: 'Please select atleast one option',
+              type: 'warning',
+            });
+          }
+        })}>
         <Group>
           <Title mr="xl" order={4}>
             Question {selectedQuestion.questionNum}
