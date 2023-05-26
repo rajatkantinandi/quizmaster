@@ -60,7 +60,9 @@ export default function QuestionsList({
                   onClick={() => showQuestion(question.questionId, category.categoryId)}
                   key={question.questionId}>
                   <Group position="apart" style={{ width: '100%' }}>
-                    {isQuestionPointsHidden && !attemptedQuestionIds.includes(question.questionId) ? (
+                    {isQuestionPointsHidden &&
+                    !attemptedQuestionIds.includes(question.questionId) &&
+                    selectedQuestion?.questionId !== question.questionId ? (
                       <Text>Question {question.questionNum}</Text>
                     ) : (
                       <Group>
