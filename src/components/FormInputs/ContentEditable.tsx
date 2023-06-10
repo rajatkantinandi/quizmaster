@@ -21,9 +21,9 @@ export default function ContentEditable({ label, autofocus, placeholder, value, 
   });
 
   return (
-    <>
+    <div className="grow">
       <label>{label}</label>
       <EditorContent editor={editor} />
-    </>
+    </div>
   );
 }
