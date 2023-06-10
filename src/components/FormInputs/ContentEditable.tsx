@@ -2,6 +2,7 @@ import React from 'react';
 import { TextareaProps } from '@mantine/core';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import EditorToolbar from './EditorToolbar';
 
 type Props = TextareaProps & {
   autofocus?: boolean;
@@ -23,6 +24,7 @@ export default function ContentEditable({ label, autofocus, placeholder, value, 
   return (
     <div className="grow">
       <label>{label}</label>
+      <EditorToolbar editor={editor} />
       <EditorContent editor={editor} />
     </div>
   );

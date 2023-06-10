@@ -75,3 +75,19 @@
   margin: 5px 0;
   padding-left: 10px;
 }
+
+.editor-toolbar button.active {
+  background-color: var(--gray-dark);
+  color: var(--off-white);
+}
+
+.editor-toolbar button {
+  border: 1px solid var(--border-gray);
+  border-radius: 5px;
+  min-width: 20px;
+  margin-left: 2px;
+}
+
+.editor-toolbar {
+  margin-bottom: 3px;
+}
