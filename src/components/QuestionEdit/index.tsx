@@ -180,6 +180,7 @@ export default function QuestionEdit({
           rows={10}
           className={classNames('resizeVertical', styles.questionText)}
           control={control}
+          autoFocus
         />
         <Tabs variant="pills" pt="xl" pb="lg" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
           <Tabs.List>

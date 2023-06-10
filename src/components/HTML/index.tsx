@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 
 interface Props {
@@ -6,5 +7,5 @@ interface Props {
 }
 
 export default function HTML({ children, className = '' }: Props) {
-  return <div dangerouslySetInnerHTML={{ __html: children }} className={className} />;
+  return <div dangerouslySetInnerHTML={{ __html: children }} className={classNames(className, 'html')} />;
 }

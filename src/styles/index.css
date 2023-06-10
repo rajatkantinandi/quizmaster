@@ -33,6 +33,10 @@ body {
   flex-wrap: wrap;
 }
 
+.noShrink {
+  flex-shrink: 0;
+}
+
 .alignCenter {
   align-items: center;
 }
@@ -132,11 +136,13 @@ legend {
 @keyframes slidedown {
   to {
     transform: scaleY(1);
+    opacity: 1;
   }
 }
 
 .slideDown {
   transform: scaleY(0);
+  opacity: 0;
   transform-origin: 50% 0%;
   animation: slidedown 0.2s forwards ease-out;
 }
@@ -148,11 +154,19 @@ legend {
 @keyframes slideup {
   to {
     transform: scaleY(1);
+    opacity: 1;
   }
 }
 
 .slideUp {
-  transform: scaleY(2);
+  transform: scaleY(1.5);
+  opacity: 0;
   transform-origin: 50% 0%;
   animation: slidedown 0.2s forwards ease-in;
+}
+
+.outline {
+  border: 2px solid var(--border-light);
+  border-radius: 10px;
+  padding: 5px 10px;
 }

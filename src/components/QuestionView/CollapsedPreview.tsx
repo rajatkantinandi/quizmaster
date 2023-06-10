@@ -50,7 +50,7 @@ export default function CollapsedPreview({
             </Badge>
           )}
         </Group>
-        <Group>
+        <Group className="noShrink">
           {!isPreview && (
             <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
               Delete

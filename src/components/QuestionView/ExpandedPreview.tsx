@@ -29,7 +29,7 @@ export default function ExpandedPreview({
   const getQuestionTextStyles = (theme, isCorrect = false) =>
     isCorrect
       ? {
-          backgroundColor: isCorrect ? theme.colors.green[2] : '',
+          backgroundColor: theme.colors.green[2],
           borderRadius: theme.radius.xs,
         }
       : {};
@@ -76,10 +76,10 @@ export default function ExpandedPreview({
       <Title mt="xl" order={6}>
         {isWithoutOptions ? 'Correct Answer' : 'Options'}
       </Title>
-      <List type="ordered">
+      <List type="ordered" listStyleType="none">
         {question.options.map((option) => (
           <Box
-            className="py-md mt-md"
+            className="py-md mt-md outline"
             component={List.Item}
             px="xs"
             mb="md"

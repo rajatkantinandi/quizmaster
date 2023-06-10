@@ -3,3 +3,75 @@
   padding: 10px 15px;
   display: block;
 }
+
+.ProseMirror p,
+.html p {
+  margin: 0;
+}
+
+.ProseMirror td,
+.ProseMirror th,
+.html th,
+.html td {
+  border: 1px solid var(--gray-dark);
+  padding: 2px 8px;
+}
+
+.ProseMirror th,
+.html th {
+  background-color: var(--gray-dark);
+  color: white;
+  border: 1px solid var(--border-gray);
+}
+
+.ProseMirror tr:nth-last-of-type(2n),
+.html tr:nth-last-of-type(2n) {
+  background-color: var(--option-background);
+}
+
+.ProseMirror tr:nth-last-of-type(2n + 1),
+.html tr:nth-last-of-type(2n + 1) {
+  background-color: white;
+}
+
+.ProseMirror tr,
+.html tr {
+  color: black;
+}
+
+.ProseMirror table,
+.html table {
+  border-collapse: collapse;
+}
+
+.ProseMirror img,
+.html img {
+  max-width: 100%;
+  max-height: 400px;
+}
+
+.ProseMirror pre code,
+.html pre code {
+  background-color: var(--gray-dark);
+  width: 100%;
+  display: block;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.ProseMirror code,
+.html code {
+  background-color: var(--card-hover-bg);
+  color: white;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.ProseMirror blockquote,
+.html blockquote {
+  border-left: 3px solid var(--gray-dark);
+  color: var(--gray-dark);
+  margin: 5px 0;
+  padding-left: 10px;
+}
