@@ -3,6 +3,7 @@ import { TextareaProps } from '@mantine/core';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
 import EditorToolbar from './EditorToolbar';
 
 type Props = TextareaProps & {
@@ -26,6 +27,10 @@ export default function ContentEditable({ label, autofocus, placeholder, value, 
           target: '_blank',
         },
       }),
+      Image.configure({
+        allowBase64: false,
+        inline: true,
+      }),
     ],
     content: value,
     enableCoreExtensions: true,
@@ -38,7 +43,7 @@ export default function ContentEditable({ label, autofocus, placeholder, value, 
   return (
     <div className="grow">
       <label>{label}</label>
-      <EditorToolbar editor={editor} />
+      {!!editor && <EditorToolbar editor={editor} />}
       <EditorContent editor={editor} />
     </div>
   );
