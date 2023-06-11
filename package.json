@@ -8,6 +8,7 @@
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@tiptap/extension-link": "^2.0.3",
     "@tiptap/pm": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
@@ -38,7 +39,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate-icons": "node ./scripts/generate-icons.js"
   },
   "eslintConfig": {
     "extends": [

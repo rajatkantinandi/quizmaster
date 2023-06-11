@@ -81,13 +81,27 @@
   color: var(--off-white);
 }
 
+.editor-toolbar button.active svg {
+  fill: var(--off-white);
+}
+
 .editor-toolbar button {
   border: 1px solid var(--border-gray);
   border-radius: 5px;
   min-width: 20px;
   margin-left: 2px;
+  padding: 2px 5px;
+  background-color: var(--off-white);
+  color: var(--qm-primary);
+}
+
+.editor-toolbar button:disabled {
+  opacity: 0.6;
+  background-color: var(--border-gray);
 }
 
 .editor-toolbar {
   margin-bottom: 3px;
+  display: flex;
+  align-items: stretch;
 }
