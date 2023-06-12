@@ -37,19 +37,17 @@ export default function ExpandedPreview({
   return (
     <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard slideDown">
       <Card className="secondaryCard clickable" p={0} onClick={() => setExpandedQuestionIndex(null)}>
-        <Group position="apart">
+        <Group position="apart" noWrap>
           <Group>
             <Title order={4}>Question {questionNum}</Title>
-            <Text ml="md" mr="xl">
-              {question.points} points
-            </Text>
+            <Text>{question.points} points</Text>
             {!isValidQuestion && (
               <Badge variant="filled" color="red">
                 Incomplete
               </Badge>
             )}
           </Group>
-          <Group>
+          <Group className="noShrink">
             {!isPreview && (
               <Button variant="light" compact radius="xl" color="red" onClick={deleteQuestion}>
                 Delete

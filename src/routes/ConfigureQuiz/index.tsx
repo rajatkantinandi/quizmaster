@@ -232,7 +232,11 @@ export default function ConfigureQuiz({
               </ActionIcon>
             </Title>
             <Title order={4}>Categories</Title>
-            <Radio.Group name="activeCategory" value={`${activeCategoryIndex}`} onChange={setActiveCategory}>
+            <Radio.Group
+              className="flexCol"
+              name="activeCategory"
+              value={`${activeCategoryIndex}`}
+              onChange={setActiveCategory}>
               {categories.map((item: any, idx: number) => (
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : ''}
@@ -242,38 +246,39 @@ export default function ConfigureQuiz({
                     [styles.activeCategory]: idx === activeCategoryIndex,
                     [styles.nonActiveCard]: idx !== activeCategoryIndex,
                     primaryCard: true,
+                    fullWidth: true,
                   })}>
                   <Radio
                     mr="md"
                     value={`${idx}`}
+                    className={styles.radio}
                     label={
-                      <div className="flex alignCenter">
+                      <div className="flex fullWidth">
                         <Text weight="bold" mr="md">
                           {idx + 1}.
                         </Text>
-                        <div>
-                          <FormInput
-                            name={`categories.${idx}.categoryName`}
-                            id={`categories.${idx}.categoryName`}
-                            rules={{ required: 'Please enter category name' }}
-                            errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
-                            type="text"
-                            placeholder="Enter category name"
-                            variant={idx === activeCategoryIndex ? 'filled' : 'unstyled'}
-                            size="md"
-                            readOnly={idx !== activeCategoryIndex}
-                            radius="md"
-                            onClick={() => {
-                              if (idx !== activeCategoryIndex) {
-                                setActiveCategory(idx);
-                              }
-                            }}
-                            onKeyUp={(ev) => setActiveCategoryName((ev.target as any).value)}
-                            className={classNames({
-                              [styles.categoryNameInput]: idx !== activeCategoryIndex,
-                            })}
-                            register={register}
-                          />
+                        <div className="noShrink grow">
+                          {idx === activeCategoryIndex ? (
+                            <FormInput
+                              name={`categories.${idx}.categoryName`}
+                              id={`categories.${idx}.categoryName`}
+                              rules={{ required: 'Please enter category name' }}
+                              errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
+                              type="text"
+                              placeholder="Enter category name"
+                              variant={'filled'}
+                              size="md"
+                              radius="md"
+                              autoFocus
+                              onChange={(ev) => setActiveCategoryName((ev.target as any).value)}
+                              className={styles.categoryNameInput}
+                              register={register}
+                            />
+                          ) : (
+                            <Text size="md" weight="bold">
+                              {item.categoryName}
+                            </Text>
+                          )}
                           {!errors.categories?.[idx]?.categoryName?.message && (
                             <Text
                               weight="bold"
@@ -281,7 +286,6 @@ export default function ConfigureQuiz({
                               align="left"
                               size="xs"
                               className={classNames({
-                                absolute: true,
                                 'mt-md': idx === activeCategoryIndex,
                               })}>
                               {item.questions.length > 0 && (
@@ -292,7 +296,7 @@ export default function ConfigureQuiz({
                               {(item.questions.length === 0 ||
                                 item.questions.some((question) => !isValidQuestion(question))) &&
                                 idx !== activeCategoryIndex && (
-                                  <Badge color="red" variant="filled">
+                                  <Badge color="red" variant="filled" mt="sm">
                                     Incomplete
                                   </Badge>
                                 )}

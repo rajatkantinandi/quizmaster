@@ -34,7 +34,7 @@ export default function CollapsedPreview({
       withBorder
       className="secondaryCard clickable slideUp"
       onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
-      <Group position="apart">
+      <Group position="apart" noWrap>
         <Group>
           <div className="flex">
             {questionNum}.{' '}
