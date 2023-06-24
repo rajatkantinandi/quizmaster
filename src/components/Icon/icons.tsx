@@ -47,6 +47,7 @@ import { ReactComponent as search} from '../../images/icons/search.svg';
 import { ReactComponent as sort} from '../../images/icons/sort.svg';
 import { ReactComponent as team} from '../../images/icons/team.svg';
 import { ReactComponent as trash} from '../../images/icons/trash.svg';
+import { ReactComponent as videoCamera} from '../../images/icons/videoCamera.svg';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const icons = {
@@ -91,6 +92,7 @@ const icons = {
   sort,
   team,
   trash,
+  videoCamera,
 };
 
 export default icons;

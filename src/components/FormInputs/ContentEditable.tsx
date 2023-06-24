@@ -5,6 +5,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import Underline from '@tiptap/extension-underline';
+import Iframe from '../../helpers/TipTapIframe';
 import EditorToolbar from './EditorToolbar';
 
 type Props = TextareaProps & {
@@ -33,6 +34,7 @@ export default function ContentEditable({ label, autofocus, placeholder, value, 
         inline: true,
       }),
       Underline,
+      Iframe,
     ],
     content: value,
     enableCoreExtensions: true,
@@ -41,11 +43,12 @@ export default function ContentEditable({ label, autofocus, placeholder, value, 
       onChange(editor.getHTML());
     },
   });
+  const [isFocussed, setIsFocussed] = React.useState(false);
 
   return (
-    <div className="grow">
+    <div className="grow" onFocus={() => setIsFocussed(true)} onBlur={() => setIsFocussed(false)}>
       <label>{label}</label>
-      {!!editor && <EditorToolbar editor={editor} />}
+      {!!editor && <EditorToolbar editor={editor} isFocussed={isFocussed} />}
       <EditorContent editor={editor} />
     </div>
   );

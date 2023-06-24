@@ -1,9 +1,11 @@
 import { ChainedCommands, Editor } from '@tiptap/react';
 import React, { useCallback, useMemo } from 'react';
+import { getEmbedUrlFromURL } from '../../helpers/video';
 import Icon from '../Icon';
 
 type Props = {
   editor: Editor;
+  isFocussed: boolean;
 };
 
 type ButtonParams = {
@@ -15,7 +17,7 @@ type ButtonParams = {
   onPress?: () => void;
 };
 
-export default function EditorToolbar({ editor }: Props) {
+export default function EditorToolbar({ editor, isFocussed }: Props) {
   const handleLink = useCallback(() => {
     if (editor.isActive('link')) {
       editor.chain().focus().unsetLink().run();
@@ -46,6 +48,20 @@ export default function EditorToolbar({ editor }: Props) {
 
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
+    }
+  }, [editor]);
+
+  const handleIframe = useCallback(() => {
+    const url = window.prompt('Enter youtube, Google Drive or Vimeo video URL');
+
+    if (url) {
+      const embedUrl = getEmbedUrlFromURL(url);
+
+      if (embedUrl) {
+        editor.chain().focus().setIframe({ src: embedUrl }).run();
+      } else {
+        alert('We only support YouTube, Google Drive and Vimeo videos. Please use videos from those sources only');
+      }
     }
   }, [editor]);
 
@@ -82,6 +98,7 @@ export default function EditorToolbar({ editor }: Props) {
         {
           actionName: 'link',
           onPress: handleLink,
+          title: 'link',
           children: <Icon name="link" width={18} height={18} />,
         },
         {
@@ -89,12 +106,17 @@ export default function EditorToolbar({ editor }: Props) {
           title: 'image',
           children: <Icon name="image" width={18} height={18} />,
         },
+        {
+          onPress: handleIframe,
+          title: 'Embed video',
+          children: <Icon name="videoCamera" width={18} height={18} />,
+        },
       ] as ButtonParams[],
-    [handleLink, handleImage],
+    [handleLink, handleImage, handleIframe],
   );
 
   return (
-    <div className="editor-toolbar">
+    <div className="editor-toolbar" style={{ opacity: isFocussed ? 1 : 0.3 }}>
       {BUTTONS.map((props) => (
         <EditorButton editor={editor} {...props} key={props.commandName} />
       ))}

@@ -76,6 +76,13 @@
   padding-left: 10px;
 }
 
+.ProseMirror .iframe-wrapper iframe,
+.html .iframe-wrapper iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  max-width: 480px;
+}
+
 .editor-toolbar button.active {
   background-color: var(--gray-dark);
   color: var(--off-white);
