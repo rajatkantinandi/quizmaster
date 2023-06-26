@@ -132,7 +132,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
           radius="md"
           minRows={7}
           control={control}
-          errorMessage={errors.playerNames?.message || ''}
         />
         <Group position="apart" my="xl" py="sm">
           <Group mb="xl">
@@ -193,7 +192,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               radius="md"
               minRows={5}
               control={teamsForm.control}
-              errorMessage={teamsForm.formState.errors.teams?.message || ''}
             />
             <button className="displayNone" id="teamNameFormSubmit" type="submit">
               Submit

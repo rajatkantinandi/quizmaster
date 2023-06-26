@@ -60,3 +60,10 @@ export const sanitize = (
     ALLOWED_ATTR: allowedAttributes,
   });
 };
+
+export const getTextContent = (htmlContent: string): string => {
+  const el = document.createElement('div');
+  el.innerHTML = htmlContent;
+
+  return el.innerText?.trim() || '';
+};

@@ -7,6 +7,7 @@ import { getEmptyOptions, getEmptyOption } from '../../helpers';
 import { Title, Card, Button, ActionIcon, Text, Checkbox, Tabs, Group, TabsValue } from '@mantine/core';
 import Icon from '../Icon';
 import classNames from 'classnames';
+import { getTextContent } from '../../helpers/dom';
 
 interface Props {
   questionNum: number;
@@ -152,25 +153,20 @@ export default function QuestionEdit({
         </Group>
         <FormTextArea
           name="text"
-          id="text"
           rules={{
             required: 'The question text should not be empty!',
-            validate: (value: string) => !!value.trim() || 'The question text should not be empty!',
+            validate: (value: string) => !!getTextContent(value) || 'The question text should not be empty!',
           }}
           label={
             <Text weight="bold" className="mb-md">
               Question text <MarkDownLogo />
             </Text>
           }
-          errorMessage={errors.text?.message || ''}
-          placeholder="Enter text here"
-          variant="filled"
-          size="sm"
-          radius="sm"
-          rows={10}
+          size="md"
           className={classNames('resizeVertical', styles.questionText)}
           control={control}
           autoFocus
+          isRichText
         />
         <Tabs variant="pills" pt="xl" pb="lg" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
           <Tabs.List>
@@ -189,23 +185,18 @@ export default function QuestionEdit({
                 />
                 <FormTextArea
                   name={`options[${idx}].text`}
-                  id={`options[${idx}].text`}
                   rules={{
                     required: 'Option text should not be empty!',
-                    validate: (value: string) => !!value.trim() || 'Option text should not be empty!',
+                    validate: (value: string) => !!getTextContent(value) || 'Option text should not be empty!',
                   }}
-                  errorMessage={errors.options?.[idx]?.text?.message || ''}
                   label={
                     <Text weight="bold" className="mb-md">
                       Option {idx + 1} <MarkDownLogo />
                     </Text>
                   }
-                  placeholder="Enter text here"
-                  variant="filled"
-                  size="sm"
-                  radius="sm"
-                  className={classNames('grow resizeVertical', styles.optionText)}
+                  className={classNames(styles.optionText)}
                   control={control}
+                  isRichText
                 />
                 <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(idx)}>
                   <Icon width="20" name="trash" />
@@ -226,23 +217,18 @@ export default function QuestionEdit({
               <FormTextArea
                 name={`options[${idx}].text`}
                 key={item.id}
-                id={`options[${idx}].text`}
                 rules={{
                   required: 'The correct answer should not be empty!',
-                  validate: (value: string) => !!value.trim() || 'The correct answer should not be empty!',
+                  validate: (value: string) => !!getTextContent(value) || 'The correct answer should not be empty!',
                 }}
-                errorMessage={errors.options?.[idx]?.text?.message || ''}
-                placeholder="Enter text here"
-                variant="filled"
                 label={
                   <Text weight="bold" mt="lg" className="mb-md">
                     Correct answer <MarkDownLogo />
                   </Text>
                 }
                 control={control}
-                size="sm"
-                radius="sm"
-                className={classNames('grow resizeVertical', styles.optionText)}
+                className={classNames(styles.optionText)}
+                isRichText
               />
             ))}
           </Tabs.Panel>
