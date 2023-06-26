@@ -46,7 +46,7 @@ export default function ContentEditable({ label, autofocus, placeholder, value, 
   const [isFocussed, setIsFocussed] = React.useState(false);
 
   return (
-    <div className="grow" onFocus={() => setIsFocussed(true)} onBlur={() => setIsFocussed(false)}>
+    <div className="grow relative" onFocus={() => setIsFocussed(true)} onBlur={() => setIsFocussed(false)}>
       <label>{label}</label>
       {!!editor && <EditorToolbar editor={editor} isFocussed={isFocussed} />}
       <EditorContent editor={editor} />

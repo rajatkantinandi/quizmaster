@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Title, Card, Text, Group, Box, Button } from '@mantine/core';
 import { Option as IOption } from '../../types';
-import HTML from '../HTML';
+import SanitizedHtml from '../SanitizedHtml';
 import { useForm } from 'react-hook-form';
 import WithoutOptions from './WithoutOptions';
 import WithOptions from './WithOptions';
@@ -63,7 +63,7 @@ export default function QuestionPlay({
           </Text>
         </Group>
         <Box my="xs">
-          <HTML>{text}</HTML>
+          <SanitizedHtml>{text}</SanitizedHtml>
         </Box>
         {isWithoutOptions ? (
           <WithoutOptions

@@ -73,8 +73,20 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
         { actionName: 'underline', commandName: 'toggleUnderline', children: <u>U</u> },
         { actionName: 'strike', commandName: 'toggleStrike', children: <del>S</del> },
         { actionName: 'code', commandName: 'toggleCode', children: <Icon name="code" width={18} height={18} /> },
-        { actionName: 'heading', commandName: 'toggleHeading', actionParams: { level: 3 }, children: 'H3' },
-        { actionName: 'heading', commandName: 'toggleHeading', actionParams: { level: 4 }, children: 'H4' },
+        {
+          actionName: 'heading',
+          commandName: 'toggleHeading',
+          title: 'Heading 3',
+          actionParams: { level: 3 },
+          children: 'H3',
+        },
+        {
+          actionName: 'heading',
+          commandName: 'toggleHeading',
+          title: 'Heading 4',
+          actionParams: { level: 4 },
+          children: 'H4',
+        },
         {
           actionName: 'bulletList',
           commandName: 'toggleBulletList',
@@ -118,7 +130,7 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
   return (
     <div className="editor-toolbar" style={{ opacity: isFocussed ? 1 : 0.3 }}>
       {BUTTONS.map((props) => (
-        <EditorButton editor={editor} {...props} key={props.commandName} />
+        <EditorButton editor={editor} {...props} key={props.title || props.actionName} />
       ))}
     </div>
   );
@@ -132,7 +144,7 @@ function EditorButton({ editor, children, commandName, actionName, actionParams,
   return (
     <button
       type="button"
-      title={actionName || title}
+      title={title || actionName}
       onClick={() => (commandName ? (editor.chain().focus()[commandName] as any)(actionParams).run() : onPress?.())}
       disabled={commandName ? !(editor.can().chain().focus() as any)[commandName](actionParams).run() : false}
       className={actionName && editor.isActive(actionName, actionParams) ? 'active' : ''}>

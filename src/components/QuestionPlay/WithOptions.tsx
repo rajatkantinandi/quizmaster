@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { Title, Button, Checkbox } from '@mantine/core';
 import { Option as IOption } from '../../types';
-import HTML from '../HTML';
+import SanitizedHtml from '../SanitizedHtml';
 import styles from './styles.module.css';
 
 interface Props {
@@ -34,7 +34,7 @@ export default function WithOptions({
         {options.map((option) => (
           <Checkbox
             key={option.optionId}
-            label={<HTML>{option.text}</HTML>}
+            label={<SanitizedHtml>{option.text}</SanitizedHtml>}
             className={classNames({
               [styles.isAttempted]: isAttempted,
               [styles.correct]:

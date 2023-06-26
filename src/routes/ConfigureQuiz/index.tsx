@@ -25,7 +25,6 @@ export default function ConfigureQuiz({
   const [activeCategoryName, setActiveCategoryName] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null>(null);
-  const [previewQuestionIndex, setPreviewQuestionIndex] = useState<number | null>(null);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
   const navigate = useNavigate();
   const {
@@ -175,7 +174,6 @@ export default function ConfigureQuiz({
     setActiveCategoryName(categories[index].categoryName);
     setActiveQuestionIndex(null);
     setExpandedQuestionIndex(null);
-    setPreviewQuestionIndex(null);
   };
 
   function isValidQuestion(question) {
@@ -343,11 +341,9 @@ export default function ConfigureQuiz({
             activeCategoryId={categories[activeCategoryIndex]?.id}
             activeQuestionIndex={activeQuestionIndex}
             expandedQuestionIndex={expandedQuestionIndex}
-            previewQuestionIndex={previewQuestionIndex}
             control={control}
             setActiveQuestionIndex={setActiveQuestionIndex}
             isValidQuestion={isValidQuestion}
-            setPreviewQuestionIndex={setPreviewQuestionIndex}
             quizId={quizId}
             setExpandedQuestionIndex={setExpandedQuestionIndex}
             updateQuizData={() => {

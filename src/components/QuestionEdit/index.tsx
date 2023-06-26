@@ -15,7 +15,6 @@ interface Props {
   onQuestionChange: Function;
   deleteQuestion: Function;
   resetQuestion: Function;
-  showPreview: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 export default function QuestionEdit({
@@ -25,7 +24,6 @@ export default function QuestionEdit({
   onQuestionChange,
   deleteQuestion,
   resetQuestion,
-  showPreview,
 }: Props) {
   const formDefaultValues = {
     ...question,
@@ -151,14 +149,6 @@ export default function QuestionEdit({
               register={register}
             />
           </Group>
-          <Button
-            leftIcon={<Icon name="preview" color="#ffffff" width={16} />}
-            variant="filled"
-            radius="md"
-            compact
-            onClick={showPreview}>
-            Preview
-          </Button>
         </Group>
         <FormTextArea
           name="text"

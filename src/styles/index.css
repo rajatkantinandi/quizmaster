@@ -174,3 +174,7 @@ legend {
   border-radius: 10px;
   padding: 5px 10px;
 }
+
+.relative {
+  position: relative;
+}

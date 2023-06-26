@@ -2,6 +2,7 @@
   background-color: var(--input-bg);
   padding: 10px 15px;
   display: block;
+  padding-top: 50px;
 }
 
 .ProseMirror p,
@@ -76,8 +77,8 @@
   padding-left: 10px;
 }
 
-.ProseMirror .iframe-wrapper iframe,
-.html .iframe-wrapper iframe {
+.ProseMirror iframe,
+.html iframe {
   width: 100%;
   aspect-ratio: 16/9;
   max-width: 480px;
@@ -108,7 +109,12 @@
 }
 
 .editor-toolbar {
-  margin-bottom: 3px;
   display: flex;
   align-items: stretch;
+  position: absolute;
+  z-index: 2;
+  background-color: var(--off-white);
+  width: calc(100% - 4px);
+  margin: 2px;
+  padding: 5px;
 }
