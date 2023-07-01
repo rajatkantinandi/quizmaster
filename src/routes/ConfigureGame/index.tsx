@@ -17,7 +17,7 @@ interface DefaultValue {
   timeLimit: null | number;
   selectionTimeLimit: null | number;
   isQuestionPointsHidden: boolean;
-  negativePointsForIncorrect: number;
+  negativePointsMultiplier: number;
   mode: string;
   players: string[];
 }
@@ -27,7 +27,7 @@ const formDefaultValues: DefaultValue = {
   timeLimit: null,
   selectionTimeLimit: null,
   isQuestionPointsHidden: false,
-  negativePointsForIncorrect: 0,
+  negativePointsMultiplier: 0,
   mode: 'manual',
   players: [],
 };
@@ -47,7 +47,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
     name: 'teams',
   });
   const [quizName, setQuizName] = useState('');
-  const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsForIncorrect, mode, players } =
+  const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier, mode, players } =
     watch();
   const { getQuiz, addGame, showModal } = useStore();
 
@@ -59,7 +59,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
 
   async function handleGameConfig(data: FieldValues) {
     if (quizId) {
-      const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsForIncorrect } = data;
+      const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier } = data;
       const { gameId } = await addGame({
         teams: teams.map((x) => {
           x.players = x.players || '';
@@ -70,7 +70,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
         timeLimit: timeLimit || 0,
         selectionTimeLimit: selectionTimeLimit || 0,
         isQuestionPointsHidden,
-        negativePointsForIncorrect,
+        negativePointsMultiplier,
       });
 
       navigate(`/play-game/${userName}/${gameId}`);
@@ -112,10 +112,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
 
   const shouldBeMoreThanZero = (value: number) => {
     return value === null || value > 0 || 'Should be more than 0';
-  };
-
-  const shouldBeLessThanZero = (value: number) => {
-    return value < 0 || 'Should be less than 0';
   };
 
   return (
@@ -219,12 +215,12 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               mb="xs"
               ml="md"
               label="Allow negative points for incorrect response"
-              checked={negativePointsForIncorrect !== 0}
+              checked={negativePointsMultiplier !== 0}
               onChange={() => {
-                if (negativePointsForIncorrect === 0) {
-                  setValue('negativePointsForIncorrect', 0.25);
+                if (negativePointsMultiplier === 0) {
+                  setValue('negativePointsMultiplier', -0.25);
                 } else {
-                  setValue('negativePointsForIncorrect', 0);
+                  setValue('negativePointsMultiplier', 0);
                 }
               }}
             />
@@ -232,22 +228,22 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               placeholder="Negative points"
               data={[
                 {
-                  value: '0.25',
-                  label: '1/4',
+                  value: '-0.25',
+                  label: '-25% of question points',
                 },
                 {
-                  value: '0.33',
-                  label: '1/3',
+                  value: '-0.33',
+                  label: '-33% of question points',
                 },
                 {
-                  value: '0.5',
-                  label: '1/2',
+                  value: '-0.5',
+                  label: '-50% of question points',
                 },
               ]}
-              id="negativePointsForIncorrect"
-              disabled={negativePointsForIncorrect === 0}
+              id="negativePointsMultiplier"
+              disabled={negativePointsMultiplier === 0}
               onChange={(value) => {
-                setValue('negativePointsForIncorrect', parseFloat(value || '0.25'));
+                setValue('negativePointsMultiplier', parseFloat(value || '-0.25'));
               }}
             />
           </Group>

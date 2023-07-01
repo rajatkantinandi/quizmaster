@@ -24,7 +24,7 @@ export default function PlayQuiz({ gameId }) {
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
-  const { timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsForIncorrect = 0 } = gameInfo;
+  const { timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier = 0 } = gameInfo;
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [winner, setWinner] = useState('');
@@ -140,7 +140,7 @@ export default function PlayQuiz({ gameId }) {
           (currentTeam.score || 0) +
           (isCorrect
             ? parseInt(selectedQuestion.points.toString())
-            : parseInt(selectedQuestion.points.toString()) * negativePointsForIncorrect);
+            : parseInt(selectedQuestion.points.toString()) * negativePointsMultiplier);
         currentTeam.selectedOptions.push({
           questionId: selectedQuestion.questionId,
           selectedOptionIds: optionIds,
@@ -336,7 +336,7 @@ export default function PlayQuiz({ gameId }) {
               }}
               winner={winner}
               selectedOptionIds={getSelectedOptionId(selectedQuestion)}
-              negativePointsForIncorrect={negativePointsForIncorrect}
+              negativePointsMultiplier={negativePointsMultiplier}
             />
           ) : (
             !winner &&

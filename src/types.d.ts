@@ -52,7 +52,7 @@ export interface GameInfo {
   isComplete?: boolean;
   teams: Team[];
   isQuestionPointsHidden: boolean;
-  negativePointsForIncorrect: number;
+  negativePointsMultiplier: number;
 }
 
 export interface Team {

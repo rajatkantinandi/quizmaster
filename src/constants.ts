@@ -13,7 +13,7 @@ export const defaultGameInfo: GameInfo = {
   selectionTimeLimit: 0,
   isComplete: false,
   isQuestionPointsHidden: false,
-  negativePointsForIncorrect: 0,
+  negativePointsMultiplier: 0,
 };
 
 export const tilesBGColors = [

@@ -22,7 +22,7 @@ interface Props {
   isAttempted: boolean;
   isTimerRunning: boolean;
   winner: string;
-  negativePointsForIncorrect: number;
+  negativePointsMultiplier: number;
 }
 
 export default function QuestionPlay({
@@ -33,7 +33,7 @@ export default function QuestionPlay({
   isAttempted,
   isTimerRunning,
   winner,
-  negativePointsForIncorrect,
+  negativePointsMultiplier,
   continueGame,
 }: Props) {
   const { showAlert } = useStore();
@@ -71,7 +71,7 @@ export default function QuestionPlay({
           <Title mr="xl" order={4}>
             Question {selectedQuestion.questionNum}
           </Title>
-          {negativePointsForIncorrect === 0 ? (
+          {negativePointsMultiplier === 0 ? (
             <Text weight="bold" component="span" size="sm">
               Points: {points}
             </Text>
@@ -81,7 +81,7 @@ export default function QuestionPlay({
                 Correct: {points} points
               </Badge>
               <Badge color="red" variant="filled">
-                Incorrect: {points * negativePointsForIncorrect} points
+                Incorrect: {points * negativePointsMultiplier} points
               </Badge>
             </Group>
           )}
