@@ -81,7 +81,7 @@ export default function QuestionPlay({
                 Correct: {points} points
               </Badge>
               <Badge color="red" variant="filled">
-                Incorrect: {negativePointsForIncorrect} points
+                Incorrect: {points * negativePointsForIncorrect} points
               </Badge>
             </Group>
           )}

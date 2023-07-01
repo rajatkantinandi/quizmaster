@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container } from '@mantine/core';
+import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container, Select } from '@mantine/core';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
@@ -218,33 +218,37 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               size="md"
               mb="xs"
               ml="md"
-              label="Allow negative response for incorrect response"
+              label="Allow negative points for incorrect response"
               checked={negativePointsForIncorrect !== 0}
               onChange={() => {
                 if (negativePointsForIncorrect === 0) {
-                  setValue('negativePointsForIncorrect', -1);
+                  setValue('negativePointsForIncorrect', 0.25);
                 } else {
                   setValue('negativePointsForIncorrect', 0);
                 }
               }}
             />
-            <FormInput
-              name="negativePointsForIncorrect"
+            <Select
+              placeholder="Negative points"
+              data={[
+                {
+                  value: '0.25',
+                  label: '1/4',
+                },
+                {
+                  value: '0.33',
+                  label: '1/3',
+                },
+                {
+                  value: '0.5',
+                  label: '1/2',
+                },
+              ]}
               id="negativePointsForIncorrect"
               disabled={negativePointsForIncorrect === 0}
-              rules={
-                negativePointsForIncorrect === 0
-                  ? {}
-                  : {
-                      validate: shouldBeLessThanZero,
-                    }
-              }
-              errorMessage={errors.negativePointsForIncorrect?.message || ''}
-              type="number"
-              size="md"
-              radius="md"
-              className={styles.timeInput}
-              register={register}
+              onChange={(value) => {
+                setValue('negativePointsForIncorrect', parseFloat(value || '0.25'));
+              }}
             />
           </Group>
           <Title pt="xl" mb="sm" order={4}>

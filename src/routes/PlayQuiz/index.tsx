@@ -138,7 +138,9 @@ export default function PlayQuiz({ gameId }) {
         const currentTeam = clonedTeams[currentTeamIndex];
         currentTeam.score =
           (currentTeam.score || 0) +
-          (isCorrect ? parseInt(selectedQuestion.points.toString()) : negativePointsForIncorrect);
+          (isCorrect
+            ? parseInt(selectedQuestion.points.toString())
+            : parseInt(selectedQuestion.points.toString()) * negativePointsForIncorrect);
         currentTeam.selectedOptions.push({
           questionId: selectedQuestion.questionId,
           selectedOptionIds: optionIds,
