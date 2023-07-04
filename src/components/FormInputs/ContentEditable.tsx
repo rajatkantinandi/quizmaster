@@ -50,7 +50,7 @@ export default function ContentEditable({
     ],
     content: value,
     enableCoreExtensions: true,
-    autofocus: autofocus,
+    autofocus,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
