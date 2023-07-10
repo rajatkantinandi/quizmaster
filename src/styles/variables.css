@@ -1,6 +1,7 @@
 :root {
   /* colors */
   --border-gray: #ccc;
+  --border-light: #fef;
   --option-background: #ededff;
   --checked-color: #ffa;
   --correct-color: rgb(64, 192, 87);

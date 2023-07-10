@@ -8,12 +8,19 @@
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@tiptap/extension-image": "^2.0.3",
+    "@tiptap/extension-link": "^2.0.3",
+    "@tiptap/extension-underline": "^2.0.3",
+    "@tiptap/pm": "^2.0.3",
+    "@tiptap/react": "^2.0.3",
+    "@tiptap/starter-kit": "^2.0.3",
     "@types/jest": "^26.0.24",
     "@types/js-cookie": "^3.0.1",
     "@types/node": "^12.20.37",
     "@types/react": "^17.0.35",
     "@types/react-dom": "^17.0.11",
     "classnames": "^2.3.1",
+    "dompurify": "^3.0.3",
     "history": "^5.1.0",
     "immer": "^9.0.14",
     "js-cookie": "^3.0.1",
@@ -23,21 +30,20 @@
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
     "react-hook-form": "^7.27.1",
-    "react-markdown": "^7.1.1",
     "react-resizable-panels": "^0.0.36",
     "react-router-dom": "^6.2.2",
     "react-scripts": "4.0.3",
-    "remark-gfm": "^3.0.1",
     "typescript": "^4.4.4",
     "web-vitals": "^1.1.2",
     "zangodb": "^1.0.8",
-    "zustand": "^4.0.0-rc.1"
+    "zustand": "^4.3.9"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate-icons": "node ./scripts/generate-icons.js"
   },
   "eslintConfig": {
     "extends": [

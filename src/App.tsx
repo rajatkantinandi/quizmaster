@@ -6,9 +6,12 @@ import { useStore } from './useStore';
 import Modal from './components/Modal';
 import Alert from './components/Alert';
 import CheckAuthAndNavigate from './components/CheckAuthAndNavigate';
+import Prompt from './components/Prompt';
 
 function App() {
-  const { modal, alert } = useStore();
+  const modal = useStore.use.modal();
+  const alert = useStore.use.alert();
+  const prompt = useStore.use.prompt();
 
   return (
     <div>
@@ -22,6 +25,7 @@ function App() {
       </BrowserRouter>
       {!!modal && <Modal />}
       {!!alert && <Alert />}
+      {!!prompt && <Prompt />}
     </div>
   );
 }

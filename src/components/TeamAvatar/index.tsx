@@ -20,7 +20,7 @@ export default function TeamAvatar({ shouldShowAvatar = true, size = '', team })
     // else take first two characters to first word
     // ex. Team Name - John Doe than name Initials are JD
     // Team Name - John than name Initials are JO
-    return arr[0][0].toUpperCase() + (arr[1] ? arr[1][0].toUpperCase() : arr[0][1].toUpperCase());
+    return arr[0][0].toUpperCase() + (arr[1] ? arr[1][0].toUpperCase() : arr[0][1]?.toUpperCase() || '');
   }
 
   if (shouldShowAvatar) {
