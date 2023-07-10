@@ -30,14 +30,7 @@ export default function QuestionEdit({
     ...question,
     options: question.options.length > 0 ? question.options : getEmptyOptions(2),
   };
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-    control,
-  } = useForm({ defaultValues: formDefaultValues });
+  const { handleSubmit, setValue, watch, control } = useForm({ defaultValues: formDefaultValues });
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'options',
@@ -141,13 +134,12 @@ export default function QuestionEdit({
                 validate: (value: number) => (value && value > 0) || 'Must be greater than 0',
               }}
               className={styles.pointsInput}
-              errorMessage={errors.points?.message || ''}
               type="number"
               placeholder="Points"
               variant="filled"
               size="sm"
               radius="sm"
-              register={register}
+              control={control}
             />
           </Group>
         </Group>

@@ -71,7 +71,7 @@ export default function QuestionCard({
   const resetQuestion = () => {
     if (activeQuestionIndex !== null && activeQuestionIndex >= 0) {
       getQuiz(quizId).then((quiz: Quiz) => {
-        const originalQuestion = quiz.categories[activeCategoryIndex].questions[activeQuestionIndex];
+        const originalQuestion = (quiz.categories[activeCategoryIndex]?.questions || [])[activeQuestionIndex];
 
         if (originalQuestion) {
           updateQuestionData(activeQuestionIndex, originalQuestion);

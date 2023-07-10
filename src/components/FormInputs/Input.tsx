@@ -1,18 +1,56 @@
+import { Text, TextInput, TextInputProps } from '@mantine/core';
+import classNames from 'classnames';
 import React from 'react';
-import { TextInput, TextInputProps } from '@mantine/core';
+import { Control, Controller, UseControllerProps } from 'react-hook-form';
 
-interface Props extends TextInputProps {
-  rules: object;
-  errorMessage: string;
-  register?: any;
-}
+type Props = TextInputProps & {
+  rules: UseControllerProps['rules'];
+  control: Control<any, any>;
+  name: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  autoFocus?: boolean;
+  label?: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+  isRichText?: boolean;
+};
 
-export default function Input({ errorMessage, register, name, rules, ...rest }: Props) {
+export default function Input({
+  control,
+  name,
+  rules,
+  label,
+  autoFocus = false,
+  size,
+  className,
+  disabled,
+  isRichText,
+  onChange: onChangeProp,
+  ...rest
+}: Props) {
   return (
-    <TextInput
-      {...rest}
-      {...register(name, rules)}
-      error={errorMessage ? <span className="absolute">{errorMessage}</span> : false}
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
+        <div className={classNames('grow', className)}>
+          <TextInput
+            onChange={(ev) => {
+              onChangeProp?.(ev);
+
+              onChange(ev);
+            }}
+            label={label}
+            value={value}
+            size={size}
+            autoFocus={autoFocus}
+            disabled={disabled}
+            {...rest}
+          />
+          {error && !!error.message && <Text className="errorText">⚠ {error.message}</Text>}
+        </div>
+      )}
     />
   );
 }

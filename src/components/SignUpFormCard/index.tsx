@@ -7,12 +7,7 @@ import { Card, Button, Title, Text } from '@mantine/core';
 import { Link } from 'react-router-dom';
 
 export default function SignUpFormCard() {
-  const {
-    register,
-    getValues,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { control, getValues, handleSubmit } = useForm();
   const { signUp, showAlert } = useStore();
   const navigate = useNavigate();
 
@@ -44,53 +39,48 @@ export default function SignUpFormCard() {
         <FormInput
           name="name"
           id="name"
-          register={register}
+          control={control}
           rules={{ required: 'Please enter your name' }}
-          errorMessage={errors.name?.message}
           label="Name"
           autoFocus
         />
         <FormInput
           name="emailId"
           id="emailId"
-          register={register}
+          control={control}
           rules={{ required: 'Please enter your email' }}
-          errorMessage={errors.emailId?.message}
           label="EmailId"
           type="email"
         />
         <FormInput
           name="userName"
           id="userName"
-          register={register}
+          control={control}
           rules={{
             required: 'Please enter your username',
             minLength: { value: 6, message: 'too small username' },
           }}
           label="Username (min 6 chars)"
-          errorMessage={errors.userName?.message}
         />
         <FormInput
           name="password"
           id="password"
-          register={register}
+          control={control}
           rules={{
             required: 'Please enter your password',
             minLength: { value: 8, message: 'too small password' },
           }}
-          errorMessage={errors.password?.message}
           label="Password (min 8 chars)"
           type="password"
         />
         <FormInput
           name="repeatPassword"
           id="repeatPassword"
-          register={register}
+          control={control}
           rules={{
             required: 'Please re-enter your password',
             validate: shouldMatchWithPassword,
           }}
-          errorMessage={errors.repeatPassword?.message}
           label="Password (min 8 chars)"
           type="password"
         />

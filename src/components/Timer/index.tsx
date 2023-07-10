@@ -80,7 +80,7 @@ export default function Timer({
           <circle className={styles.baseTimerPathElapsed} cx="50" cy="50" r="45" />
           <path
             id="base-timer-path-remaining"
-            stroke-dasharray={circleDasharray}
+            strokeDasharray={circleDasharray}
             className={classNames({
               [styles.baseTimerPathRemaining]: true,
               [styles.green]: !alert && !warning,

@@ -24,13 +24,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const [shouldShowTeams, setShouldShowTeams] = useState(!!rest.players);
   const [players, setPlayers] = useState<string[]>(rest.teams.map((x) => x.players));
   const { showAlert, enableOkButton, disableOkButton } = useStore();
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       playerNames: rest.players,
       teamCount: rest.teamCount,
@@ -144,13 +138,12 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
                 required: 'Please enter team count',
                 validate: shouldBeMoreThanOne,
               }}
-              errorMessage={errors.teamCount?.message || ''}
               type="number"
               variant="filled"
               size="md"
               radius="md"
               min={2}
-              register={register}
+              control={control}
             />
           </Group>
           <Button

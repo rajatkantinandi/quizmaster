@@ -31,7 +31,6 @@ export default function ConfigureQuiz({
     handleSubmit,
     formState: { errors },
     reset,
-    register,
     watch,
     control,
   } = useForm();
@@ -261,16 +260,15 @@ export default function ConfigureQuiz({
                               name={`categories.${idx}.categoryName`}
                               id={`categories.${idx}.categoryName`}
                               rules={{ required: 'Please enter category name' }}
-                              errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
                               type="text"
                               placeholder="Enter category name"
                               variant={'filled'}
                               size="md"
                               radius="md"
                               autoFocus
-                              onChange={(ev) => setActiveCategoryName((ev.target as any).value)}
+                              onChange={(ev) => setActiveCategoryName(ev.target.value)}
                               className={styles.categoryNameInput}
-                              register={register}
+                              control={control}
                             />
                           ) : (
                             <Text size="md" weight="bold">
@@ -318,6 +316,10 @@ export default function ConfigureQuiz({
             <Button
               mt="xl"
               onClick={() => {
+                setActiveCategoryIndex(categories.length);
+                setActiveCategoryName('');
+                setActiveQuestionIndex(null);
+                setExpandedQuestionIndex(null);
                 append({
                   categoryName: '',
                   questions: [],
