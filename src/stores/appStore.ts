@@ -109,9 +109,9 @@ export interface AppState {
   alert: AlertState | null;
   quizzesSelector: QuizzesSelectorState;
   showAlert: (data: AlertState | null) => void;
-  enableOkButton: Function;
-  disableOkButton: Function;
-  showModal: Function;
+  enableOkButton: () => void;
+  disableOkButton: () => void;
+  showModal: (modalState: ModalState | null) => void;
   setQuizzesSelectorState: (data: QuizzesSelectorState) => void;
   toggleSelectedQuizzes: (quizId: number) => void;
 }

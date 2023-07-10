@@ -3,6 +3,8 @@
   padding: 10px 15px;
   display: block;
   padding-top: 50px;
+  max-height: 400px;
+  overflow: auto;
 }
 
 .smEditor .ProseMirror {
@@ -131,7 +133,7 @@
   z-index: 2;
   background-color: var(--off-white);
   width: calc(100% - 4px);
-  margin: 2px;
+  margin: 1px;
   padding: 5px;
 }
 

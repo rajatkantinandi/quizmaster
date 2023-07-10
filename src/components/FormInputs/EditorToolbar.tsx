@@ -1,6 +1,9 @@
+import { Button, TextInput } from '@mantine/core';
 import { ChainedCommands, Editor } from '@tiptap/react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { isValidImageUrl, isValidUrl } from '../../helpers/url';
 import { getEmbedUrlFromURL } from '../../helpers/video';
+import { useStore } from '../../useStore';
 import Icon from '../Icon';
 
 type Props = {
@@ -18,51 +21,119 @@ type ButtonParams = {
 };
 
 export default function EditorToolbar({ editor, isFocussed }: Props) {
+  const showModal = useStore.use.showModal();
+  const showAlert = useStore.use.showAlert();
   const handleLink = useCallback(() => {
-    if (editor.isActive('link')) {
-      editor.chain().focus().unsetLink().run();
-      return;
-    }
-
     const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('Enter URL:', previousUrl || 'https://');
+    let url = previousUrl || 'https://';
 
-    // cancelled
-    if (url === null) {
-      return;
-    }
-
-    // empty
-    if (url === '') {
+    const unsetLink = () => {
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
-    }
+      showModal(null);
+    };
 
-    // update link
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    showModal({
+      title: 'Enter a valid Url:',
+      body: (
+        <div className="flex">
+          <EditorInput
+            initialValue={url}
+            onChange={(val) => {
+              url = val;
+            }}
+          />
+          <Button
+            variant="subtle"
+            type="button"
+            ml="md"
+            onClick={() => {
+              url = '';
+              unsetLink();
+            }}>
+            <Icon name="trash" width={16} height={16} />
+          </Button>
+        </div>
+      ),
+      okText: 'Save',
+      closeOnOkClick: false,
+      okCallback: () => {
+        // cancelled
+        if (!url) {
+          unsetLink();
+        } else if (isValidUrl(url)) {
+          // update link
+          editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+          showModal(null);
+        } else {
+          showAlert({ message: 'Invalid URL!', type: 'warning' });
+        }
+      },
+    });
   }, [editor]);
 
   const handleImage = useCallback(() => {
     // TODO: add ability to upload image
-    const url = window.prompt('Enter image URL');
+    let url;
 
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
+    showModal({
+      title: 'Enter a valid image URL:',
+      body: (
+        <EditorInput
+          initialValue={url}
+          onChange={(val) => {
+            url = val;
+          }}
+        />
+      ),
+      okText: 'Save',
+      closeOnOkClick: false,
+      okCallback: () => {
+        if (url && isValidImageUrl(url)) {
+          // update link
+          editor.chain().focus().setImage({ src: url }).run();
+          showModal(null);
+        } else {
+          showAlert({
+            message: 'Invalid image URL! An image url must end with a valid image file extension',
+            type: 'warning',
+          });
+        }
+      },
+    });
   }, [editor]);
 
   const handleIframe = useCallback(() => {
-    const url = window.prompt('Enter youtube, Google Drive or Vimeo video URL');
+    let url;
 
-    if (url) {
-      const embedUrl = getEmbedUrlFromURL(url);
+    showModal({
+      title: 'Enter youtube, Google Drive or Vimeo video URL:',
+      body: (
+        <EditorInput
+          initialValue={url}
+          onChange={(val) => {
+            url = val;
+          }}
+        />
+      ),
+      okText: 'Save',
+      closeOnOkClick: false,
+      okCallback: () => {
+        if (url) {
+          const embedUrl = getEmbedUrlFromURL(url);
 
-      if (embedUrl) {
-        editor.chain().focus().setIframe({ src: embedUrl }).run();
-      } else {
-        alert('We only support YouTube, Google Drive and Vimeo videos. Please use videos from those sources only');
-      }
-    }
+          if (embedUrl) {
+            editor.chain().focus().setIframe({ src: embedUrl }).run();
+            showModal(null);
+          } else {
+            showAlert({
+              message:
+                'We only support YouTube, Google Drive and Vimeo videos. Please use videos from those sources only',
+              type: 'warning',
+            });
+          }
+        }
+      },
+    });
   }, [editor]);
 
   const BUTTONS = useMemo(
@@ -150,5 +221,30 @@ function EditorButton({ editor, children, commandName, actionName, actionParams,
       className={actionName && editor.isActive(actionName, actionParams) ? 'active' : ''}>
       {children}
     </button>
+  );
+}
+
+function EditorInput({ onChange, initialValue }: { onChange: (value: string) => void; initialValue: string }) {
+  const [text, setText] = useState(initialValue);
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      ref.current?.focus();
+    }, 50);
+  }, []);
+
+  return (
+    <TextInput
+      variant="filled"
+      ref={ref}
+      type="text"
+      value={text}
+      className="grow"
+      onChange={(ev) => {
+        onChange(ev.target.value);
+        setText(ev.target.value);
+      }}
+    />
   );
 }
