@@ -1,6 +1,6 @@
-import { Button, TextInput } from '@mantine/core';
+import { Button } from '@mantine/core';
 import { ChainedCommands, Editor } from '@tiptap/react';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { isValidImageUrl, isValidUrl } from '../../helpers/url';
 import { getEmbedUrlFromURL } from '../../helpers/video';
 import { useStore } from '../../useStore';
@@ -21,49 +21,30 @@ type ButtonParams = {
 };
 
 export default function EditorToolbar({ editor, isFocussed }: Props) {
-  const showModal = useStore.use.showModal();
+  const showPrompt = useStore.use.showPrompt();
   const showAlert = useStore.use.showAlert();
   const handleLink = useCallback(() => {
     const previousUrl = editor.getAttributes('link').href;
-    let url = previousUrl || 'https://';
 
     const unsetLink = () => {
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      showModal(null);
+      showPrompt(null);
     };
 
-    showModal({
+    showPrompt({
       title: 'Enter a valid Url:',
-      body: (
-        <div className="flex">
-          <EditorInput
-            initialValue={url}
-            onChange={(val) => {
-              url = val;
-            }}
-          />
-          <Button
-            variant="subtle"
-            type="button"
-            ml="md"
-            onClick={() => {
-              url = '';
-              unsetLink();
-            }}>
-            <Icon name="trash" width={16} height={16} />
-          </Button>
-        </div>
-      ),
+      initialValue: previousUrl,
+      textInputProps: { placeholder: 'https://example.com' },
       okText: 'Save',
       closeOnOkClick: false,
-      okCallback: () => {
+      okCallback: (url) => {
         // cancelled
         if (!url) {
           unsetLink();
         } else if (isValidUrl(url)) {
           // update link
           editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-          showModal(null);
+          showPrompt(null);
         } else {
           showAlert({ message: 'Invalid URL!', type: 'warning' });
         }
@@ -73,25 +54,16 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
 
   const handleImage = useCallback(() => {
     // TODO: add ability to upload image
-    let url;
-
-    showModal({
+    showPrompt({
       title: 'Enter a valid image URL:',
-      body: (
-        <EditorInput
-          initialValue={url}
-          onChange={(val) => {
-            url = val;
-          }}
-        />
-      ),
+      textInputProps: { placeholder: 'https://example.com/image.png' },
       okText: 'Save',
       closeOnOkClick: false,
-      okCallback: () => {
+      okCallback: (url) => {
         if (url && isValidImageUrl(url)) {
           // update link
           editor.chain().focus().setImage({ src: url }).run();
-          showModal(null);
+          showPrompt(null);
         } else {
           showAlert({
             message: 'Invalid image URL! An image url must end with a valid image file extension',
@@ -103,27 +75,18 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
   }, [editor]);
 
   const handleIframe = useCallback(() => {
-    let url;
-
-    showModal({
+    showPrompt({
       title: 'Enter youtube, Google Drive or Vimeo video URL:',
-      body: (
-        <EditorInput
-          initialValue={url}
-          onChange={(val) => {
-            url = val;
-          }}
-        />
-      ),
+      textInputProps: { placeholder: 'https://youtube.com/watch?v=<videoId>' },
       okText: 'Save',
       closeOnOkClick: false,
-      okCallback: () => {
+      okCallback: (url) => {
         if (url) {
           const embedUrl = getEmbedUrlFromURL(url);
 
           if (embedUrl) {
             editor.chain().focus().setIframe({ src: embedUrl }).run();
-            showModal(null);
+            showPrompt(null);
           } else {
             showAlert({
               message:
@@ -221,30 +184,5 @@ function EditorButton({ editor, children, commandName, actionName, actionParams,
       className={actionName && editor.isActive(actionName, actionParams) ? 'active' : ''}>
       {children}
     </button>
-  );
-}
-
-function EditorInput({ onChange, initialValue }: { onChange: (value: string) => void; initialValue: string }) {
-  const [text, setText] = useState(initialValue);
-  const ref = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setTimeout(() => {
-      ref.current?.focus();
-    }, 50);
-  }, []);
-
-  return (
-    <TextInput
-      variant="filled"
-      ref={ref}
-      type="text"
-      value={text}
-      className="grow"
-      onChange={(ev) => {
-        onChange(ev.target.value);
-        setText(ev.target.value);
-      }}
-    />
   );
 }

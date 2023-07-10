@@ -1,5 +1,8 @@
+import { TextInputProps } from '@mantine/core';
+
 export const getAppStore = (set: Function, get: Function) => ({
   modal: null,
+  prompt: null,
   alert: null,
   quizzesSelector: {
     show: false,
@@ -45,6 +48,15 @@ export const getAppStore = (set: Function, get: Function) => ({
       },
       false,
       'showAlert',
+    );
+  },
+  showPrompt: (promptState: PromptState | null) => {
+    set(
+      (state: AppState) => {
+        state.prompt = promptState;
+      },
+      false,
+      'showPrompt',
     );
   },
   setQuizzesSelectorState: (quizzesSelectorState: QuizzesSelectorState) => {
@@ -95,6 +107,19 @@ export interface AlertState {
   callback?: Function;
 }
 
+export interface PromptState {
+  title: string;
+  initialValue?: string;
+  textInputProps?: TextInputProps;
+  okText?: string;
+  okCallback?: (value: string) => Promise<void> | void;
+  className?: string;
+  cancelText?: string;
+  cancelCallback?: Function;
+  size?: 'mini' | 'tiny' | 'small' | 'large' | 'fullscreen';
+  closeOnOkClick?: boolean;
+}
+
 export interface QuizzesSelectorState {
   action: string;
   message: string;
@@ -107,8 +132,10 @@ export interface QuizzesSelectorState {
 export interface AppState {
   modal: ModalState | null;
   alert: AlertState | null;
+  prompt: PromptState | null;
   quizzesSelector: QuizzesSelectorState;
   showAlert: (data: AlertState | null) => void;
+  showPrompt: (data: PromptState | null) => void;
   enableOkButton: () => void;
   disableOkButton: () => void;
   showModal: (modalState: ModalState | null) => void;
