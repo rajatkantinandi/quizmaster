@@ -119,6 +119,7 @@
   padding: 2px 5px;
   background-color: var(--off-white);
   color: var(--qm-primary);
+  flex-shrink: 0;
 }
 
 .editor-toolbar button:disabled {
@@ -135,6 +136,7 @@
   width: calc(100% - 4px);
   margin: 1px;
   padding: 5px;
+  overflow: auto;
 }
 
 .errorText {
