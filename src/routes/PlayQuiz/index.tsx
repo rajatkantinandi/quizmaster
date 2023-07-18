@@ -351,7 +351,7 @@ export default function PlayQuiz({ gameId }) {
           )}
           <div className="textAlignCenter">
             {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
-              <Button my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+              <Button radius="md" size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
                 Go to home
               </Button>
             )}

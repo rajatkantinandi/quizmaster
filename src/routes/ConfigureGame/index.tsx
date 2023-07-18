@@ -221,17 +221,18 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               data={[
                 {
                   value: '-0.25',
-                  label: '-25% of question points',
+                  label: '1/4 of question points',
                 },
                 {
                   value: '-0.33',
-                  label: '-33% of question points',
+                  label: '1/3 of question points',
                 },
                 {
                   value: '-0.5',
-                  label: '-50% of question points',
+                  label: '1/2 of question points',
                 },
               ]}
+              value={negativePointsMultiplier.toString()}
               id="negativePointsMultiplier"
               disabled={negativePointsMultiplier === 0}
               onChange={(value) => {

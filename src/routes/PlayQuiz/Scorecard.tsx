@@ -26,7 +26,7 @@ export default function Scorecard({ teams, currentTeamId, winner }) {
                 <Group position="apart" key={team.teamId}>
                   <Text color={team.teamId === currentTeamId ? 'white' : ''}>{team.name}</Text>
                   <div>
-                    {team.score || 0}
+                    {(team.score || 0).toFixed(2)}
                     {team.teamId && winner.includes(`${team.teamId}`) && <span title="winner"> 👑</span>}
                   </div>
                 </Group>
@@ -60,7 +60,7 @@ export default function Scorecard({ teams, currentTeamId, winner }) {
               </Text>
             </Group>
             <div>
-              {t.score}
+              {t.score.toFixed(2)}
               {t.teamId && winner.includes(`${t.teamId}`) && <span title="winner"> 👑</span>}
             </div>
           </Group>

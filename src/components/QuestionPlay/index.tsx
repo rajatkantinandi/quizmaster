@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 import WithoutOptions from './WithoutOptions';
 import WithOptions from './WithOptions';
 import { useStore } from '../../useStore';
+import styles from './styles.module.css';
+import classNames from 'classnames';
 
 interface Props {
   submitResponse: Function;
@@ -55,7 +57,7 @@ export default function QuestionPlay({
   }, [selectedOptionIds]);
 
   return (
-    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
+    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className={classNames('secondaryCard', styles.container)}>
       <form
         onSubmit={handleSubmit(() => {
           if (selectedChoices) {
@@ -81,7 +83,7 @@ export default function QuestionPlay({
                 Correct: {points} points
               </Badge>
               <Badge color="red" variant="filled">
-                Incorrect: {points * negativePointsMultiplier} points
+                Incorrect: {(points * negativePointsMultiplier).toFixed(2)} points
               </Badge>
             </Group>
           )}
