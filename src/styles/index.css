@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&family=Ubuntu&display=swap');
 
+/* html reset */
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -8,8 +9,58 @@ body {
   font-family: var(--body-font), sans-serif;
 }
 
+fieldset {
+  border: 1px solid var(--border-gray);
+  padding: 15px 20px;
+  border-radius: 10px;
+}
+
+legend {
+  background-color: var(--legend-bg);
+  color: var(--legend-color);
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 5px;
+  letter-spacing: 1.2px;
+  font-size: 15px;
+}
+
+
+/* thin scrollbar */
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(120, 120, 120, .35);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(120, 120, 120, .35) transparent;
+}
+
+/* flexbox stuff */
 .flex {
   display: flex;
+  align-items: flex-start;
+}
+
+.alignStart {
   align-items: flex-start;
 }
 
@@ -31,6 +82,10 @@ body {
 
 .flexWrap {
   flex-wrap: wrap;
+}
+
+.noShrink {
+  flex-shrink: 0;
 }
 
 .alignCenter {
@@ -57,57 +112,21 @@ body {
   justify-content: flex-end;
 }
 
+/* layout */
 .fullWidth {
   width: 100%;
-}
-
-fieldset {
-  border: 1px solid var(--border-gray);
-  padding: 15px 20px;
-  border-radius: 10px;
-}
-
-legend {
-  background-color: var(--legend-bg);
-  color: var(--legend-color);
-  font-weight: bold;
-  padding: 4px 10px;
-  border-radius: 5px;
-  letter-spacing: 1.2px;
-  font-size: 15px;
 }
 
 .absolute {
   position: absolute !important;
 }
 
+.relative {
+  position: relative;
+}
+
 .bold {
   font-weight: bold;
-}
-
-.textAlignCenter {
-  text-align: center;
-}
-
-.primaryCard {
-  background-color: var(--primary-card-bg);
-}
-
-.secondaryCard {
-  background-color: var(--secondary-card-bg);
-}
-
-.displayNone {
-  display: none;
-}
-
-.container-md {
-  width: 40%;
-  min-width: 500px;
-}
-
-.container-md .input {
-  width: 100%;
 }
 
 .textAlignCenter {
@@ -129,30 +148,63 @@ legend {
   cursor: pointer;
 }
 
-@keyframes slidedown {
-  to {
-    transform: scaleY(1);
-  }
-}
-
-.slideDown {
-  transform: scaleY(0);
-  transform-origin: 50% 0%;
-  animation: slidedown 0.2s forwards ease-out;
+.displayNone {
+  display: none;
 }
 
 .resizeVertical textarea {
   resize: vertical !important;
 }
 
+/* containers */
+.primaryCard {
+  background-color: var(--primary-card-bg);
+}
+
+.secondaryCard {
+  background-color: var(--secondary-card-bg);
+}
+
+.container-md {
+  width: 40%;
+  min-width: 500px;
+}
+
+.container-md .input {
+  width: 100%;
+}
+
+.outline {
+  border: 2px solid var(--border-light);
+  border-radius: 10px;
+  padding: 5px 10px;
+}
+
+/* Animations */
+@keyframes slidedown {
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.slideDown {
+  transform: scaleY(0);
+  opacity: 0;
+  transform-origin: 50% 0%;
+  animation: slidedown 0.2s forwards ease-out;
+}
+
 @keyframes slideup {
   to {
     transform: scaleY(1);
+    opacity: 1;
   }
 }
 
 .slideUp {
-  transform: scaleY(2);
+  transform: scaleY(1.5);
+  opacity: 0;
   transform-origin: 50% 0%;
   animation: slidedown 0.2s forwards ease-in;
 }

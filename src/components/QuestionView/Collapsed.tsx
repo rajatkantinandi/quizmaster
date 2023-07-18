@@ -2,23 +2,21 @@ import React from 'react';
 import { Question as IQuestion } from '../../types';
 import { Badge, ActionIcon, Text, List, Group, Button, Card } from '@mantine/core';
 import Icon from '../Icon';
-import Markdown from '../Markdown';
+import SanitizedHtml from '../SanitizedHtml';
 
 interface Props {
   questionNum: number;
   question: IQuestion;
   isValidQuestion: boolean;
-  isPreview: boolean;
   setActiveQuestion: any;
   deleteQuestion: any;
   setExpandedQuestionIndex: Function;
 }
 
-export default function CollapsedPreview({
+export default function CollapsedView({
   questionNum,
   question,
   isValidQuestion,
-  isPreview,
   setActiveQuestion,
   deleteQuestion,
   setExpandedQuestionIndex,
@@ -34,11 +32,11 @@ export default function CollapsedPreview({
       withBorder
       className="secondaryCard clickable slideUp"
       onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
-      <Group position="apart">
+      <Group position="apart" noWrap>
         <Group>
           <div className="flex">
             {questionNum}.{' '}
-            {<Markdown className="truncatedOneLine ml-md">{question.text}</Markdown> || (
+            {<SanitizedHtml className="truncatedOneLine ml-md">{question.text}</SanitizedHtml> || (
               <Text italic size="sm" span>
                 (No question text)
               </Text>
@@ -50,12 +48,10 @@ export default function CollapsedPreview({
             </Badge>
           )}
         </Group>
-        <Group>
-          {!isPreview && (
-            <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
-              Delete
-            </Button>
-          )}
+        <Group className="noShrink">
+          <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
+            Delete
+          </Button>
           <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
             <Icon name="pencil" width={22} />
           </ActionIcon>

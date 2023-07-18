@@ -4,20 +4,14 @@ import { FormInput } from '../FormInputs';
 import { Button, Text } from '@mantine/core';
 
 export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = false, handleFormSubmit }) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({ defaultValues: { name } });
+  const { control, handleSubmit } = useForm({ defaultValues: { name } });
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <FormInput
         name="name"
-        id="name"
-        register={register}
+        control={control}
         rules={{ required: 'Please enter a name for the quiz' }}
-        errorMessage={errors.name?.message || ''}
         type="text"
         placeholder="Please enter a name for the quiz"
         variant="filled"

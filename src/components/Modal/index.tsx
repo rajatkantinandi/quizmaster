@@ -3,7 +3,8 @@ import { useStore } from '../../useStore';
 import { Modal as MTModal, Button, Group, Checkbox, Text } from '@mantine/core';
 
 function Modal() {
-  const { modal, showModal } = useStore();
+  const showModal = useStore.use.showModal();
+  const modal = useStore.use.modal();
   const okRef = useRef<any>();
   const [shouldNotShowAgain, setShouldNotShowAgain] = useState(false);
   const {

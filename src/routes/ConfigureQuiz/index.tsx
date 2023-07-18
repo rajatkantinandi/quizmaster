@@ -25,14 +25,12 @@ export default function ConfigureQuiz({
   const [activeCategoryName, setActiveCategoryName] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null>(null);
-  const [previewQuestionIndex, setPreviewQuestionIndex] = useState<number | null>(null);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
   const navigate = useNavigate();
   const {
     handleSubmit,
     formState: { errors },
     reset,
-    register,
     watch,
     control,
   } = useForm();
@@ -175,7 +173,6 @@ export default function ConfigureQuiz({
     setActiveCategoryName(categories[index].categoryName);
     setActiveQuestionIndex(null);
     setExpandedQuestionIndex(null);
-    setPreviewQuestionIndex(null);
   };
 
   function isValidQuestion(question) {
@@ -232,7 +229,11 @@ export default function ConfigureQuiz({
               </ActionIcon>
             </Title>
             <Title order={4}>Categories</Title>
-            <Radio.Group name="activeCategory" value={`${activeCategoryIndex}`} onChange={setActiveCategory}>
+            <Radio.Group
+              className="flexCol"
+              name="activeCategory"
+              value={`${activeCategoryIndex}`}
+              onChange={setActiveCategory}>
               {categories.map((item: any, idx: number) => (
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : ''}
@@ -242,38 +243,38 @@ export default function ConfigureQuiz({
                     [styles.activeCategory]: idx === activeCategoryIndex,
                     [styles.nonActiveCard]: idx !== activeCategoryIndex,
                     primaryCard: true,
+                    fullWidth: true,
                   })}>
                   <Radio
                     mr="md"
                     value={`${idx}`}
+                    className={styles.radio}
                     label={
-                      <div className="flex alignCenter">
+                      <div className="flex fullWidth">
                         <Text weight="bold" mr="md">
                           {idx + 1}.
                         </Text>
-                        <div>
-                          <FormInput
-                            name={`categories.${idx}.categoryName`}
-                            id={`categories.${idx}.categoryName`}
-                            rules={{ required: 'Please enter category name' }}
-                            errorMessage={errors.categories?.[idx]?.categoryName?.message || ''}
-                            type="text"
-                            placeholder="Enter category name"
-                            variant={idx === activeCategoryIndex ? 'filled' : 'unstyled'}
-                            size="md"
-                            readOnly={idx !== activeCategoryIndex}
-                            radius="md"
-                            onClick={() => {
-                              if (idx !== activeCategoryIndex) {
-                                setActiveCategory(idx);
-                              }
-                            }}
-                            onKeyUp={(ev) => setActiveCategoryName((ev.target as any).value)}
-                            className={classNames({
-                              [styles.categoryNameInput]: idx !== activeCategoryIndex,
-                            })}
-                            register={register}
-                          />
+                        <div className="noShrink grow">
+                          {idx === activeCategoryIndex ? (
+                            <FormInput
+                              name={`categories.${idx}.categoryName`}
+                              id={`categories.${idx}.categoryName`}
+                              rules={{ required: 'Please enter category name' }}
+                              type="text"
+                              placeholder="Enter category name"
+                              variant={'filled'}
+                              size="md"
+                              radius="md"
+                              autoFocus
+                              onChange={(ev) => setActiveCategoryName(ev.target.value)}
+                              className={styles.categoryNameInput}
+                              control={control}
+                            />
+                          ) : (
+                            <Text size="md" weight="bold">
+                              {item.categoryName}
+                            </Text>
+                          )}
                           {!errors.categories?.[idx]?.categoryName?.message && (
                             <Text
                               weight="bold"
@@ -281,7 +282,6 @@ export default function ConfigureQuiz({
                               align="left"
                               size="xs"
                               className={classNames({
-                                absolute: true,
                                 'mt-md': idx === activeCategoryIndex,
                               })}>
                               {item.questions.length > 0 && (
@@ -292,7 +292,7 @@ export default function ConfigureQuiz({
                               {(item.questions.length === 0 ||
                                 item.questions.some((question) => !isValidQuestion(question))) &&
                                 idx !== activeCategoryIndex && (
-                                  <Badge color="red" variant="filled">
+                                  <Badge color="red" variant="filled" mt="sm">
                                     Incomplete
                                   </Badge>
                                 )}
@@ -316,6 +316,10 @@ export default function ConfigureQuiz({
             <Button
               mt="xl"
               onClick={() => {
+                setActiveCategoryIndex(categories.length);
+                setActiveCategoryName('');
+                setActiveQuestionIndex(null);
+                setExpandedQuestionIndex(null);
                 append({
                   categoryName: '',
                   questions: [],
@@ -339,21 +343,19 @@ export default function ConfigureQuiz({
             activeCategoryId={categories[activeCategoryIndex]?.id}
             activeQuestionIndex={activeQuestionIndex}
             expandedQuestionIndex={expandedQuestionIndex}
-            previewQuestionIndex={previewQuestionIndex}
             control={control}
             setActiveQuestionIndex={setActiveQuestionIndex}
             isValidQuestion={isValidQuestion}
-            setPreviewQuestionIndex={setPreviewQuestionIndex}
             quizId={quizId}
             setExpandedQuestionIndex={setExpandedQuestionIndex}
-            updateQuizData={() =>
+            updateQuizData={() => {
               createOrUpdateQuiz({
                 categories,
                 quizId,
                 name: quizName,
                 isDraft: isDraftRef.current,
-              })
-            }
+              });
+            }}
           />
         </Grid.Col>
       </Grid>
