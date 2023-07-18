@@ -14,13 +14,11 @@ export default function QuestionCard({
   questions,
   activeCategoryIndex,
   control,
-  previewQuestionIndex,
   expandedQuestionIndex,
   activeQuestionIndex,
   activeCategoryId,
   setActiveQuestionIndex,
   isValidQuestion,
-  setPreviewQuestionIndex,
   setExpandedQuestionIndex,
   quizId,
   updateQuizData,
@@ -67,14 +65,13 @@ export default function QuestionCard({
 
     if (index === activeQuestionIndex) {
       setActiveQuestionIndex(null);
-      setPreviewQuestionIndex(null);
     }
   }
 
   const resetQuestion = () => {
     if (activeQuestionIndex !== null && activeQuestionIndex >= 0) {
       getQuiz(quizId).then((quiz: Quiz) => {
-        const originalQuestion = quiz.categories[activeCategoryIndex].questions[activeQuestionIndex];
+        const originalQuestion = (quiz.categories[activeCategoryIndex]?.questions || [])[activeQuestionIndex];
 
         if (originalQuestion) {
           updateQuestionData(activeQuestionIndex, originalQuestion);
@@ -83,7 +80,6 @@ export default function QuestionCard({
         }
 
         setActiveQuestionIndex(null);
-        setPreviewQuestionIndex(null);
       });
     }
   };
@@ -92,11 +88,11 @@ export default function QuestionCard({
     update(index, data);
   }
 
-  async function handleSaveQuestion() {
+  async function handleSaveQuestion(idx, question) {
+    updateQuestionData(idx, question);
     await updateQuizData();
     setActiveQuestionIndex(null);
     setExpandedQuestionIndex(null);
-    setPreviewQuestionIndex(null);
 
     showAlert({
       message: 'Question has been saved successfully.',
@@ -115,27 +111,20 @@ export default function QuestionCard({
             questionNum={idx + 1}
             question={item}
             key={item.questionId}
-            saveQuestion={handleSaveQuestion}
+            saveQuestion={(data) => handleSaveQuestion(idx, data)}
             onQuestionChange={(data) => updateQuestionData(idx, data)}
             deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
             resetQuestion={resetQuestion}
-            showPreview={() => {
-              setActiveQuestionIndex(null);
-              setExpandedQuestionIndex(idx);
-              setPreviewQuestionIndex(idx);
-            }}
           />
         ) : (
           <QuestionView
             questionNum={idx + 1}
             question={item}
             key={item.questionId}
-            saveQuestion={handleSaveQuestion}
             isValidQuestion={isValidQuestion(item)}
             setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
             deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
             isExpanded={expandedQuestionIndex === idx}
-            isPreview={previewQuestionIndex === idx}
             setExpandedQuestionIndex={setExpandedQuestionIndex}
           />
         ),

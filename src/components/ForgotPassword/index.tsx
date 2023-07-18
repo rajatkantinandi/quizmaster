@@ -8,11 +8,7 @@ import { Card, Button, Title } from '@mantine/core';
 
 export default function Login() {
   const { sendForgotPasswordLink, showAlert } = useStore();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { control, handleSubmit } = useForm();
 
   async function handleForgotPassword(data: FieldValues) {
     try {
@@ -35,9 +31,8 @@ export default function Login() {
         <FormInput
           name="emailId"
           id="emailId"
-          register={register}
+          control={control}
           rules={{ required: 'Please enter email' }}
-          errorMessage={errors.emailId?.message}
           label="EmailId"
           type="email"
           autoFocus

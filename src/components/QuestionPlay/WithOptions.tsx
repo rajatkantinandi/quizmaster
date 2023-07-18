@@ -1,7 +1,7 @@
 import React from 'react';
 import { Title, Button, Checkbox, Group, createStyles } from '@mantine/core';
 import { Option as IOption } from '../../types';
-import Markdown from '../Markdown';
+import SanitizedHtml from '../SanitizedHtml';
 
 interface Props {
   setSelectedChoices: Function;
@@ -79,7 +79,7 @@ export default function WithOptions({
           onChange={(value) => setSelectedChoices(value.map((x) => parseInt(x)))}>
           {options.map((option) => (
             <Checkbox
-              label={<Markdown>{option.text}</Markdown>}
+              label={<SanitizedHtml>{option.text}</SanitizedHtml>}
               color={getCheckboxColor(option)}
               value={option.optionId.toString()}
               classNames={{

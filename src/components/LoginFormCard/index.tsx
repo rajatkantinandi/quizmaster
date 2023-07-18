@@ -10,11 +10,7 @@ import { Link } from 'react-router-dom';
 export default function LoginFormCard() {
   const { logIn, showModal, showAlert } = useStore();
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { control, handleSubmit } = useForm();
 
   async function handleLogin(data: FieldValues) {
     Cookies.remove('userName');
@@ -66,9 +62,8 @@ export default function LoginFormCard() {
         <FormInput
           name="userName"
           id="userName"
-          register={register}
+          control={control}
           rules={{ required: 'Please enter your username' }}
-          errorMessage={errors.userName?.message}
           label="Username"
           type="text"
           autoFocus
@@ -76,9 +71,8 @@ export default function LoginFormCard() {
         <FormInput
           name="password"
           id="password"
-          register={register}
+          control={control}
           rules={{ required: 'Please enter your password' }}
-          errorMessage={errors.password?.message}
           label="Password"
           type="password"
         />

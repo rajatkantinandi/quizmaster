@@ -34,14 +34,7 @@ const formDefaultValues: DefaultValue = {
 
 export default function ConfigureGame({ quizId, userName = 'guest' }) {
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-    control,
-  } = useForm({ defaultValues: formDefaultValues });
+  const { control, handleSubmit, setValue, watch } = useForm({ defaultValues: formDefaultValues });
   const { fields, append, remove, replace } = useFieldArray({
     control,
     name: 'teams',
@@ -136,7 +129,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                 name={`teams.${idx}.name`}
                 id={`teams.${idx}.name`}
                 rules={{ required: 'Please enter team name' }}
-                errorMessage={errors.teams?.[idx]?.name?.message || ''}
                 type="text"
                 variant="filled"
                 placeholder="Enter team name"
@@ -146,7 +138,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                 })}
                 size="md"
                 radius="md"
-                register={register}
+                control={control}
                 my="md"
               />
               {mode === 'automatic' && (
@@ -273,12 +265,11 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               rules={{
                 validate: shouldBeMoreThanZero,
               }}
-              errorMessage={errors.timeLimit?.message || ''}
               type="number"
               size="md"
               radius="md"
               className={styles.timeInput}
-              register={register}
+              control={control}
             />
           </Group>
           <Group position="apart">
@@ -304,12 +295,11 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               rules={{
                 validate: shouldBeMoreThanZero,
               }}
-              errorMessage={errors.selectionTimeLimit?.message || ''}
               type="number"
               size="md"
               radius="md"
               className={styles.timeInput}
-              register={register}
+              control={control}
             />
           </Group>
           <button className="displayNone" id="btnGameFormSubmit" type="submit">
