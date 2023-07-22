@@ -24,7 +24,7 @@ export default function PlayQuiz({ gameId }) {
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
-  const { timeLimit, selectionTimeLimit, isQuestionPointsHidden } = gameInfo;
+  const { timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier = 0 } = gameInfo;
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [winner, setWinner] = useState('');
@@ -136,7 +136,11 @@ export default function PlayQuiz({ gameId }) {
 
       if (currentTeamIndex >= 0) {
         const currentTeam = clonedTeams[currentTeamIndex];
-        currentTeam.score = (currentTeam.score || 0) + (isCorrect ? selectedQuestion.points : 0);
+        currentTeam.score =
+          (currentTeam.score || 0) +
+          (isCorrect
+            ? parseInt(selectedQuestion.points.toString())
+            : parseInt(selectedQuestion.points.toString()) * negativePointsMultiplier);
         currentTeam.selectedOptions.push({
           questionId: selectedQuestion.questionId,
           selectedOptionIds: optionIds,
@@ -332,6 +336,7 @@ export default function PlayQuiz({ gameId }) {
               }}
               winner={winner}
               selectedOptionIds={getSelectedOptionId(selectedQuestion)}
+              negativePointsMultiplier={negativePointsMultiplier}
             />
           ) : (
             !winner &&
@@ -346,7 +351,7 @@ export default function PlayQuiz({ gameId }) {
           )}
           <div className="textAlignCenter">
             {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
-              <Button my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+              <Button radius="md" size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
                 Go to home
               </Button>
             )}

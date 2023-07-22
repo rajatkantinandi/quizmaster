@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Title, Card, Text, Group, Box, Button } from '@mantine/core';
+import { Title, Card, Text, Group, Box, Button, Badge } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
 import { useForm } from 'react-hook-form';
 import WithoutOptions from './WithoutOptions';
 import WithOptions from './WithOptions';
 import { useStore } from '../../useStore';
+import styles from './styles.module.css';
+import classNames from 'classnames';
 
 interface Props {
   submitResponse: Function;
@@ -22,6 +24,7 @@ interface Props {
   isAttempted: boolean;
   isTimerRunning: boolean;
   winner: string;
+  negativePointsMultiplier: number;
 }
 
 export default function QuestionPlay({
@@ -32,6 +35,7 @@ export default function QuestionPlay({
   isAttempted,
   isTimerRunning,
   winner,
+  negativePointsMultiplier,
   continueGame,
 }: Props) {
   const { showAlert } = useStore();
@@ -53,7 +57,7 @@ export default function QuestionPlay({
   }, [selectedOptionIds]);
 
   return (
-    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard">
+    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className={classNames('secondaryCard', styles.container)}>
       <form
         onSubmit={handleSubmit(() => {
           if (selectedChoices) {
@@ -69,9 +73,20 @@ export default function QuestionPlay({
           <Title mr="xl" order={4}>
             Question {selectedQuestion.questionNum}
           </Title>
-          <Text weight="bold" component="span" size="sm">
-            Points: {points}
-          </Text>
+          {negativePointsMultiplier === 0 ? (
+            <Text weight="bold" component="span" size="sm">
+              Points: {points}
+            </Text>
+          ) : (
+            <Group spacing="xl">
+              <Badge color="green" variant="filled">
+                Correct: {points} points
+              </Badge>
+              <Badge color="red" variant="filled">
+                Incorrect: {(points * negativePointsMultiplier).toFixed(2)} points
+              </Badge>
+            </Group>
+          )}
         </Group>
         <Box my="xs">
           <SanitizedHtml>{text}</SanitizedHtml>

@@ -2,7 +2,6 @@ import React from 'react';
 import { Title, Button, Checkbox, Group, createStyles } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
-import styles from './styles.module.css';
 
 interface Props {
   setSelectedChoices: Function;
