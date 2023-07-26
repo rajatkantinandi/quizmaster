@@ -62,6 +62,7 @@ export default function WithOptions({
                   className="justifyCenter"
                   style={{ pointerEvents: 'none' }}
                   radius="xl"
+                  tabIndex={-1}
                   size="lg"
                 />
               ) : (
@@ -88,6 +89,7 @@ export default function WithOptions({
                     ? classes.input
                     : '',
               }}
+              tabIndex={isAttempted || !isTimerRunning ? -1 : undefined}
               style={isAttempted || !isTimerRunning ? { pointerEvents: 'none' } : {}}
               radius="xl"
               size="lg"
