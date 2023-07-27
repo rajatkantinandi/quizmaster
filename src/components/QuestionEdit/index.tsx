@@ -57,7 +57,7 @@ export default function QuestionEdit({
   function setCorrectOption(optionId: string | number, ev: any) {
     const optionsData = options.map((option) => ({
       ...option,
-      isCorrect: ev.target.checked && option.optionId === optionId,
+      isCorrect: option.optionId === optionId ? ev.target.checked : option.isCorrect,
     }));
 
     setValue('options', optionsData);

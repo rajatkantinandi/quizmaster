@@ -44,18 +44,22 @@ const theme: MantineThemeOverride = {
     },
     Checkbox: {
       styles: (theme, params) => ({
-        input: {
-          backgroundColor: 'var(--checkbox-bg)',
-          borderColor: 'var(--qm-primary)',
+        input: params.color
+          ? {}
+          : {
+              backgroundColor: 'var(--checkbox-bg)',
+              borderColor: 'var(--qm-primary)',
 
-          '&:checked': {
-            backgroundColor: 'var(--checkbox-bg)',
-            borderColor: 'var(--qm-primary)',
-          },
-        },
-        icon: {
-          color: 'var(--qm-primary)',
-        },
+              '&:checked': {
+                backgroundColor: 'var(--checkbox-bg)',
+                borderColor: 'var(--qm-primary)',
+              },
+            },
+        icon: params.color
+          ? {}
+          : {
+              color: 'var(--qm-primary)',
+            },
       }),
     },
     Radio: {

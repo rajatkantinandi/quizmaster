@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container } from '@mantine/core';
+import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container, Select } from '@mantine/core';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
@@ -17,6 +17,7 @@ interface DefaultValue {
   timeLimit: null | number;
   selectionTimeLimit: null | number;
   isQuestionPointsHidden: boolean;
+  negativePointsMultiplier: number;
   mode: string;
   players: string[];
 }
@@ -26,6 +27,7 @@ const formDefaultValues: DefaultValue = {
   timeLimit: null,
   selectionTimeLimit: null,
   isQuestionPointsHidden: false,
+  negativePointsMultiplier: 0,
   mode: 'manual',
   players: [],
 };
@@ -38,7 +40,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
     name: 'teams',
   });
   const [quizName, setQuizName] = useState('');
-  const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, mode, players } = watch();
+  const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier, mode, players } =
+    watch();
   const { getQuiz, addGame, showModal } = useStore();
 
   useEffect(() => {
@@ -49,7 +52,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
 
   async function handleGameConfig(data: FieldValues) {
     if (quizId) {
-      const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden } = data;
+      const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier } = data;
       const { gameId } = await addGame({
         teams: teams.map((x) => {
           x.players = x.players || '';
@@ -60,6 +63,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
         timeLimit: timeLimit || 0,
         selectionTimeLimit: selectionTimeLimit || 0,
         isQuestionPointsHidden,
+        negativePointsMultiplier,
       });
 
       navigate(`/play-game/${userName}/${gameId}`);
@@ -196,6 +200,46 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               setValue('isQuestionPointsHidden', !isQuestionPointsHidden);
             }}
           />
+          <Group position="apart" mb="xl">
+            <Checkbox
+              radius="xl"
+              size="md"
+              mb="xs"
+              ml="md"
+              label="Allow negative points for incorrect response"
+              checked={negativePointsMultiplier !== 0}
+              onChange={() => {
+                if (negativePointsMultiplier === 0) {
+                  setValue('negativePointsMultiplier', -0.25);
+                } else {
+                  setValue('negativePointsMultiplier', 0);
+                }
+              }}
+            />
+            <Select
+              placeholder="Negative points"
+              data={[
+                {
+                  value: '-0.25',
+                  label: '1/4 of question points',
+                },
+                {
+                  value: '-0.33',
+                  label: '1/3 of question points',
+                },
+                {
+                  value: '-0.5',
+                  label: '1/2 of question points',
+                },
+              ]}
+              value={negativePointsMultiplier.toString()}
+              id="negativePointsMultiplier"
+              disabled={negativePointsMultiplier === 0}
+              onChange={(value) => {
+                setValue('negativePointsMultiplier', parseFloat(value || '-0.25'));
+              }}
+            />
+          </Group>
           <Title pt="xl" mb="sm" order={4}>
             Time limits
           </Title>

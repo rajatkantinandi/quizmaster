@@ -1,46 +1,4 @@
-.questionText {
-  font-size: 22px;
-  font-family: var(--comfortaa);
-  color: var(--gray-dark);
-  margin: 10px 5px;
-}
-
 .container {
-  width: 450px;
-  padding: 20px 15px;
-  margin: 10px;
-  background-color: var(--question-container-color);
-  border-radius: 10px;
-  box-shadow: 0 0 2px -1px var(--shadow-color-light);
-  display: flex;
-  flex-direction: column;
-}
-
-.isAttempted.correct {
-  background-color: #79d389;
-  border-radius: 3px;
-  margin-left: -10px;
-  padding: 5px 10px;
-}
-
-.isAttempted.inCorrect {
-  padding: 5px 10px;
-  background-color: #fb8585 !important;
-  border-radius: 3px;
-  margin-left: -10px;
-}
-
-.correctAns {
-  padding: 10px;
-  background: var(--score-active-color);
-  border-radius: 10px;
-  width: 100%;
-}
-
-.correctAns .heading {
-  font-weight: bolder;
-  text-transform: uppercase;
-  font-size: 15px;
-  border-bottom: 1px solid var(--border-gray);
-  margin-bottom: 5px;
+  max-height: calc(90vh - 120px);
+  overflow: auto;
 }

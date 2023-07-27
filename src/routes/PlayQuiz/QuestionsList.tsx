@@ -26,10 +26,15 @@ export default function QuestionsList({
 
   function getQuestionColor(question: IQuestion): string {
     if (attemptedQuestionIds.includes(question.questionId)) {
-      const correctOptionId = question.options.find((x) => x.isCorrect)?.optionId;
-      const selectedOptionId = selectedOptionsData.find((x) => x.questionId === question.questionId)?.selectedOptionId;
+      const correctOptionIds = question.options.filter((x) => x.isCorrect).map((x) => x.optionId);
+      const selectedOptionIds = selectedOptionsData.find(
+        (x) => x.questionId === question.questionId,
+      )?.selectedOptionIds;
 
-      return correctOptionId === parseInt(selectedOptionId) ? 'green' : 'red';
+      return correctOptionIds.length === selectedOptionIds.length &&
+        !correctOptionIds.some((x) => !selectedOptionIds.includes(x))
+        ? 'green'
+        : 'red';
     } else {
       return 'blue';
     }

@@ -24,7 +24,7 @@ export default function PlayQuiz({ gameId }) {
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
-  const { timeLimit, selectionTimeLimit, isQuestionPointsHidden } = gameInfo;
+  const { timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier = 0 } = gameInfo;
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [winner, setWinner] = useState('');
@@ -124,9 +124,11 @@ export default function PlayQuiz({ gameId }) {
     return teams.filter((team) => team.score === maxScore);
   }
 
-  async function handleSubmitResponse(optionId: number | null) {
+  async function handleSubmitResponse(optionIds: number[]) {
     if (selectedQuestion) {
-      const isCorrect = selectedQuestion.options.find((o) => o.optionId === optionId)?.isCorrect;
+      const correctOptionIds = selectedQuestion.options.filter((o) => o.isCorrect).map((x) => x.optionId);
+      const isCorrect =
+        correctOptionIds.length === optionIds.length && !optionIds.some((x) => !correctOptionIds.includes(x));
       const currentTeamIndex = gameInfo.teams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
       const nextTeamIndex = (currentTeamIndex + 1) % gameInfo.teams.length;
       const clonedTeams = gameInfo.teams.map((x) => ({ ...x }));
@@ -134,10 +136,14 @@ export default function PlayQuiz({ gameId }) {
 
       if (currentTeamIndex >= 0) {
         const currentTeam = clonedTeams[currentTeamIndex];
-        currentTeam.score = (currentTeam.score || 0) + (isCorrect ? parseInt(selectedQuestion.points.toString()) : 0);
+        currentTeam.score =
+          (currentTeam.score || 0) +
+          (isCorrect
+            ? parseInt(selectedQuestion.points.toString())
+            : parseInt(selectedQuestion.points.toString()) * negativePointsMultiplier);
         currentTeam.selectedOptions.push({
           questionId: selectedQuestion.questionId,
-          selectedOptionId: optionId,
+          selectedOptionIds: optionIds,
         });
 
         setGameInfo({
@@ -158,7 +164,7 @@ export default function PlayQuiz({ gameId }) {
         nextTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
         currentTeam: {
           score: clonedTeams[currentTeamIndex].score,
-          selectedOptionId: optionId,
+          selectedOptionIds: optionIds,
           questionId: parseInt(selectedQuestion.questionId),
           teamId: parseInt(`${clonedTeams[currentTeamIndex].teamId}`),
         },
@@ -194,13 +200,13 @@ export default function PlayQuiz({ gameId }) {
     );
   }
 
-  function getSelectedOptionId(selectedQuestion) {
+  function getSelectedOptionId(selectedQuestion): number[] | null {
     const selectedOptionData = selectedOptionsData.find((x) => x.questionId === selectedQuestion.questionId);
 
     if (selectedOptionData) {
-      return selectedOptionData.selectedOptionId;
+      return selectedOptionData.selectedOptionIds;
     } else {
-      return '';
+      return null;
     }
   }
 
@@ -329,7 +335,8 @@ export default function PlayQuiz({ gameId }) {
                 setIsTimerRunning(true);
               }}
               winner={winner}
-              selectedOptionId={getSelectedOptionId(selectedQuestion)}
+              selectedOptionIds={getSelectedOptionId(selectedQuestion)}
+              negativePointsMultiplier={negativePointsMultiplier}
             />
           ) : (
             !winner &&
@@ -344,7 +351,7 @@ export default function PlayQuiz({ gameId }) {
           )}
           <div className="textAlignCenter">
             {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
-              <Button my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+              <Button radius="md" size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
                 Go to home
               </Button>
             )}
@@ -357,7 +364,7 @@ export default function PlayQuiz({ gameId }) {
               duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
               handleTimeUp={() => {
                 if (showQuestionTimer) {
-                  handleSubmitResponse(null);
+                  handleSubmitResponse([]);
                 } else if (selectionTimeLimit) {
                   selectRandomQuestion();
                 }
