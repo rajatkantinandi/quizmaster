@@ -1,4 +1,3 @@
-import { Button } from '@mantine/core';
 import { ChainedCommands, Editor } from '@tiptap/react';
 import React, { useCallback, useMemo } from 'react';
 import { isValidImageUrl, isValidUrl } from '../../helpers/url';
@@ -50,6 +49,7 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
         }
       },
     });
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [editor]);
 
   const handleImage = useCallback(() => {
@@ -72,6 +72,7 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
         }
       },
     });
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [editor]);
 
   const handleIframe = useCallback(() => {
@@ -97,6 +98,7 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
         }
       },
     });
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [editor]);
 
   const BUTTONS = useMemo(
