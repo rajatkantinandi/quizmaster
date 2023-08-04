@@ -6,7 +6,6 @@ import './styles/spacing.css';
 import './styles/editor.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { get } from './helpers';
 import { useStore } from './useStore';
 import Cookies from 'js-cookie';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -14,11 +13,29 @@ import { MantineProvider } from '@mantine/core';
 import theme from './styles/theme';
 
 if (Cookies.get('userToken')) {
-  get('user/data').then((resp) => {
-    useStore.setState({ userData: resp });
+  /**
+   * Original code
+  ```js
+    get('user/data').then((resp) => {
+      useStore.setState({ userData: resp });
 
-    renderDom();
+      renderDom();
+    });
+  ```
+   */
+  // Temporarily set user as guest
+  // TODO: revert this when we have a backend & login functionality
+  useStore.setState({
+    userData: {
+      userId: 1,
+      userName: Cookies.get('userName') || 'guest',
+      name: 'guest',
+      emailId: 'guest@quizmasterapp.in',
+      token: Cookies.get('userToken') || 'guestToken',
+    },
   });
+
+  renderDom();
 } else {
   renderDom();
 }

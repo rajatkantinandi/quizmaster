@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 
 export const getCommaSeparatedStringWithAndBeforeTheLastItem = (arr: string[]): string => {
   return arr.reduce((acc, val, i, arr) => {
@@ -6,7 +6,15 @@ export const getCommaSeparatedStringWithAndBeforeTheLastItem = (arr: string[]): 
   }, '');
 };
 
-export const isGuestUser = () => Cookies.get('userName') === 'guest';
+/**
+ * Original code
+```js
+  export const isGuestUser = () => Cookies.get('userName') === 'guest';
+```
+  */
+// Temporarily consider every user as guest
+// TODO: revert this when we have a backend & login functionality
+export const isGuestUser = () => true; // Cookies.get('userName') === 'guest';
 
 export const getRandomColor = () => {
   const letters = '0123456789ABCDEF';

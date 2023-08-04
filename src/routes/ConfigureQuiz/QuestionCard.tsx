@@ -41,6 +41,7 @@ export default function QuestionCard({
     const question = getEmptyQuestion(activeCategoryId);
     append(question);
     setActiveQuestionIndex(questions.length);
+    setExpandedQuestionIndex(null);
   };
 
   function handleDeleteQuestion(ev, index: number) {
@@ -92,7 +93,7 @@ export default function QuestionCard({
     updateQuestionData(idx, question);
     await updateQuizData();
     setActiveQuestionIndex(null);
-    setExpandedQuestionIndex(null);
+    setExpandedQuestionIndex(idx);
 
     showAlert({
       message: 'Question has been saved successfully.',
