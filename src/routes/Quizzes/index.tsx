@@ -98,63 +98,63 @@ export default function Quizzes({ userName }) {
     });
   }
 
-  function handlePublishQuizzes() {
-    if (quizzes.some((quiz) => !quiz.isDraft && !quiz.isPublished)) {
-      setQuizzesSelectorState({
-        action: 'publish',
-        message: 'Select quizzes to publish',
-        show: true,
-        selectedQuizzes: [],
-        onNextClick: (selectedQuizzes) => {
-          showModal({
-            title: 'Publish Quizzes',
-            body: (
-              <>
-                <p>Are you sure you want to publish following quizzes ?</p>
-                <ol>
-                  {selectedQuizzes.map((quizId) => (
-                    <li key={quizId}>{quizzes.find((quiz) => quiz.quizId === quizId)?.name}</li>
-                  ))}
-                </ol>
-              </>
-            ),
-            okCallback: async () => {
-              await publishQuizzes(selectedQuizzes);
-              setQuizzesSelectorState({
-                action: '',
-                message: '',
-                show: false,
-                selectedQuizzes: [],
-              });
-            },
-            cancelCallback: () => {
-              setQuizzesSelectorState({
-                action: '',
-                message: '',
-                show: false,
-                selectedQuizzes: [],
-              });
-            },
-            okText: 'Publish Quizzes',
-            cancelText: 'Cancel',
-          });
-        },
-        onCancelClick: () => {
-          setQuizzesSelectorState({
-            action: '',
-            message: '',
-            show: false,
-            selectedQuizzes: [],
-          });
-        },
-      });
-    } else {
-      showAlert({
-        message: 'No quiz to publish. Please complete the quizzes before publish if they are in draft state.',
-        type: 'info',
-      });
-    }
-  }
+  // function handlePublishQuizzes() {
+  //   if (quizzes.some((quiz) => !quiz.isDraft && !quiz.isPublished)) {
+  //     setQuizzesSelectorState({
+  //       action: 'publish',
+  //       message: 'Select quizzes to publish',
+  //       show: true,
+  //       selectedQuizzes: [],
+  //       onNextClick: (selectedQuizzes) => {
+  //         showModal({
+  //           title: 'Publish Quizzes',
+  //           body: (
+  //             <>
+  //               <p>Are you sure you want to publish following quizzes ?</p>
+  //               <ol>
+  //                 {selectedQuizzes.map((quizId) => (
+  //                   <li key={quizId}>{quizzes.find((quiz) => quiz.quizId === quizId)?.name}</li>
+  //                 ))}
+  //               </ol>
+  //             </>
+  //           ),
+  //           okCallback: async () => {
+  //             await publishQuizzes(selectedQuizzes);
+  //             setQuizzesSelectorState({
+  //               action: '',
+  //               message: '',
+  //               show: false,
+  //               selectedQuizzes: [],
+  //             });
+  //           },
+  //           cancelCallback: () => {
+  //             setQuizzesSelectorState({
+  //               action: '',
+  //               message: '',
+  //               show: false,
+  //               selectedQuizzes: [],
+  //             });
+  //           },
+  //           okText: 'Publish Quizzes',
+  //           cancelText: 'Cancel',
+  //         });
+  //       },
+  //       onCancelClick: () => {
+  //         setQuizzesSelectorState({
+  //           action: '',
+  //           message: '',
+  //           show: false,
+  //           selectedQuizzes: [],
+  //         });
+  //       },
+  //     });
+  //   } else {
+  //     showAlert({
+  //       message: 'No quiz to publish. Please complete the quizzes before publish if they are in draft state.',
+  //       type: 'info',
+  //     });
+  //   }
+  // }
 
   async function handlePlayGame(quizId) {
     const gameId = await getInCompletedGame(quizId);
@@ -206,12 +206,13 @@ export default function Quizzes({ userName }) {
                 leftIcon={<Icon color="white" width="16" name="trash" />}>
                 Delete Quizzes
               </Button>
-              <Button
+              {/* TODO: enable publish button when we have backend */}
+              {/* <Button
                 onClick={handlePublishQuizzes}
                 className={styles.publishQuiz}
                 leftIcon={<Icon color="white" width="16" name="publish" />}>
                 Publish Quizzes
-              </Button>
+              </Button> */}
               <Select
                 placeholder="Sort by"
                 className={styles.sort}
