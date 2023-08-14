@@ -35,15 +35,24 @@ export const downloadQuiz = (quiz: Quiz) => {
 };
 
 export const importQuizzes = (files: File[]) => {
-  const { createOrUpdateQuiz, getQuizzes } = useStore.getState();
+  const { createOrUpdateQuiz, getQuizzes, showAlert } = useStore.getState();
 
   for (let file of files) {
     Papa.parse<string[]>(file as any, {
       complete: async (results) => {
-        const quiz = getQuizFromCsv(results.data, file.name.split('.')[0]);
+        let quiz: Quiz;
 
-        await createOrUpdateQuiz(quiz);
-        getQuizzes(); // Update state
+        try {
+          quiz = getQuizFromCsv(results.data, file.name.split('.')[0]);
+        } catch (e) {
+          showAlert({ message: 'Invalid file format. Please check the file and try again.', type: 'error' });
+          return;
+        }
+
+        if (quiz.categories.length > 0) {
+          await createOrUpdateQuiz(quiz);
+          getQuizzes(); // Update state
+        }
       },
     });
   }
