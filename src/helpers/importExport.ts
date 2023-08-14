@@ -40,7 +40,7 @@ export const importQuizzes = (files: File[]) => {
   for (let file of files) {
     Papa.parse<string[]>(file as any, {
       complete: async (results) => {
-        let quiz: Quiz;
+        let quiz: Omit<Quiz, 'quizId'>;
 
         try {
           quiz = getQuizFromCsv(results.data, file.name.split('.')[0]);
@@ -59,10 +59,9 @@ export const importQuizzes = (files: File[]) => {
 };
 
 const getQuizFromCsv = (csvArray: string[][], name: string) => {
-  const quiz: Quiz = {
+  const quiz: Omit<Quiz, 'quizId'> = {
     name,
     categories: [],
-    quizId: getRandomId(),
     createDate: new Date().toISOString(),
     updateDate: new Date().toISOString(),
   };

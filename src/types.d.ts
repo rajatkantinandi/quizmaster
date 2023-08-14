@@ -37,7 +37,7 @@ export interface Quiz {
   isDraft?: boolean;
   isPublished?: boolean;
   userName?: string;
-  quizId: any;
+  quizId: number;
   createDate: string;
   updateDate: string;
   isDeleted?: boolean;
