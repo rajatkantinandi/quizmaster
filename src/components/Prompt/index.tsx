@@ -87,13 +87,12 @@ function Prompt() {
                 if (cancelCallback) {
                   cancelCallback();
                 }
-              }}
-              radius="md">
+              }}>
               {cancelText}
             </Button>
           )}
           {!!okText && (
-            <Button variant="filled" radius="md" type="submit" disabled={disableOkButton}>
+            <Button variant="filled" type="submit" disabled={disableOkButton}>
               {okText}
             </Button>
           )}

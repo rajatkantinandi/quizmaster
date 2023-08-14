@@ -65,8 +65,7 @@ function Modal() {
               if (cancelCallback) {
                 cancelCallback();
               }
-            }}
-            radius="md">
+            }}>
             {cancelText}
           </Button>
         )}
@@ -74,7 +73,6 @@ function Modal() {
           <Button
             ref={okRef}
             variant="filled"
-            radius="md"
             disabled={disableOkButton}
             onClick={() => {
               if (okCallback) {

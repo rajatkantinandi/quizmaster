@@ -264,7 +264,6 @@ export default function ConfigureQuiz({
                               placeholder="Enter category name"
                               variant={'filled'}
                               size="md"
-                              radius="md"
                               autoFocus
                               onChange={(ev) => setActiveCategoryName(ev.target.value)}
                               className={styles.categoryNameInput}
@@ -325,7 +324,6 @@ export default function ConfigureQuiz({
                   questions: [],
                 });
               }}
-              radius="md"
               variant="default"
               leftIcon={<Icon name="plus" width={18} />}>
               Add Category
@@ -365,7 +363,6 @@ export default function ConfigureQuiz({
             variant="gradient"
             size="lg"
             fullWidth
-            radius="md"
             leftIcon={<Icon name="done" color="#ffffff" />}
             onClick={submitQuizForm}>
             Complete Quiz

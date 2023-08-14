@@ -156,6 +156,10 @@ legend {
   resize: vertical !important;
 }
 
+.round {
+  border-radius: 50px !important;
+}
+
 /* containers */
 .primaryCard {
   background-color: var(--primary-card-bg);
@@ -178,6 +182,14 @@ legend {
   border: 2px solid var(--border-light);
   border-radius: 10px;
   padding: 5px 10px;
+}
+
+/* Button */
+.iconButton {
+  padding: 5px;
+  border-radius: 50% !important;
+  width: 35px;
+  height: 35px;
 }
 
 /* Animations */

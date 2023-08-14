@@ -98,7 +98,7 @@ export default function WithOptions({
         </Checkbox.Group>
       </Group>
       {!isAttempted && isTimerRunning && (
-        <Button radius="md" color="green" onClick={() => document.getElementById('btnSubmitResponse')?.click()}>
+        <Button color="green" onClick={() => document.getElementById('btnSubmitResponse')?.click()}>
           Submit
         </Button>
       )}

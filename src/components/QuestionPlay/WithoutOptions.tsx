@@ -50,10 +50,10 @@ export default function WithoutOptions({
       </Box>
       {!isAttempted && (
         <Group>
-          <Button radius="md" color="red" onClick={() => handleSelectedChoice([])}>
+          <Button color="red" onClick={() => handleSelectedChoice([])}>
             Incorrect
           </Button>
-          <Button radius="md" color="green" onClick={() => handleSelectedChoice([options[0].optionId])}>
+          <Button color="green" onClick={() => handleSelectedChoice([options[0].optionId])}>
             Correct
           </Button>
         </Group>
@@ -62,7 +62,6 @@ export default function WithoutOptions({
   ) : (
     <Button
       color="green"
-      radius="md"
       onClick={() => {
         setIsAnswerRevealed(true);
 

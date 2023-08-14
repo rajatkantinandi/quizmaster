@@ -11,6 +11,7 @@ import PageLoader from '../../components/PageLoader';
 import noContent from '../../images/no_content.png';
 import CreateQuizButton from '../../components/CreateQuizButton';
 import QuizSelectorAlert from '../../components/QuizSelectorAlert';
+import { downloadQuiz } from '../../helpers/importExport';
 
 export default function Quizzes({ userName }) {
   const [loading, setLoading] = useState(true);
@@ -234,7 +235,7 @@ export default function Quizzes({ userName }) {
           <Group>
             {quizzes.map((quiz, index) => (
               <div className={styles.quizCardWrapper} key={quiz.quizId}>
-                <Card shadow="sm" p="lg" radius="md" withBorder>
+                <Card shadow="sm" p="lg" withBorder>
                   <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
                     <Icon
                       name={`quiz_${(index % 13) + 1}` as IconName}
@@ -272,26 +273,39 @@ export default function Quizzes({ userName }) {
                     {plural(quiz.categories.length, '%count Category', '%count Categories')},{' '}
                     {plural(getQuestionsCount(quiz.categories), '%count Question', '%count Questions')}
                   </Text>
-
                   <Group position="apart" className={styles.cardButton}>
-                    <Button
-                      color="pink"
-                      radius="md"
-                      fullWidth={quiz.isDraft}
-                      className={quiz.isDraft ? '' : styles.playCardButton}
-                      leftIcon={<Icon color="#ffffff" name="pencil" width={16} />}
-                      onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
-                      Edit
-                    </Button>
-                    {!quiz.isDraft && (
+                    {quiz.isDraft ? (
                       <Button
-                        color="teal"
-                        radius="md"
-                        className={styles.playCardButton}
-                        leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
-                        onClick={() => handlePlayGame(quiz.quizId)}>
-                        Play
+                        color="pink"
+                        fullWidth
+                        leftIcon={<Icon color="#ffffff" name="pencil" width={16} />}
+                        onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
+                        Edit
                       </Button>
+                    ) : (
+                      <>
+                        <Button
+                          color="teal"
+                          className="grow"
+                          leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
+                          onClick={() => handlePlayGame(quiz.quizId)}>
+                          Play
+                        </Button>
+                        <Button
+                          title="Edit quiz"
+                          variant="light"
+                          className="iconButton"
+                          onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
+                          <Icon color="var(--gray-dark)" name="pencil" width={18} />
+                        </Button>
+                        <Button
+                          title="Download quiz"
+                          variant="light"
+                          className="iconButton"
+                          onClick={() => downloadQuiz(quiz)}>
+                          <Icon color="var(--gray-dark)" name="download" width={18} />
+                        </Button>
+                      </>
                     )}
                   </Group>
                   {quizzesSelector.show && (

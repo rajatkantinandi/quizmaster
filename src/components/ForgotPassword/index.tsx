@@ -37,7 +37,7 @@ export default function Login() {
           type="email"
           autoFocus
         />
-        <Button mt="xl" size="md" radius="md" type="submit" fullWidth variant="filled">
+        <Button mt="xl" size="md" type="submit" fullWidth variant="filled">
           Email me a reset link
         </Button>
       </form>

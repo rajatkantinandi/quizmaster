@@ -17,6 +17,7 @@ export const saveQuiz = async (data: QuizParams) => {
   if (existing) {
     await quizzesC.update({ quizId: data.quizId }, data);
   } else {
+    data.createDate = new Date().toISOString();
     await quizzesC.insert(data);
   }
 

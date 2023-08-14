@@ -16,8 +16,8 @@ function CreateQuizButton({ userName }): JSX.Element {
       size="lg"
       onClick={() => navigate(`/configure-quiz/${userName}`)}
       variant="filled"
+      className="round"
       sx={(theme) => ({ boxShadow: theme.shadows.sm })}
-      radius="xl"
       leftIcon={<Icon name="plus" color="#ffffff" />}>
       Create Quiz
     </Button>

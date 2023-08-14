@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppShell, Header, Group, TextInput, Menu, Avatar } from '@mantine/core';
+import { AppShell, Header, Group, TextInput } from '@mantine/core';
 import { Helmet } from 'react-helmet';
 import Quizzes from '../Quizzes';
 import ConfigureQuiz from '../ConfigureQuiz';
@@ -14,11 +14,11 @@ import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
 import { isValidUser } from '../../helpers/authHelper';
 import { capitalizeFirstLetter } from '../../helpers/textHelpers';
 import { Link } from 'react-router-dom';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 
 function AppLayout() {
   const { userName, viewType, id } = useParams();
-  const { searchQuiz, logout, quizzes, userData } = useStore();
+  const { searchQuiz, quizzes } = useStore();
 
   function getTabsView() {
     switch (viewType) {
@@ -40,16 +40,16 @@ function AppLayout() {
     }
   }
 
-  function getNameInitials() {
-    const name = userData.name || Cookies.get('userName') || '';
-    const firstNameLastNameArr = name.split(' ');
+  // function getNameInitials() {
+  //   const name = userData.name || Cookies.get('userName') || '';
+  //   const firstNameLastNameArr = name.split(' ');
 
-    if (firstNameLastNameArr[1]) {
-      return `${firstNameLastNameArr[0]?.charAt(0)?.toUpperCase()}${firstNameLastNameArr[1]?.charAt(0)?.toUpperCase()}`;
-    } else {
-      return firstNameLastNameArr[0]?.charAt(0)?.toUpperCase();
-    }
-  }
+  //   if (firstNameLastNameArr[1]) {
+  //     return `${firstNameLastNameArr[0]?.charAt(0)?.toUpperCase()}${firstNameLastNameArr[1]?.charAt(0)?.toUpperCase()}`;
+  //   } else {
+  //     return firstNameLastNameArr[0]?.charAt(0)?.toUpperCase();
+  //   }
+  // }
 
   return isValidUser ? (
     <>
@@ -66,7 +66,7 @@ function AppLayout() {
               <Link to={`/my-quizzes/${userName}`}>
                 <Icon name="logo" className="ml-lg" width={150} height={50} />
               </Link>
-              {quizzes.length > 0 && viewType === 'quizzes' && (
+              {quizzes.length > 0 && viewType === 'my-quizzes' && (
                 <TextInput
                   mr="xl"
                   type="text"
@@ -79,17 +79,20 @@ function AppLayout() {
                   icon={<Icon name="search" width={16} />}
                 />
               )}
-              <Menu shadow="md" width={200}>
-                <Menu.Target>
-                  <Avatar color="cyan" radius="xl">
-                    {getNameInitials()}
-                  </Avatar>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <Menu.Label>Hi, {userName}</Menu.Label>
-                  <Menu.Item onClick={logout}>Sign out</Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
+              {/* TODO: make menu visible when we add real users */}
+              {/* {userName !== 'guest' && (
+                <Menu shadow="md" width={200}>
+                  <Menu.Target>
+                    <Avatar color="cyan" radius="xl">
+                      {getNameInitials()}
+                    </Avatar>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Label>Hi, {userName}</Menu.Label>
+                    <Menu.Item onClick={logout}>Sign out</Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              )} */}
             </Group>
           </Header>
         }>

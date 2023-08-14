@@ -20,14 +20,12 @@ export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = fals
             Enter quiz name
           </Text>
         }
-        radius="md"
         size="md"
       />
       <Button
         id="btnUpdateQuizNameForm"
         className={hideSubmitButton ? 'displayNone' : ''}
         mt="xl"
-        radius="xl"
         size="md"
         fullWidth
         type="submit"

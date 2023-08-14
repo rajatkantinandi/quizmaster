@@ -19,3 +19,14 @@ export const getCSVExportContentForQuiz = (quiz: Quiz) => {
 
   return { fileContents, fileName };
 };
+
+export const downloadQuiz = (quiz: Quiz) => {
+  const { fileContents, fileName } = getCSVExportContentForQuiz(quiz);
+
+  const blob = new Blob([fileContents], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = fileName;
+  link.click();
+  link.remove();
+};
