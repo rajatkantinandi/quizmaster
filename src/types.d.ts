@@ -36,11 +36,11 @@ export interface Quiz {
   categories: Category[];
   isDraft?: boolean;
   isPublished?: boolean;
-  userName: string;
+  userName?: string;
   quizId: any;
   createDate: string;
   updateDate: string;
-  isDeleted: boolean;
+  isDeleted?: boolean;
 }
 
 export interface GameInfo {

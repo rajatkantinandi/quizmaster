@@ -12,6 +12,7 @@ import noContent from '../../images/no_content.png';
 import CreateQuizButton from '../../components/CreateQuizButton';
 import QuizSelectorAlert from '../../components/QuizSelectorAlert';
 import { downloadQuiz } from '../../helpers/importExport';
+import ImportQuizzesButton from '../../components/ImportQuizzesButton';
 
 export default function Quizzes({ userName }) {
   const [loading, setLoading] = useState(true);
@@ -188,6 +189,10 @@ export default function Quizzes({ userName }) {
                 Nothing here! Please create a quiz to get started.
               </Text>
               <CreateQuizButton userName={userName} />
+              <Text size="lg" my="lg">
+                Or
+              </Text>
+              <ImportQuizzesButton size="md" />
             </Grid.Col>
           )}
         </Grid>
@@ -200,6 +205,7 @@ export default function Quizzes({ userName }) {
               <CreateQuizButton userName={userName} />
             </Group>
             <Group>
+              <ImportQuizzesButton />
               <Button
                 onClick={handleDeleteQuizzes}
                 className={styles.deleteButton}
@@ -246,7 +252,6 @@ export default function Quizzes({ userName }) {
                       className={`my-lg ${styles.tileIcon}`}
                     />
                   </Card.Section>
-
                   <Group position="apart" mt="md">
                     <Text weight="bold" className={styles.truncate2Lines}>
                       {quiz.name}

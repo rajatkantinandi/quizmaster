@@ -1,10 +1,9 @@
-
 import { DEFAULT_NEW_QUESTION_POINTS, MIN_NUM_OF_CATEGORIES } from '../constants';
 import { Category, Option } from '../types';
 import { getRandomColor } from './common';
 
 export const getEmptyQuestion = (categoryId: number | string) => ({
-  questionId: parseInt(`${Math.random() * 10000}`),
+  questionId: getRandomId(),
   text: '',
   points: DEFAULT_NEW_QUESTION_POINTS,
   options: getEmptyOptions(MIN_NUM_OF_CATEGORIES) as Option[],
@@ -12,14 +11,14 @@ export const getEmptyQuestion = (categoryId: number | string) => ({
 });
 
 export const getEmptyCategory = (): Category => ({
-  categoryId: parseInt(`${Math.random() * 10000}`),
+  categoryId: getRandomId(),
   categoryName: '',
   questions: [],
 });
 
 export const getEmptyTeam = () => ({
   name: '',
-  teamId: parseInt(`${Math.random() * 10000}`),
+  teamId: getRandomId(),
   score: 0,
   selectedOptions: [],
   players: '',
@@ -32,7 +31,9 @@ export const getEmptyOptions = (count: number) =>
     .map((val, idx) => getEmptyOption());
 
 export const getEmptyOption = () => ({
-  optionId: parseInt(`${Math.random() * 10000}`),
+  optionId: getRandomId(),
   text: '',
   isCorrect: false,
 });
+
+export const getRandomId = () => parseInt(`${Math.random() * 10000}`);

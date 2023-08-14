@@ -1,8 +1,3 @@
-/**
- *
- * Icon
- *
- */
 import React from 'react';
 import { Button } from '@mantine/core';
 import Icon from '../../components/Icon';
@@ -13,12 +8,11 @@ function CreateQuizButton({ userName }): JSX.Element {
 
   return (
     <Button
-      size="lg"
+      size="md"
       onClick={() => navigate(`/configure-quiz/${userName}`)}
       variant="filled"
-      className="round"
       sx={(theme) => ({ boxShadow: theme.shadows.sm })}
-      leftIcon={<Icon name="plus" color="#ffffff" />}>
+      leftIcon={<Icon name="plus" color="#ffffff" width={20} height={20} />}>
       Create Quiz
     </Button>
   );
