@@ -156,10 +156,6 @@ legend {
   resize: vertical !important;
 }
 
-.round {
-  border-radius: 50px !important;
-}
-
 /* containers */
 .primaryCard {
   background-color: var(--primary-card-bg);

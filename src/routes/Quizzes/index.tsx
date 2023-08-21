@@ -192,7 +192,7 @@ export default function Quizzes({ userName }) {
               <Text size="lg" my="lg">
                 Or
               </Text>
-              <ImportQuizzesButton size="md" />
+              <ImportQuizzesButton size="md" radius="xl" />
             </Grid.Col>
           )}
         </Grid>

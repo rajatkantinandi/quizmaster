@@ -33,7 +33,7 @@ const theme: MantineThemeOverride = {
     },
     Button: {
       styles: (theme, params) => ({
-        root: { ...getButtonCss(params), borderRadius: 20 },
+        root: { borderRadius: params.radius ? undefined : 8, ...getButtonCss(params) },
       }),
     },
     Tabs: {

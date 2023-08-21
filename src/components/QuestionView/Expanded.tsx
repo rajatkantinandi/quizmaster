@@ -44,7 +44,7 @@ export default function ExpandedView({
             )}
           </Group>
           <Group className="noShrink">
-            <Button variant="light" compact color="red" onClick={deleteQuestion}>
+            <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
               Delete
             </Button>
             <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>

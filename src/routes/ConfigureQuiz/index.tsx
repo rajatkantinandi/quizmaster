@@ -363,9 +363,10 @@ export default function ConfigureQuiz({
             variant="gradient"
             size="lg"
             fullWidth
+            radius="xl"
             leftIcon={<Icon name="done" color="#ffffff" />}
             onClick={submitQuizForm}>
-            Complete Quiz
+            Complete quiz
           </Button>
         </Grid.Col>
       </Grid>
