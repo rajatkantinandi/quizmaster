@@ -16,6 +16,7 @@ import { ReactComponent as code} from '../../images/icons/code.svg';
 import { ReactComponent as codeBlock} from '../../images/icons/codeBlock.svg';
 import { ReactComponent as collapse} from '../../images/icons/collapse.svg';
 import { ReactComponent as done} from '../../images/icons/done.svg';
+import { ReactComponent as download} from '../../images/icons/download.svg';
 import { ReactComponent as expand} from '../../images/icons/expand.svg';
 import { ReactComponent as image} from '../../images/icons/image.svg';
 import { ReactComponent as link} from '../../images/icons/link.svg';
@@ -61,6 +62,7 @@ const icons = {
   codeBlock,
   collapse,
   done,
+  download,
   expand,
   image,
   link,

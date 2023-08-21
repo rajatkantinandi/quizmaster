@@ -11,6 +11,8 @@ import PageLoader from '../../components/PageLoader';
 import noContent from '../../images/no_content.png';
 import CreateQuizButton from '../../components/CreateQuizButton';
 import QuizSelectorAlert from '../../components/QuizSelectorAlert';
+import { downloadQuiz } from '../../helpers/importExport';
+import ImportQuizzesButton from '../../components/ImportQuizzesButton';
 
 export default function Quizzes({ userName }) {
   const [loading, setLoading] = useState(true);
@@ -97,63 +99,63 @@ export default function Quizzes({ userName }) {
     });
   }
 
-  function handlePublishQuizzes() {
-    if (quizzes.some((quiz) => !quiz.isDraft && !quiz.isPublished)) {
-      setQuizzesSelectorState({
-        action: 'publish',
-        message: 'Select quizzes to publish',
-        show: true,
-        selectedQuizzes: [],
-        onNextClick: (selectedQuizzes) => {
-          showModal({
-            title: 'Publish Quizzes',
-            body: (
-              <>
-                <p>Are you sure you want to publish following quizzes ?</p>
-                <ol>
-                  {selectedQuizzes.map((quizId) => (
-                    <li key={quizId}>{quizzes.find((quiz) => quiz.quizId === quizId)?.name}</li>
-                  ))}
-                </ol>
-              </>
-            ),
-            okCallback: async () => {
-              await publishQuizzes(selectedQuizzes);
-              setQuizzesSelectorState({
-                action: '',
-                message: '',
-                show: false,
-                selectedQuizzes: [],
-              });
-            },
-            cancelCallback: () => {
-              setQuizzesSelectorState({
-                action: '',
-                message: '',
-                show: false,
-                selectedQuizzes: [],
-              });
-            },
-            okText: 'Publish Quizzes',
-            cancelText: 'Cancel',
-          });
-        },
-        onCancelClick: () => {
-          setQuizzesSelectorState({
-            action: '',
-            message: '',
-            show: false,
-            selectedQuizzes: [],
-          });
-        },
-      });
-    } else {
-      showAlert({
-        message: 'No quiz to publish. Please complete the quizzes before publish if they are in draft state.',
-        type: 'info',
-      });
-    }
-  }
+  // function handlePublishQuizzes() {
+  //   if (quizzes.some((quiz) => !quiz.isDraft && !quiz.isPublished)) {
+  //     setQuizzesSelectorState({
+  //       action: 'publish',
+  //       message: 'Select quizzes to publish',
+  //       show: true,
+  //       selectedQuizzes: [],
+  //       onNextClick: (selectedQuizzes) => {
+  //         showModal({
+  //           title: 'Publish Quizzes',
+  //           body: (
+  //             <>
+  //               <p>Are you sure you want to publish following quizzes ?</p>
+  //               <ol>
+  //                 {selectedQuizzes.map((quizId) => (
+  //                   <li key={quizId}>{quizzes.find((quiz) => quiz.quizId === quizId)?.name}</li>
+  //                 ))}
+  //               </ol>
+  //             </>
+  //           ),
+  //           okCallback: async () => {
+  //             await publishQuizzes(selectedQuizzes);
+  //             setQuizzesSelectorState({
+  //               action: '',
+  //               message: '',
+  //               show: false,
+  //               selectedQuizzes: [],
+  //             });
+  //           },
+  //           cancelCallback: () => {
+  //             setQuizzesSelectorState({
+  //               action: '',
+  //               message: '',
+  //               show: false,
+  //               selectedQuizzes: [],
+  //             });
+  //           },
+  //           okText: 'Publish Quizzes',
+  //           cancelText: 'Cancel',
+  //         });
+  //       },
+  //       onCancelClick: () => {
+  //         setQuizzesSelectorState({
+  //           action: '',
+  //           message: '',
+  //           show: false,
+  //           selectedQuizzes: [],
+  //         });
+  //       },
+  //     });
+  //   } else {
+  //     showAlert({
+  //       message: 'No quiz to publish. Please complete the quizzes before publish if they are in draft state.',
+  //       type: 'info',
+  //     });
+  //   }
+  // }
 
   async function handlePlayGame(quizId) {
     const gameId = await getInCompletedGame(quizId);
@@ -187,6 +189,10 @@ export default function Quizzes({ userName }) {
                 Nothing here! Please create a quiz to get started.
               </Text>
               <CreateQuizButton userName={userName} />
+              <Text size="lg" my="lg">
+                Or
+              </Text>
+              <ImportQuizzesButton size="md" radius="xl" />
             </Grid.Col>
           )}
         </Grid>
@@ -199,18 +205,20 @@ export default function Quizzes({ userName }) {
               <CreateQuizButton userName={userName} />
             </Group>
             <Group>
+              <ImportQuizzesButton />
               <Button
                 onClick={handleDeleteQuizzes}
                 className={styles.deleteButton}
                 leftIcon={<Icon color="white" width="16" name="trash" />}>
                 Delete Quizzes
               </Button>
-              <Button
+              {/* TODO: enable publish button when we have backend */}
+              {/* <Button
                 onClick={handlePublishQuizzes}
                 className={styles.publishQuiz}
                 leftIcon={<Icon color="white" width="16" name="publish" />}>
                 Publish Quizzes
-              </Button>
+              </Button> */}
               <Select
                 placeholder="Sort by"
                 className={styles.sort}
@@ -234,7 +242,7 @@ export default function Quizzes({ userName }) {
           <Group>
             {quizzes.map((quiz, index) => (
               <div className={styles.quizCardWrapper} key={quiz.quizId}>
-                <Card shadow="sm" p="lg" radius="md" withBorder>
+                <Card shadow="sm" p="lg" withBorder>
                   <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
                     <Icon
                       name={`quiz_${(index % 13) + 1}` as IconName}
@@ -244,7 +252,6 @@ export default function Quizzes({ userName }) {
                       className={`my-lg ${styles.tileIcon}`}
                     />
                   </Card.Section>
-
                   <Group position="apart" mt="md">
                     <Text weight="bold" className={styles.truncate2Lines}>
                       {quiz.name}
@@ -272,26 +279,39 @@ export default function Quizzes({ userName }) {
                     {plural(quiz.categories.length, '%count Category', '%count Categories')},{' '}
                     {plural(getQuestionsCount(quiz.categories), '%count Question', '%count Questions')}
                   </Text>
-
                   <Group position="apart" className={styles.cardButton}>
-                    <Button
-                      color="pink"
-                      radius="md"
-                      fullWidth={quiz.isDraft}
-                      className={quiz.isDraft ? '' : styles.playCardButton}
-                      leftIcon={<Icon color="#ffffff" name="pencil" width={16} />}
-                      onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
-                      Edit
-                    </Button>
-                    {!quiz.isDraft && (
+                    {quiz.isDraft ? (
                       <Button
-                        color="teal"
-                        radius="md"
-                        className={styles.playCardButton}
-                        leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
-                        onClick={() => handlePlayGame(quiz.quizId)}>
-                        Play
+                        color="pink"
+                        fullWidth
+                        leftIcon={<Icon color="#ffffff" name="pencil" width={16} />}
+                        onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
+                        Edit
                       </Button>
+                    ) : (
+                      <>
+                        <Button
+                          color="teal"
+                          className="grow"
+                          leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
+                          onClick={() => handlePlayGame(quiz.quizId)}>
+                          Play
+                        </Button>
+                        <Button
+                          title="Edit quiz"
+                          variant="light"
+                          className="iconButton"
+                          onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
+                          <Icon color="var(--gray-dark)" name="pencil" width={18} />
+                        </Button>
+                        <Button
+                          title="Download quiz"
+                          variant="light"
+                          className="iconButton"
+                          onClick={() => downloadQuiz(quiz)}>
+                          <Icon color="var(--gray-dark)" name="download" width={18} />
+                        </Button>
+                      </>
                     )}
                   </Group>
                   {quizzesSelector.show && (

@@ -180,6 +180,14 @@ legend {
   padding: 5px 10px;
 }
 
+/* Button */
+.iconButton {
+  padding: 5px;
+  border-radius: 50% !important;
+  width: 35px;
+  height: 35px;
+}
+
 /* Animations */
 @keyframes slidedown {
   to {

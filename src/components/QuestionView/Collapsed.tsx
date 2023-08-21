@@ -27,7 +27,6 @@ export default function CollapsedView({
     <Card
       shadow="sm"
       p="lg"
-      radius="md"
       my="sm"
       withBorder
       className="secondaryCard clickable slideUp"

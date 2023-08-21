@@ -2,6 +2,7 @@
   height: inherit;
 }
 
-.searchInput input {
-  width: 500px;
+.searchInput {
+  margin-left: 20px;
+  flex: 1;
 }

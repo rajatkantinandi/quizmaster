@@ -52,7 +52,6 @@ export default function QuestionsList({
               {category.questions.map((question) => (
                 <Button
                   my="sm"
-                  radius="md"
                   styles={{
                     inner: {
                       display: 'inherit',

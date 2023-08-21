@@ -130,7 +130,7 @@ export default function QuestionCard({
           />
         ),
       )}
-      <Button mt="xl" onClick={addQuestion} radius="md" variant="default" leftIcon={<Icon name="plus" width={18} />}>
+      <Button mt="xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
         Add Question
       </Button>
     </Card>

@@ -31,7 +31,7 @@ export default function ExpandedView({
       : {};
 
   return (
-    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className="secondaryCard slideDown">
+    <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard slideDown">
       <Card className="secondaryCard clickable" p={0} onClick={() => setExpandedQuestionIndex(null)}>
         <Group position="apart" noWrap>
           <Group>
@@ -44,7 +44,7 @@ export default function ExpandedView({
             )}
           </Group>
           <Group className="noShrink">
-            <Button variant="light" compact radius="xl" color="red" onClick={deleteQuestion}>
+            <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
               Delete
             </Button>
             <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
