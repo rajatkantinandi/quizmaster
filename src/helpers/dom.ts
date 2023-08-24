@@ -67,3 +67,10 @@ export const getTextContent = (htmlContent: string): string => {
 
   return el.innerText?.trim() || '';
 };
+
+export const getImageOrTextContent = (htmlContent: string): string | boolean => {
+  const el = document.createElement('div');
+  el.innerHTML = htmlContent;
+
+  return el.innerText?.trim() || el.getElementsByTagName('img').length > 0 || '';
+};

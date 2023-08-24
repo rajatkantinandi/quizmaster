@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Divider, Button, Text, Checkbox, Group } from '@mantine/core';
 import {
   getCommaSeparatedStringWithAndBeforeTheLastItem,
@@ -30,7 +30,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
       teamCount: rest.teamCount,
     },
   });
-  const teamCount = watch('teamCount');
+  const { playerNames, teamCount } = watch();
   const teamsForm = useForm({
     defaultValues: {
       teams:
@@ -44,6 +44,14 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   });
   const teamsData = teamsForm.watch('teams');
   const teamList = getValidValuesFromColumns(teamsData);
+
+  useEffect(() => {
+    if (shouldShowTeams) {
+      setShouldShowTeams(false);
+      setIsEditingTeams(false);
+      disableOkButton();
+    }
+  }, [playerNames, teamCount]);
 
   function generateTeams(data) {
     const { teamCount, playerNames } = data;
@@ -104,15 +112,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(generateTeams)}
-        onChange={() => {
-          if (shouldShowTeams) {
-            setShouldShowTeams(false);
-            setIsEditingTeams(false);
-            disableOkButton();
-          }
-        }}>
+      <form onSubmit={handleSubmit(generateTeams)}>
         <Text mt="lg" mb="md">
           Enter one player name in each line or paste names from a spreadsheet column (Excel, Google sheet, etc.).
         </Text>
