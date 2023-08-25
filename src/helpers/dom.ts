@@ -74,3 +74,6 @@ export const getImageOrTextContent = (htmlContent: string): string | boolean => 
 
   return el.innerText?.trim() || el.getElementsByTagName('img').length > 0 || '';
 };
+
+// trim the text and remove multiple spaces
+export const getTrimmedText = (text): string => text.trim().replace(/\s+/g, ' ');

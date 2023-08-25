@@ -7,7 +7,7 @@ import { getEmptyOptions, getEmptyOption } from '../../helpers';
 import { Title, Card, Button, ActionIcon, Text, Checkbox, Tabs, Group, TabsValue } from '@mantine/core';
 import Icon from '../Icon';
 import classNames from 'classnames';
-import { getTextContent, getImageOrTextContent } from '../../helpers/dom';
+import { getTextContent, getImageOrTextContent, getTrimmedText } from '../../helpers/dom';
 
 interface Props {
   questionNum: number;
@@ -39,18 +39,17 @@ export default function QuestionEdit({
     question.options.length === 1 && question.options[0].isCorrect ? 'withoutOptions' : 'withOptions',
   );
   const { showAlert } = useStore();
-  const options = watch('options');
+  const { points, text, options, ...rest } = watch();
   const isWithoutOptions = options.length === 1;
-  const { points, text } = watch();
 
   useEffect(() => {
     onQuestionChange({
-      ...watch(),
+      ...rest,
       points,
       text,
       options,
     });
-  }, [points, text, options]);
+  }, [points, text, options, rest]);
 
   function onFormSubmit(data: FieldValues) {
     const validationError = getValidationError();
@@ -102,11 +101,11 @@ export default function QuestionEdit({
 
         for (let i = 0; i < optionTexts.length - 1; i++) {
           el.innerHTML = optionTexts[i];
-          const option1Text = el.innerText.trim().replace(/\s+/g, ' ');
+          const option1Text = getTrimmedText(el.innerText);
 
           for (let j = i + 1; j < optionTexts.length; j++) {
             el.innerHTML = optionTexts[j];
-            const option2Text = el.innerText.trim().replace(/\s+/g, ' '); // replacing multiple space with single space
+            const option2Text = getTrimmedText(el.innerText); // replacing multiple space with single space
 
             if (option1Text === option2Text) {
               return 'All options must have different text';
@@ -210,8 +209,8 @@ export default function QuestionEdit({
                 <FormTextArea
                   name={`options[${idx}].text`}
                   rules={{
-                    required: 'Option text should not be empty!',
-                    validate: (value: string) => !!getImageOrTextContent(value) || 'Option text should not be empty!',
+                    required: 'Option should not be empty!',
+                    validate: (value: string) => !!getImageOrTextContent(value) || 'Option should not be empty!',
                   }}
                   label={
                     <Text weight="bold" className="mb-md">
