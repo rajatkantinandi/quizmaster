@@ -137,7 +137,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                   [styles.inputWithPlayerNames]: mode === 'automatic',
                 })}
                 size="md"
-                radius="md"
                 control={control}
                 my="md"
               />
@@ -161,7 +160,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                 <Button
                   mt="xl"
                   onClick={() => append(getEmptyTeam())}
-                  radius="md"
                   className={styles.button}
                   variant="default"
                   leftIcon={<Icon name="plus" width={18} />}>
@@ -177,7 +175,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               </>
             )}
             <Button
-              radius="md"
               variant="filled"
               className={styles.button}
               leftIcon={<Icon color="white" name="randomTeam" width={20} />}
@@ -268,7 +265,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               }}
               type="number"
               size="md"
-              radius="md"
               className={styles.timeInput}
               control={control}
             />
@@ -298,7 +294,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               }}
               type="number"
               size="md"
-              radius="md"
               className={styles.timeInput}
               control={control}
             />
@@ -314,7 +309,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
           variant="gradient"
           size="lg"
           fullWidth
-          radius="md"
           leftIcon={<Icon name="done" color="#ffffff" />}>
           Play Game
         </Button>

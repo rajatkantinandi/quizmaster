@@ -188,10 +188,12 @@ export const getQuizStore = (set: Function, get: Function) => ({
 
     await unDraftQuiz(quizId);
   },
-  searchQuiz: (queryString) => {
+  searchQuiz: (queryString: string) => {
     set((state: QuizState) => {
       state.searchQuery = queryString;
-      state.searchResults = queryString ? state.quizzes.filter((quiz) => quiz.name.startsWith(queryString)) : [];
+      state.searchResults = queryString
+        ? state.quizzes.filter((quiz) => quiz.name.toLowerCase().includes(queryString.toLowerCase()))
+        : [];
     });
   },
   deleteQuizzes: async (quizIds) => {
@@ -261,7 +263,7 @@ async function saveQuizInLocalDB(data) {
   data.updateDate = new Date().toISOString();
 
   if (data.quizId) {
-    data.quizId = parseInt(data.quizId.toString());
+    data.quizId = parseInt(data.quizId.toString(), 10);
   }
 
   const response: any = await saveQuiz(data);

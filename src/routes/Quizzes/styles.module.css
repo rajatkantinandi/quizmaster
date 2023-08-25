@@ -56,10 +56,6 @@
   width: calc(100% - 40px);
 }
 
-.playCardButton {
-  width: calc(50% - 10px);
-}
-
 .truncate2Lines {
   display: -webkit-box;
   max-width: 200px;

@@ -57,7 +57,7 @@ export default function QuestionPlay({
   }, [selectedOptionIds]);
 
   return (
-    <Card shadow="sm" p="lg" radius="md" my="sm" withBorder className={classNames('secondaryCard', styles.container)}>
+    <Card shadow="sm" p="lg" my="sm" withBorder className={classNames('secondaryCard', styles.container)}>
       <form
         onSubmit={handleSubmit(() => {
           if (selectedChoices) {
@@ -111,7 +111,7 @@ export default function QuestionPlay({
           />
         )}
         {isAttempted && !winner && (
-          <Button mt="xl" variant="default" radius="md" onClick={continueGame}>
+          <Button mt="xl" variant="default" onClick={continueGame}>
             Continue
           </Button>
         )}

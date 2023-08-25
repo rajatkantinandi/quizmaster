@@ -343,7 +343,7 @@ export default function PlayQuiz({ gameId }) {
             attemptedQuestionIds.length === 0 &&
             !isGameStarted && (
               <Container mt="xl" pt="xl" className="textAlignCenter">
-                <Button size="lg" variant="gradient" radius="md" onClick={startGame}>
+                <Button size="lg" variant="gradient" onClick={startGame}>
                   Start Game
                 </Button>
               </Container>
@@ -351,7 +351,7 @@ export default function PlayQuiz({ gameId }) {
           )}
           <div className="textAlignCenter">
             {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
-              <Button radius="md" size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+              <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
                 Go to home
               </Button>
             )}

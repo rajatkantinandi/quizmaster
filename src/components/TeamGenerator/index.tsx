@@ -123,7 +123,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
           id="playerNames"
           variant="filled"
           size="md"
-          radius="md"
           minRows={7}
           control={control}
         />
@@ -141,7 +140,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               type="number"
               variant="filled"
               size="md"
-              radius="md"
               min={2}
               control={control}
             />
@@ -150,7 +148,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
             disabled={isEditingTeams}
             mb="xl"
             type="submit"
-            radius="md"
             variant="default"
             leftIcon={<Icon name="team" width={20} />}>
             Generate team
@@ -182,7 +179,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               variant="filled"
               disabled={!isEditingTeams}
               size="md"
-              radius="md"
               minRows={5}
               control={teamsForm.control}
             />

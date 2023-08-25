@@ -8,7 +8,6 @@ function QuizSelectorAlert({ show, message, selectedQuizzes, onNextClick, onCanc
     <Dialog
       opened={show}
       size="lg"
-      radius="md"
       shadow="xl"
       styles={() => ({
         root: {
@@ -37,14 +36,13 @@ function QuizSelectorAlert({ show, message, selectedQuizzes, onNextClick, onCanc
             <Button
               variant="light"
               size="sm"
-              radius="md"
               disabled={selectedQuizzes.length === 0}
               onClick={() => onNextClick(selectedQuizzes)}>
               Next
             </Button>
           )}
           {!!onCancelClick && (
-            <Button variant="light" size="sm" radius="md" onClick={() => onCancelClick()}>
+            <Button variant="light" size="sm" onClick={() => onCancelClick()}>
               Cancel
             </Button>
           )}

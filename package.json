@@ -24,6 +24,7 @@
     "history": "^5.1.0",
     "immer": "^9.0.14",
     "js-cookie": "^3.0.1",
+    "papaparse": "^5.4.1",
     "prettier": "^2.4.1",
     "qs": "^6.7.0",
     "react": "^17.0.2",
@@ -64,7 +65,9 @@
     ]
   },
   "devDependencies": {
+    "@types/papaparse": "^5.3.7",
     "@types/qs": "^6.9.7",
-    "@types/react-router-dom": "^5.3.3"
+    "@types/react-router-dom": "^5.3.3",
+    "ts-node": "^10.9.1"
   }
 }

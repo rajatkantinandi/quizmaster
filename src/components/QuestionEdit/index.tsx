@@ -148,7 +148,7 @@ export default function QuestionEdit({
   }
 
   return (
-    <Card shadow="sm" p="lg" my="sm" radius="md" withBorder className="secondaryCard slideDown">
+    <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard slideDown">
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <Group position="apart" mb="lg">
           <Group>
@@ -227,12 +227,7 @@ export default function QuestionEdit({
                 </ActionIcon>
               </Group>
             ))}
-            <Button
-              radius="md"
-              mt="lg"
-              variant="default"
-              onClick={addOption}
-              leftIcon={<Icon name="plus" width={18} />}>
+            <Button mt="lg" variant="default" onClick={addOption} leftIcon={<Icon name="plus" width={18} />}>
               Add option
             </Button>
           </Tabs.Panel>
@@ -259,14 +254,14 @@ export default function QuestionEdit({
           </Tabs.Panel>
         </Tabs>
         <Group position="apart" mt="xl">
-          <Button radius="md" color="red" variant="white" onClick={onDeleteClick}>
+          <Button color="red" variant="white" onClick={onDeleteClick}>
             Delete
           </Button>
           <div>
-            <Button mr="sm" radius="md" variant="light" onClick={onCancelClick}>
+            <Button mr="sm" variant="light" onClick={onCancelClick}>
               Cancel
             </Button>
-            <Button radius="md" variant="filled" type="submit">
+            <Button variant="filled" type="submit">
               Save
             </Button>
           </div>
