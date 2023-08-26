@@ -1,6 +1,20 @@
 .categoryGrid {
-  min-width: 275px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
+
+@media only screen and (max-width: 1380px) {
+  .categoryGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  .categoryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 .avatar {
   border-radius: 32px;
@@ -42,6 +56,7 @@
   margin: 0 5px;
   --background-color: rgba(0, 0, 0, 0.1);
 }
+
 .ResizeHandleOuter[data-resize-handle-active] {
   --background-color: rgba(0, 0, 0, 0.3);
 }

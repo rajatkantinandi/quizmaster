@@ -283,7 +283,7 @@ export default function PlayQuiz({ gameId }) {
       <Helmet>
         <title>Play Quiz</title>
       </Helmet>
-      <Group mb="xl" pb="xl">
+      <Group mb="xl">
         {quizInfo.name && <Title order={2}>Play game for {quizInfo.name}</Title>}
         {gameId && getAllQuestions(quizInfo.categories).length !== selectedOptionsData.length && (
           <Button onClick={confirmCreateNewGame} variant="outline">
@@ -291,39 +291,20 @@ export default function PlayQuiz({ gameId }) {
           </Button>
         )}
       </Group>
-      <PanelGroup autoSaveId="playQuizPanel" direction="horizontal">
-        <Panel defaultSize={20} minSize={20} style={{ minWidth: '290px' }}>
-          <QuestionsList
-            categories={quizInfo.categories}
-            selectedOptionsData={selectedOptionsData}
-            teams={gameInfo.teams}
-            attemptedQuestionIds={attemptedQuestionIds}
-            selectedQuestion={selectedQuestion}
-            isQuestionPointsHidden={isQuestionPointsHidden}
-            shouldEnableQuestion={shouldEnableQuestion}
-            showQuestion={showQuestion}
-          />
-        </Panel>
-        <ResizeHandle />
-        <Panel defaultSize={60} maxSize={60}>
-          {winner
-            ? !selectedQuestion && (
-                <Title pt="xl" mt="xl" color="grey" align="center" order={3}>
-                  {getWinnerMessage()}
-                </Title>
-              )
-            : shouldShowTimer() &&
-              isTimerRunning &&
-              (showQuestionTimer ? (
-                <Title mb="lg" color="grey" align="center" order={3}>
-                  Answer the question before timer ends
-                </Title>
-              ) : (
-                <Title pt="xl" mt="xl" color="grey" align="center" order={3}>
-                  Select a question before timer ends
-                </Title>
-              ))}
-          {!!selectedQuestion ? (
+      {winner && (
+        <Title
+          py="md"
+          my="lg"
+          color="white"
+          style={{ backgroundColor: 'var(--correct-color)', borderRadius: 10 }}
+          align="center"
+          order={3}>
+          🎉 {getWinnerMessage()}
+        </Title>
+      )}
+      <PanelGroup autoSaveId={selectedQuestion ? 'playQuestion' : 'playSelectQuestion'} direction="horizontal">
+        {selectedQuestion ? (
+          <Panel defaultSize={70} maxSize={70}>
             <QuestionPlay
               submitResponse={handleSubmitResponse}
               selectedQuestion={selectedQuestion}
@@ -338,42 +319,68 @@ export default function PlayQuiz({ gameId }) {
               selectedOptionIds={getSelectedOptionId(selectedQuestion)}
               negativePointsMultiplier={negativePointsMultiplier}
             />
-          ) : (
-            !winner &&
-            attemptedQuestionIds.length === 0 &&
-            !isGameStarted && (
-              <Container mt="xl" pt="xl" className="textAlignCenter">
+            {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
+              <div className="flex justifyCenter">
+                <Button size="lg" my="lg" mr="md" variant="outline" onClick={() => setSelectedQuestion(null)}>
+                  Show questions
+                </Button>
+                <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+                  Go to home
+                </Button>
+              </div>
+            )}
+          </Panel>
+        ) : (
+          <Panel defaultSize={70} maxSize={70} style={{ minWidth: '290px' }}>
+            {!winner && attemptedQuestionIds.length === 0 && !isGameStarted && (
+              <Container my="xl" className="textAlignCenter">
                 <Button size="lg" variant="gradient" onClick={startGame}>
                   Start Game
                 </Button>
               </Container>
-            )
-          )}
-          <div className="textAlignCenter">
-            {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
-              <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
-                Go to home
-              </Button>
             )}
-          </div>
-        </Panel>
-        <ResizeHandle />
-        <Panel defaultSize={20} minSize={20} style={{ minWidth: '320px' }}>
-          {shouldShowTimer() && (
-            <Timer
-              duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
-              handleTimeUp={() => {
-                if (showQuestionTimer) {
-                  handleSubmitResponse([]);
-                } else if (selectionTimeLimit) {
-                  selectRandomQuestion();
-                }
-              }}
-              key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
-              isTimerRunning={isTimerRunning}
-              setIsTimerRunning={setIsTimerRunning}
-              selectedQuestionId={selectedQuestion?.questionId}
+            <QuestionsList
+              categories={quizInfo.categories}
+              selectedOptionsData={selectedOptionsData}
+              teams={gameInfo.teams}
+              attemptedQuestionIds={attemptedQuestionIds}
+              selectedQuestion={selectedQuestion}
+              isQuestionPointsHidden={isQuestionPointsHidden}
+              shouldEnableQuestion={shouldEnableQuestion}
+              showQuestion={showQuestion}
             />
+          </Panel>
+        )}
+        <ResizeHandle />
+        <Panel defaultSize={30} minSize={20} style={{ minWidth: '320px' }}>
+          {shouldShowTimer() && (
+            <>
+              <div style={{ opacity: isTimerRunning ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
+                {showQuestionTimer ? (
+                  <Title color="grey" align="center" order={3}>
+                    Answer the question before timer ends
+                  </Title>
+                ) : (
+                  <Title color="grey" align="center" order={3}>
+                    Select a question before timer ends
+                  </Title>
+                )}
+              </div>
+              <Timer
+                duration={showQuestionTimer ? timeLimit : selectionTimeLimit}
+                handleTimeUp={() => {
+                  if (showQuestionTimer) {
+                    handleSubmitResponse([]);
+                  } else if (selectionTimeLimit) {
+                    selectRandomQuestion();
+                  }
+                }}
+                key={showQuestionTimer ? selectedQuestion?.questionId : 'questionSelection'}
+                isTimerRunning={isTimerRunning}
+                setIsTimerRunning={setIsTimerRunning}
+                selectedQuestionId={selectedQuestion?.questionId}
+              />
+            </>
           )}
           <Scorecard teams={gameInfo.teams} currentTeamId={gameInfo.currentTeamId} winner={winner} />
         </Panel>
