@@ -65,18 +65,17 @@ const getQuizFromCsv = (csvArray: string[][], name: string) => {
     createDate: new Date().toISOString(),
     updateDate: new Date().toISOString(),
   };
-  let currentCategory: Category = {
-    categoryName: '',
-    categoryId: getRandomId(),
-    questions: [],
-  };
+  let currentCategory: Category | null = null;
 
   for (let [index, csvRow] of csvArray.entries()) {
     if (csvRow[0] === 'Category name') {
-      currentCategory.categoryId = getRandomId();
-      currentCategory.categoryName = csvRow[1];
+      currentCategory = {
+        categoryName: csvRow[1],
+        categoryId: getRandomId(),
+        questions: [],
+      };
       quiz.categories.push(currentCategory);
-    } else if (csvRow[0].startsWith('Question')) {
+    } else if (csvRow[0].startsWith('Question') && !!currentCategory) {
       const questionArray = csvArray[index + 1];
       const question = {
         text: questionArray[0],
