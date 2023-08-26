@@ -11,6 +11,7 @@ import ResizeHandle from './ResizeHandle';
 import Scorecard from './Scorecard';
 import QuestionsList from './QuestionsList';
 import { useNavigate } from 'react-router';
+import styles from './styles.module.css';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -302,9 +303,9 @@ export default function PlayQuiz({ gameId }) {
           🎉 {getWinnerMessage()}
         </Title>
       )}
-      <PanelGroup autoSaveId={selectedQuestion ? 'playQuestion' : 'playSelectQuestion'} direction="horizontal">
-        {selectedQuestion ? (
-          <Panel defaultSize={70} maxSize={70}>
+      <PanelGroup autoSaveId="playQuestion" direction="horizontal">
+        <Panel defaultSize={70} maxSize={70} className={styles.categoryGridContainer}>
+          {selectedQuestion ? (
             <QuestionPlay
               submitResponse={handleSubmitResponse}
               selectedQuestion={selectedQuestion}
@@ -319,40 +320,42 @@ export default function PlayQuiz({ gameId }) {
               selectedOptionIds={getSelectedOptionId(selectedQuestion)}
               negativePointsMultiplier={negativePointsMultiplier}
             />
-            {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
-              <div className="flex justifyCenter">
+          ) : (
+            <>
+              {!winner && attemptedQuestionIds.length === 0 && !isGameStarted && (
+                <Container my="xl" className="textAlignCenter">
+                  <Button size="lg" variant="gradient" onClick={startGame}>
+                    Start Game
+                  </Button>
+                </Container>
+              )}
+              <QuestionsList
+                categories={quizInfo.categories}
+                selectedOptionsData={selectedOptionsData}
+                teams={gameInfo.teams}
+                attemptedQuestionIds={attemptedQuestionIds}
+                selectedQuestion={selectedQuestion}
+                isQuestionPointsHidden={isQuestionPointsHidden}
+                shouldEnableQuestion={shouldEnableQuestion}
+                showQuestion={showQuestion}
+              />
+            </>
+          )}
+          {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
+            <div className="flex justifyCenter">
+              {!!selectedQuestion && (
                 <Button size="lg" my="lg" mr="md" variant="outline" onClick={() => setSelectedQuestion(null)}>
-                  Show questions
+                  Show question list
                 </Button>
-                <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
-                  Go to home
-                </Button>
-              </div>
-            )}
-          </Panel>
-        ) : (
-          <Panel defaultSize={70} maxSize={70} style={{ minWidth: '290px' }}>
-            {!winner && attemptedQuestionIds.length === 0 && !isGameStarted && (
-              <Container my="xl" className="textAlignCenter">
-                <Button size="lg" variant="gradient" onClick={startGame}>
-                  Start Game
-                </Button>
-              </Container>
-            )}
-            <QuestionsList
-              categories={quizInfo.categories}
-              selectedOptionsData={selectedOptionsData}
-              teams={gameInfo.teams}
-              attemptedQuestionIds={attemptedQuestionIds}
-              selectedQuestion={selectedQuestion}
-              isQuestionPointsHidden={isQuestionPointsHidden}
-              shouldEnableQuestion={shouldEnableQuestion}
-              showQuestion={showQuestion}
-            />
-          </Panel>
-        )}
+              )}
+              <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+                Go to home
+              </Button>
+            </div>
+          )}
+        </Panel>
         <ResizeHandle />
-        <Panel defaultSize={30} minSize={20} style={{ minWidth: '320px' }}>
+        <Panel defaultSize={30} minSize={20}>
           {shouldShowTimer() && (
             <>
               <div style={{ opacity: isTimerRunning ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>

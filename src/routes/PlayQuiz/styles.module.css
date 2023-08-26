@@ -1,15 +1,21 @@
+.categoryGridContainer {
+  container-type: inline-size;
+  container-name: panel;
+  min-width: 320px;
+}
+
 .categoryGrid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-@media only screen and (max-width: 1380px) {
+@container panel (max-width: 900px) {
   .categoryGrid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media only screen and (max-width: 1024px) {
+@container panel (max-width: 640px) {
   .categoryGrid {
     grid-template-columns: 1fr;
   }
