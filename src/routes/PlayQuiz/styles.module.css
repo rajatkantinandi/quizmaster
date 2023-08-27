@@ -43,28 +43,3 @@
   padding: 3px 15px 3px 3px;
   border-radius: 58px;
 }
-
-.Icon {
-  width: 14px;
-  height: 14px;
-  position: absolute;
-  left: calc(50% - 0.45rem);
-  top: calc(50% - 0.5rem);
-}
-
-.ResizeHandleOuter {
-  flex: 0 0 1em;
-  position: relative;
-  margin: 0 5px;
-  --background-color: rgba(0, 0, 0, 0.1);
-}
-
-.ResizeHandleOuter[data-resize-handle-active] {
-  --background-color: rgba(0, 0, 0, 0.3);
-}
-
-.ResizeHandleInner {
-  height: 100%;
-  background-color: var(--background-color);
-  transition: background-color 0.2s linear;
-}
