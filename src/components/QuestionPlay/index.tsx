@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Title, Card, Text, Group, Box, Button, Badge } from '@mantine/core';
+import { Title, Card, Group, Box, Button, Badge } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
 import { useForm } from 'react-hook-form';
@@ -74,9 +74,9 @@ export default function QuestionPlay({
             Question {selectedQuestion.questionNum}
           </Title>
           {negativePointsMultiplier === 0 ? (
-            <Text weight="bold" component="span" size="sm">
+            <Badge color="green" variant="filled">
               Points: {points}
-            </Text>
+            </Badge>
           ) : (
             <Group spacing="xl">
               <Badge color="green" variant="filled">

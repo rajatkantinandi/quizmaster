@@ -48,7 +48,7 @@ export default function QuestionsList({
       className={styles.categoryGrid}
       variant="filled">
       {categories.map((category) => (
-        <Accordion.Item className="grow" mr="lg" mb="lg" key={category.categoryId} value={`${category.categoryId}`}>
+        <Accordion.Item className="grow" key={category.categoryId} value={`${category.categoryId}`}>
           <Accordion.Control>
             <Title order={6}>{category.categoryName}</Title>
           </Accordion.Control>

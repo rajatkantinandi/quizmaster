@@ -353,7 +353,7 @@ export default function PlayQuiz({ gameId }) {
             </div>
           )}
         </div>
-        <div>
+        <div className={styles.scoreAndTimer}>
           {shouldShowTimer() && (
             <>
               <div style={{ opacity: isTimerRunning ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
