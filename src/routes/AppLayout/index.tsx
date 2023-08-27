@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppShell, Header, Group, TextInput } from '@mantine/core';
+import { AppShell, Header, Group, TextInput, Button } from '@mantine/core';
 import { Helmet } from 'react-helmet';
 import Quizzes from '../Quizzes';
 import ConfigureQuiz from '../ConfigureQuiz';
@@ -79,6 +79,12 @@ function AppLayout() {
                   icon={<Icon name="search" width={16} />}
                 />
               )}
+              <Button
+                onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
+                variant="filled"
+                leftIcon={<Icon color="#fff" name="feedback" width={16} />}>
+                Share feedback
+              </Button>
               {/* TODO: make menu visible when we add real users */}
               {/* {userName !== 'guest' && (
                 <Menu shadow="md" width={200}>
