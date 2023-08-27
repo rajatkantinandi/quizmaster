@@ -6,12 +6,11 @@ import Timer from '../../components/Timer';
 import { useStore } from '../../useStore';
 import { defaultGameInfo } from '../../constants';
 import { Helmet } from 'react-helmet';
-import { Panel, PanelGroup } from 'react-resizable-panels';
-import ResizeHandle from './ResizeHandle';
 import Scorecard from './Scorecard';
 import QuestionsList from './QuestionsList';
 import { useNavigate } from 'react-router';
 import styles from './styles.module.css';
+import classNames from 'classnames';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -159,7 +158,7 @@ export default function PlayQuiz({ gameId }) {
       const winner = isComplete ? showWinner(clonedTeams) : null;
 
       await updateGame({
-        gameId: parseInt(`${gameId}`),
+        gameId: parseInt(`${gameId}`, 10),
         isComplete,
         winnerTeamId: winner,
         nextTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
@@ -264,14 +263,16 @@ export default function PlayQuiz({ gameId }) {
     }
   }
 
+  const isGameCompleted = () => getAllQuestions(quizInfo.categories).length === selectedOptionsData.length;
+
   function confirmCreateNewGame() {
     showModal({
-      title: 'Are you sure you want to create new game ?',
-      body: 'After creating new game current game will be deleted.',
+      title: 'Are you sure you want to start a new game?',
+      body: isGameCompleted() ? '' : 'Current game is incomplete and will be discarded.',
       okCallback: async () => {
         await markGameCompleted(parseInt(gameId));
 
-        navigate(`/configure-game/${userData.userName}/${quizInfo.quizId}`);
+        navigate(`/configure-game/${userData.userName || 'guest'}/${quizInfo.quizId}`);
       },
       cancelText: 'Cancel',
     });
@@ -286,11 +287,9 @@ export default function PlayQuiz({ gameId }) {
       </Helmet>
       <Group mb="xl">
         {quizInfo.name && <Title order={2}>Play game for {quizInfo.name}</Title>}
-        {gameId && getAllQuestions(quizInfo.categories).length !== selectedOptionsData.length && (
-          <Button onClick={confirmCreateNewGame} variant="outline">
-            Start a new game
-          </Button>
-        )}
+        <Button onClick={confirmCreateNewGame} variant="outline">
+          Start a new game
+        </Button>
       </Group>
       {winner && (
         <Title
@@ -303,8 +302,8 @@ export default function PlayQuiz({ gameId }) {
           🎉 {getWinnerMessage()}
         </Title>
       )}
-      <PanelGroup autoSaveId="playQuestion" direction="horizontal">
-        <Panel defaultSize={70} maxSize={70} className={styles.categoryGridContainer}>
+      <div className="flex grow">
+        <div className={classNames('grow', { [styles.categoryGridContainer]: !selectedQuestion })}>
           {selectedQuestion ? (
             <QuestionPlay
               submitResponse={handleSubmitResponse}
@@ -353,9 +352,8 @@ export default function PlayQuiz({ gameId }) {
               </Button>
             </div>
           )}
-        </Panel>
-        <ResizeHandle />
-        <Panel defaultSize={30} minSize={20}>
+        </div>
+        <div>
           {shouldShowTimer() && (
             <>
               <div style={{ opacity: isTimerRunning ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
@@ -386,8 +384,8 @@ export default function PlayQuiz({ gameId }) {
             </>
           )}
           <Scorecard teams={gameInfo.teams} currentTeamId={gameInfo.currentTeamId} winner={winner} />
-        </Panel>
-      </PanelGroup>
+        </div>
+      </div>
     </>
   );
 }

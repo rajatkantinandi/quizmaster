@@ -188,6 +188,20 @@ legend {
   height: 35px;
 }
 
+@media screen and (max-width: 940px) {
+  button.noTextOnSmallScreen [class*='mantine-Button-label'] {
+    display: none;
+  }
+
+  button.noTextOnSmallScreen [class*='mantine-Button-icon'] {
+    margin-right: 0;
+  }
+
+  button.noTextOnSmallScreen {
+    padding-right: 12px;
+  }
+}
+
 /* Animations */
 @keyframes slidedown {
   to {

@@ -13,6 +13,7 @@ import CreateQuizButton from '../../components/CreateQuizButton';
 import QuizSelectorAlert from '../../components/QuizSelectorAlert';
 import { downloadQuiz } from '../../helpers/importExport';
 import ImportQuizzesButton from '../../components/ImportQuizzesButton';
+import classNames from 'classnames';
 
 export default function Quizzes({ userName }) {
   const [loading, setLoading] = useState(true);
@@ -208,7 +209,8 @@ export default function Quizzes({ userName }) {
               <ImportQuizzesButton />
               <Button
                 onClick={handleDeleteQuizzes}
-                className={styles.deleteButton}
+                className={classNames('noTextOnSmallScreen', styles.deleteButton)}
+                title="Delete Quizzes"
                 leftIcon={<Icon color="white" width="16" name="trash" />}>
                 Delete Quizzes
               </Button>
