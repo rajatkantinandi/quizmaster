@@ -2,6 +2,7 @@ import React from 'react';
 import TeamAvatar from '../../components/TeamAvatar';
 import { Button, Text, Accordion, Group, Badge, Title } from '@mantine/core';
 import { Question as IQuestion } from '../../types';
+import styles from './styles.module.css';
 
 export default function QuestionsList({
   categories,
@@ -41,9 +42,13 @@ export default function QuestionsList({
   }
 
   return (
-    <Accordion multiple defaultValue={categories.map((x) => `${x.categoryId}`)} variant="separated">
+    <Accordion
+      multiple
+      defaultValue={categories.map((x) => `${x.categoryId}`)}
+      className={styles.categoryGrid}
+      variant="filled">
       {categories.map((category) => (
-        <Accordion.Item key={category.categoryId} value={`${category.categoryId}`}>
+        <Accordion.Item className="grow" key={category.categoryId} value={`${category.categoryId}`}>
           <Accordion.Control>
             <Title order={6}>{category.categoryName}</Title>
           </Accordion.Control>

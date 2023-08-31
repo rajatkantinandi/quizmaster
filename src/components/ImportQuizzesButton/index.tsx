@@ -13,7 +13,13 @@ function ImportQuizzesButton({
   return (
     <FileButton onChange={(files) => importQuizzes(files)} accept="text/csv" multiple>
       {(props) => (
-        <Button {...props} size={size} radius={radius} leftIcon={<Icon color="white" width="16" name="download" />}>
+        <Button
+          {...props}
+          title="Import Quizzes"
+          className="noTextOnSmallScreen"
+          size={size}
+          radius={radius}
+          leftIcon={<Icon color="white" width="16" name="download" />}>
           Import Quizzes
         </Button>
       )}

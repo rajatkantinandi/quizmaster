@@ -33,10 +33,6 @@
   .quizCardWrapper {
     width: 42%;
   }
-
-  .pageTitleWrapper {
-    width: 86%;
-  }
 }
 
 @media only screen and (max-width: 640px) {

@@ -4,6 +4,7 @@
   height: 38px;
   font-weight: 700;
   color: white;
+  flex-shrink: 0;
 }
 
 .avatar.small {

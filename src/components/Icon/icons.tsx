@@ -18,6 +18,7 @@ import { ReactComponent as collapse} from '../../images/icons/collapse.svg';
 import { ReactComponent as done} from '../../images/icons/done.svg';
 import { ReactComponent as download} from '../../images/icons/download.svg';
 import { ReactComponent as expand} from '../../images/icons/expand.svg';
+import { ReactComponent as feedback} from '../../images/icons/feedback.svg';
 import { ReactComponent as image} from '../../images/icons/image.svg';
 import { ReactComponent as link} from '../../images/icons/link.svg';
 import { ReactComponent as logo} from '../../images/icons/logo.svg';
@@ -64,6 +65,7 @@ const icons = {
   done,
   download,
   expand,
+  feedback,
   image,
   link,
   logo,
