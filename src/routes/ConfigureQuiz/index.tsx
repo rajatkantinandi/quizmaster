@@ -238,7 +238,7 @@ export default function ConfigureQuiz({
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : ''}
                   withBorder={idx === activeCategoryIndex}
-                  key={item.id}
+                  key={item.categoryId || idx}
                   className={classNames({
                     [styles.activeCategory]: idx === activeCategoryIndex,
                     [styles.nonActiveCard]: idx !== activeCategoryIndex,

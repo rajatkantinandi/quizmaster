@@ -7,7 +7,7 @@ import { getEmptyOptions, getEmptyOption } from '../../helpers';
 import { Title, Card, Button, ActionIcon, Text, Checkbox, Tabs, Group, TabsValue } from '@mantine/core';
 import Icon from '../Icon';
 import classNames from 'classnames';
-import { getTextContent, getImageOrTextContent, getTrimmedText } from '../../helpers/dom';
+import { getTextContent, getImageOrTextContent, getCleanText } from '../../helpers/dom';
 
 interface Props {
   questionNum: number;
@@ -39,17 +39,17 @@ export default function QuestionEdit({
     question.options.length === 1 && question.options[0].isCorrect ? 'withoutOptions' : 'withOptions',
   );
   const { showAlert } = useStore();
-  const { points, text, options, ...rest } = watch();
+  const { points, text, options, questionId } = watch();
   const isWithoutOptions = options.length === 1;
 
   useEffect(() => {
     onQuestionChange({
-      ...rest,
+      questionId,
       points,
       text,
       options,
     });
-  }, [points, text, options, rest]);
+  }, [points, text, options, questionId]);
 
   function onFormSubmit(data: FieldValues) {
     const validationError = getValidationError();
@@ -101,11 +101,11 @@ export default function QuestionEdit({
 
         for (let i = 0; i < optionTexts.length - 1; i++) {
           el.innerHTML = optionTexts[i];
-          const option1Text = getTrimmedText(el.innerText);
+          const option1Text = getCleanText(el.innerText);
 
           for (let j = i + 1; j < optionTexts.length; j++) {
             el.innerHTML = optionTexts[j];
-            const option2Text = getTrimmedText(el.innerText); // replacing multiple space with single space
+            const option2Text = getCleanText(el.innerText); // replacing multiple space with single space
 
             if (option1Text === option2Text) {
               return 'All options must have different text';

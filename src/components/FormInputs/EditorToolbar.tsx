@@ -1,6 +1,6 @@
 import { ChainedCommands, Editor } from '@tiptap/react';
 import React, { useCallback, useMemo } from 'react';
-import { isValidImageUrl, isValidUrl } from '../../helpers/url';
+import { imageContentTypes, isValidUrl } from '../../helpers/url';
 import { getEmbedUrlFromURL } from '../../helpers/video';
 import { useStore } from '../../useStore';
 import Icon from '../Icon';
@@ -64,7 +64,7 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
           try {
             const response = await fetch(url, { method: 'HEAD' });
 
-            if (response.ok && response.headers.get('content-type')?.includes('image')) {
+            if (response.ok && imageContentTypes.includes(response.headers.get('content-type') || '')) {
               // update link
               editor.chain().focus().setImage({ src: url }).run();
               showPrompt(null);
