@@ -49,6 +49,7 @@ export default function QuestionEdit({
       text,
       options,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [points, text, options, questionId]);
 
   function onFormSubmit(data: FieldValues) {

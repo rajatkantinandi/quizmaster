@@ -43,3 +43,33 @@
   padding: 3px 15px 3px 3px;
   border-radius: 58px;
 }
+
+.winnerMessage {
+  background-color: var(--qm-primary);
+  border-radius: 10px;
+  position: relative;
+}
+
+.winnerMessage::before {
+  display: block;
+  position: absolute;
+  content: "";
+  width: calc(100% + 16px);
+  margin-left: -8px;
+  z-index: -1;
+  height: 78px;
+  margin-top: -24px;
+  border-radius: 10px;
+  background: repeating-linear-gradient(45deg, var(--correct-color) 1%, var(--qm-primary) 3%);
+  animation: borderRoll 0.5s linear infinite;
+}
+
+@keyframes borderRoll {
+  50% {
+    background: repeating-linear-gradient(45deg, var(--correct-color) 2%, var(--qm-primary) 4%);
+  }
+
+  to {
+    background: repeating-linear-gradient(45deg, var(--correct-color) 3%, var(--qm-primary) 5%);
+  }
+}
