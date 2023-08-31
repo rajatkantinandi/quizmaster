@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './styles.module.css';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
@@ -7,7 +7,7 @@ import { getEmptyOptions, getEmptyOption } from '../../helpers';
 import { Title, Card, Button, ActionIcon, Text, Checkbox, Tabs, Group, TabsValue } from '@mantine/core';
 import Icon from '../Icon';
 import classNames from 'classnames';
-import { getTextContent } from '../../helpers/dom';
+import { getTextContent, getImageOrTextContent, getCleanText } from '../../helpers/dom';
 
 interface Props {
   questionNum: number;
@@ -39,8 +39,17 @@ export default function QuestionEdit({
     question.options.length === 1 && question.options[0].isCorrect ? 'withoutOptions' : 'withOptions',
   );
   const { showAlert } = useStore();
-  const options = watch('options');
+  const { points, text, options, questionId } = watch();
   const isWithoutOptions = options.length === 1;
+
+  useEffect(() => {
+    onQuestionChange({
+      questionId,
+      points,
+      text,
+      options,
+    });
+  }, [points, text, options, questionId]);
 
   function onFormSubmit(data: FieldValues) {
     const validationError = getValidationError();
@@ -84,6 +93,28 @@ export default function QuestionEdit({
       return 'Please select 1 correct option!';
     } else if (options.length < 2) {
       return 'At least 2 options are mandatory!';
+    } else {
+      const optionTexts = options.map((x) => x.text);
+
+      if (optionTexts.length >= 2) {
+        const el = document.createElement('div');
+
+        for (let i = 0; i < optionTexts.length - 1; i++) {
+          el.innerHTML = optionTexts[i];
+          const option1Text = getCleanText(el.innerText);
+
+          for (let j = i + 1; j < optionTexts.length; j++) {
+            el.innerHTML = optionTexts[j];
+            const option2Text = getCleanText(el.innerText); // replacing multiple space with single space
+
+            if (option1Text === option2Text) {
+              return 'All options must have different text';
+            } else {
+              continue;
+            }
+          }
+        }
+      }
     }
 
     return '';
@@ -117,7 +148,7 @@ export default function QuestionEdit({
 
   return (
     <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard slideDown">
-      <form onSubmit={handleSubmit(onFormSubmit)} onChange={() => onQuestionChange(watch())}>
+      <form onSubmit={handleSubmit(onFormSubmit)}>
         <Group position="apart" mb="lg">
           <Group>
             <Title mr="xl" order={4}>
@@ -178,8 +209,8 @@ export default function QuestionEdit({
                 <FormTextArea
                   name={`options[${idx}].text`}
                   rules={{
-                    required: 'Option text should not be empty!',
-                    validate: (value: string) => !!getTextContent(value) || 'Option text should not be empty!',
+                    required: 'Option should not be empty!',
+                    validate: (value: string) => !!getImageOrTextContent(value) || 'Option should not be empty!',
                   }}
                   label={
                     <Text weight="bold" className="mb-md">
@@ -206,7 +237,8 @@ export default function QuestionEdit({
                 key={item.id}
                 rules={{
                   required: 'The correct answer should not be empty!',
-                  validate: (value: string) => !!getTextContent(value) || 'The correct answer should not be empty!',
+                  validate: (value: string) =>
+                    !!getImageOrTextContent(value) || 'The correct answer should not be empty!',
                 }}
                 label={
                   <Text weight="bold" mt="lg" className="mb-md">

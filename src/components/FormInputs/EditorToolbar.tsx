@@ -1,6 +1,6 @@
 import { ChainedCommands, Editor } from '@tiptap/react';
 import React, { useCallback, useMemo } from 'react';
-import { isValidImageUrl, isValidUrl } from '../../helpers/url';
+import { imageContentTypes, isValidUrl } from '../../helpers/url';
 import { getEmbedUrlFromURL } from '../../helpers/video';
 import { useStore } from '../../useStore';
 import Icon from '../Icon';
@@ -59,16 +59,27 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
       textInputProps: { placeholder: 'https://example.com/image.png' },
       okText: 'Save',
       closeOnOkClick: false,
-      okCallback: (url) => {
-        if (url && isValidImageUrl(url)) {
-          // update link
-          editor.chain().focus().setImage({ src: url }).run();
-          showPrompt(null);
-        } else {
-          showAlert({
-            message: 'Invalid image URL! An image url must end with a valid image file extension',
-            type: 'warning',
-          });
+      okCallback: async (url) => {
+        if (url) {
+          try {
+            const response = await fetch(url, { method: 'HEAD' });
+
+            if (response.ok && imageContentTypes.includes(response.headers.get('content-type') || '')) {
+              // update link
+              editor.chain().focus().setImage({ src: url }).run();
+              showPrompt(null);
+            } else {
+              showAlert({
+                message: 'Invalid image URL',
+                type: 'warning',
+              });
+            }
+          } catch (err) {
+            showAlert({
+              message: 'Not able to load the image',
+              type: 'error',
+            });
+          }
         }
       },
     });

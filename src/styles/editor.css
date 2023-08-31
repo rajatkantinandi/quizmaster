@@ -65,7 +65,7 @@
 
 .ProseMirror img,
 .html img {
-  max-width: 100%;
+  max-width: 150px;
   max-height: 400px;
 }
 
