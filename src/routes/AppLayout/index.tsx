@@ -81,8 +81,8 @@ function AppLayout() {
               )}
               <Button
                 onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
-                variant="filled"
-                leftIcon={<Icon color="#fff" name="feedback" width={16} />}>
+                variant="outline"
+                leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}>
                 Share feedback
               </Button>
               {/* TODO: make menu visible when we add real users */}
