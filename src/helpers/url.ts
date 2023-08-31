@@ -44,4 +44,15 @@ export const isValidUrl = (str: string) => {
   return !!(str.match(urlRegex) || str.match(mailtoUrlRegex) || str.match(telUrlRegex) || str.match(smsUrlRegex));
 };
 
-export const imageContentTypes = ['binary/octet-stream', 'image/jpeg', 'image/png', 'image/gif'];
+export const imageContentTypes = [
+  'binary/octet-stream',
+  'image/jpeg',
+  'image/pjpeg',
+  'image/png',
+  'image/gif',
+  'image/bmp',
+  'image/x-windows-bmp',
+  'image/tiff',
+  'image/webp',
+  'image/svg+xml',
+];
