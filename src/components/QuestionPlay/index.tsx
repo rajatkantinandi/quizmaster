@@ -23,7 +23,7 @@ interface Props {
   };
   isAttempted: boolean;
   isTimerRunning: boolean;
-  winner: string;
+  isGameCompleted: boolean;
   negativePointsMultiplier: number;
 }
 
@@ -34,7 +34,7 @@ export default function QuestionPlay({
   selectedQuestion,
   isAttempted,
   isTimerRunning,
-  winner,
+  isGameCompleted,
   negativePointsMultiplier,
   continueGame,
 }: Props) {
@@ -110,7 +110,7 @@ export default function QuestionPlay({
             isTimerRunning={isTimerRunning}
           />
         )}
-        {isAttempted && !winner && (
+        {isAttempted && !isGameCompleted && (
           <Button mt="xl" variant="default" onClick={continueGame}>
             Continue
           </Button>

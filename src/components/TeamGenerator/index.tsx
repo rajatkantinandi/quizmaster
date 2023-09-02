@@ -51,6 +51,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
       setIsEditingTeams(false);
       disableOkButton();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerNames, teamCount]);
 
   function generateTeams(data) {

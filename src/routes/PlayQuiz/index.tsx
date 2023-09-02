@@ -11,6 +11,7 @@ import QuestionsList from './QuestionsList';
 import { useNavigate } from 'react-router';
 import styles from './styles.module.css';
 import classNames from 'classnames';
+import Confetti from 'react-confetti-boom';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -27,7 +28,7 @@ export default function PlayQuiz({ gameId }) {
   const { timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier = 0 } = gameInfo;
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [winner, setWinner] = useState('');
+  const [winnerIdsCsv, setWinnerIdsCsv] = useState('');
   const selectedOptionsData: any = gameInfo.teams.reduce(
     (acc, team) => acc.concat(team.selectedOptions || []),
     [] as SelectedOptions[],
@@ -64,9 +65,7 @@ export default function PlayQuiz({ gameId }) {
         const isCompleted = allQuestionsCount === attemptedQuestionsCount;
 
         if (isCompleted) {
-          const winners = getWinners(restData.teams);
-          const winnerIds = winners.map((winner) => winner.teamId).join(',');
-          setWinner(winnerIds);
+          setWinnerIds(restData.teams);
         } else if (attemptedQuestionsCount > 0) {
           setSelectedQuestion(getLastAttemptedQuestion(restData.teams, quizData.categories));
         }
@@ -95,33 +94,18 @@ export default function PlayQuiz({ gameId }) {
     return allQuestions.find((x) => x.questionId === questionId);
   }
 
-  function showWinner(teams: Team[], callback?: Function) {
-    const winners = getWinners(teams);
-    const winnerIds = winners.map((winner) => winner.teamId).join(',');
-    setWinner(winnerIds);
-
-    if (winners.length > 1) {
-      showModal({
-        title: 'Match drawn!',
-        body: 'Well played! It is a draw!',
-        okCallback: callback,
-        cancelText: '',
-      });
-    } else if (winners[0]) {
-      showModal({
-        title: `Congrats ${winners[0].name}!`,
-        body: `Team '${winners[0].name}' has won the game with ${winners[0].score} points.`,
-        okCallback: callback,
-        cancelText: '',
-      });
-    }
-
-    return winnerIds;
-  }
-
   function getWinners(teams: Team[]) {
     const maxScore = Math.max(...teams.map((team) => team.score));
     return teams.filter((team) => team.score === maxScore);
+  }
+
+  function setWinnerIds(teams: Team[]) {
+    const winnerIdsCsv = getWinners(teams)
+      .map((winner) => winner.teamId)
+      .join(',');
+
+    setWinnerIdsCsv(winnerIdsCsv);
+    return winnerIdsCsv;
   }
 
   async function handleSubmitResponse(optionIds: number[]) {
@@ -155,12 +139,12 @@ export default function PlayQuiz({ gameId }) {
 
       setIsTimerRunning(false);
       const isComplete = allQuestionCount === selectedOptionsData.length + 1;
-      const winner = isComplete ? showWinner(clonedTeams) : null;
+      const winnerIdsCsv = isComplete ? setWinnerIds(clonedTeams) : null;
 
       await updateGame({
         gameId: parseInt(`${gameId}`, 10),
         isComplete,
-        winnerTeamId: winner,
+        winnerTeamId: winnerIdsCsv,
         nextTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
         currentTeam: {
           score: clonedTeams[currentTeamIndex].score,
@@ -195,7 +179,7 @@ export default function PlayQuiz({ gameId }) {
     // (question is not selected and question selection timer exists)
     return !!(
       ((!selectedQuestion && !!selectionTimeLimit) || (selectedQuestion && !!showQuestionTimer)) &&
-      !winner &&
+      !winnerIdsCsv &&
       isGameStarted
     );
   }
@@ -211,16 +195,18 @@ export default function PlayQuiz({ gameId }) {
   }
 
   function getWinnerMessage() {
-    if (winner.split(',').length > 1) {
-      const winnerTeams = gameInfo.teams.filter((x) => winner.includes(x.teamId.toString()));
-      const teamNames = winnerTeams
+    const winners = getWinners(gameInfo.teams);
+
+    if (winners.length === gameInfo.teams.length) {
+      return 'Well played! It is a draw!';
+    } else if (winners.length > 1) {
+      const teamNames = winners
         .map((x) => x.name)
         .join(', ')
         .replace(/,(?=[^,]+$)/, ' and');
       return `${teamNames} have won the game`;
     } else {
-      const winnerTeam = gameInfo.teams.find((x) => x.teamId === parseInt(winner));
-      return winnerTeam ? `${winnerTeam.name} has won the game with ${winnerTeam.score} points.` : '';
+      return winners.length === 1 ? `${winners[0].name} has won the game with ${winners[0].score} points.` : '';
     }
   }
 
@@ -291,14 +277,8 @@ export default function PlayQuiz({ gameId }) {
           Start a new game
         </Button>
       </Group>
-      {winner && (
-        <Title
-          py="md"
-          my="lg"
-          color="white"
-          style={{ backgroundColor: 'var(--correct-color)', borderRadius: 10 }}
-          align="center"
-          order={3}>
+      {!!winnerIdsCsv && (
+        <Title py="md" my="lg" color="white" className={styles.winnerMessage} align="center" order={3}>
           🎉 {getWinnerMessage()}
         </Title>
       )}
@@ -315,13 +295,13 @@ export default function PlayQuiz({ gameId }) {
                 setSelectedQuestion(null);
                 setIsTimerRunning(true);
               }}
-              winner={winner}
+              isGameCompleted={!!winnerIdsCsv}
               selectedOptionIds={getSelectedOptionId(selectedQuestion)}
               negativePointsMultiplier={negativePointsMultiplier}
             />
           ) : (
             <>
-              {!winner && attemptedQuestionIds.length === 0 && !isGameStarted && (
+              {!winnerIdsCsv && attemptedQuestionIds.length === 0 && !isGameStarted && (
                 <Container my="xl" className="textAlignCenter">
                   <Button size="lg" variant="gradient" onClick={startGame}>
                     Start Game
@@ -383,9 +363,37 @@ export default function PlayQuiz({ gameId }) {
               />
             </>
           )}
-          <Scorecard teams={gameInfo.teams} currentTeamId={gameInfo.currentTeamId} winner={winner} />
+          <Scorecard teams={gameInfo.teams} currentTeamId={gameInfo.currentTeamId} winnerIdsCsv={winnerIdsCsv} />
         </div>
       </div>
+      {!!winnerIdsCsv && (
+        <>
+          <Confetti
+            x={0.1}
+            y={1}
+            particleCount={200}
+            deg={270}
+            shapeSize={20}
+            spreadDeg={30}
+            effectInterval={1000}
+            launchSpeed={4}
+            effectCount={2}
+            colors={['#ff577f', '#ff884b', '#ffd384', '#fff9b0', '#3498db']}
+          />
+          <Confetti
+            x={0.9}
+            y={1}
+            particleCount={200}
+            deg={270}
+            shapeSize={20}
+            spreadDeg={30}
+            effectInterval={1000}
+            launchSpeed={4}
+            effectCount={2}
+            colors={['#ff577f', '#ff884b', '#ffd384', '#fff9b0', '#3498db']}
+          />
+        </>
+      )}
     </>
   );
 }

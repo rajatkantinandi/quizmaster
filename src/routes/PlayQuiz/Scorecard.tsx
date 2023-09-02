@@ -5,7 +5,7 @@ import TeamAvatar from '../../components/TeamAvatar';
 import classNames from 'classnames';
 import { Team } from '../../types';
 
-export default function Scorecard({ teams, currentTeamId, winner }) {
+export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
   return (
     <div>
       <Group position="apart" mt="xl" mx="xl" pt="xl">
@@ -29,7 +29,7 @@ export default function Scorecard({ teams, currentTeamId, winner }) {
                   </Text>
                   <div>
                     {(team.score || 0).toFixed(2)}
-                    {team.teamId && winner.includes(`${team.teamId}`) && <span title="winner"> 👑</span>}
+                    {team.teamId && winnerIdsCsv.includes(`${team.teamId}`) && <span title="winner"> 👑</span>}
                   </div>
                 </Group>
               </Accordion.Control>
@@ -65,7 +65,7 @@ export default function Scorecard({ teams, currentTeamId, winner }) {
             </Group>
             <div>
               {t.score.toFixed(2)}
-              {t.teamId && winner.includes(`${t.teamId}`) && <span title="winner"> 👑</span>}
+              {t.teamId && winnerIdsCsv.includes(`${t.teamId}`) && <span title="winner"> 👑</span>}
             </div>
           </Group>
         ))
