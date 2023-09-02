@@ -14,6 +14,15 @@ export default function QuestionsList({
   shouldEnableQuestion,
   showQuestion,
 }) {
+  const questionPointsAverage =
+    categories.reduce(
+      (sum, category) => sum + category.questions.reduce((sum, question) => sum + parseInt(question.points), 0),
+      0,
+    ) / categories.reduce((count, category) => count + category.questions.length, 0);
+  const minQuestionPoint = Math.min(
+    ...categories.map((category) => Math.min(...category.questions.map((question) => parseInt(question.points)))),
+  );
+
   function getAvatarProps(question) {
     const team = teams.find((team) => team.selectedOptions.some((x) => x.questionId === question.questionId));
     const shouldShowAvatar = attemptedQuestionIds.includes(question.questionId) && !!team;
@@ -38,6 +47,20 @@ export default function QuestionsList({
         : 'red';
     } else {
       return 'blue';
+    }
+  }
+
+  function getBadgeColor(points) {
+    if (parseInt(points) > minQuestionPoint + questionPointsAverage * 0.8) {
+      return 'red';
+    } else if (parseInt(points) > minQuestionPoint + questionPointsAverage * 0.6) {
+      return 'orange';
+    } else if (parseInt(points) > minQuestionPoint + questionPointsAverage * 0.4) {
+      return 'yellow';
+    } else if (parseInt(points) > minQuestionPoint + questionPointsAverage * 0.2) {
+      return 'lime';
+    } else {
+      return 'green';
     }
   }
 
@@ -76,8 +99,8 @@ export default function QuestionsList({
                     ) : (
                       <Group>
                         <Text>Question {question.questionNum}</Text>
-                        <Badge variant="filled" color="red" size="sm">
-                          Points {question.points}
+                        <Badge variant="filled" color={getBadgeColor(question.points)} size="sm">
+                          {question.points} pts
                         </Badge>
                       </Group>
                     )}
