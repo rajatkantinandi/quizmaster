@@ -35,3 +35,19 @@ export const pickTextColorBasedOnBgColorSimple = (bgColor) => {
 
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? 'rgba(0, 0, 0, 0.5)' : '#ffffff';
 };
+
+export const getBadgeColor = (points, minQuestionPoint, maxQuestionPoint) => {
+  const questionPointsRange = maxQuestionPoint - minQuestionPoint;
+
+  if (parseInt(points) > minQuestionPoint + questionPointsRange * 0.8) {
+    return 'red';
+  } else if (parseInt(points) > minQuestionPoint + questionPointsRange * 0.6) {
+    return 'orange';
+  } else if (parseInt(points) > minQuestionPoint + questionPointsRange * 0.4) {
+    return 'yellow';
+  } else if (parseInt(points) > minQuestionPoint + questionPointsRange * 0.2) {
+    return 'lime';
+  } else {
+    return 'green';
+  }
+};

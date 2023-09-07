@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Button, Title, Container, Group } from '@mantine/core';
 import QuestionPlay from '../../components/QuestionPlay';
 import { Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
@@ -38,6 +38,15 @@ export default function PlayQuiz({ gameId }) {
   const { showModal, getGameData, updateGame, markGameCompleted, userData } = useStore();
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { categories } = quizInfo;
+  const minQuestionPoint = useMemo(() => getMinOrMaxPoints(categories, Math.min), [categories]);
+  const maxQuestionPoint = useMemo(() => getMinOrMaxPoints(categories, Math.max), [categories]);
+
+  function getMinOrMaxPoints(categories, func) {
+    return func(
+      ...categories.map((category) => func(...category.questions.map((question) => parseInt(question.points)))),
+    );
+  }
 
   useEffect(() => {
     if (gameId) {
@@ -318,6 +327,8 @@ export default function PlayQuiz({ gameId }) {
               winner={winner}
               selectedOptionIds={getSelectedOptionId(selectedQuestion)}
               negativePointsMultiplier={negativePointsMultiplier}
+              minQuestionPoint={minQuestionPoint}
+              maxQuestionPoint={maxQuestionPoint}
             />
           ) : (
             <>
@@ -337,6 +348,8 @@ export default function PlayQuiz({ gameId }) {
                 isQuestionPointsHidden={isQuestionPointsHidden}
                 shouldEnableQuestion={shouldEnableQuestion}
                 showQuestion={showQuestion}
+                minQuestionPoint={minQuestionPoint}
+                maxQuestionPoint={maxQuestionPoint}
               />
             </>
           )}

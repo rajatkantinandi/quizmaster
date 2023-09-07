@@ -8,6 +8,7 @@ import WithOptions from './WithOptions';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 import classNames from 'classnames';
+import { getBadgeColor } from '../../helpers/common';
 
 interface Props {
   submitResponse: Function;
@@ -25,6 +26,8 @@ interface Props {
   isTimerRunning: boolean;
   winner: string;
   negativePointsMultiplier: number;
+  minQuestionPoint: number;
+  maxQuestionPoint: number;
 }
 
 export default function QuestionPlay({
@@ -37,6 +40,8 @@ export default function QuestionPlay({
   winner,
   negativePointsMultiplier,
   continueGame,
+  minQuestionPoint,
+  maxQuestionPoint,
 }: Props) {
   const { showAlert } = useStore();
   const [selectedChoices, setSelectedChoices] = useState(selectedOptionIds);
@@ -74,8 +79,8 @@ export default function QuestionPlay({
             Question {selectedQuestion.questionNum}
           </Title>
           {negativePointsMultiplier === 0 ? (
-            <Badge color="green" variant="filled">
-              Points: {points}
+            <Badge color={getBadgeColor(points, minQuestionPoint, maxQuestionPoint)} variant="filled">
+              {points} pts
             </Badge>
           ) : (
             <Group spacing="xl">
