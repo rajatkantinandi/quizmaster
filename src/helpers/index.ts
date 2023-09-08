@@ -5,3 +5,4 @@ export * from './dataCreator';
 export * from './common';
 export * from './indexedDB';
 export * from './request';
+export * from './quizViewHelper';

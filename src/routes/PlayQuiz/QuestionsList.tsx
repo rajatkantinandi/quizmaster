@@ -3,7 +3,7 @@ import TeamAvatar from '../../components/TeamAvatar';
 import { Button, Text, Accordion, Group, Badge, Title } from '@mantine/core';
 import { Question as IQuestion } from '../../types';
 import styles from './styles.module.css';
-import { getBadgeColor } from '../../helpers/common';
+import { getBadgeColor } from '../../helpers';
 
 export default function QuestionsList({
   categories,

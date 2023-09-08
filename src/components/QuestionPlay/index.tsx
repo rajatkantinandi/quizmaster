@@ -8,7 +8,7 @@ import WithOptions from './WithOptions';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 import classNames from 'classnames';
-import { getBadgeColor } from '../../helpers/common';
+import { getBadgeColor } from '../../helpers';
 
 interface Props {
   submitResponse: Function;
@@ -84,10 +84,10 @@ export default function QuestionPlay({
             </Badge>
           ) : (
             <Group spacing="xl">
-              <Badge color="green" variant="filled">
+              <Badge color={getBadgeColor(points, minQuestionPoint, maxQuestionPoint)} variant="filled">
                 Correct: {points} points
               </Badge>
-              <Badge color="red" variant="filled">
+              <Badge color="red" variant="outline">
                 Incorrect: {(points * negativePointsMultiplier).toFixed(2)} points
               </Badge>
             </Group>
