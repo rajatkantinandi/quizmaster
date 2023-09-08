@@ -8,6 +8,7 @@ import WithOptions from './WithOptions';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 import classNames from 'classnames';
+import { getBadgeColor } from '../../helpers';
 
 interface Props {
   submitResponse: Function;
@@ -25,6 +26,8 @@ interface Props {
   isTimerRunning: boolean;
   isGameCompleted: boolean;
   negativePointsMultiplier: number;
+  minQuestionPoint: number;
+  maxQuestionPoint: number;
 }
 
 export default function QuestionPlay({
@@ -37,6 +40,8 @@ export default function QuestionPlay({
   isGameCompleted,
   negativePointsMultiplier,
   continueGame,
+  minQuestionPoint,
+  maxQuestionPoint,
 }: Props) {
   const { showAlert } = useStore();
   const [selectedChoices, setSelectedChoices] = useState(selectedOptionIds);
@@ -74,15 +79,15 @@ export default function QuestionPlay({
             Question {selectedQuestion.questionNum}
           </Title>
           {negativePointsMultiplier === 0 ? (
-            <Badge color="green" variant="filled">
-              Points: {points}
+            <Badge color={getBadgeColor(points, minQuestionPoint, maxQuestionPoint)} variant="filled">
+              {points} pts
             </Badge>
           ) : (
             <Group spacing="xl">
-              <Badge color="green" variant="filled">
+              <Badge color={getBadgeColor(points, minQuestionPoint, maxQuestionPoint)} variant="filled">
                 Correct: {points} points
               </Badge>
-              <Badge color="red" variant="filled">
+              <Badge color="red" variant="outline">
                 Incorrect: {(points * negativePointsMultiplier).toFixed(2)} points
               </Badge>
             </Group>

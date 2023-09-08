@@ -3,6 +3,7 @@ import TeamAvatar from '../../components/TeamAvatar';
 import { Button, Text, Accordion, Group, Badge, Title } from '@mantine/core';
 import { Question as IQuestion } from '../../types';
 import styles from './styles.module.css';
+import { getBadgeColor } from '../../helpers';
 
 export default function QuestionsList({
   categories,
@@ -13,6 +14,8 @@ export default function QuestionsList({
   isQuestionPointsHidden,
   shouldEnableQuestion,
   showQuestion,
+  minQuestionPoint,
+  maxQuestionPoint,
 }) {
   function getAvatarProps(question) {
     const team = teams.find((team) => team.selectedOptions.some((x) => x.questionId === question.questionId));
@@ -76,8 +79,11 @@ export default function QuestionsList({
                     ) : (
                       <Group>
                         <Text>Question {question.questionNum}</Text>
-                        <Badge variant="filled" color="red" size="sm">
-                          Points {question.points}
+                        <Badge
+                          variant="filled"
+                          color={getBadgeColor(question.points, minQuestionPoint, maxQuestionPoint)}
+                          size="sm">
+                          {question.points} pts
                         </Badge>
                       </Group>
                     )}
