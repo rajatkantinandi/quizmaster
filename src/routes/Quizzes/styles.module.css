@@ -79,3 +79,12 @@
 .sort {
   max-width: 190px;
 }
+
+.welcomeHeader {
+  font-size: 34px;
+  margin-bottom: 15px;
+}
+
+.secondaryText {
+  font-size: 20px;
+}

@@ -14,6 +14,8 @@ import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
 import { isValidUser } from '../../helpers/authHelper';
 import { capitalizeFirstLetter } from '../../helpers/textHelpers';
 import { Link } from 'react-router-dom';
+import TopTabs from '../../components/TopTabs';
+import Catalog from '../Catalog';
 // import Cookies from 'js-cookie';
 
 function AppLayout() {
@@ -35,6 +37,8 @@ function AppLayout() {
         return <ConfigureGame quizId={id} userName={userName} />;
       case 'play-game':
         return <PlayQuiz gameId={id} />;
+      case 'catalog':
+        return <Catalog />;
       default:
         return <CheckAuthAndNavigate />;
     }
@@ -63,9 +67,17 @@ function AppLayout() {
         header={
           <Header height={70}>
             <Group position="apart" className={styles.headerTabs} pr="xl">
-              <Link to={`/my-quizzes/${userName}`}>
-                <Icon name="logo" className="ml-lg" width={150} height={50} />
-              </Link>
+              <Group>
+                <Link to={`/my-quizzes/${userName}`}>
+                  <Icon name="logo" className="ml-lg mt-lg" width={150} height={50} />
+                </Link>
+                <TopTabs
+                  tabs={[
+                    { title: 'My quizzes', url: `/my-quizzes/${userName}` },
+                    { title: 'Catalog', url: `/catalog/${userName}` },
+                  ]}
+                />
+              </Group>
               {quizzes.length > 0 && viewType === 'my-quizzes' && (
                 <TextInput
                   mr="xl"
