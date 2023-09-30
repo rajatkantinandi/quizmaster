@@ -1,3 +1,4 @@
+import config from '../config';
 import {
   getQuizzes,
   post,
@@ -27,6 +28,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   quizzes: [],
   searchResults: [],
   searchQuery: '',
+  catalogList: null as CatalogListItem[] | null,
   getQuizzes: async () => {
     if (isGuestUser()) {
       const response: any = await getQuizzes(-1);
@@ -238,6 +240,15 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return response;
     }
   },
+  getCatalogList: async () => {
+    if (!get().catalogList) {
+      const catalogList = await fetchCatalogList();
+
+      set((state: QuizState) => {
+        state.catalogList = catalogList;
+      });
+    }
+  },
 });
 
 function getSortedQuizzes(sortBy, data) {
@@ -276,3 +287,20 @@ export interface QuizState extends Omit<Omit<ReturnType<typeof getQuizStore>, 'q
   searchResults: Quiz[];
   searchQuery: string;
 }
+
+const CATALOG_LIST_FILE_NAME = 'catalogList.json';
+const CATALOG_LIST_URL = `${config.catalogDataBaseUrl}${CATALOG_LIST_FILE_NAME}`;
+
+const fetchCatalogList = async () => {
+  const response = await fetch(CATALOG_LIST_URL);
+  const data = await response.json();
+  return data;
+};
+
+export type CatalogListItem = {
+  name: string;
+  numOfCategories: number;
+  numOfQuestions: number;
+  createDate: string;
+  quizId: number;
+};
