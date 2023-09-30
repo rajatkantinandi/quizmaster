@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Independence day quiz",
+    "numOfCategories": 2,
+    "numOfQuestions": 20,
+    "createDate": "2023-08-21T11:26:08.299Z",
+    "quizId": 1
+  },
+  {
+    "name": "Geopolitics",
+    "createDate": "2023-09-22T07:30:30.717Z",
+    "numOfCategories": 2,
+    "numOfQuestions": 20,
+    "quizId": 2
+  }
+]

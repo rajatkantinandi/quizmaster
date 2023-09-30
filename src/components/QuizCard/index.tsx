@@ -3,28 +3,30 @@ import { useNavigate } from 'react-router';
 import Icon, { IconName } from '../../components/Icon';
 import { tilesBGColors } from '../../constants';
 import { plural } from '../../helpers';
-import { downloadQuiz } from '../../helpers/importExport';
-import { Quiz } from '../../types';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 
-type Props = {
-  quiz: Quiz;
-  index: number;
-  userName: string;
+type QuizMetadata = {
+  name: string;
+  numOfCategories: number;
+  numOfQuestions: number;
+  isDraft?: boolean;
+  isPublished?: boolean;
+  isInCatalog?: boolean;
+  createDate: string;
+  quizId: number;
 };
 
-export default function QuizCard({ quiz, index, userName }: Props) {
+type Props = {
+  quizMetadata: QuizMetadata;
+  index: number;
+  userName: string;
+  handleDownload?: () => void;
+};
+
+export default function QuizCard({ quizMetadata, index, userName, handleDownload }: Props) {
   const navigate = useNavigate();
   const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame } = useStore();
-
-  function getQuestionsCount(categories): number {
-    return categories.reduce((count, category) => {
-      count += category.questions.length;
-
-      return count;
-    }, 0);
-  }
 
   async function handlePlayGame(quizId) {
     const gameId = await getInCompletedGame(quizId);
@@ -36,8 +38,10 @@ export default function QuizCard({ quiz, index, userName }: Props) {
     }
   }
 
+  function importToMyQuizzesAndEdit(quizName: string) {}
+
   return (
-    <div className={styles.quizCardWrapper} key={quiz.quizId}>
+    <div className={styles.quizCardWrapper} key={quizMetadata.quizId}>
       <Card shadow="sm" p="lg" withBorder>
         <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
           <Icon
@@ -50,14 +54,14 @@ export default function QuizCard({ quiz, index, userName }: Props) {
         </Card.Section>
         <Group position="apart" mt="md">
           <Text weight="bold" className={styles.truncate2Lines}>
-            {quiz.name}
+            {quizMetadata.name}
           </Text>
-          {quiz.isDraft && (
+          {quizMetadata.isDraft && (
             <Badge color="pink" variant="light">
               Draft
             </Badge>
           )}
-          {quiz.isPublished && (
+          {quizMetadata.isPublished && (
             <Badge color="green" variant="light">
               Published
             </Badge>
@@ -65,23 +69,29 @@ export default function QuizCard({ quiz, index, userName }: Props) {
         </Group>
         <Text mb="xs" size="xs" italic>
           Created on:{' '}
-          {new Date(quiz.createDate).toLocaleDateString('en-GB', {
+          {new Date(quizMetadata.createDate).toLocaleDateString('en-GB', {
             day: 'numeric',
             month: 'short',
             year: 'numeric',
           })}
         </Text>
         <Text>
-          {plural(quiz.categories.length, '%count Category', '%count Categories')},{' '}
-          {plural(getQuestionsCount(quiz.categories), '%count Question', '%count Questions')}
+          {plural(quizMetadata.numOfCategories, '%count category', '%count categories')},{' '}
+          {plural(quizMetadata.numOfQuestions, '%count question', '%count questions')}
         </Text>
-        <Group position="apart" className={styles.cardButton}>
-          {quiz.isDraft ? (
+        <Group position="apart" className="mt-lg">
+          {quizMetadata.isInCatalog || quizMetadata.isDraft ? (
             <Button
               color="pink"
               fullWidth
               leftIcon={<Icon color="#ffffff" name="pencil" width={16} />}
-              onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
+              onClick={() => {
+                if (quizMetadata.isInCatalog) {
+                  importToMyQuizzesAndEdit(quizMetadata.name);
+                } else {
+                  navigate(`/configure-quiz/${userName}/${quizMetadata.quizId}`);
+                }
+              }}>
               Edit
             </Button>
           ) : (
@@ -90,38 +100,42 @@ export default function QuizCard({ quiz, index, userName }: Props) {
                 color="teal"
                 className="grow"
                 leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
-                onClick={() => handlePlayGame(quiz.quizId)}>
+                onClick={() => handlePlayGame(quizMetadata.quizId)}>
                 Play
               </Button>
               <Button
                 title="Edit quiz"
                 variant="light"
                 className="iconButton"
-                onClick={() => navigate(`/configure-quiz/${userName}/${quiz.quizId}`)}>
+                onClick={() => navigate(`/configure-quiz/${userName}/${quizMetadata.quizId}`)}>
                 <Icon color="var(--gray-dark)" name="pencil" width={18} />
               </Button>
-              <Button title="Download quiz" variant="light" className="iconButton" onClick={() => downloadQuiz(quiz)}>
-                <Icon color="var(--gray-dark)" name="download" width={18} />
-              </Button>
+              {!!handleDownload && (
+                <Button title="Download quiz" variant="light" className="iconButton" onClick={handleDownload}>
+                  <Icon color="var(--gray-dark)" name="download" width={18} />
+                </Button>
+              )}
             </>
           )}
         </Group>
-        {quizzesSelector.show && (
+        {quizzesSelector.show && !quizMetadata.isInCatalog && (
           <ActionIcon
             variant="transparent"
             className={styles.cardSelectBtn}
             onClick={() => {
-              if (quizzesSelector.action === 'publish' && quiz.isDraft) {
+              if (quizzesSelector.action === 'publish' && quizMetadata.isDraft) {
                 showAlert({
                   message: 'Quiz in draft state is not allowed to publish.',
                   type: 'info',
                 });
               } else {
-                toggleSelectedQuizzes(quiz.quizId);
+                toggleSelectedQuizzes(quizMetadata.quizId);
               }
             }}>
             <Icon
-              name={quizzesSelector.selectedQuizzes.includes(quiz.quizId) ? 'checkmarkFilled' : 'checkmarkOutline'}
+              name={
+                quizzesSelector.selectedQuizzes.includes(quizMetadata.quizId) ? 'checkmarkFilled' : 'checkmarkOutline'
+              }
               width={200}
               height={200}
             />

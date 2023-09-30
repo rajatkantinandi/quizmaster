@@ -6,8 +6,10 @@ import PageLoader from '../../components/PageLoader';
 import QuizSelectorBanner from '../../components/QuizSelectorBanner';
 import NoQuizzes from './NoQuizzes';
 import ActionBar from './ActionBar';
-import QuizCard from './QuizCard';
 import CreateQuizButton from '../../components/CreateQuizButton';
+import QuizCard from '../../components/QuizCard';
+import { getQuestionsCount } from '../../helpers';
+import { downloadQuiz } from '../../helpers/importExport';
 
 export default function Quizzes({ userName }) {
   const [loading, setLoading] = useState(true);
@@ -47,9 +49,27 @@ export default function Quizzes({ userName }) {
           <QuizSelectorBanner {...quizzesSelector} />
           <ActionBar quizzes={quizzes} />
           <Group>
-            {quizzes.map((quiz, index) => (
-              <QuizCard quiz={quiz} index={index} userName={userName} key={quiz.quizId} />
-            ))}
+            {quizzes.map((quiz, index) => {
+              const { quizId, categories, createDate, name, isDraft, isPublished } = quiz;
+
+              return (
+                <QuizCard
+                  quizMetadata={{
+                    quizId,
+                    numOfCategories: categories.length,
+                    numOfQuestions: getQuestionsCount(categories),
+                    createDate,
+                    name,
+                    isDraft,
+                    isPublished,
+                  }}
+                  index={index}
+                  userName={userName}
+                  key={quizId}
+                  handleDownload={() => downloadQuiz(quiz)}
+                />
+              );
+            })}
             {/* No search results */}
             {quizzes.length === 0 && (
               <div className="ml-xl mt-xl">
