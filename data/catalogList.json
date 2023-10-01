@@ -12,5 +12,12 @@
     "numOfCategories": 2,
     "numOfQuestions": 20,
     "quizId": 2
+  },
+  {
+    "name": "Lifestyle and food",
+    "createDate": "2023-10-01T11:26:08.299Z",
+    "numOfCategories": 3,
+    "numOfQuestions": 20,
+    "quizId": 3
   }
 ]
