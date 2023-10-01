@@ -1,8 +1,10 @@
 import { ActionIcon, Badge, Button, Card, Group, Text } from '@mantine/core';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Icon, { IconName } from '../../components/Icon';
 import { tilesBGColors } from '../../constants';
 import { plural } from '../../helpers';
+import { downloadQuizFromCatalogAndImport } from '../../helpers/importExport';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 
@@ -27,6 +29,7 @@ type Props = {
 export default function QuizCard({ quizMetadata, index, userName, handleDownload }: Props) {
   const navigate = useNavigate();
   const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame } = useStore();
+  const [isImportingFromCatalog, setIsImportingFromCatalog] = useState(false);
 
   async function handlePlayGame(quizId) {
     const gameId = await getInCompletedGame(quizId);
@@ -38,7 +41,14 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
     }
   }
 
-  function importToMyQuizzesAndEdit(quizName: string) {}
+  async function importToMyQuizzesAndEdit(quizName: string) {
+    setIsImportingFromCatalog(true);
+    const quizId = await downloadQuizFromCatalogAndImport(quizName);
+
+    if (quizId) {
+      navigate(`/configure-quiz/${userName}/${quizId}`);
+    }
+  }
 
   return (
     <div className={styles.quizCardWrapper} key={quizMetadata.quizId}>
@@ -85,6 +95,7 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
               color="pink"
               fullWidth
               leftIcon={<Icon color="#ffffff" name="pencil" width={16} />}
+              disabled={isImportingFromCatalog}
               onClick={() => {
                 if (quizMetadata.isInCatalog) {
                   importToMyQuizzesAndEdit(quizMetadata.name);

@@ -2,6 +2,7 @@ import { Category, Quiz } from '../types';
 import Papa from 'papaparse';
 import { getRandomId } from './dataCreator';
 import { useStore } from '../useStore';
+import config from '../config';
 
 export const getCSVExportContentForQuiz = (quiz: Quiz) => {
   const fileName = `${quiz.name}.csv`;
@@ -34,25 +35,29 @@ export const downloadQuiz = (quiz: Quiz) => {
   link.remove();
 };
 
-export const importQuizzes = (files: File[]) => {
+const addParsedCsvDataToMyQuizzes = async (csvArray: string[][], name: string) => {
   const { createOrUpdateQuiz, getQuizzes, showAlert } = useStore.getState();
+  let quiz: Omit<Quiz, 'quizId'>;
 
+  try {
+    quiz = getQuizFromCsv(csvArray, name);
+  } catch (e) {
+    showAlert({ message: 'Invalid file format. Please check the file and try again.', type: 'error' });
+    return;
+  }
+
+  if (quiz.categories.length > 0) {
+    const savedQuiz = await createOrUpdateQuiz(quiz);
+    getQuizzes(); // Update state
+    return savedQuiz.quizId;
+  }
+};
+
+export const importQuizzes = (files: File[]) => {
   for (let file of files) {
     Papa.parse<string[]>(file as any, {
       complete: async (results) => {
-        let quiz: Omit<Quiz, 'quizId'>;
-
-        try {
-          quiz = getQuizFromCsv(results.data, file.name.split('.')[0]);
-        } catch (e) {
-          showAlert({ message: 'Invalid file format. Please check the file and try again.', type: 'error' });
-          return;
-        }
-
-        if (quiz.categories.length > 0) {
-          await createOrUpdateQuiz(quiz);
-          getQuizzes(); // Update state
-        }
+        await addParsedCsvDataToMyQuizzes(results.data, file.name.split('.')[0]);
       },
     });
   }
@@ -91,4 +96,18 @@ const getQuizFromCsv = (csvArray: string[][], name: string) => {
   }
 
   return quiz;
+};
+
+export const downloadQuizFromCatalogAndImport = (name: string) => {
+  return new Promise((resolve) => {
+    const url = config.catalogDataBaseUrl + encodeURIComponent(name) + '.csv';
+
+    Papa.parse<string[]>(url, {
+      download: true,
+      complete: async (results) => {
+        const quizId = await addParsedCsvDataToMyQuizzes(results.data, name);
+        resolve(quizId);
+      },
+    });
+  });
 };
