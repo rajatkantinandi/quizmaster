@@ -10,7 +10,7 @@ interface Props {
   setActiveQuestion: any;
   deleteQuestion: any;
   isExpanded: boolean;
-  setExpandedQuestionIndex: Function;
+  setExpandedQuestionId: Function;
 }
 
 export default function QuestionView({
@@ -20,7 +20,7 @@ export default function QuestionView({
   setActiveQuestion,
   deleteQuestion,
   isExpanded,
-  setExpandedQuestionIndex,
+  setExpandedQuestionId,
 }: Props) {
   return (
     <>
@@ -31,7 +31,7 @@ export default function QuestionView({
           isValidQuestion={isValidQuestion}
           setActiveQuestion={setActiveQuestion}
           deleteQuestion={deleteQuestion}
-          setExpandedQuestionIndex={setExpandedQuestionIndex}
+          setExpandedQuestionId={setExpandedQuestionId}
         />
       ) : (
         <CollapsedView
@@ -40,7 +40,7 @@ export default function QuestionView({
           isValidQuestion={isValidQuestion}
           setActiveQuestion={setActiveQuestion}
           deleteQuestion={deleteQuestion}
-          setExpandedQuestionIndex={setExpandedQuestionIndex}
+          setExpandedQuestionId={setExpandedQuestionId}
         />
       )}
     </>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './styles.module.css';
 import { Title, Card, Button } from '@mantine/core';
 import Icon from '../../components/Icon';
@@ -8,22 +8,23 @@ import { useFieldArray } from 'react-hook-form';
 import { getEmptyQuestion } from '../../helpers';
 import { useStore } from '../../useStore';
 import { Quiz } from '../../types';
+import { ReactSortable } from 'react-sortablejs';
 
 export default function QuestionCard({
   activeCategoryName,
   questions,
   activeCategoryIndex,
   control,
-  expandedQuestionIndex,
+  expandedQuestionId,
   activeQuestionIndex,
   activeCategoryId,
   setActiveQuestionIndex,
   isValidQuestion,
-  setExpandedQuestionIndex,
+  setExpandedQuestionId,
   quizId,
   updateQuizData,
 }) {
-  const { append, remove, update } = useFieldArray({
+  const { append, remove, update, replace } = useFieldArray({
     control,
     name: `categories[${activeCategoryIndex}].questions`,
   });
@@ -41,7 +42,7 @@ export default function QuestionCard({
     const question = getEmptyQuestion(activeCategoryId);
     append(question);
     setActiveQuestionIndex(questions.length);
-    setExpandedQuestionIndex(null);
+    setExpandedQuestionId(null);
   };
 
   function handleDeleteQuestion(ev, index: number) {
@@ -93,7 +94,7 @@ export default function QuestionCard({
     updateQuestionData(idx, question);
     await updateQuizData();
     setActiveQuestionIndex(null);
-    setExpandedQuestionIndex(idx);
+    setExpandedQuestionId(question.questionId);
 
     showAlert({
       message: 'Question has been saved successfully.',
@@ -101,35 +102,65 @@ export default function QuestionCard({
     });
   }
 
+  function onQuestionSwap(data) {
+    const updatedQuestionIds = data.map((x) => x.questionId).join(',');
+    const initialQuestionIds = questions.map((x) => x.questionId).join(',');
+
+    if (initialQuestionIds !== updatedQuestionIds) {
+      replace(
+        data.map((x) => {
+          delete x.id;
+          return x;
+        }),
+      );
+    }
+  }
+
   return (
     <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsCard}`}>
       <Title order={5} mb="xl">
         {activeCategoryName || 'Unnamed Category'}
       </Title>
-      {questions.map((item: any, idx) =>
-        activeQuestionIndex === idx ? (
-          <QuestionEdit
-            questionNum={idx + 1}
-            question={item}
-            key={item.questionId}
-            saveQuestion={(data) => handleSaveQuestion(idx, data)}
-            onQuestionChange={(data) => updateQuestionData(idx, data)}
-            deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
-            resetQuestion={resetQuestion}
-          />
-        ) : (
-          <QuestionView
-            questionNum={idx + 1}
-            question={item}
-            key={item.questionId}
-            isValidQuestion={isValidQuestion(item)}
-            setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
-            deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
-            isExpanded={expandedQuestionIndex === idx}
-            setExpandedQuestionIndex={setExpandedQuestionIndex}
-          />
-        ),
-      )}
+      <ReactSortable
+        list={questions.map((item, idx) => ({ ...item, id: idx + 1, name: item.text }))}
+        chosenClass={styles.chosenStyle}
+        handle=".questionHandle"
+        onChoose={(data, ev: any) => {
+          if (!!activeQuestionIndex) {
+            showAlert({
+              message: 'Please save question before drag',
+              type: 'warning',
+            });
+
+            ev._disableDelayedDrag();
+          }
+        }}
+        setList={onQuestionSwap}>
+        {questions.map((item: any, idx) =>
+          activeQuestionIndex === idx ? (
+            <QuestionEdit
+              questionNum={idx + 1}
+              question={item}
+              key={item.questionId}
+              saveQuestion={(data) => handleSaveQuestion(idx, data)}
+              onQuestionChange={(data) => updateQuestionData(idx, data)}
+              deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
+              resetQuestion={resetQuestion}
+            />
+          ) : (
+            <QuestionView
+              questionNum={idx + 1}
+              question={item}
+              key={item.questionId}
+              isValidQuestion={isValidQuestion(item)}
+              setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
+              deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
+              isExpanded={expandedQuestionId === item.questionId}
+              setExpandedQuestionId={setExpandedQuestionId}
+            />
+          ),
+        )}
+      </ReactSortable>
       <Button mt="xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
         Add Question
       </Button>

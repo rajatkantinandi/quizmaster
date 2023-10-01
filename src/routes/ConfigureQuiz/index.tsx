@@ -24,7 +24,7 @@ export default function ConfigureQuiz({
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeCategoryName, setActiveCategoryName] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
-  const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null>(null);
+  const [expandedQuestionId, setExpandedQuestionId] = useState<number | null>(null);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
   const navigate = useNavigate();
   const {
@@ -172,7 +172,7 @@ export default function ConfigureQuiz({
     setActiveCategoryIndex(index);
     setActiveCategoryName(categories[index].categoryName);
     setActiveQuestionIndex(null);
-    setExpandedQuestionIndex(null);
+    setExpandedQuestionId(null);
   };
 
   function isValidQuestion(question) {
@@ -318,7 +318,7 @@ export default function ConfigureQuiz({
                 setActiveCategoryIndex(categories.length);
                 setActiveCategoryName('');
                 setActiveQuestionIndex(null);
-                setExpandedQuestionIndex(null);
+                setExpandedQuestionId(null);
                 append({
                   categoryName: '',
                   questions: [],
@@ -340,12 +340,12 @@ export default function ConfigureQuiz({
             activeCategoryIndex={activeCategoryIndex}
             activeCategoryId={categories[activeCategoryIndex]?.id}
             activeQuestionIndex={activeQuestionIndex}
-            expandedQuestionIndex={expandedQuestionIndex}
+            expandedQuestionId={expandedQuestionId}
             control={control}
             setActiveQuestionIndex={setActiveQuestionIndex}
             isValidQuestion={isValidQuestion}
             quizId={quizId}
-            setExpandedQuestionIndex={setExpandedQuestionIndex}
+            setExpandedQuestionId={setExpandedQuestionId}
             updateQuizData={() => {
               createOrUpdateQuiz({
                 categories,

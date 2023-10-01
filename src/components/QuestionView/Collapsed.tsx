@@ -10,7 +10,7 @@ interface Props {
   isValidQuestion: boolean;
   setActiveQuestion: any;
   deleteQuestion: any;
-  setExpandedQuestionIndex: Function;
+  setExpandedQuestionId: Function;
 }
 
 export default function CollapsedView({
@@ -19,18 +19,12 @@ export default function CollapsedView({
   isValidQuestion,
   setActiveQuestion,
   deleteQuestion,
-  setExpandedQuestionIndex,
+  setExpandedQuestionId,
 }: Props) {
   const isWithoutOptions = question.options.length === 1;
 
   return (
-    <Card
-      shadow="sm"
-      p="lg"
-      my="sm"
-      withBorder
-      className="secondaryCard clickable slideUp"
-      onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
+    <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard clickable slideUp">
       <Group position="apart" noWrap>
         <Group>
           <div className="flex">
@@ -54,8 +48,11 @@ export default function CollapsedView({
           <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
             <Icon name="pencil" width={22} />
           </ActionIcon>
-          <ActionIcon variant="transparent">
+          <ActionIcon variant="transparent" onClick={() => setExpandedQuestionId(question.questionId)}>
             <Icon name="caretDown" />
+          </ActionIcon>
+          <ActionIcon variant="transparent" className="questionHandle">
+            <Icon name="drag" />
           </ActionIcon>
         </Group>
       </Group>
