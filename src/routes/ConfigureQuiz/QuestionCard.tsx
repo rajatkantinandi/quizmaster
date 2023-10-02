@@ -158,7 +158,7 @@ export default function QuestionCard({
               isValidQuestion={isValidQuestion(item)}
               setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
               deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
-              isExpanded={expandedQuestionIndex === item.questionId}
+              isExpanded={expandedQuestionIndex === idx}
               setExpandedQuestionIndex={setExpandedQuestionIndex}
               rearrangeMode={rearrangeMode}
             />
