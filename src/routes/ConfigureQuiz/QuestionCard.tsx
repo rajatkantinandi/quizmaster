@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './styles.module.css';
-import { Title, Card, Button } from '@mantine/core';
+import { Title, Card, Button, Group } from '@mantine/core';
 import Icon from '../../components/Icon';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuestionView from '../../components/QuestionView';
@@ -23,6 +23,8 @@ export default function QuestionCard({
   setExpandedQuestionIndex,
   quizId,
   updateQuizData,
+  handleRearrangeQuestions,
+  rearrangeMode,
 }) {
   const { append, remove, update, replace } = useFieldArray({
     control,
@@ -118,23 +120,24 @@ export default function QuestionCard({
 
   return (
     <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsCard}`}>
-      <Title order={5} mb="xl">
-        {activeCategoryName || 'Unnamed Category'}
-      </Title>
+      <Group position="apart">
+        <Title order={5} mb="xl">
+          {activeCategoryName || 'Unnamed Category'}
+        </Title>
+        {rearrangeMode ? (
+          <Button size="xs" color="teal" onClick={handleRearrangeQuestions}>
+            Complete Rearranging
+          </Button>
+        ) : (
+          <Button size="xs" color="teal" onClick={handleRearrangeQuestions}>
+            Rearrange Questions
+          </Button>
+        )}
+      </Group>
       <ReactSortable
         list={questions.map((item, idx) => ({ ...item, id: idx + 1, name: item.text }))}
         chosenClass={styles.chosenStyle}
         handle=".questionHandle"
-        onChoose={(data, ev: any) => {
-          if (!!activeQuestionIndex) {
-            showAlert({
-              message: 'Please save question before drag',
-              type: 'warning',
-            });
-
-            ev._disableDelayedDrag();
-          }
-        }}
         setList={onQuestionSwap}>
         {questions.map((item: any, idx) =>
           activeQuestionIndex === idx ? (
@@ -157,6 +160,7 @@ export default function QuestionCard({
               deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
               isExpanded={expandedQuestionIndex === item.questionId}
               setExpandedQuestionIndex={setExpandedQuestionIndex}
+              rearrangeMode={rearrangeMode}
             />
           ),
         )}

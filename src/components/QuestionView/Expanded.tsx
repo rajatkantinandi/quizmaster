@@ -31,14 +31,8 @@ export default function ExpandedView({
       : {};
 
   return (
-    <Card
-      shadow="sm"
-      p="lg"
-      my="sm"
-      withBorder
-      className="secondaryCard slideDown clickable"
-      onClick={() => setExpandedQuestionIndex(null)}>
-      <div>
+    <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard slideDown">
+      <Card className="secondaryCard clickable" p={0} onClick={() => setExpandedQuestionIndex(null)}>
         <Group position="apart" noWrap>
           <Group>
             <Title order={4}>Question {questionNum}</Title>
@@ -59,12 +53,9 @@ export default function ExpandedView({
             <ActionIcon variant="transparent">
               <Icon name="caretUp" />
             </ActionIcon>
-            <ActionIcon variant="transparent" className="questionHandle">
-              <Icon name="drag" />
-            </ActionIcon>
           </Group>
         </Group>
-      </div>
+      </Card>
       <Box my="xs">
         {question.text ? (
           <SanitizedHtml>{question.text}</SanitizedHtml>
