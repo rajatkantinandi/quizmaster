@@ -165,9 +165,11 @@ export default function QuestionCard({
           ),
         )}
       </ReactSortable>
-      <Button mt="xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
-        Add Question
-      </Button>
+      {!rearrangeMode && (
+        <Button mt="xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
+          Add Question
+        </Button>
+      )}
     </Card>
   );
 }
