@@ -15,12 +15,12 @@ export default function QuestionCard({
   questions,
   activeCategoryIndex,
   control,
-  expandedQuestionId,
+  expandedQuestionIndex,
   activeQuestionIndex,
   activeCategoryId,
   setActiveQuestionIndex,
   isValidQuestion,
-  setExpandedQuestionId,
+  setExpandedQuestionIndex,
   quizId,
   updateQuizData,
 }) {
@@ -42,7 +42,7 @@ export default function QuestionCard({
     const question = getEmptyQuestion(activeCategoryId);
     append(question);
     setActiveQuestionIndex(questions.length);
-    setExpandedQuestionId(null);
+    setExpandedQuestionIndex(null);
   };
 
   function handleDeleteQuestion(ev, index: number) {
@@ -94,7 +94,7 @@ export default function QuestionCard({
     updateQuestionData(idx, question);
     await updateQuizData();
     setActiveQuestionIndex(null);
-    setExpandedQuestionId(question.questionId);
+    setExpandedQuestionIndex(idx);
 
     showAlert({
       message: 'Question has been saved successfully.',
@@ -155,8 +155,8 @@ export default function QuestionCard({
               isValidQuestion={isValidQuestion(item)}
               setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
               deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
-              isExpanded={expandedQuestionId === item.questionId}
-              setExpandedQuestionId={setExpandedQuestionId}
+              isExpanded={expandedQuestionIndex === item.questionId}
+              setExpandedQuestionIndex={setExpandedQuestionIndex}
             />
           ),
         )}

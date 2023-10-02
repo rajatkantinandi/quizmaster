@@ -10,7 +10,7 @@ interface Props {
   isValidQuestion: boolean;
   setActiveQuestion: any;
   deleteQuestion: any;
-  setExpandedQuestionId: Function;
+  setExpandedQuestionIndex: Function;
 }
 
 export default function ExpandedView({
@@ -19,7 +19,7 @@ export default function ExpandedView({
   isValidQuestion,
   setActiveQuestion,
   deleteQuestion,
-  setExpandedQuestionId,
+  setExpandedQuestionIndex,
 }: Props) {
   const isWithoutOptions = question.options.length === 1;
   const getQuestionTextStyles = (theme, isCorrect = false) =>
@@ -31,7 +31,13 @@ export default function ExpandedView({
       : {};
 
   return (
-    <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard slideDown clickable">
+    <Card
+      shadow="sm"
+      p="lg"
+      my="sm"
+      withBorder
+      className="secondaryCard slideDown clickable"
+      onClick={() => setExpandedQuestionIndex(null)}>
       <div>
         <Group position="apart" noWrap>
           <Group>
@@ -50,7 +56,7 @@ export default function ExpandedView({
             <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
               <Icon name="pencil" width={22} />
             </ActionIcon>
-            <ActionIcon variant="transparent" onClick={() => setExpandedQuestionId(null)}>
+            <ActionIcon variant="transparent">
               <Icon name="caretUp" />
             </ActionIcon>
             <ActionIcon variant="transparent" className="questionHandle">
