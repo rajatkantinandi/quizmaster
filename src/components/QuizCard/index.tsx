@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import Icon, { IconName } from '../../components/Icon';
 import { tilesBGColors } from '../../constants';
 import { plural } from '../../helpers';
-import { downloadQuizFromCatalogAndImport } from '../../helpers/importExport';
+import { getQuizFromCatalog } from '../../helpers/importExport';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 
@@ -28,7 +28,7 @@ type Props = {
 
 export default function QuizCard({ quizMetadata, index, userName, handleDownload }: Props) {
   const navigate = useNavigate();
-  const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame } = useStore();
+  const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame, updatePreviewQuiz } = useStore();
   const [isImportingFromCatalog, setIsImportingFromCatalog] = useState(false);
 
   async function handlePlayGame(quizId) {
@@ -41,12 +41,13 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
     }
   }
 
-  async function importToMyQuizzesAndEdit(quizName: string) {
+  async function previewQuiz(quizName: string) {
     setIsImportingFromCatalog(true);
-    const quizId = await downloadQuizFromCatalogAndImport(quizName);
+    const quiz = await getQuizFromCatalog(quizName);
 
-    if (quizId) {
-      navigate(`/configure-quiz/${userName}/${quizId}`);
+    if (quiz) {
+      updatePreviewQuiz(quiz);
+      navigate(`/configure-quiz/${userName}/preview`);
     }
   }
 
@@ -94,16 +95,16 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
             <Button
               color="pink"
               fullWidth
-              leftIcon={<Icon color="#ffffff" name="pencil" width={16} />}
+              leftIcon={<Icon color="#ffffff" name={quizMetadata.isInCatalog ? 'play' : 'pencil'} width={16} />}
               disabled={isImportingFromCatalog}
               onClick={() => {
                 if (quizMetadata.isInCatalog) {
-                  importToMyQuizzesAndEdit(quizMetadata.name);
+                  previewQuiz(quizMetadata.name);
                 } else {
                   navigate(`/configure-quiz/${userName}/${quizMetadata.quizId}`);
                 }
               }}>
-              Edit
+              {quizMetadata.isInCatalog ? 'Preview' : 'Edit'}
             </Button>
           ) : (
             <>

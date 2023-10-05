@@ -45,7 +45,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
   const { getQuiz, addGame, showModal } = useStore();
 
   useEffect(() => {
-    getQuiz(quizId).then((x) => {
+    getQuiz(quizId, false).then((x) => {
       setQuizName(x.name);
     });
   }, [getQuiz, quizId]);

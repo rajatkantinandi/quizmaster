@@ -98,15 +98,15 @@ const getQuizFromCsv = (csvArray: string[][], name: string) => {
   return quiz;
 };
 
-export const downloadQuizFromCatalogAndImport = (name: string) => {
+export const getQuizFromCatalog = (name: string): Promise<Omit<Quiz, 'quizId'>> => {
   return new Promise((resolve) => {
     const url = config.catalogDataBaseUrl + encodeURIComponent(name) + '.csv';
 
     Papa.parse<string[]>(url, {
       download: true,
       complete: async (results) => {
-        const quizId = await addParsedCsvDataToMyQuizzes(results.data, name);
-        resolve(quizId);
+        const quiz = getQuizFromCsv(results.data, name);
+        resolve(quiz);
       },
     });
   });

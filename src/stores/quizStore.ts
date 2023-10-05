@@ -22,7 +22,7 @@ import {
   getInCompletedGameByQuizId,
   markGameCompleted,
 } from '../helpers';
-import { GameData, Quiz } from '../types';
+import { GameData, PreviewQuiz, Quiz } from '../types';
 
 export const getQuizStore = (set: Function, get: Function) => ({
   quizzes: [],
@@ -56,7 +56,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return sortedData;
     }
   },
-  getQuiz: async (quizId: number | string) => {
+  getQuiz: async (quizId: number | string, isPreview: boolean) => {
+    if (isPreview) {
+      return get().previewQuiz;
+    }
+
     const quizIdNum = parseInt(quizId.toString());
 
     if (isGuestUser()) {
@@ -74,7 +78,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
     }
   },
   createOrUpdateQuiz: async (data) => {
-    if (isGuestUser()) {
+    if (data.isPreview) {
+      set((state: QuizState) => {
+        state.previewQuiz = data;
+      });
+    } else if (isGuestUser()) {
       const response: any = await saveQuizInLocalDB(data);
 
       return response;
@@ -86,7 +94,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
     }
   },
   updateQuizName: async (data) => {
-    if (isGuestUser()) {
+    if (data.isPreview) {
+      set((state: QuizState) => {
+        state.previewQuiz = data;
+      });
+    } else if (isGuestUser()) {
       const response: any = await saveQuizInLocalDB(data);
       return response;
     } else {
@@ -248,6 +260,12 @@ export const getQuizStore = (set: Function, get: Function) => ({
         state.catalogList = catalogList;
       });
     }
+  },
+  previewQuiz: null as PreviewQuiz | null,
+  updatePreviewQuiz: (data: PreviewQuiz | null) => {
+    set((state: QuizState) => {
+      state.previewQuiz = data;
+    });
   },
 });
 

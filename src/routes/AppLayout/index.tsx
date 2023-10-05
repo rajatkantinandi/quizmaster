@@ -38,7 +38,7 @@ function AppLayout() {
       case 'play-game':
         return <PlayQuiz gameId={id} />;
       case 'catalog':
-        return <Catalog />;
+        return <Catalog userName={userName} />;
       default:
         return <CheckAuthAndNavigate />;
     }

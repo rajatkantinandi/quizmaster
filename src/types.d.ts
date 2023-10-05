@@ -43,6 +43,8 @@ export interface Quiz {
   isDeleted?: boolean;
 }
 
+export type PreviewQuiz = Omit<Quiz, 'quizId'>;
+
 export interface GameInfo {
   gameId?: number;
   winnerTeamId?: string;
