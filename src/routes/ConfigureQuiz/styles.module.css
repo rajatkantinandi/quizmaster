@@ -46,3 +46,7 @@
 .radio {
   align-items: flex-start;
 }
+
+.chosenStyle {
+  background-color: var(--dragging-question-bg);
+}

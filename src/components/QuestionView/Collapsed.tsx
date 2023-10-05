@@ -11,6 +11,7 @@ interface Props {
   setActiveQuestion: any;
   deleteQuestion: any;
   setExpandedQuestionIndex: Function;
+  rearrangeMode: boolean;
 }
 
 export default function CollapsedView({
@@ -20,6 +21,7 @@ export default function CollapsedView({
   setActiveQuestion,
   deleteQuestion,
   setExpandedQuestionIndex,
+  rearrangeMode,
 }: Props) {
   const isWithoutOptions = question.options.length === 1;
 
@@ -47,17 +49,23 @@ export default function CollapsedView({
             </Badge>
           )}
         </Group>
-        <Group className="noShrink">
-          <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
-            Delete
-          </Button>
-          <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
-            <Icon name="pencil" width={22} />
+        {rearrangeMode ? (
+          <ActionIcon variant="transparent" className="questionHandle">
+            <Icon name="drag" />
           </ActionIcon>
-          <ActionIcon variant="transparent">
-            <Icon name="caretDown" />
-          </ActionIcon>
-        </Group>
+        ) : (
+          <Group className="noShrink">
+            <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
+              Delete
+            </Button>
+            <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
+              <Icon name="pencil" width={22} />
+            </ActionIcon>
+            <ActionIcon variant="transparent">
+              <Icon name="caretDown" />
+            </ActionIcon>
+          </Group>
+        )}
       </Group>
       <List className="flex" ml="lg">
         <List.Item mr="xl">{question.points} points</List.Item>
