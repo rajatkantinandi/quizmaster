@@ -144,7 +144,7 @@ export default function QuestionEdit({
 
   function onDeleteClick(ev) {
     ev.preventDefault();
-    deleteQuestion();
+    deleteQuestion(ev);
   }
 
   return (

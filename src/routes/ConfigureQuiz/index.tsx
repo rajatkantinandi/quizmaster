@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import { plural } from '../../helpers/textHelpers';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
 import { useNavigate } from 'react-router';
-import QuestionCard from './QuestionCard';
+import QuestionsListPanel from './QuestionsListPanel';
 
 export default function ConfigureQuiz({
   quizId,
@@ -25,6 +25,7 @@ export default function ConfigureQuiz({
   const [activeCategoryName, setActiveCategoryName] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null>(null);
+  const [rearrangeMode, setRearrangeMode] = useState(false);
   const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName, updatePreviewQuiz } =
     useStore();
   const navigate = useNavigate();
@@ -219,6 +220,18 @@ export default function ConfigureQuiz({
     });
   }
 
+  function handleRearrangeQuestions() {
+    if (activeQuestionIndex !== null) {
+      showAlert({
+        message: 'Please save all the questions before rearrange',
+        type: 'warning',
+      });
+    } else {
+      setRearrangeMode(!rearrangeMode);
+      setExpandedQuestionIndex(null);
+    }
+  }
+
   async function handleQuizName(data, quizId) {
     await updateQuizName({ ...data, quizId, isPreview });
     setQuizName(data.name);
@@ -348,7 +361,7 @@ export default function ConfigureQuiz({
           </form>
         </Grid.Col>
         <Grid.Col span={14}>
-          <QuestionCard
+          <QuestionsListPanel
             activeCategoryName={activeCategoryName}
             questions={(categories[activeCategoryIndex] as any)?.questions || []}
             activeCategoryIndex={activeCategoryIndex}
@@ -360,6 +373,8 @@ export default function ConfigureQuiz({
             isValidQuestion={isValidQuestion}
             quizId={quizId}
             setExpandedQuestionIndex={setExpandedQuestionIndex}
+            handleRearrangeQuestions={handleRearrangeQuestions}
+            rearrangeMode={rearrangeMode}
             updateQuizData={() => {
               createOrUpdateQuiz({
                 categories,
