@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import { plural } from '../../helpers/textHelpers';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
 import { useNavigate } from 'react-router';
-import QuestionCard from './QuestionCard';
+import QuestionsListPanel from './QuestionsListPanel';
 
 export default function ConfigureQuiz({
   quizId,
@@ -347,7 +347,7 @@ export default function ConfigureQuiz({
           </form>
         </Grid.Col>
         <Grid.Col span={14}>
-          <QuestionCard
+          <QuestionsListPanel
             activeCategoryName={activeCategoryName}
             questions={(categories[activeCategoryIndex] as any)?.questions || []}
             activeCategoryIndex={activeCategoryIndex}

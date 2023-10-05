@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './styles.module.css';
-import { Title, Card, Button, Group } from '@mantine/core';
+import { Title, Card, Button, Group, Text } from '@mantine/core';
 import Icon from '../../components/Icon';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuestionView from '../../components/QuestionView';
@@ -10,7 +10,7 @@ import { useStore } from '../../useStore';
 import { Quiz } from '../../types';
 import { ReactSortable } from 'react-sortablejs';
 
-export default function QuestionCard({
+export default function QuestionsListPanel({
   activeCategoryName,
   questions,
   activeCategoryIndex,
@@ -110,6 +110,7 @@ export default function QuestionCard({
 
     if (initialQuestionIds !== updatedQuestionIds) {
       replace(
+        // Remove id required for react sortable before updating questions state
         data.map((x) => {
           delete x.id;
           return x;
@@ -120,20 +121,24 @@ export default function QuestionCard({
 
   return (
     <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsCard}`}>
-      <Group position="apart">
-        <Title order={5} mb="xl">
-          {activeCategoryName || 'Unnamed Category'}
-        </Title>
+      <Group position="apart" align="center" mb="md">
+        <Title order={4}>{activeCategoryName || 'Unnamed Category'}</Title>
         {rearrangeMode ? (
-          <Button size="xs" color="teal" onClick={handleRearrangeQuestions}>
-            Complete Rearranging
+          <Button size="sm" style={{ width: 130 }} color="teal" onClick={handleRearrangeQuestions}>
+            Done
           </Button>
         ) : (
-          <Button size="xs" color="teal" onClick={handleRearrangeQuestions}>
+          <Button size="xs" color="green" onClick={handleRearrangeQuestions}>
             Rearrange Questions
           </Button>
         )}
       </Group>
+      {rearrangeMode && (
+        <Text mb="md">
+          Drag the questions using the drag handle on the right corner of each question to rearrange them. Click the
+          "Done" button above, after rearranging them.
+        </Text>
+      )}
       <ReactSortable
         list={questions.map((item, idx) => ({ ...item, id: idx + 1, name: item.text }))}
         chosenClass={styles.chosenStyle}
