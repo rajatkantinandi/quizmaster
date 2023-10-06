@@ -11,6 +11,7 @@ interface Props {
   deleteQuestion: any;
   isExpanded: boolean;
   setExpandedQuestionIndex: Function;
+  rearrangeMode: boolean;
 }
 
 export default function QuestionView({
@@ -21,6 +22,7 @@ export default function QuestionView({
   deleteQuestion,
   isExpanded,
   setExpandedQuestionIndex,
+  rearrangeMode,
 }: Props) {
   return (
     <>
@@ -41,6 +43,7 @@ export default function QuestionView({
           setActiveQuestion={setActiveQuestion}
           deleteQuestion={deleteQuestion}
           setExpandedQuestionIndex={setExpandedQuestionIndex}
+          rearrangeMode={rearrangeMode}
         />
       )}
     </>

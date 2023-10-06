@@ -53,10 +53,11 @@ export default function WithOptions({
             label={<Title order={6}>ANSWER</Title>}
             size="md"
             my="lg">
-            {options.map((x) =>
+            {options.map((x, idx) =>
               x.isCorrect ? (
                 <Checkbox
                   value={x.optionId.toString()}
+                  key={x.optionId}
                   checked
                   color="green"
                   className="justifyCenter"
@@ -66,7 +67,7 @@ export default function WithOptions({
                   size="lg"
                 />
               ) : (
-                <div style={{ width: '24px', height: '24px' }}></div>
+                <div style={{ width: '24px', height: '24px' }} key={`empty_${idx}`}></div>
               ),
             )}
           </Checkbox.Group>
@@ -93,6 +94,7 @@ export default function WithOptions({
               style={isAttempted || !isTimerRunning ? { pointerEvents: 'none' } : {}}
               radius="xl"
               size="lg"
+              key={option.optionId}
             />
           ))}
         </Checkbox.Group>
