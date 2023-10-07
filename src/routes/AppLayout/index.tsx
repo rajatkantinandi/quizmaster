@@ -14,7 +14,7 @@ import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
 import { isValidUser } from '../../helpers/authHelper';
 import { capitalizeFirstLetter } from '../../helpers/textHelpers';
 import { Link } from 'react-router-dom';
-import TopTabs from '../../components/TopTabs';
+import HeaderTabs from '../../components/TopTabs/HeaderTabs';
 import Catalog from '../Catalog';
 // import Cookies from 'js-cookie';
 
@@ -71,7 +71,7 @@ function AppLayout() {
                 <Link to={`/my-quizzes/${userName}`}>
                   <Icon name="logo" className="ml-lg mt-lg" width={150} height={50} />
                 </Link>
-                <TopTabs
+                <HeaderTabs
                   tabs={[
                     { title: 'My quizzes', url: `/my-quizzes/${userName}` },
                     { title: 'Catalog', url: `/catalog/${userName}` },

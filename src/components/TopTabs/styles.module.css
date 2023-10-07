@@ -1,8 +1,8 @@
 .tab {
   text-decoration: none;
   display: block;
-  padding: 15px 20px;
-  margin-top: 10px;
+  padding: 20px 20px;
+  margin-top: 13px;
   margin-right: 10px;
   font-family: var(--comfortaa);
   font-weight: bold;
@@ -19,10 +19,12 @@
 }
 
 .tab.active {
-  background: linear-gradient(to bottom, var(--primary-card-bg) 20%, var(--off-white));
-  border: 0.5px solid var(--border-gray);
-  border-top-width: 2px;
-  border-bottom: none;
+  background: linear-gradient(to bottom, var(--primary-card-bg) 20%, var(--off-white) 80%, var(--off-white) 100%);
+  border-top: 2px solid var(--border-gray);
+}
+
+.tab.active::before {
+  background-color: var(--off-white);
 }
 
 .tab:hover,
