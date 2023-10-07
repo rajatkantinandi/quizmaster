@@ -10,13 +10,20 @@ type Tab = {
 
 type Props = {
   tabs: Tab[];
+  onChange: (value: string) => void;
 };
 
-export default function HeaderTabs({ tabs }: Props) {
+export default function HeaderTabs({ tabs, onChange }: Props) {
   const navigate = useNavigate();
 
   return (
-    <Tabs variant="outline" value={window.location.pathname} onTabChange={(value) => navigate(value!)}>
+    <Tabs
+      variant="outline"
+      value={window.location.pathname}
+      onTabChange={(value) => {
+        onChange(value!);
+        navigate(value!);
+      }}>
       <Tabs.List>
         {tabs.map((tab) => (
           <Tabs.Tab

@@ -26,7 +26,6 @@ import { GameData, PreviewQuiz, Quiz } from '../types';
 
 export const getQuizStore = (set: Function, get: Function) => ({
   quizzes: [],
-  searchResults: [],
   searchQuery: '',
   catalogList: null as CatalogListItem[] | null,
   getQuizzes: async () => {
@@ -205,9 +204,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
   searchQuiz: (queryString: string) => {
     set((state: QuizState) => {
       state.searchQuery = queryString;
-      state.searchResults = queryString
-        ? state.quizzes.filter((quiz) => quiz.name.toLowerCase().includes(queryString.toLowerCase()))
-        : [];
+    });
+  },
+  clearSearch: () => {
+    set((state: QuizState) => {
+      state.searchQuery = '';
     });
   },
   deleteQuizzes: async (quizIds) => {
@@ -300,9 +301,8 @@ async function saveQuizInLocalDB(data) {
   return response;
 }
 
-export interface QuizState extends Omit<Omit<ReturnType<typeof getQuizStore>, 'quizzes'>, 'searchResults'> {
+export interface QuizState extends Omit<ReturnType<typeof getQuizStore>, 'quizzes'> {
   quizzes: Quiz[];
-  searchResults: Quiz[];
   searchQuery: string;
 }
 

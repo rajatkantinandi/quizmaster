@@ -20,7 +20,7 @@ import Catalog from '../Catalog';
 
 function AppLayout() {
   const { userName, viewType, id } = useParams();
-  const { searchQuiz, quizzes } = useStore();
+  const { searchQuiz, quizzes, searchQuery, clearSearch } = useStore();
 
   function getTabsView() {
     switch (viewType) {
@@ -76,9 +76,10 @@ function AppLayout() {
                     { title: 'My quizzes', url: `/my-quizzes/${userName}` },
                     { title: 'Catalog', url: `/catalog/${userName}` },
                   ]}
+                  onChange={() => clearSearch()}
                 />
               </Group>
-              {quizzes.length > 0 && viewType === 'my-quizzes' && (
+              {((quizzes.length > 0 && viewType === 'my-quizzes') || viewType === 'catalog') && (
                 <TextInput
                   mr="xl"
                   type="text"
@@ -87,6 +88,7 @@ function AppLayout() {
                   radius="xl"
                   size="md"
                   className={styles.searchInput}
+                  value={searchQuery}
                   onChange={(ev) => searchQuiz(ev.target.value)}
                   icon={<Icon name="search" width={16} />}
                 />

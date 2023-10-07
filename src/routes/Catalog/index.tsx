@@ -1,11 +1,18 @@
 import { Group } from '@mantine/core';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import PageLoader from '../../components/PageLoader';
 import QuizCard from '../../components/QuizCard';
 import { useStore } from '../../useStore';
 
 export default function Catalog({ userName }: any) {
-  const { catalogList, getCatalogList } = useStore();
+  const { catalogList, getCatalogList, searchQuery } = useStore();
+  const filteredCatalogList = useMemo(
+    () =>
+      searchQuery && catalogList
+        ? catalogList.filter((quiz) => quiz.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        : catalogList || [],
+    [searchQuery, catalogList],
+  );
 
   useEffect(() => {
     getCatalogList();
@@ -18,7 +25,7 @@ export default function Catalog({ userName }: any) {
 
   return (
     <Group>
-      {catalogList.map((item, index) => (
+      {filteredCatalogList.map((item, index) => (
         <QuizCard
           quizMetadata={{
             name: item.name,

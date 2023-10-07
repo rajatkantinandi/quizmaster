@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../../useStore';
 import { Helmet } from 'react-helmet';
 import { Group, Text } from '@mantine/core';
@@ -26,7 +26,13 @@ export default function Quizzes({ userName }) {
     getInCompletedGame,
     ...rest
   } = useStore();
-  const quizzes = rest.searchQuery ? rest.searchResults : rest.quizzes;
+  const filteredQuizzes = useMemo(
+    () =>
+      rest.searchQuery
+        ? rest.quizzes.filter((quiz) => quiz.name.toLowerCase().includes(rest.searchQuery.toLowerCase()))
+        : rest.quizzes,
+    [rest.quizzes, rest.searchQuery],
+  );
 
   useEffect(() => {
     getQuizzes().then((quizzes) => {
@@ -42,14 +48,14 @@ export default function Quizzes({ userName }) {
       </Helmet>
       {loading ? (
         <PageLoader />
-      ) : quizzes.length === 0 && !rest.searchQuery.trim() ? (
+      ) : filteredQuizzes.length === 0 && !rest.searchQuery.trim() ? (
         <NoQuizzes userName={userName} />
       ) : (
         <>
           <QuizSelectorBanner {...quizzesSelector} />
-          <ActionBar quizzes={quizzes} />
+          <ActionBar quizzes={filteredQuizzes} />
           <Group>
-            {quizzes.map((quiz, index) => {
+            {filteredQuizzes.map((quiz, index) => {
               const { quizId, categories, createDate, name, isDraft, isPublished } = quiz;
 
               return (
@@ -71,7 +77,7 @@ export default function Quizzes({ userName }) {
               );
             })}
             {/* No search results */}
-            {quizzes.length === 0 && (
+            {filteredQuizzes.length === 0 && (
               <div className="ml-xl mt-xl">
                 <Text color="gray" size="xl" mb="sm">
                   No search results found
