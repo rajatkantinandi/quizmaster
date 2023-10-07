@@ -10,7 +10,7 @@
     "name": "Geopolitics",
     "createDate": "2023-09-22T07:30:30.717Z",
     "numOfCategories": 2,
-    "numOfQuestions": 20,
+    "numOfQuestions": 16,
     "quizId": 2
   },
   {
@@ -19,5 +19,26 @@
     "numOfCategories": 3,
     "numOfQuestions": 20,
     "quizId": 3
+  },
+  {
+    "name": "Investment Quiz",
+    "createDate": "2023-10-07T11:26:08.299Z",
+    "numOfCategories": 2,
+    "numOfQuestions": 20,
+    "quizId": 4
+  },
+  {
+    "name": "Science Quiz",
+    "createDate": "2023-10-07T11:26:08.299Z",
+    "numOfCategories": 2,
+    "numOfQuestions": 20,
+    "quizId": 5
+  },
+  {
+    "name": "World war 2",
+    "createDate": "2023-10-07T11:26:08.299Z",
+    "numOfCategories": 2,
+    "numOfQuestions": 20,
+    "quizId": 6
   }
 ]
