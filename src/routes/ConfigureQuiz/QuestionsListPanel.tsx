@@ -74,7 +74,7 @@ export default function QuestionsListPanel({
 
   const resetQuestion = () => {
     if (activeQuestionIndex !== null && activeQuestionIndex >= 0) {
-      getQuiz(quizId).then((quiz: Quiz) => {
+      getQuiz(quizId, false).then((quiz: Quiz) => {
         const originalQuestion = (quiz.categories[activeCategoryIndex]?.questions || [])[activeQuestionIndex];
 
         if (originalQuestion) {

@@ -9,6 +9,13 @@ body {
   font-family: var(--body-font), sans-serif;
 }
 
+p,
+h1,
+h2,
+h3 {
+  font-family: var(--body-font), sans-serif;
+}
+
 fieldset {
   border: 1px solid var(--border-gray);
   padding: 15px 20px;

@@ -26,7 +26,8 @@ export default function ConfigureQuiz({
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null>(null);
   const [rearrangeMode, setRearrangeMode] = useState(false);
-  const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName } = useStore();
+  const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName, updatePreviewQuiz } =
+    useStore();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -46,9 +47,15 @@ export default function ConfigureQuiz({
   const isQuizAlreadySaved = useRef(false);
   categoriesRef.current = categories;
   quizNameRef.current = quizName;
+  const isPreview = quizId === 'preview';
 
   useEffect(() => {
-    getQuiz(quizId).then((quiz: Quiz) => {
+    getQuiz(quizId, isPreview).then((quiz: Quiz) => {
+      if (!quiz) {
+        navigate(`/my-quizzes`);
+        return;
+      }
+
       setQuizName(quiz.name);
       isDraftRef.current = !!quiz.isDraft;
       let activeQuestionIndex: any = null;
@@ -68,7 +75,7 @@ export default function ConfigureQuiz({
     });
 
     return () => {
-      if (!isQuizAlreadySaved.current) {
+      if (!isQuizAlreadySaved.current && !isPreview) {
         sendBeaconPost({
           name: quizNameRef.current,
           quizId,
@@ -88,14 +95,16 @@ export default function ConfigureQuiz({
   }, [categories, activeCategoryIndex]);
 
   useEffect(() => {
-    window.onbeforeunload = function () {
-      sendBeaconPost({
-        name: quizName,
-        quizId,
-        categories,
-        isDraft: isDraftRef.current,
-      });
-    };
+    if (!isPreview) {
+      window.onbeforeunload = function () {
+        sendBeaconPost({
+          name: quizName,
+          quizId,
+          categories,
+          isDraft: isDraftRef.current,
+        });
+      };
+    }
 
     return () => {
       window.onbeforeunload = null;
@@ -135,7 +144,7 @@ export default function ConfigureQuiz({
       isQuizAlreadySaved.current = true;
       await createOrUpdateQuiz({
         categories: formData.categories,
-        quizId,
+        quizId: isPreview ? undefined : quizId,
         name: quizName,
         isDraft: false,
       });
@@ -145,7 +154,12 @@ export default function ConfigureQuiz({
         type: 'success',
       });
 
-      navigate(`/my-quizzes/${userName}`);
+      if (isPreview) {
+        // Reset preview quiz
+        updatePreviewQuiz(null);
+      }
+
+      navigate(`/my-quizzes`);
     } catch (err) {
       showAlert({
         message: 'Something went wrong while saving the quiz data. Please try again later.',
@@ -219,7 +233,7 @@ export default function ConfigureQuiz({
   }
 
   async function handleQuizName(data, quizId) {
-    await updateQuizName({ ...data, quizId });
+    await updateQuizName({ ...data, quizId, isPreview });
     setQuizName(data.name);
   }
 
@@ -367,13 +381,25 @@ export default function ConfigureQuiz({
                 quizId,
                 name: quizName,
                 isDraft: isDraftRef.current,
+                isPreview,
               });
             }}
           />
         </Grid.Col>
       </Grid>
       <Grid columns={24} className={styles.btnCompleteQuiz}>
-        <Grid.Col span={10} offset={7} py="xl">
+        <Grid.Col span={10} offset={7} py="xl" className="flex">
+          {isPreview && (
+            <Button
+              variant="outline"
+              size="lg"
+              fullWidth
+              radius="xl"
+              mr="lg"
+              onClick={() => navigate(`/catalog/${userName}`)}>
+              Cancel
+            </Button>
+          )}
           <Button
             variant="gradient"
             size="lg"
@@ -381,7 +407,7 @@ export default function ConfigureQuiz({
             radius="xl"
             leftIcon={<Icon name="done" color="#ffffff" />}
             onClick={submitQuizForm}>
-            Complete quiz
+            {isPreview ? 'Add to my quizzes' : 'Complete quiz'}
           </Button>
         </Grid.Col>
       </Grid>

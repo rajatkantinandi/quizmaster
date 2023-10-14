@@ -15,10 +15,9 @@ function ImportQuizzesButton({
       {(props) => (
         <Button
           {...props}
-          title="Import Quizzes"
-          className="noTextOnSmallScreen"
           size={size}
           radius={radius}
+          sx={(theme) => ({ backgroundColor: theme.colors.lime[8] })}
           leftIcon={<Icon color="white" width="16" name="download" />}>
           Import Quizzes
         </Button>

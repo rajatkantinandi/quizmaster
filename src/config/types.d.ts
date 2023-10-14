@@ -3,4 +3,5 @@ export interface IConfig {
   productName: string;
   productUrl: string;
   backendUrl: string;
+  catalogDataBaseUrl: string;
 }

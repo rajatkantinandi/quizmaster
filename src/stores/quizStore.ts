@@ -1,3 +1,4 @@
+import config from '../config';
 import {
   getQuizzes,
   post,
@@ -21,12 +22,12 @@ import {
   getInCompletedGameByQuizId,
   markGameCompleted,
 } from '../helpers';
-import { GameData, Quiz } from '../types';
+import { GameData, PreviewQuiz, Quiz } from '../types';
 
 export const getQuizStore = (set: Function, get: Function) => ({
   quizzes: [],
-  searchResults: [],
   searchQuery: '',
+  catalogList: null as CatalogListItem[] | null,
   getQuizzes: async () => {
     if (isGuestUser()) {
       const response: any = await getQuizzes(-1);
@@ -54,7 +55,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return sortedData;
     }
   },
-  getQuiz: async (quizId: number | string) => {
+  getQuiz: async (quizId: number | string, isPreview: boolean) => {
+    if (isPreview) {
+      return get().previewQuiz;
+    }
+
     const quizIdNum = parseInt(quizId.toString());
 
     if (isGuestUser()) {
@@ -72,7 +77,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
     }
   },
   createOrUpdateQuiz: async (data) => {
-    if (isGuestUser()) {
+    if (data.isPreview) {
+      set((state: QuizState) => {
+        state.previewQuiz = data;
+      });
+    } else if (isGuestUser()) {
       const response: any = await saveQuizInLocalDB(data);
 
       return response;
@@ -84,7 +93,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
     }
   },
   updateQuizName: async (data) => {
-    if (isGuestUser()) {
+    if (data.isPreview) {
+      set((state: QuizState) => {
+        state.previewQuiz = data;
+      });
+    } else if (isGuestUser()) {
       const response: any = await saveQuizInLocalDB(data);
       return response;
     } else {
@@ -191,9 +204,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
   searchQuiz: (queryString: string) => {
     set((state: QuizState) => {
       state.searchQuery = queryString;
-      state.searchResults = queryString
-        ? state.quizzes.filter((quiz) => quiz.name.toLowerCase().includes(queryString.toLowerCase()))
-        : [];
+    });
+  },
+  clearSearch: () => {
+    set((state: QuizState) => {
+      state.searchQuery = '';
     });
   },
   deleteQuizzes: async (quizIds) => {
@@ -238,6 +253,21 @@ export const getQuizStore = (set: Function, get: Function) => ({
       return response;
     }
   },
+  getCatalogList: async () => {
+    if (!get().catalogList) {
+      const catalogList = await fetchCatalogList();
+
+      set((state: QuizState) => {
+        state.catalogList = catalogList;
+      });
+    }
+  },
+  previewQuiz: null as PreviewQuiz | null,
+  updatePreviewQuiz: (data: PreviewQuiz | null) => {
+    set((state: QuizState) => {
+      state.previewQuiz = data;
+    });
+  },
 });
 
 function getSortedQuizzes(sortBy, data) {
@@ -271,8 +301,24 @@ async function saveQuizInLocalDB(data) {
   return response;
 }
 
-export interface QuizState extends Omit<Omit<ReturnType<typeof getQuizStore>, 'quizzes'>, 'searchResults'> {
+export interface QuizState extends Omit<ReturnType<typeof getQuizStore>, 'quizzes'> {
   quizzes: Quiz[];
-  searchResults: Quiz[];
   searchQuery: string;
 }
+
+const CATALOG_LIST_FILE_NAME = 'catalogList.json';
+const CATALOG_LIST_URL = `${config.catalogDataBaseUrl}${CATALOG_LIST_FILE_NAME}`;
+
+const fetchCatalogList = async () => {
+  const response = await fetch(CATALOG_LIST_URL);
+  const data = await response.json();
+  return data;
+};
+
+export type CatalogListItem = {
+  name: string;
+  numOfCategories: number;
+  numOfQuestions: number;
+  createDate: string;
+  quizId: number;
+};

@@ -14,11 +14,13 @@ import CheckAuthAndNavigate from '../../components/CheckAuthAndNavigate';
 import { isValidUser } from '../../helpers/authHelper';
 import { capitalizeFirstLetter } from '../../helpers/textHelpers';
 import { Link } from 'react-router-dom';
+import HeaderTabs from '../../components/TopTabs/HeaderTabs';
+import Catalog from '../Catalog';
 // import Cookies from 'js-cookie';
 
 function AppLayout() {
   const { userName, viewType, id } = useParams();
-  const { searchQuiz, quizzes } = useStore();
+  const { searchQuiz, quizzes, searchQuery, clearSearch } = useStore();
 
   function getTabsView() {
     switch (viewType) {
@@ -35,6 +37,8 @@ function AppLayout() {
         return <ConfigureGame quizId={id} userName={userName} />;
       case 'play-game':
         return <PlayQuiz gameId={id} />;
+      case 'catalog':
+        return <Catalog userName={userName} />;
       default:
         return <CheckAuthAndNavigate />;
     }
@@ -63,10 +67,19 @@ function AppLayout() {
         header={
           <Header height={70}>
             <Group position="apart" className={styles.headerTabs} pr="xl">
-              <Link to={`/my-quizzes/${userName}`}>
-                <Icon name="logo" className="ml-lg" width={150} height={50} />
-              </Link>
-              {quizzes.length > 0 && viewType === 'my-quizzes' && (
+              <Group>
+                <Link to={`/my-quizzes/${userName}`}>
+                  <Icon name="logo" className="ml-lg mt-lg" width={150} height={50} />
+                </Link>
+                <HeaderTabs
+                  tabs={[
+                    { title: 'My quizzes', url: `/my-quizzes/${userName}` },
+                    { title: 'Catalog', url: `/catalog/${userName}` },
+                  ]}
+                  onChange={() => clearSearch()}
+                />
+              </Group>
+              {((quizzes.length > 0 && viewType === 'my-quizzes') || viewType === 'catalog') && (
                 <TextInput
                   mr="xl"
                   type="text"
@@ -75,6 +88,7 @@ function AppLayout() {
                   radius="xl"
                   size="md"
                   className={styles.searchInput}
+                  value={searchQuery}
                   onChange={(ev) => searchQuiz(ev.target.value)}
                   icon={<Icon name="search" width={16} />}
                 />

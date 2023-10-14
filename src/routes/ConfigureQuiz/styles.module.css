@@ -39,7 +39,7 @@
   overflow-x: hidden;
 }
 
-.radio label {
+.radio [class*="mantine-Radio-labelWrapper"] {
   flex-grow: 1;
 }
 

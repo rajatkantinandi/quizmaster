@@ -1,3 +1,5 @@
+import { Category } from '../types';
+
 export const getBadgeColor = (points, minQuestionPoint, maxQuestionPoint) => {
   const questionPointsRange = maxQuestionPoint - minQuestionPoint;
 
@@ -12,4 +14,12 @@ export const getBadgeColor = (points, minQuestionPoint, maxQuestionPoint) => {
   } else {
     return 'green';
   }
+};
+
+export const getQuestionsCount = (categories: Category[]) => {
+  return categories.reduce((count, category) => {
+    count += category.questions.length;
+
+    return count;
+  }, 0);
 };
