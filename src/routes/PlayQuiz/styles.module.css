@@ -7,7 +7,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, calc(33% - 40px));
   gap: 20px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 @container panel (max-width: 980px) {
@@ -72,4 +72,17 @@
   to {
     background: repeating-linear-gradient(45deg, var(--correct-color) 3%, var(--qm-primary) 5%);
   }
+}
+
+.colorPallet {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.colorPallet .bar {
+  width: 200px;
+  height: 35px;
+  background: linear-gradient(to right, var(--points-color-1), var(--points-color-2), var(--points-color-3), var(--points-color-4), var(--points-color-5));
+  margin: 0 10px;
 }
