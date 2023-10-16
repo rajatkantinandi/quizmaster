@@ -1,6 +1,6 @@
 import React from 'react';
 import TeamAvatar from '../../components/TeamAvatar';
-import { Button, Text, Accordion, Group, Badge, Title, type MantineColor } from '@mantine/core';
+import { Button, Text, Accordion, Group, Badge, Title } from '@mantine/core';
 import { Question as IQuestion } from '../../types';
 import styles from './styles.module.css';
 import { getPointsColor } from '../../helpers';
@@ -104,7 +104,7 @@ export default function QuestionsList({
                             styles={{
                               root: {
                                 backgroundColor: attemptedQuestionIds.includes(question.questionId)
-                                  ? 'var(--indigo)' // Show a neutral color when question is attempted
+                                  ? 'var(--gray-dark)' // Show a neutral color when question is attempted
                                   : getPointsColor(question.points, minQuestionPoint, maxQuestionPoint).color,
                               },
                             }}>

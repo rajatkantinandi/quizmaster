@@ -22,7 +22,6 @@
   --info-text-color: rgba(0, 0, 0, 0.67);
   --card-hover-bg: #557;
   --card-hover-color: white;
-  --badge-color: #772;
   --legend-bg: #65e;
   --legend-color: #fef;
   --shadow-color-dark: rgba(0, 0, 0, 0.5);
@@ -54,7 +53,6 @@
   --points-bg-color-3: #fff9db;
   --points-bg-color-2: #f4fce3;
   --points-bg-color-1: #ebfbee;
-  --indigo: #22f;
 
   /* fonts */
   --comfortaa: 'Comfortaa';
