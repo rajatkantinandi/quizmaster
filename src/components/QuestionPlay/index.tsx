@@ -116,11 +116,9 @@ export default function QuestionPlay({
           />
         )}
         {isAttempted && !isGameCompleted && (
-          <>
-            <Button mt="xl" variant="default" onClick={continueGame}>
-              Continue
-            </Button>
-          </>
+          <Button mt="xl" variant="default" onClick={continueGame}>
+            Continue
+          </Button>
         )}
         <button className="displayNone" id="btnSubmitResponse" type="submit">
           Submit

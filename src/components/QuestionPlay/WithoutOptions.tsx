@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Title, Button, Group, Box } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
-import UndoTimer from './undoTimer';
+import UndoButtonIcon from './UndoButtonIcon';
 
 interface Props {
   isAnswerRevealed: boolean;
@@ -21,29 +21,24 @@ export default function WithoutOptions({
   setIsAnswerRevealed,
   setSelectedChoices,
 }: Props) {
-  const [userResponse, setUserResponse] = useState({
-    isConfirmed: false,
-    value: null as any,
-  });
-  const [timer, setTimer] = useState(0);
+  const [isUndoTimerRunning, setIsUndoTimerRunning] = useState(false);
+  const [time, setTime] = useState(0);
   const timerRef = useRef(null as any);
+  const userResponse = useRef(null as any);
 
   useEffect(() => {
-    if (timer > 0) {
-      if (timer === 5) {
-        clearTimeout(timerRef.current);
-        handleSelectedChoice(userResponse.value);
-        setUserResponse({
-          isConfirmed: false,
-          value: null,
-        });
-      } else {
-        timerRef.current = setTimeout(() => {
-          setTimer(timer + 1);
-        }, 1000);
-      }
+    if (isUndoTimerRunning) {
+      timerRef.current = setTimeout(() => {
+        if (time === 4) {
+          clearTimeout(timerRef.current);
+          setIsUndoTimerRunning(false);
+          handleSelectedChoice(userResponse.current);
+        }
+
+        setTime(time + 1);
+      }, 1000);
     }
-  }, [timer]);
+  }, [isUndoTimerRunning, time]);
 
   function handleSelectedChoice(choice: number[]) {
     setSelectedChoices(choice);
@@ -54,21 +49,13 @@ export default function WithoutOptions({
   }
 
   function handleSubmitResponse(choice: number[]) {
-    setUserResponse({
-      isConfirmed: true,
-      value: choice,
-    });
-    setTimer(timer + 1);
+    userResponse.current = choice;
+    setIsUndoTimerRunning(true);
   }
 
   function undoSubmit() {
-    clearTimeout(timerRef.current);
-    timerRef.current = null;
-    setTimer(0);
-    setUserResponse({
-      isConfirmed: false,
-      value: null,
-    });
+    userResponse.current = null;
+    setIsUndoTimerRunning(false);
   }
 
   const getQuestionTextStyles = (theme, isCorrect = false) =>
@@ -91,12 +78,12 @@ export default function WithoutOptions({
         sx={(theme) => getQuestionTextStyles(theme, !!options[0].text && options[0].isCorrect)}>
         <SanitizedHtml>{options[0].text}</SanitizedHtml>
       </Box>
-      {userResponse.isConfirmed ? (
+      {isUndoTimerRunning ? (
         <Group>
-          <Button variant="outline" onClick={() => handleSelectedChoice(userResponse.value)}>
+          <Button variant="outline" onClick={() => handleSelectedChoice(userResponse.current)}>
             Confirm Submit
           </Button>
-          <Button onClick={() => undoSubmit()} leftIcon={<UndoTimer>{5 - timer}</UndoTimer>}>
+          <Button onClick={() => undoSubmit()} leftIcon={<UndoButtonIcon>{5 - time}</UndoButtonIcon>}>
             Undo
           </Button>
         </Group>
