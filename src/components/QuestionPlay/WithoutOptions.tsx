@@ -9,8 +9,9 @@ interface Props {
   setIsTimerRunning: Function;
   options: IOption[];
   setIsAnswerRevealed: Function;
-  setSelectedChoices: Function;
   isAttempted: boolean;
+  submitResponse: Function;
+  continueGame: Function;
 }
 
 export default function WithoutOptions({
@@ -19,10 +20,12 @@ export default function WithoutOptions({
   options,
   isAttempted,
   setIsAnswerRevealed,
-  setSelectedChoices,
+  submitResponse,
+  continueGame,
 }: Props) {
   const [isUndoTimerRunning, setIsUndoTimerRunning] = useState(false);
   const [time, setTime] = useState(0);
+  const [isUndoClicked, setIsUndoClicked] = useState(false);
   const timerRef = useRef(null as any);
   const userResponse = useRef(null as any);
 
@@ -30,32 +33,37 @@ export default function WithoutOptions({
     if (isUndoTimerRunning) {
       timerRef.current = setTimeout(() => {
         if (time === 4) {
-          clearTimeout(timerRef.current);
-          setIsUndoTimerRunning(false);
-          handleSelectedChoice(userResponse.current);
+          handleContinueClick(userResponse.current);
         }
 
         setTime(time + 1);
       }, 1000);
     }
+
+    return () => {
+      clearTimeout(timerRef.current);
+    };
   }, [isUndoTimerRunning, time]);
 
-  function handleSelectedChoice(choice: number[]) {
-    setSelectedChoices(choice);
-
-    setTimeout(() => {
-      document.getElementById('btnSubmitResponse')?.click();
-    }, 100);
+  function handleContinueClick(choice: number[]) {
+    submitResponse(choice);
+    continueGame();
   }
 
   function handleSubmitResponse(choice: number[]) {
-    userResponse.current = choice;
-    setIsUndoTimerRunning(true);
+    if (isUndoClicked) {
+      submitResponse(choice);
+    } else {
+      userResponse.current = choice;
+      setIsUndoTimerRunning(true);
+    }
   }
 
   function undoSubmit() {
     userResponse.current = null;
+    clearTimeout(timerRef.current);
     setIsUndoTimerRunning(false);
+    setIsUndoClicked(true);
   }
 
   const getQuestionTextStyles = (theme, isCorrect = false) =>
@@ -80,8 +88,8 @@ export default function WithoutOptions({
       </Box>
       {isUndoTimerRunning ? (
         <Group>
-          <Button variant="outline" onClick={() => handleSelectedChoice(userResponse.current)}>
-            Confirm Submit
+          <Button variant="default" onClick={() => handleContinueClick(userResponse.current)}>
+            Continue
           </Button>
           <Button onClick={() => undoSubmit()} leftIcon={<UndoButtonIcon>{5 - time}</UndoButtonIcon>}>
             Undo

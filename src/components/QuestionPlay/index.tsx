@@ -102,8 +102,9 @@ export default function QuestionPlay({
             setIsTimerRunning={setIsTimerRunning}
             options={options}
             setIsAnswerRevealed={setIsAnswerRevealed}
-            setSelectedChoices={setSelectedChoices}
             isAttempted={isAttempted}
+            submitResponse={submitResponse}
+            continueGame={continueGame}
           />
         ) : (
           <WithOptions
