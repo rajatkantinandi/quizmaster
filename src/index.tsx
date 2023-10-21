@@ -61,6 +61,13 @@ serviceWorkerRegistration.register({
   },
 });
 
+// Prevent scroll wheel changing value for input type number
+document.addEventListener('wheel', function () {
+  if (document.activeElement && document.activeElement['type'] === 'number' && document.activeElement['blur']) {
+    document.activeElement['blur']();
+  }
+});
+
 function renderDom() {
   return ReactDOM.render(
     <React.StrictMode>
