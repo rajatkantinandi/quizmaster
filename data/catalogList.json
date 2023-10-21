@@ -47,5 +47,12 @@
     "numOfCategories": 2,
     "numOfQuestions": 20,
     "quizId": 7
+  },
+  {
+    "name": "Superhero stories",
+    "createDate": "2023-10-21T11:26:08.299Z",
+    "numOfCategories": 3,
+    "numOfQuestions": 31,
+    "quizId": 8
   }
 ]
