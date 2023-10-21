@@ -8,7 +8,7 @@ import WithOptions from './WithOptions';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 import classNames from 'classnames';
-import { getBadgeColor } from '../../helpers';
+import { getPointsColor } from '../../helpers';
 
 interface Props {
   submitResponse: Function;
@@ -79,15 +79,27 @@ export default function QuestionPlay({
             Question {selectedQuestion.questionNum}
           </Title>
           {negativePointsMultiplier === 0 ? (
-            <Badge color={getBadgeColor(points, minQuestionPoint, maxQuestionPoint)} variant="filled">
+            <Badge
+              styles={{
+                root: {
+                  backgroundColor: getPointsColor(points, minQuestionPoint, maxQuestionPoint).color,
+                },
+              }}
+              variant="filled">
               {points} pts
             </Badge>
           ) : (
             <Group spacing="xl">
-              <Badge color={getBadgeColor(points, minQuestionPoint, maxQuestionPoint)} variant="filled">
+              <Badge
+                styles={{
+                  root: {
+                    backgroundColor: getPointsColor(points, minQuestionPoint, maxQuestionPoint).color,
+                  },
+                }}
+                variant="filled">
                 Correct: {points} points
               </Badge>
-              <Badge color="red" variant="outline">
+              <Badge color="red" variant="filled">
                 Incorrect: {(points * negativePointsMultiplier).toFixed(2)} points
               </Badge>
             </Group>
