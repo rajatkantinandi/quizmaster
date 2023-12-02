@@ -2,7 +2,6 @@ import { Category, Quiz } from '../types';
 import Papa from 'papaparse';
 import { getRandomId } from './dataCreator';
 import { useStore } from '../useStore';
-import config from '../config';
 
 export const getCSVExportContentForQuiz = (quiz: Quiz) => {
   const fileName = `${quiz.name}.csv`;
@@ -100,7 +99,7 @@ const getQuizFromCsv = (csvArray: string[][], name: string) => {
 
 export const getQuizFromCatalog = (name: string): Promise<Omit<Quiz, 'quizId'>> => {
   return new Promise((resolve) => {
-    const url = config.catalogDataBaseUrl + encodeURIComponent(name) + '.csv';
+    const url = process.env.CATALOG_BASE_URL + encodeURIComponent(name) + '.csv';
 
     Papa.parse<string[]>(url, {
       download: true,

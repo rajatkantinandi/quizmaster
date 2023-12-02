@@ -35,3 +35,8 @@ export const appPaths = [
 export const MIN_NUM_OF_CATEGORIES = 2;
 
 export const DEFAULT_NEW_QUESTION_POINTS = 100;
+
+export enum TrackingEvent {
+  APP_LAUNCHED = 'appLaunched',
+  QUIZ_CREATED = 'quizCreated',
+}

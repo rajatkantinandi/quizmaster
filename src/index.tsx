@@ -11,6 +11,17 @@ import Cookies from 'js-cookie';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { MantineProvider } from '@mantine/core';
 import theme from './styles/theme';
+import mixpanel from 'mixpanel-browser';
+import { getDeviceId } from './helpers/device';
+
+require('dotenv').config();
+
+try {
+  mixpanel.init(process.env.MIXPANEL_API_KEY, { debug: true, track_pageview: false, persistence: 'localStorage' });
+  mixpanel.identify(getDeviceId());
+} catch (e: any) {
+  console.log(e.message);
+}
 
 if (Cookies.get('userToken')) {
   /**
