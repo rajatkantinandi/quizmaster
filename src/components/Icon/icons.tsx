@@ -47,6 +47,7 @@ import { ReactComponent as quiz_7} from '../../images/icons/quiz_7.svg';
 import { ReactComponent as quiz_8} from '../../images/icons/quiz_8.svg';
 import { ReactComponent as quiz_9} from '../../images/icons/quiz_9.svg';
 import { ReactComponent as randomTeam} from '../../images/icons/randomTeam.svg';
+import { ReactComponent as rating} from '../../images/icons/rating.svg';
 import { ReactComponent as search} from '../../images/icons/search.svg';
 import { ReactComponent as sort} from '../../images/icons/sort.svg';
 import { ReactComponent as team} from '../../images/icons/team.svg';
@@ -96,6 +97,7 @@ const icons = {
   quiz_8,
   quiz_9,
   randomTeam,
+  rating,
   search,
   sort,
   team,

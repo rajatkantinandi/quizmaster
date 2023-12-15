@@ -13,6 +13,7 @@ import styles from './styles.module.css';
 import classNames from 'classnames';
 import Confetti from 'react-confetti-boom';
 import { track } from '../../helpers/track';
+import Icon from '../../components/Icon';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -355,6 +356,19 @@ export default function PlayQuiz({ gameId }) {
               )}
               <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
                 Go to home
+              </Button>
+              <Button
+                size="lg"
+                m="lg"
+                variant="gradient"
+                leftIcon={<Icon name="rating" width={24} height={24} />}
+                onClick={() => {
+                  window.open(
+                    `https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?quizId=${quizInfo.quizId}`,
+                    '_blank',
+                  );
+                }}>
+                Rate this Quiz
               </Button>
             </div>
           )}
