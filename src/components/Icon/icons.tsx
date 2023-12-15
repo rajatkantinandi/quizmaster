@@ -51,6 +51,7 @@ import { ReactComponent as team } from '../../images/icons/team.svg';
 import { ReactComponent as trash } from '../../images/icons/trash.svg';
 import { ReactComponent as videoCamera } from '../../images/icons/videoCamera.svg';
 import { ReactComponent as drag } from '../../images/icons/drag.svg';
+import { ReactComponent as rating } from '../../images/icons/rating.svg';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const icons = {
@@ -99,6 +100,7 @@ const icons = {
   trash,
   videoCamera,
   drag,
+  rating,
 };
 
 export default icons;
