@@ -1,7 +1,9 @@
 import queryString from 'qs';
 
 function getEndpointFullUrl(api: string, queryParams: any = {}): string {
-  return `${process.env.BACKEND_URL}/${api}?${queryString.stringify(queryParams, { arrayFormat: 'brackets' })}`;
+  return `${process.env.REACT_APP_BACKEND_URL}/${api}?${queryString.stringify(queryParams, {
+    arrayFormat: 'brackets',
+  })}`;
 }
 
 export const get = async (url: string, queryParams = {}) => {

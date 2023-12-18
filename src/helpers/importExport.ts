@@ -2,6 +2,8 @@ import { Category, Quiz } from '../types';
 import Papa from 'papaparse';
 import { getRandomId } from './dataCreator';
 import { useStore } from '../useStore';
+import { track } from './track';
+import { TrackingEvent } from '../constants';
 
 export const getCSVExportContentForQuiz = (quiz: Quiz) => {
   const fileName = `${quiz.name}.csv`;
@@ -25,6 +27,13 @@ export const getCSVExportContentForQuiz = (quiz: Quiz) => {
 
 export const downloadQuiz = (quiz: Quiz) => {
   const { fileContents, fileName } = getCSVExportContentForQuiz(quiz);
+
+  track(TrackingEvent.DOWNLOAD_QUIZ, {
+    quizName: quiz.name,
+    isAddedFromCatalog: !!quiz.isAddedFromCatalog,
+    numOfCategories: quiz.categories.length,
+    numOfQuestions: quiz.categories.reduce((sum, curr) => sum + curr.questions.length, 0),
+  });
 
   const blob = new Blob([fileContents], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
@@ -99,13 +108,13 @@ const getQuizFromCsv = (csvArray: string[][], name: string) => {
 
 export const getQuizFromCatalog = (name: string): Promise<Omit<Quiz, 'quizId'>> => {
   return new Promise((resolve) => {
-    const url = process.env.CATALOG_BASE_URL + encodeURIComponent(name) + '.csv';
+    const url = process.env.REACT_APP_CATALOG_BASE_URL + encodeURIComponent(name) + '.csv';
 
     Papa.parse<string[]>(url, {
       download: true,
       complete: async (results) => {
         const quiz = getQuizFromCsv(results.data, name);
-        resolve(quiz);
+        resolve({ ...quiz, isAddedFromCatalog: true });
       },
     });
   });

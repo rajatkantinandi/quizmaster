@@ -38,5 +38,14 @@ export const DEFAULT_NEW_QUESTION_POINTS = 100;
 
 export enum TrackingEvent {
   APP_LAUNCHED = 'appLaunched',
+  CATALOG_QUIZ_PREVIEWED = 'catalogQuizPreviewed',
+  CATALOG_QUIZ_NOT_SAVED = 'catalogQuizNotSaved',
   QUIZ_CREATED = 'quizCreated',
+  DOWNLOAD_QUIZ = 'downloadQuiz',
+  PLAY_QUIZ = 'playQuiz',
+  START_GAME = 'startGame',
+  OPENED_RANDOM_TEAM_GENERATOR = 'openedRandomTeamGenerator',
+  USED_RANDOM_TEAM_GENERATOR = 'usedRandomTeamGenerator',
+  COMPLETED_GAME = 'completedGame',
+  SEARCH = 'search',
 }

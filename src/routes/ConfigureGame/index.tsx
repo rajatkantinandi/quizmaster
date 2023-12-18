@@ -11,6 +11,8 @@ import { Helmet } from 'react-helmet';
 import Icon from '../../components/Icon';
 import styles from './styles.module.css';
 import classNames from 'classnames';
+import { track } from 'mixpanel-browser';
+import { TrackingEvent } from '../../constants';
 
 interface DefaultValue {
   teams: Team[];
@@ -18,7 +20,7 @@ interface DefaultValue {
   selectionTimeLimit: null | number;
   isQuestionPointsHidden: boolean;
   negativePointsMultiplier: number;
-  mode: string;
+  mode: 'manual' | 'automatic';
   players: string[];
 }
 
@@ -40,6 +42,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
     name: 'teams',
   });
   const [quizName, setQuizName] = useState('');
+  const [numOfCategories, setNumOfCategories] = useState(0);
+  const [numOfQuestions, setNumOfQuestions] = useState(0);
   const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier, mode, players } =
     watch();
   const { getQuiz, addGame, showModal } = useStore();
@@ -47,6 +51,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
   useEffect(() => {
     getQuiz(quizId, false).then((x) => {
       setQuizName(x.name);
+      setNumOfCategories(x.categories.length);
+      setNumOfQuestions(x.categories.reduce((acc, category) => acc + category.questions.length, 0));
     });
   }, [getQuiz, quizId]);
 
@@ -64,6 +70,18 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
         selectionTimeLimit: selectionTimeLimit || 0,
         isQuestionPointsHidden,
         negativePointsMultiplier,
+      });
+      track(TrackingEvent.START_GAME, {
+        quizName,
+        usedRandomTeamGenerator: mode === 'automatic',
+        timeLimit: timeLimit || 0,
+        selectionTimeLimit: selectionTimeLimit || 0,
+        isQuestionPointsHidden,
+        negativePointsMultiplier,
+        numOfCategories,
+        numOfQuestions,
+        numOfTeams: teams.length,
+        numOfPlayers: players.length,
       });
 
       navigate(`/play-game/${userName}/${gameId}`);
@@ -93,6 +111,14 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               })),
             ); // Adding new teams data
             showModal(null);
+
+            track(TrackingEvent.USED_RANDOM_TEAM_GENERATOR, {
+              quizName,
+              numOfCategories,
+              numOfQuestions,
+              numOfTeams: teams.length,
+              numOfPlayers: players.reduce((sum, curr) => sum + curr.split(',').length, 0),
+            });
           }}
         />
       ),
@@ -100,6 +126,12 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
       okText: 'Continue',
       closeOnOkClick: false,
       okCallback: () => document.getElementById('teamNameFormSubmit')?.click(),
+    });
+
+    track(TrackingEvent.OPENED_RANDOM_TEAM_GENERATOR, {
+      quizName,
+      numOfCategories,
+      numOfQuestions,
     });
   }
 

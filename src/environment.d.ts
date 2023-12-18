@@ -2,10 +2,9 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      PORT: string;
-      BACKEND_URL: string;
-      CATALOG_BASE_URL: string;
-      MIXPANEL_API_KEY: string;
+      REACT_APP_BACKEND_URL: string;
+      REACT_APP_CATALOG_BASE_URL: string;
+      REACT_APP_MIXPANEL_API_KEY: string;
     }
   }
 }

@@ -23,6 +23,7 @@ export interface QuizInfo {
   quizId: string | number;
   name?: string;
   categories: Category[];
+  isAddedFromCatalog?: boolean;
 }
 
 export interface User {
@@ -40,6 +41,7 @@ export interface Quiz {
   quizId: number;
   createDate: string;
   updateDate: string;
+  isAddedFromCatalog?: boolean;
   isDeleted?: boolean;
 }
 

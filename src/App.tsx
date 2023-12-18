@@ -7,8 +7,6 @@ import Modal from './components/Modal';
 import Alert from './components/Alert';
 import CheckAuthAndNavigate from './components/CheckAuthAndNavigate';
 import Prompt from './components/Prompt';
-import mixpanel from 'mixpanel-browser';
-import { getDeviceId } from './helpers/device';
 import { track } from './helpers/track';
 import { TrackingEvent } from './constants';
 
@@ -18,7 +16,7 @@ function App() {
   const prompt = useStore.use.prompt();
 
   useEffect(() => {
-    // track(TrackingEvent.APP_LAUNCHED);
+    track(TrackingEvent.APP_LAUNCHED);
   }, []);
 
   return (
