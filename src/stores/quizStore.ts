@@ -1,4 +1,3 @@
-import config from '../config';
 import {
   getQuizzes,
   post,
@@ -307,7 +306,7 @@ export interface QuizState extends Omit<ReturnType<typeof getQuizStore>, 'quizze
 }
 
 const CATALOG_LIST_FILE_NAME = 'catalogList.json';
-const CATALOG_LIST_URL = `${config.catalogDataBaseUrl}${CATALOG_LIST_FILE_NAME}`;
+const CATALOG_LIST_URL = `${process.env.REACT_APP_CATALOG_BASE_URL}${CATALOG_LIST_FILE_NAME}`;
 
 const fetchCatalogList = async () => {
   const response = await fetch(CATALOG_LIST_URL);
