@@ -102,6 +102,21 @@
   max-width: 480px;
 }
 
+.ProseMirror li p,
+.html li p {
+  display: inline-block;
+}
+
+.ProseMirror ol,
+.html ol,
+.ProseMirror ul,
+.html ul {
+  padding-left: 20px;
+  margin-left: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
 .editor-toolbar button.active {
   background-color: var(--gray-dark);
   color: var(--off-white);
