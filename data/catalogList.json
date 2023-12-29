@@ -61,5 +61,12 @@
     "numOfCategories": 2,
     "numOfQuestions": 30,
     "quizId": 9
+  },
+  {
+    "name": "AI and Machine Learning",
+    "createDate": "2023-12-29T11:26:08.299Z",
+    "numOfCategories": 3,
+    "numOfQuestions": 39,
+    "quizId": 10
   }
 ]
