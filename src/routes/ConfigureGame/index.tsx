@@ -11,8 +11,8 @@ import { Helmet } from 'react-helmet';
 import Icon from '../../components/Icon';
 import styles from './styles.module.css';
 import classNames from 'classnames';
-import { track } from 'mixpanel-browser';
 import { TrackingEvent } from '../../constants';
+import { track } from '../../helpers/track';
 
 interface DefaultValue {
   teams: Team[];
