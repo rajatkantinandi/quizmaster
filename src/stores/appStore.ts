@@ -93,7 +93,7 @@ export interface ModalState {
   className?: string;
   cancelText?: string;
   cancelCallback?: Function;
-  size?: 'mini' | 'tiny' | 'small' | 'large' | 'fullscreen';
+  size?: 'mini' | 'tiny' | 'small' | 'large' | '70%' | '100%' | 'xl' | number;
   isAlert?: boolean;
   doNotShowAgainKey?: string;
   closeOnOkClick?: boolean;

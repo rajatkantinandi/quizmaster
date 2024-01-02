@@ -84,6 +84,10 @@ export default function QuestionEdit({
   function addOption(ev: React.MouseEvent) {
     ev.preventDefault();
 
+    setTimeout(() => {
+      document.querySelector('#addOptionBtn')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+
     append(getEmptyOption());
   }
 
@@ -148,111 +152,118 @@ export default function QuestionEdit({
   }
 
   return (
-    <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard slideDown">
+    <Card shadow="sm" my="sm" mx="auto" maw={800} withBorder className="secondaryCard slideDown">
       <form onSubmit={handleSubmit(onFormSubmit)}>
-        <Group position="apart" mb="lg">
-          <Group>
-            <Title mr="xl" order={4}>
-              Question {questionNum}
-            </Title>
-            <Text weight="bold" component="span" size="sm">
-              Points:
-            </Text>
-            <FormInput
-              name="points"
-              id="points"
-              rules={{
-                required: 'Required',
-                validate: (value: number) => (value && value > 0) || 'Must be greater than 0',
-              }}
-              className={styles.pointsInput}
-              type="number"
-              placeholder="Points"
-              variant="filled"
-              size="sm"
-              radius="sm"
-              control={control}
-            />
+        <div className={styles.scrollableArea}>
+          <Group position="apart" mb="lg">
+            <Group>
+              <Title mr="xl" order={4}>
+                Question {questionNum}
+              </Title>
+              <Text weight="bold" component="span" size="sm">
+                Points:
+              </Text>
+              <FormInput
+                name="points"
+                id="points"
+                rules={{
+                  required: 'Required',
+                  validate: (value: number) => (value && value > 0) || 'Must be greater than 0',
+                }}
+                className={styles.pointsInput}
+                type="number"
+                placeholder="Points"
+                variant="filled"
+                size="sm"
+                radius="sm"
+                control={control}
+              />
+            </Group>
           </Group>
-        </Group>
-        <FormTextArea
-          name="text"
-          rules={{
-            required: 'The question text should not be empty!',
-            validate: (value: string) => !!getTextContent(value) || 'The question text should not be empty!',
-          }}
-          label={
-            <Text weight="bold" className="mb-md">
-              Question text <MarkDownLogo />
-            </Text>
-          }
-          size="md"
-          className={classNames('resizeVertical', styles.questionText)}
-          control={control}
-          autoFocus
-          isRichText
-        />
-        <Tabs variant="pills" pt="xl" pb="lg" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
-          <Tabs.List>
-            <Tabs.Tab value="withOptions">With Options</Tabs.Tab>
-            <Tabs.Tab value="withoutOptions">Without Options</Tabs.Tab>
-          </Tabs.List>
-          <Tabs.Panel value="withOptions">
-            {fields.map((item, idx) => (
-              <Group pt="sm" pb="sm" key={options[idx].optionId}>
-                <Checkbox
-                  radius="xl"
-                  size="md"
-                  mb="xs"
-                  checked={options[idx].isCorrect}
-                  onChange={(ev) => setCorrectOption(options[idx].optionId, ev)}
-                />
+          <FormTextArea
+            name="text"
+            rules={{
+              required: 'The question text should not be empty!',
+              validate: (value: string) => !!getTextContent(value) || 'The question text should not be empty!',
+            }}
+            label={
+              <Text weight="bold" className="mb-md">
+                Question text <MarkDownLogo />
+              </Text>
+            }
+            size="md"
+            className={classNames('resizeVertical', styles.questionText)}
+            control={control}
+            autoFocus
+            isRichText
+          />
+          <Tabs variant="pills" pt="xl" pb="lg" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
+            <Tabs.List>
+              <Tabs.Tab value="withOptions">With Options</Tabs.Tab>
+              <Tabs.Tab value="withoutOptions">Without Options</Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value="withOptions">
+              {fields.map((item, idx) => (
+                <Group pt="sm" pb="sm" key={options[idx].optionId}>
+                  <Checkbox
+                    radius="xl"
+                    size="md"
+                    mb="xs"
+                    checked={options[idx].isCorrect}
+                    onChange={(ev) => setCorrectOption(options[idx].optionId, ev)}
+                  />
+                  <FormTextArea
+                    name={`options[${idx}].text`}
+                    rules={{
+                      required: 'Option should not be empty!',
+                      validate: (value: string) => !!getImageOrTextContent(value) || 'Option should not be empty!',
+                    }}
+                    label={
+                      <Text weight="bold" className="mb-md">
+                        Option {idx + 1} <MarkDownLogo />
+                      </Text>
+                    }
+                    className={classNames(styles.optionText)}
+                    control={control}
+                    isRichText
+                  />
+                  <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(idx)}>
+                    <Icon width="20" name="trash" />
+                  </ActionIcon>
+                </Group>
+              ))}
+              <Button
+                mt="md"
+                variant="default"
+                id="addOptionBtn"
+                onClick={addOption}
+                leftIcon={<Icon name="plus" width={18} />}>
+                Add option
+              </Button>
+            </Tabs.Panel>
+            <Tabs.Panel value="withoutOptions">
+              {fields.map((item, idx) => (
                 <FormTextArea
                   name={`options[${idx}].text`}
+                  key={item.id}
                   rules={{
-                    required: 'Option should not be empty!',
-                    validate: (value: string) => !!getImageOrTextContent(value) || 'Option should not be empty!',
+                    required: 'The correct answer should not be empty!',
+                    validate: (value: string) =>
+                      !!getImageOrTextContent(value) || 'The correct answer should not be empty!',
                   }}
                   label={
-                    <Text weight="bold" className="mb-md">
-                      Option {idx + 1} <MarkDownLogo />
+                    <Text weight="bold" mt="lg" className="mb-md">
+                      Correct answer <MarkDownLogo />
                     </Text>
                   }
-                  className={classNames(styles.optionText)}
                   control={control}
+                  className={classNames(styles.optionText)}
                   isRichText
                 />
-                <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(idx)}>
-                  <Icon width="20" name="trash" />
-                </ActionIcon>
-              </Group>
-            ))}
-            <Button mt="lg" variant="default" onClick={addOption} leftIcon={<Icon name="plus" width={18} />}>
-              Add option
-            </Button>
-          </Tabs.Panel>
-          <Tabs.Panel value="withoutOptions">
-            {fields.map((item, idx) => (
-              <FormTextArea
-                name={`options[${idx}].text`}
-                key={item.id}
-                rules={{
-                  required: 'The correct answer should not be empty!',
-                  validate: (value: string) =>
-                    !!getImageOrTextContent(value) || 'The correct answer should not be empty!',
-                }}
-                label={
-                  <Text weight="bold" mt="lg" className="mb-md">
-                    Correct answer <MarkDownLogo />
-                  </Text>
-                }
-                control={control}
-                className={classNames(styles.optionText)}
-                isRichText
-              />
-            ))}
-          </Tabs.Panel>
-        </Tabs>
+              ))}
+            </Tabs.Panel>
+          </Tabs>
+        </div>
         <Group position="apart" mt="xl">
           <Button color="red" variant="white" onClick={onDeleteClick}>
             Delete

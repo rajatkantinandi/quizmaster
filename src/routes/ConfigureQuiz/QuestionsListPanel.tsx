@@ -9,6 +9,7 @@ import { getEmptyQuestion } from '../../helpers';
 import { useStore } from '../../useStore';
 import { Quiz } from '../../types';
 import { ReactSortable } from 'react-sortablejs';
+import Modal from '../../components/Modal';
 
 export default function QuestionsListPanel({
   activeCategoryName,
@@ -144,32 +145,41 @@ export default function QuestionsListPanel({
         chosenClass={styles.chosenStyle}
         handle=".questionHandle"
         setList={onQuestionSwap}>
-        {questions.map((item: any, idx) =>
-          activeQuestionIndex === idx ? (
-            <QuestionEdit
-              questionNum={idx + 1}
-              question={item}
-              key={item.questionId}
-              saveQuestion={(data) => handleSaveQuestion(idx, data)}
-              onQuestionChange={(data) => updateQuestionData(idx, data)}
-              deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
-              resetQuestion={resetQuestion}
-            />
-          ) : (
-            <QuestionView
-              questionNum={idx + 1}
-              question={item}
-              key={item.questionId}
-              isValidQuestion={isValidQuestion(item)}
-              setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
-              deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
-              isExpanded={expandedQuestionIndex === idx}
-              setExpandedQuestionIndex={setExpandedQuestionIndex}
-              rearrangeMode={rearrangeMode}
-            />
-          ),
-        )}
+        {questions.map((item: any, idx) => (
+          <QuestionView
+            questionNum={idx + 1}
+            question={item}
+            key={item.questionId}
+            isValidQuestion={isValidQuestion(item)}
+            setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
+            deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
+            isExpanded={expandedQuestionIndex === idx}
+            setExpandedQuestionIndex={setExpandedQuestionIndex}
+            rearrangeMode={rearrangeMode}
+          />
+        ))}
       </ReactSortable>
+      {!!questions[activeQuestionIndex] && (
+        <Modal
+          modalProps={{
+            title: 'Edit question',
+            body: (
+              <QuestionEdit
+                questionNum={activeQuestionIndex + 1}
+                question={questions[activeQuestionIndex]}
+                saveQuestion={(data) => handleSaveQuestion(activeQuestionIndex, data)}
+                onQuestionChange={(data) => updateQuestionData(activeQuestionIndex, data)}
+                deleteQuestion={(ev) => handleDeleteQuestion(ev, activeQuestionIndex)}
+                resetQuestion={resetQuestion}
+              />
+            ),
+            okText: '',
+            cancelText: '',
+            size: 'xl',
+            cancelCallback: resetQuestion,
+          }}
+        />
+      )}
       {!rearrangeMode && (
         <Button mt="xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
           Add Question

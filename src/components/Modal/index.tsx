@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../useStore';
 import { Modal as MTModal, Button, Group, Checkbox, Text } from '@mantine/core';
+import { ModalState } from '../../stores/appStore';
 
-function Modal() {
+function Modal({ modalProps }: { modalProps?: ModalState }) {
   const showModal = useStore.use.showModal();
   const modal = useStore.use.modal();
   const okRef = useRef<any>();
@@ -20,7 +21,7 @@ function Modal() {
     doNotShowAgainKey,
     closeOnOkClick = true,
     disableOkButton = false,
-  } = modal || {};
+  } = modal || modalProps || {};
 
   function hideModal() {
     showModal(null);
@@ -32,10 +33,18 @@ function Modal() {
     }
   }, [isAlert, okRef]);
 
+  const onClose = () => {
+    hideModal();
+
+    if (cancelCallback) {
+      cancelCallback();
+    }
+  };
+
   return (
     <MTModal
       className={className}
-      onClose={hideModal}
+      onClose={onClose}
       closeOnClickOutside={isAlert}
       opened
       overlayBlur={5}
@@ -54,42 +63,35 @@ function Modal() {
           onChange={() => setShouldNotShowAgain(!shouldNotShowAgain)}
         />
       )}
-      <Group mt="xl" pt="xl" position="right">
-        {!!cancelText && (
-          <Button
-            color="dark"
-            variant="outline"
-            onClick={() => {
-              hideModal();
+      {(!!cancelText || !!okText) && (
+        <Group mt="xl" pt="xl" position="right">
+          {!!cancelText && (
+            <Button color="dark" variant="outline" onClick={onClose}>
+              {cancelText}
+            </Button>
+          )}
+          {!!okText && (
+            <Button
+              ref={okRef}
+              variant="filled"
+              disabled={disableOkButton}
+              onClick={() => {
+                if (okCallback) {
+                  okCallback();
+                }
+                if (doNotShowAgainKey && shouldNotShowAgain) {
+                  localStorage.setItem('DoNotShow' + doNotShowAgainKey, 'true');
+                }
 
-              if (cancelCallback) {
-                cancelCallback();
-              }
-            }}>
-            {cancelText}
-          </Button>
-        )}
-        {!!okText && (
-          <Button
-            ref={okRef}
-            variant="filled"
-            disabled={disableOkButton}
-            onClick={() => {
-              if (okCallback) {
-                okCallback();
-              }
-              if (doNotShowAgainKey && shouldNotShowAgain) {
-                localStorage.setItem('DoNotShow' + doNotShowAgainKey, 'true');
-              }
-
-              if (closeOnOkClick) {
-                hideModal();
-              }
-            }}>
-            {okText}
-          </Button>
-        )}
-      </Group>
+                if (closeOnOkClick) {
+                  hideModal();
+                }
+              }}>
+              {okText}
+            </Button>
+          )}
+        </Group>
+      )}
     </MTModal>
   );
 }
