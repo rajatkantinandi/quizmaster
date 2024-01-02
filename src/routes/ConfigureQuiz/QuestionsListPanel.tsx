@@ -4,11 +4,28 @@ import { Title, Card, Button, Group, Text } from '@mantine/core';
 import Icon from '../../components/Icon';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuestionView from '../../components/QuestionView';
-import { useFieldArray } from 'react-hook-form';
+import { Control, useFieldArray } from 'react-hook-form';
 import { getEmptyQuestion } from '../../helpers';
 import { useStore } from '../../useStore';
-import { Quiz } from '../../types';
+import { Question, Quiz } from '../../types';
 import { ReactSortable } from 'react-sortablejs';
+
+type Props = {
+  activeCategoryName: string;
+  questions: Question[];
+  activeCategoryIndex: number;
+  control: Control<any, any>;
+  expandedQuestionIndex: number | null | 'all';
+  activeQuestionIndex: number | null;
+  activeCategoryId?: number;
+  setActiveQuestionIndex: (idx: number | null) => void;
+  isValidQuestion: (question: Question) => boolean;
+  setExpandedQuestionIndex: (idx: number | null | 'all') => void;
+  quizId: string;
+  updateQuizData: () => void;
+  handleRearrangeQuestions: () => void;
+  rearrangeMode: boolean;
+};
 
 export default function QuestionsListPanel({
   activeCategoryName,
@@ -25,7 +42,7 @@ export default function QuestionsListPanel({
   updateQuizData,
   handleRearrangeQuestions,
   rearrangeMode,
-}) {
+}: Props) {
   const { append, remove, update, replace } = useFieldArray({
     control,
     name: `categories[${activeCategoryIndex}].questions`,
@@ -41,7 +58,7 @@ export default function QuestionsListPanel({
       return;
     }
 
-    const question = getEmptyQuestion(activeCategoryId);
+    const question = getEmptyQuestion(activeCategoryId!);
     append(question);
     setActiveQuestionIndex(questions.length);
     setExpandedQuestionIndex(null);
@@ -123,15 +140,29 @@ export default function QuestionsListPanel({
     <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsCard}`}>
       <Group position="apart" align="center" mb="md">
         <Title order={4}>{activeCategoryName || 'Unnamed Category'}</Title>
-        {rearrangeMode ? (
-          <Button size="sm" style={{ width: 130 }} color="teal" onClick={handleRearrangeQuestions}>
-            Done
-          </Button>
-        ) : (
-          <Button size="xs" color="green" onClick={handleRearrangeQuestions}>
-            Rearrange Questions
-          </Button>
-        )}
+        <div className="flex alignCenter">
+          {rearrangeMode ? (
+            <Button size="sm" style={{ width: 130 }} color="teal" onClick={handleRearrangeQuestions}>
+              Done
+            </Button>
+          ) : (
+            <>
+              <Button
+                size="xs"
+                mr="md"
+                variant="white"
+                color="dark"
+                miw={170}
+                onClick={() => setExpandedQuestionIndex(expandedQuestionIndex === 'all' ? null : 'all')}
+                leftIcon={<Icon name={expandedQuestionIndex === 'all' ? 'minus' : 'plus'} width={14} />}>
+                {expandedQuestionIndex === 'all' ? 'Collapse' : 'Expand'} questions
+              </Button>
+              <Button size="xs" color="green" onClick={handleRearrangeQuestions}>
+                Rearrange Questions
+              </Button>
+            </>
+          )}
+        </div>
       </Group>
       {rearrangeMode && (
         <Text mb="md">
@@ -163,7 +194,7 @@ export default function QuestionsListPanel({
               isValidQuestion={isValidQuestion(item)}
               setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
               deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
-              isExpanded={expandedQuestionIndex === idx}
+              isExpanded={expandedQuestionIndex === 'all' || expandedQuestionIndex === idx}
               setExpandedQuestionIndex={setExpandedQuestionIndex}
               rearrangeMode={rearrangeMode}
             />
