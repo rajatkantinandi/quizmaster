@@ -274,6 +274,27 @@ export default function PlayQuiz({ gameId }) {
     });
   }
 
+  function openRateQuizModal() {
+    showModal({
+      title: '',
+      body: (
+        <iframe
+          src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?embedded=true&&quizId=${quizInfo.quizId}`}
+          width="640"
+          title="Rate this quiz"
+          height="700"
+          frameBorder="0"
+          marginHeight={0}
+          marginWidth={0}>
+          Loading…
+        </iframe>
+      ),
+      size: 'fullscreen',
+      okCallback: () => {},
+      cancelText: 'Cancel',
+    });
+  }
+
   return isLoading ? (
     <></>
   ) : (
@@ -349,12 +370,7 @@ export default function PlayQuiz({ gameId }) {
                 m="lg"
                 variant="gradient"
                 leftIcon={<Icon name="rating" width={24} height={24} />}
-                onClick={() => {
-                  window.open(
-                    `https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?quizId=${quizInfo.quizId}`,
-                    '_blank',
-                  );
-                }}>
+                onClick={openRateQuizModal}>
                 Rate this Quiz
               </Button>
             </div>
