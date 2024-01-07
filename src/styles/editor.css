@@ -65,7 +65,7 @@
 
 .ProseMirror img,
 .html img {
-  max-width: 150px;
+  max-width: 300px;
   max-height: 400px;
 }
 
@@ -100,6 +100,21 @@
   width: 100%;
   aspect-ratio: 16/9;
   max-width: 480px;
+}
+
+.ProseMirror li p,
+.html li p {
+  display: inline-block;
+}
+
+.ProseMirror ol,
+.html ol,
+.ProseMirror ul,
+.html ul {
+  padding-left: 20px;
+  margin-left: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .editor-toolbar button.active {

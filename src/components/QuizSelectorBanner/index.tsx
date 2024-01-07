@@ -3,7 +3,7 @@ import { Dialog, Text, Button, Group } from '@mantine/core';
 import { plural } from '../../helpers/textHelpers';
 import { QuizzesSelectorState } from '../../stores/appStore';
 
-function QuizSelectorAlert({ show, message, selectedQuizzes, onNextClick, onCancelClick }: QuizzesSelectorState) {
+function QuizSelectorBanner({ show, message, selectedQuizzes, onNextClick, onCancelClick }: QuizzesSelectorState) {
   return (
     <Dialog
       opened={show}
@@ -52,4 +52,4 @@ function QuizSelectorAlert({ show, message, selectedQuizzes, onNextClick, onCanc
   );
 }
 
-export default QuizSelectorAlert;
+export default QuizSelectorBanner;

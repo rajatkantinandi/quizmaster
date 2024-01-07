@@ -2,6 +2,8 @@ import { Category, Quiz } from '../types';
 import Papa from 'papaparse';
 import { getRandomId } from './dataCreator';
 import { useStore } from '../useStore';
+import { track } from './track';
+import { TrackingEvent } from '../constants';
 
 export const getCSVExportContentForQuiz = (quiz: Quiz) => {
   const fileName = `${quiz.name}.csv`;
@@ -26,6 +28,13 @@ export const getCSVExportContentForQuiz = (quiz: Quiz) => {
 export const downloadQuiz = (quiz: Quiz) => {
   const { fileContents, fileName } = getCSVExportContentForQuiz(quiz);
 
+  track(TrackingEvent.DOWNLOAD_QUIZ, {
+    quizName: quiz.name,
+    isAddedFromCatalog: !!quiz.isAddedFromCatalog,
+    numOfCategories: quiz.categories.length,
+    numOfQuestions: quiz.categories.reduce((sum, curr) => sum + curr.questions.length, 0),
+  });
+
   const blob = new Blob([fileContents], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
@@ -34,25 +43,29 @@ export const downloadQuiz = (quiz: Quiz) => {
   link.remove();
 };
 
-export const importQuizzes = (files: File[]) => {
+const addParsedCsvDataToMyQuizzes = async (csvArray: string[][], name: string) => {
   const { createOrUpdateQuiz, getQuizzes, showAlert } = useStore.getState();
+  let quiz: Omit<Quiz, 'quizId'>;
 
+  try {
+    quiz = getQuizFromCsv(csvArray, name);
+  } catch (e) {
+    showAlert({ message: 'Invalid file format. Please check the file and try again.', type: 'error' });
+    return;
+  }
+
+  if (quiz.categories.length > 0) {
+    const savedQuiz = await createOrUpdateQuiz(quiz);
+    getQuizzes(); // Update state
+    return savedQuiz.quizId;
+  }
+};
+
+export const importQuizzes = (files: File[]) => {
   for (let file of files) {
     Papa.parse<string[]>(file as any, {
       complete: async (results) => {
-        let quiz: Omit<Quiz, 'quizId'>;
-
-        try {
-          quiz = getQuizFromCsv(results.data, file.name.split('.')[0]);
-        } catch (e) {
-          showAlert({ message: 'Invalid file format. Please check the file and try again.', type: 'error' });
-          return;
-        }
-
-        if (quiz.categories.length > 0) {
-          await createOrUpdateQuiz(quiz);
-          getQuizzes(); // Update state
-        }
+        await addParsedCsvDataToMyQuizzes(results.data, file.name.split('.')[0]);
       },
     });
   }
@@ -91,4 +104,18 @@ const getQuizFromCsv = (csvArray: string[][], name: string) => {
   }
 
   return quiz;
+};
+
+export const getQuizFromCatalog = (name: string): Promise<Omit<Quiz, 'quizId'>> => {
+  return new Promise((resolve) => {
+    const url = process.env.REACT_APP_CATALOG_BASE_URL + encodeURIComponent(name) + '.csv';
+
+    Papa.parse<string[]>(url, {
+      download: true,
+      complete: async (results) => {
+        const quiz = getQuizFromCsv(results.data, name);
+        resolve({ ...quiz, isAddedFromCatalog: true });
+      },
+    });
+  });
 };

@@ -1,15 +1,19 @@
-export const getBadgeColor = (points, minQuestionPoint, maxQuestionPoint) => {
-  const questionPointsRange = maxQuestionPoint - minQuestionPoint;
+import { Category } from '../types';
 
-  if (parseInt(points, 10) > minQuestionPoint + questionPointsRange * 0.8) {
-    return 'red';
-  } else if (parseInt(points, 10) > minQuestionPoint + questionPointsRange * 0.6) {
-    return 'orange';
-  } else if (parseInt(points, 10) > minQuestionPoint + questionPointsRange * 0.4) {
-    return 'yellow';
-  } else if (parseInt(points, 10) > minQuestionPoint + questionPointsRange * 0.2) {
-    return 'lime';
-  } else {
-    return 'green';
-  }
+export const getPointsColor = (points, minQuestionPoint, maxQuestionPoint) => {
+  const questionPointsRange = maxQuestionPoint - minQuestionPoint;
+  const colorNumber = Math.ceil(((points - minQuestionPoint) * 4) / questionPointsRange) + 1;
+
+  return {
+    color: `var(--points-color-${colorNumber})`,
+    bgColor: `var(--points-bg-color-${colorNumber})`,
+  };
+};
+
+export const getQuestionsCount = (categories: Category[]) => {
+  return categories.reduce((count, category) => {
+    count += category.questions.length;
+
+    return count;
+  }, 0);
 };
