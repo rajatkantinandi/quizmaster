@@ -11,6 +11,21 @@ import Cookies from 'js-cookie';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { MantineProvider } from '@mantine/core';
 import theme from './styles/theme';
+import mixpanel from 'mixpanel-browser';
+import { getDeviceId } from './helpers/device';
+import config from './config';
+
+try {
+  mixpanel.init(process.env.REACT_APP_MIXPANEL_API_KEY, {
+    debug: config.env === 'local',
+    track_pageview: false,
+    persistence: 'localStorage',
+    ignore_dnt: true,
+  });
+  mixpanel.identify(getDeviceId());
+} catch (e: any) {
+  console.log(e.message);
+}
 
 if (Cookies.get('userToken')) {
   /**
@@ -59,6 +74,13 @@ serviceWorkerRegistration.register({
       waitingServiceWorker.postMessage({ type: 'SKIP_WAITING' });
     }
   },
+});
+
+// Prevent scroll wheel changing value for input type number
+document.addEventListener('wheel', function () {
+  if (document.activeElement && document.activeElement['type'] === 'number' && document.activeElement['blur']) {
+    document.activeElement['blur']();
+  }
 });
 
 function renderDom() {

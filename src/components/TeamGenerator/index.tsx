@@ -13,7 +13,15 @@ import { useStore } from '../../useStore';
 import { Team } from '../../types';
 
 interface Props {
-  createTeams: Function;
+  createTeams: (params: {
+    players: string[];
+    teams: {
+      name: string;
+      players: string;
+      avatarColor: string;
+    }[];
+    mode: 'manual' | 'automatic';
+  }) => void;
   players: string;
   teams: Team[];
   teamCount: number;

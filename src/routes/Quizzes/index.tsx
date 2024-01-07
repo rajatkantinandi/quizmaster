@@ -56,7 +56,7 @@ export default function Quizzes({ userName }) {
           <ActionBar quizzes={filteredQuizzes} />
           <Group>
             {filteredQuizzes.map((quiz, index) => {
-              const { quizId, categories, createDate, name, isDraft, isPublished } = quiz;
+              const { quizId, categories, createDate, name, isDraft, isPublished, isAddedFromCatalog } = quiz;
 
               return (
                 <QuizCard
@@ -68,6 +68,7 @@ export default function Quizzes({ userName }) {
                     name,
                     isDraft,
                     isPublished,
+                    isAddedFromCatalog,
                   }}
                   index={index}
                   userName={userName}
