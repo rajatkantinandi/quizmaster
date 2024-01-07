@@ -58,7 +58,7 @@ const theme: MantineThemeOverride = {
         icon: params.color
           ? {}
           : {
-              color: 'var(--qm-primary) !important',
+              color: 'var(--qm-primary)',
             },
       }),
     },

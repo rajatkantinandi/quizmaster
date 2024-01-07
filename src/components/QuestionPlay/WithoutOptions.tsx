@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Title, Button, Group, Box } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
-import UndoButtonIcon from './UndoButtonIcon';
+import UndoButton from '../UndoButton';
 
 interface Props {
   isAnswerRevealed: boolean;
@@ -25,25 +25,26 @@ export default function WithoutOptions({
 }: Props) {
   const [isUndoTimerRunning, setIsUndoTimerRunning] = useState(false);
   const [time, setTime] = useState(0);
-  const [isUndoClicked, setIsUndoClicked] = useState(false);
+  const [wasUndoClickedOnce, setWasUndoClickedOnce] = useState(false);
+  const [showUndoButton, setShowUndoButton] = useState(false);
   const timerRef = useRef(null as any);
   const userResponse = useRef(null as any);
 
   useEffect(() => {
-    if (isUndoTimerRunning) {
+    if (showUndoButton) {
       timerRef.current = setTimeout(() => {
         if (time === 4) {
-          handleContinueClick(userResponse.current);
+          setIsUndoTimerRunning(false);
+        } else {
+          setTime(time + 1);
         }
-
-        setTime(time + 1);
       }, 1000);
     }
 
     return () => {
       clearTimeout(timerRef.current);
     };
-  }, [isUndoTimerRunning, time]);
+  }, [showUndoButton, time]);
 
   function handleContinueClick(choice: number[]) {
     submitResponse(choice);
@@ -51,10 +52,11 @@ export default function WithoutOptions({
   }
 
   function handleSubmitResponse(choice: number[]) {
-    if (isUndoClicked) {
+    if (wasUndoClickedOnce) {
       submitResponse(choice);
     } else {
       userResponse.current = choice;
+      setShowUndoButton(true);
       setIsUndoTimerRunning(true);
     }
   }
@@ -62,8 +64,8 @@ export default function WithoutOptions({
   function undoSubmit() {
     userResponse.current = null;
     clearTimeout(timerRef.current);
-    setIsUndoTimerRunning(false);
-    setIsUndoClicked(true);
+    setShowUndoButton(false);
+    setWasUndoClickedOnce(true);
   }
 
   const getQuestionTextStyles = (theme, isCorrect = false) =>
@@ -86,14 +88,12 @@ export default function WithoutOptions({
         sx={(theme) => getQuestionTextStyles(theme, !!options[0].text && options[0].isCorrect)}>
         <SanitizedHtml>{options[0].text}</SanitizedHtml>
       </Box>
-      {isUndoTimerRunning ? (
+      {showUndoButton ? (
         <Group>
           <Button variant="default" onClick={() => handleContinueClick(userResponse.current)}>
             Continue
           </Button>
-          <Button onClick={() => undoSubmit()} leftIcon={<UndoButtonIcon>{5 - time}</UndoButtonIcon>}>
-            Undo
-          </Button>
+          {isUndoTimerRunning && <UndoButton time={time} onClick={() => undoSubmit()} />}
         </Group>
       ) : (
         <>
