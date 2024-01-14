@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './styles.module.css';
 import { Title, Card, Button, Group, Text } from '@mantine/core';
 import Icon from '../../components/Icon';
@@ -32,6 +32,14 @@ export default function QuestionsListPanel({
     name: `categories[${activeCategoryIndex}].questions`,
   });
   const { getQuiz, showAlert, showModal } = useStore();
+  const questionEditRef = useRef<HTMLFormElement>();
+  const [isAddingQuestion, setIsAddingQuestion] = useState(false);
+
+  useEffect(() => {
+    if (!activeQuestionIndex) {
+      setIsAddingQuestion(false); // When edit mode is closed, reset isAddingQuestion
+    }
+  }, [activeQuestionIndex]);
 
   const addQuestion = () => {
     if (!activeCategoryName) {
@@ -46,6 +54,7 @@ export default function QuestionsListPanel({
     append(question);
     setActiveQuestionIndex(questions.length);
     setExpandedQuestionIndex(null);
+    setIsAddingQuestion(true);
   };
 
   function handleDeleteQuestion(ev, index: number) {
@@ -162,21 +171,21 @@ export default function QuestionsListPanel({
       {!!questions[activeQuestionIndex] && (
         <Modal
           modalProps={{
-            title: 'Edit question',
+            title: isAddingQuestion ? 'Add new question' : 'Edit question',
             body: (
               <QuestionEdit
                 questionNum={activeQuestionIndex + 1}
                 question={questions[activeQuestionIndex]}
                 saveQuestion={(data) => handleSaveQuestion(activeQuestionIndex, data)}
                 onQuestionChange={(data) => updateQuestionData(activeQuestionIndex, data)}
-                deleteQuestion={(ev) => handleDeleteQuestion(ev, activeQuestionIndex)}
-                resetQuestion={resetQuestion}
+                ref={questionEditRef}
               />
             ),
-            okText: '',
-            cancelText: '',
+            okText: 'Save',
             size: 'xl',
             cancelCallback: resetQuestion,
+            okCallback: () => questionEditRef.current?.requestSubmit(),
+            closeOnOkClick: false,
           }}
         />
       )}

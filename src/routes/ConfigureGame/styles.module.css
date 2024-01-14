@@ -29,3 +29,8 @@
   padding-bottom: 15px;
   height: 60px;
 }
+
+.scrollable {
+  max-height: calc(100vh - 170px);
+  overflow: auto;
+}

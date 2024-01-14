@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../useStore';
 import { Modal as MTModal, Button, Group, Checkbox, Text } from '@mantine/core';
 import { ModalState } from '../../stores/appStore';
+import styles from './styles.module.css';
 
 function Modal({ modalProps }: { modalProps?: ModalState }) {
   const showModal = useStore.use.showModal();
@@ -54,17 +55,19 @@ function Modal({ modalProps }: { modalProps?: ModalState }) {
         </Text>
       }
       size={size}>
-      {body}
-      {!!doNotShowAgainKey && (
-        <Checkbox
-          className="mt-xl"
-          label="Do not show this message again"
-          checked={shouldNotShowAgain}
-          onChange={() => setShouldNotShowAgain(!shouldNotShowAgain)}
-        />
-      )}
+      <div className={styles.body}>
+        {body}
+        {!!doNotShowAgainKey && (
+          <Checkbox
+            className="mt-xl"
+            label="Do not show this message again"
+            checked={shouldNotShowAgain}
+            onChange={() => setShouldNotShowAgain(!shouldNotShowAgain)}
+          />
+        )}
+      </div>
       {(!!cancelText || !!okText) && (
-        <Group mt="xl" pt="xl" position="right">
+        <Group mt="xl" position="right">
           {!!cancelText && (
             <Button color="dark" variant="outline" onClick={onClose}>
               {cancelText}
