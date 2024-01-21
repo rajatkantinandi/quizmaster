@@ -16,6 +16,8 @@ import { capitalizeFirstLetter } from '../../helpers/textHelpers';
 import { Link } from 'react-router-dom';
 import HeaderTabs from '../../components/TopTabs/HeaderTabs';
 import Catalog from '../Catalog';
+import { track } from '../../helpers/track';
+import { TrackingEvent } from '../../constants';
 // import Cookies from 'js-cookie';
 
 function AppLayout() {
@@ -90,6 +92,14 @@ function AppLayout() {
                   className={styles.searchInput}
                   value={searchQuery}
                   onChange={(ev) => searchQuiz(ev.target.value)}
+                  onBlur={() => {
+                    if (searchQuery.trim() && searchQuery.trim().length > 3) {
+                      track(TrackingEvent.SEARCH, {
+                        searchQuery,
+                        isInCatalog: viewType === 'catalog',
+                      });
+                    }
+                  }}
                   icon={<Icon name="search" width={16} />}
                 />
               )}

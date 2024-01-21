@@ -45,14 +45,14 @@ const theme: MantineThemeOverride = {
     Checkbox: {
       styles: (theme, params) => ({
         input: params.color
-          ? {}
+          ? { borderRadius: 5 }
           : {
               backgroundColor: 'var(--checkbox-bg)',
               borderColor: 'var(--qm-primary)',
+              borderRadius: 5,
 
               '&:checked': {
-                backgroundColor: 'var(--checkbox-bg)',
-                borderColor: 'var(--qm-primary)',
+                backgroundColor: 'var(--qm-primary)',
               },
             },
         icon: params.color

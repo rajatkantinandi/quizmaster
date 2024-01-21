@@ -2,9 +2,10 @@ import { ActionIcon, Badge, Button, Card, Group, Text } from '@mantine/core';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Icon, { IconName } from '../../components/Icon';
-import { tilesBGColors } from '../../constants';
+import { tilesBGColors, TrackingEvent } from '../../constants';
 import { plural } from '../../helpers';
 import { getQuizFromCatalog } from '../../helpers/importExport';
+import { track } from '../../helpers/track';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
 
@@ -14,6 +15,7 @@ type QuizMetadata = {
   numOfQuestions: number;
   isDraft?: boolean;
   isPublished?: boolean;
+  isAddedFromCatalog?: boolean;
   isInCatalog?: boolean;
   createDate: string;
   quizId: number;
@@ -34,6 +36,13 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
   async function handlePlayGame(quizId) {
     const gameId = await getInCompletedGame(quizId);
 
+    track(TrackingEvent.PLAY_QUIZ, {
+      quizName: quizMetadata.name,
+      isAddedFromCatalog: !!quizMetadata.isAddedFromCatalog,
+      numOfCategories: quizMetadata.numOfCategories,
+      numOfQuestions: quizMetadata.numOfQuestions,
+    });
+
     if (gameId) {
       navigate(`/play-game/${userName}/${gameId}`);
     } else {
@@ -44,6 +53,12 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
   async function previewQuiz(quizName: string) {
     setIsImportingFromCatalog(true);
     const quiz = await getQuizFromCatalog(quizName);
+    track(TrackingEvent.CATALOG_QUIZ_PREVIEWED, {
+      quizName,
+      isAddedFromCatalog: true,
+      numOfCategories: quizMetadata.numOfCategories,
+      numOfQuestions: quizMetadata.numOfQuestions,
+    });
 
     if (quiz) {
       updatePreviewQuiz(quiz);

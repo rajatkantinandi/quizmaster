@@ -1,4 +1,4 @@
-import create, { StoreApi, UseBoundStore } from 'zustand';
+import { create, StoreApi, UseBoundStore } from 'zustand';
 import { AppState, getAppStore } from './stores/appStore';
 import { AuthState, getAuthStore } from './stores/authStore';
 import { getQuizStore, QuizState } from './stores/quizStore';

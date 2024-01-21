@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Title, Button, Group, Box } from '@mantine/core';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
+import UndoButton from '../UndoButton';
 
 interface Props {
   isAnswerRevealed: boolean;
   setIsTimerRunning: Function;
   options: IOption[];
   setIsAnswerRevealed: Function;
-  setSelectedChoices: Function;
   isAttempted: boolean;
+  submitResponse: Function;
+  continueGame: Function;
 }
 
 export default function WithoutOptions({
@@ -18,14 +20,52 @@ export default function WithoutOptions({
   options,
   isAttempted,
   setIsAnswerRevealed,
-  setSelectedChoices,
+  submitResponse,
+  continueGame,
 }: Props) {
-  function handleSelectedChoice(choice: number[]) {
-    setSelectedChoices(choice);
+  const [isUndoTimerRunning, setIsUndoTimerRunning] = useState(false);
+  const [time, setTime] = useState(0);
+  const [wasUndoClickedOnce, setWasUndoClickedOnce] = useState(false);
+  const [showUndoButton, setShowUndoButton] = useState(false);
+  const timerRef = useRef(null as any);
+  const userResponse = useRef(null as any);
 
-    setTimeout(() => {
-      document.getElementById('btnSubmitResponse')?.click();
-    }, 100);
+  useEffect(() => {
+    if (showUndoButton) {
+      timerRef.current = setTimeout(() => {
+        if (time === 4) {
+          setIsUndoTimerRunning(false);
+        } else {
+          setTime(time + 1);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      clearTimeout(timerRef.current);
+    };
+  }, [showUndoButton, time]);
+
+  function handleContinueClick(choice: number[]) {
+    submitResponse(choice);
+    continueGame();
+  }
+
+  function handleSubmitResponse(choice: number[]) {
+    if (wasUndoClickedOnce) {
+      submitResponse(choice);
+    } else {
+      userResponse.current = choice;
+      setShowUndoButton(true);
+      setIsUndoTimerRunning(true);
+    }
+  }
+
+  function undoSubmit() {
+    userResponse.current = null;
+    clearTimeout(timerRef.current);
+    setShowUndoButton(false);
+    setWasUndoClickedOnce(true);
   }
 
   const getQuestionTextStyles = (theme, isCorrect = false) =>
@@ -48,15 +88,26 @@ export default function WithoutOptions({
         sx={(theme) => getQuestionTextStyles(theme, !!options[0].text && options[0].isCorrect)}>
         <SanitizedHtml>{options[0].text}</SanitizedHtml>
       </Box>
-      {!isAttempted && (
+      {showUndoButton ? (
         <Group>
-          <Button color="red" onClick={() => handleSelectedChoice([])}>
-            Incorrect
+          <Button variant="default" onClick={() => handleContinueClick(userResponse.current)}>
+            Continue
           </Button>
-          <Button color="green" onClick={() => handleSelectedChoice([options[0].optionId])}>
-            Correct
-          </Button>
+          {isUndoTimerRunning && <UndoButton time={time} onClick={() => undoSubmit()} />}
         </Group>
+      ) : (
+        <>
+          {!isAttempted && (
+            <Group>
+              <Button color="red" onClick={() => handleSubmitResponse([])}>
+                Incorrect
+              </Button>
+              <Button color="green" onClick={() => handleSubmitResponse([options[0].optionId])}>
+                Correct
+              </Button>
+            </Group>
+          )}
+        </>
       )}
     </>
   ) : (

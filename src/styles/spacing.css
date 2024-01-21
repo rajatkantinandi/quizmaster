@@ -86,6 +86,14 @@
   margin-left: 2px !important;
 }
 
+.pl-sm {
+  padding-left: 2px;
+}
+
+.pt-sm {
+  padding-left: 2px;
+}
+
 .mr-sm {
   margin-right: 2px !important;
 }

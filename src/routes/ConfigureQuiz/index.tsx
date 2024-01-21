@@ -12,6 +12,8 @@ import { plural } from '../../helpers/textHelpers';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
 import { useNavigate } from 'react-router';
 import QuestionsListPanel from './QuestionsListPanel';
+import { track } from '../../helpers/track';
+import { TrackingEvent } from '../../constants';
 
 export default function ConfigureQuiz({
   quizId,
@@ -147,6 +149,12 @@ export default function ConfigureQuiz({
         quizId: isPreview ? undefined : quizId,
         name: quizName,
         isDraft: false,
+      });
+      track(TrackingEvent.QUIZ_CREATED, {
+        quizName,
+        isAddedFromCatalog: isPreview,
+        numOfCategories: formData.categories.length,
+        numOfQuestions: formData.categories.reduce((sum, curr) => sum + curr.questions.length, 0),
       });
 
       showAlert({
@@ -396,7 +404,15 @@ export default function ConfigureQuiz({
               fullWidth
               radius="xl"
               mr="lg"
-              onClick={() => navigate(`/catalog/${userName}`)}>
+              onClick={() => {
+                track(TrackingEvent.CATALOG_QUIZ_NOT_SAVED, {
+                  quizName,
+                  isAddedFromCatalog: true,
+                  numOfCategories: categories.length,
+                  numOfQuestions: categories.reduce((sum, curr) => sum + curr.questions.length, 0),
+                });
+                navigate(`/catalog/${userName}`);
+              }}>
               Cancel
             </Button>
           )}

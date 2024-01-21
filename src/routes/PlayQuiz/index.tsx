@@ -4,7 +4,7 @@ import QuestionPlay from '../../components/QuestionPlay';
 import { Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
 import Timer from '../../components/Timer';
 import { useStore } from '../../useStore';
-import { defaultGameInfo } from '../../constants';
+import { defaultGameInfo, TrackingEvent } from '../../constants';
 import { Helmet } from 'react-helmet';
 import Scorecard from './Scorecard';
 import QuestionsList from './QuestionsList';
@@ -13,11 +13,13 @@ import styles from './styles.module.css';
 import classNames from 'classnames';
 import Confetti from 'react-confetti-boom';
 import Icon from '../../components/Icon';
+import { track } from '../../helpers/track';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
   name: '',
   categories: [],
+  isAddedFromCatalog: false,
 };
 
 const defaultSelectedQuestion: IQuestion | null = null;
@@ -163,6 +165,17 @@ export default function PlayQuiz({ gameId, userName }) {
           teamId: parseInt(`${clonedTeams[currentTeamIndex].teamId}`),
         },
       });
+
+      if (isComplete) {
+        track(TrackingEvent.COMPLETED_GAME, {
+          quizName: quizInfo.name,
+          isAddedFromCatalog: !!quizInfo.isAddedFromCatalog,
+          numOfCategories: quizInfo.categories.length,
+          numOfQuestions: quizInfo.categories.reduce((sum, curr) => sum + curr.questions.length, 0),
+          scores: clonedTeams.map((x) => x.score),
+          winnerScore: Math.max(...clonedTeams.map((x) => x.score)),
+        });
+      }
     }
   }
 
