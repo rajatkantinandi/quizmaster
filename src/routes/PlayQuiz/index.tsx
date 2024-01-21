@@ -24,7 +24,7 @@ const defaultQuizInfo: QuizInfo = {
 
 const defaultSelectedQuestion: IQuestion | null = null;
 
-export default function PlayQuiz({ gameId }) {
+export default function PlayQuiz({ gameId, userName }) {
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
@@ -281,7 +281,7 @@ export default function PlayQuiz({ gameId }) {
       okCallback: async () => {
         await markGameCompleted(parseInt(gameId));
 
-        navigate(`/configure-game/${userData.userName || 'guest'}/${quizInfo.quizId}`);
+        navigate(`/configure-game/${userName || 'guest'}/${quizInfo.quizId}`);
       },
       cancelText: 'Cancel',
     });
@@ -292,7 +292,7 @@ export default function PlayQuiz({ gameId }) {
       title: '',
       body: (
         <iframe
-          src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?embedded=true&&quizId=${quizInfo.quizId}`}
+          src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?usp=pp_url&entry.1743219011=${gameId}&entry.853348402=${userName}`}
           width="640"
           title="Rate this quiz"
           height="700"
@@ -375,7 +375,7 @@ export default function PlayQuiz({ gameId }) {
                   Show question list
                 </Button>
               )}
-              <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+              <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userName}`)}>
                 Go to home
               </Button>
               <Button

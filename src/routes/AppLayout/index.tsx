@@ -38,7 +38,7 @@ function AppLayout() {
       case 'configure-game':
         return <ConfigureGame quizId={id} userName={userName} />;
       case 'play-game':
-        return <PlayQuiz gameId={id} />;
+        return <PlayQuiz gameId={id} userName={userName} />;
       case 'catalog':
         return <Catalog userName={userName} />;
       default:
