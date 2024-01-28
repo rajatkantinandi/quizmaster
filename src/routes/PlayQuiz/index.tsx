@@ -302,7 +302,7 @@ export default function PlayQuiz({ gameId, userName }) {
           Loading…
         </iframe>
       ),
-      size: 'fullscreen',
+      size: '100%',
       okCallback: () => {},
       cancelText: 'Cancel',
     });
