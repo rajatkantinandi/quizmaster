@@ -1,30 +1,83 @@
-import { nanoid } from 'nanoid';
-import React, { useState } from 'react';
-import { Button, Icon, Input, Label, Modal, TextArea } from 'semantic-ui-react';
-import { getCommaSeparatedStringWithAndBeforeTheLastItem } from '../../helpers/common';
-import { Team } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { Divider, Button, Text, Checkbox, Group } from '@mantine/core';
+import {
+  getCommaSeparatedStringWithAndBeforeTheLastItem,
+  getRandomColor,
+  getValidValuesFromColumns,
+} from '../../helpers';
+import { FormTextArea, FormInput } from '../FormInputs';
+import { useForm } from 'react-hook-form';
+import Icon from '../../components/Icon';
 import styles from './styles.module.css';
+import { useStore } from '../../useStore';
+import { Team } from '../../types';
 
 interface Props {
-  okCallback: Function;
-  numOfTeams: number;
-  hideModal: Function;
+  createTeams: (params: {
+    players: string[];
+    teams: {
+      name: string;
+      players: string;
+      avatarColor: string;
+    }[];
+    mode: 'manual' | 'automatic';
+  }) => void;
+  players: string;
+  teams: Team[];
+  teamCount: number;
 }
 
-export default function TeamGenerator({ okCallback, numOfTeams, hideModal }: Props) {
-  const [teamCount, setTeamCount] = useState<number | ''>(numOfTeams);
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [playerNames, setPlayerNames] = useState('');
+export default function TeamGenerator({ createTeams, ...rest }: Props) {
+  const [isEditingTeams, setIsEditingTeams] = useState(!!rest.players);
+  const [shouldShowTeams, setShouldShowTeams] = useState(!!rest.players);
+  const [players, setPlayers] = useState<string[]>(rest.teams.map((x) => x.players));
+  const { showAlert, enableOkButton, disableOkButton } = useStore();
+  const { control, handleSubmit, watch } = useForm({
+    defaultValues: {
+      playerNames: rest.players,
+      teamCount: rest.teamCount,
+    },
+  });
+  const { playerNames, teamCount } = watch();
+  const teamsForm = useForm({
+    defaultValues: {
+      teams:
+        rest.teams.length > 0
+          ? rest.teams
+              .map((x) => x.name)
+              .join(',')
+              .replaceAll(',', '\n')
+          : '',
+    },
+  });
+  const teamsData = teamsForm.watch('teams');
+  const teamList = getValidValuesFromColumns(teamsData);
 
-  function generateTeams() {
-    const totalTeams = teamCount || numOfTeams || 2;
-    const teamsPlayers = new Array<string[]>(totalTeams);
+  useEffect(() => {
+    if (shouldShowTeams) {
+      setShouldShowTeams(false);
+      setIsEditingTeams(false);
+      disableOkButton();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerNames, teamCount]);
 
-    let validPlayerNames = playerNames
-      .split('\n')
-      .map((name) => name.trim())
-      .filter((name) => !!name);
-    const minPlayersPerTeam = Math.floor(validPlayerNames.length / totalTeams);
+  function generateTeams(data) {
+    const { teamCount, playerNames } = data;
+    const count = parseInt(teamCount);
+    const teamsPlayers = new Array<string[]>(count);
+
+    let validPlayerNames = getValidValuesFromColumns(playerNames);
+
+    if (validPlayerNames.length < count) {
+      showAlert({
+        message: 'Players count should not be less than number of teams',
+        type: 'error',
+      });
+
+      return;
+    }
+    const minPlayersPerTeam = Math.floor(validPlayerNames.length / count);
 
     for (let i = 0; i < teamsPlayers.length; i++) {
       teamsPlayers[i] = [];
@@ -41,69 +94,122 @@ export default function TeamGenerator({ okCallback, numOfTeams, hideModal }: Pro
       teamsPlayers[i].push(validPlayerNames[i]);
     }
 
-    setTeams(
-      teamsPlayers.map((playerNames) => ({
-        id: nanoid(),
-        name: getCommaSeparatedStringWithAndBeforeTheLastItem(playerNames),
-        score: 0,
-      })),
+    teamsForm.setValue(
+      'teams',
+      teamsPlayers.map((playerNames) => getCommaSeparatedStringWithAndBeforeTheLastItem(playerNames)).join('\n'),
     );
+    setPlayers(teamsPlayers.map((playerList) => playerList.join(',')));
+    setShouldShowTeams(true);
+    enableOkButton();
   }
 
+  function submitTeamNamesForm({ teams }) {
+    createTeams({
+      teams: teams.split('\n').map((name, idx) => ({
+        name,
+        players: players[idx],
+        avatarColor: getRandomColor(),
+      })),
+      players,
+      mode: 'automatic',
+    });
+  }
+
+  const shouldBeMoreThanOne = (value: number) => value >= 2 || 'Should be more than 1';
+  const validateNumberOfTeams = (value: string) =>
+    value.split('\n').length === parseInt(`${teamCount}`) || `Number of teams should not be more than ${teamCount}`;
+
   return (
-    <Modal open size="tiny" centered={false} dimmer="blurring">
-      <Modal.Header>Generate team with player names</Modal.Header>
-      <Modal.Content className="flexCol flex">
-        <div className="flex flexCol">
-          <p className={styles.info}>
-            Enter one player name in each line or paste names from a spreadsheet column (Excel, Google sheet, etc.).
-          </p>
-          <Label as="label" className={styles.playerNames}>
-            <div className="mb-md">Player names</div>
-            <TextArea
-              className="fullWidth"
-              rows={10}
-              value={playerNames}
-              onChange={(ev) => setPlayerNames(ev.target.value)}
+    <>
+      <form onSubmit={handleSubmit(generateTeams)}>
+        <Text mt="lg" mb="md">
+          Enter one player name in each line or paste names from a spreadsheet column (Excel, Google sheet, etc.).
+        </Text>
+        <FormTextArea
+          placeholder="Enter player names"
+          rules={{ required: 'Please enter player names' }}
+          name="playerNames"
+          id="playerNames"
+          variant="filled"
+          size="md"
+          minRows={7}
+          control={control}
+        />
+        <Group position="apart" my="xl" py="sm">
+          <Group mb="xl">
+            <Text weight="bolder">Number of teams</Text>
+            <FormInput
+              name="teamCount"
+              id="teamCount"
+              className={styles.teamsInput}
+              rules={{
+                required: 'Please enter team count',
+                validate: shouldBeMoreThanOne,
+              }}
+              type="number"
+              variant="filled"
+              size="md"
+              min={2}
+              control={control}
             />
-          </Label>
-          <Input
-            label="Number of teams"
-            value={teamCount}
-            type="number"
-            className="fullWidth"
-            onChange={(ev) => setTeamCount(parseInt(ev.target.value) || '')}
-            min={2}
-          />
-          <Button className="alignSelfEnd mt-lg" color="blue" onClick={() => generateTeams()}>
-            <Icon name="refresh" /> {teams.length > 0 ? 'Regenerate' : 'Generate'} teams
+          </Group>
+          <Button
+            disabled={isEditingTeams}
+            mb="xl"
+            type="submit"
+            variant="default"
+            leftIcon={<Icon name="team" width={20} />}>
+            Generate team
           </Button>
-          {teams.length > 0 && (
-            <div className={styles.teams}>
-              <h3>Teams:</h3>
+        </Group>
+      </form>
+      {shouldShowTeams && (
+        <>
+          <Checkbox
+            radius="xl"
+            size="md"
+            mb="xl"
+            checked={isEditingTeams}
+            label="Edit team names?"
+            onChange={() => setIsEditingTeams(!isEditingTeams)}
+          />
+          <Text my="xl">
+            Edit team names one team per line or paste team names from a spreadsheet column (Excel, Google sheet, etc.).
+          </Text>
+          <form onSubmit={teamsForm.handleSubmit(submitTeamNamesForm)}>
+            <FormTextArea
+              placeholder="Enter team names"
+              rules={{
+                required: 'Please enter team names',
+                validate: validateNumberOfTeams,
+              }}
+              name="teams"
+              id="teams"
+              variant="filled"
+              disabled={!isEditingTeams}
+              size="md"
+              minRows={5}
+              control={teamsForm.control}
+            />
+            <button className="displayNone" id="teamNameFormSubmit" type="submit">
+              Submit
+            </button>
+          </form>
+          {teamList.length > 0 && (
+            <>
+              <Divider my="xl" />
+              <Text>Teams</Text>
               <ol>
-                {teams.map((t) => (
-                  <li key={t.id}>{t.name}</li>
+                {getValidValuesFromColumns(teamsData).map((team, idx) => (
+                  <li key={idx}>
+                    {team} {players[idx] ? `(${players[idx]})` : ''}
+                  </li>
                 ))}
               </ol>
-            </div>
+            </>
           )}
-        </div>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button basic color="grey" onClick={() => hideModal()}>
-          Cancel
-        </Button>
-        <Button
-          color="green"
-          disabled={teams.length < 2}
-          onClick={() => {
-            okCallback(teams);
-            hideModal();
-          }}>
-          Choose teams
-        </Button>
-      </Modal.Actions>
-    </Modal>
+        </>
+      )}
+    </>
   );
 }

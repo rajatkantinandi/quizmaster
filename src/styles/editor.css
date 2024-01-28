@@ -1,0 +1,163 @@
+.ProseMirror {
+  background-color: var(--input-bg);
+  padding: 10px 15px;
+  display: block;
+  padding-top: 50px;
+  max-height: 400px;
+  overflow: auto;
+}
+
+.smEditor .ProseMirror {
+  min-height: 100px;
+}
+
+.mdEditor .ProseMirror {
+  min-height: 150px;
+}
+
+.lgEditor .ProseMirror {
+  min-height: 250px;
+}
+
+.xlEditor .ProseMirror {
+  min-height: 350px;
+}
+
+.ProseMirror p,
+.html p {
+  margin: 0;
+}
+
+.ProseMirror td,
+.ProseMirror th,
+.html th,
+.html td {
+  border: 1px solid var(--gray-dark);
+  padding: 2px 8px;
+}
+
+.ProseMirror th,
+.html th {
+  background-color: var(--gray-dark);
+  color: white;
+  border: 1px solid var(--border-gray);
+}
+
+.ProseMirror tr:nth-last-of-type(2n),
+.html tr:nth-last-of-type(2n) {
+  background-color: var(--option-background);
+}
+
+.ProseMirror tr:nth-last-of-type(2n + 1),
+.html tr:nth-last-of-type(2n + 1) {
+  background-color: white;
+}
+
+.ProseMirror tr,
+.html tr {
+  color: black;
+}
+
+.ProseMirror table,
+.html table {
+  border-collapse: collapse;
+}
+
+.ProseMirror img,
+.html img {
+  max-width: 300px;
+  max-height: 400px;
+}
+
+.ProseMirror pre code,
+.html pre code {
+  background-color: var(--gray-dark);
+  width: 100%;
+  display: block;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.ProseMirror code,
+.html code {
+  background-color: var(--card-hover-bg);
+  color: white;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.ProseMirror blockquote,
+.html blockquote {
+  border-left: 3px solid var(--gray-dark);
+  color: var(--gray-dark);
+  margin: 5px 0;
+  padding-left: 10px;
+}
+
+.ProseMirror iframe,
+.html iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  max-width: 480px;
+}
+
+.ProseMirror li p,
+.html li p {
+  display: inline-block;
+}
+
+.ProseMirror ol,
+.html ol,
+.ProseMirror ul,
+.html ul {
+  padding-left: 20px;
+  margin-left: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.editor-toolbar button.active {
+  background-color: var(--gray-dark);
+  color: var(--off-white);
+}
+
+.editor-toolbar button.active svg {
+  fill: var(--off-white);
+}
+
+.editor-toolbar button {
+  border: 1px solid var(--border-gray);
+  border-radius: 5px;
+  min-width: 20px;
+  margin-left: 2px;
+  padding: 2px 5px;
+  background-color: var(--off-white);
+  color: var(--qm-primary);
+  flex-shrink: 0;
+}
+
+.editor-toolbar button:disabled {
+  opacity: 0.6;
+  background-color: var(--border-gray);
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  z-index: 2;
+  background-color: var(--off-white);
+  width: calc(100% - 4px);
+  margin: 1px;
+  padding: 5px;
+  overflow: auto;
+}
+
+.errorText {
+  color: var(--incorrect-color);
+  background-color: #fff;
+  padding: 5px 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}

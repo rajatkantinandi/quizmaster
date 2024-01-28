@@ -1,0 +1,36 @@
+.teamInputCount {
+  max-width: 25px;
+}
+
+.teamInput {
+  max-width: 100%;
+}
+
+.button {
+  width: 70%;
+  margin: 0px 10%;
+}
+
+.timeInput {
+  max-width: 70px;
+}
+
+.playerNames {
+  position: absolute;
+  bottom: 20px;
+  left: 55px;
+}
+
+.teamInputWrapper {
+  position: relative;
+}
+
+.inputWithPlayerNames input {
+  padding-bottom: 15px;
+  height: 60px;
+}
+
+.scrollable {
+  max-height: calc(100vh - 170px);
+  overflow: auto;
+}

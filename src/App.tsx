@@ -1,34 +1,37 @@
-import React from 'react';
-import './styles/app.css';
+import React, { useEffect } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import HomePage from './routes/HomePage';
-import Login from './routes/Login';
-import Signup from './routes/Signup';
-import Quizzes from './routes/Quizzes';
-import AddEditQuiz from './routes/AddEditQuiz';
-import PlayQuiz from './routes/PlayQuiz';
-import { useAppStore } from './useAppStore';
-import ConfirmationModal from './components/ConfirmationModal';
-import Header from './components/Header';
+import AppLayout from './routes/AppLayout';
+import { useStore } from './useStore';
+import Modal from './components/Modal';
+import Alert from './components/Alert';
+import CheckAuthAndNavigate from './components/CheckAuthAndNavigate';
+import Prompt from './components/Prompt';
+import { track } from './helpers/track';
+import { TrackingEvent } from './constants';
 
 function App() {
-  const { confirmationModal } = useAppStore();
+  const modal = useStore.use.modal();
+  const alert = useStore.use.alert();
+  const prompt = useStore.use.prompt();
+
+  useEffect(() => {
+    track(TrackingEvent.APP_LAUNCHED);
+  }, []);
 
   return (
-    <div className="App">
+    <div>
       <BrowserRouter>
-        <Header />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/quizzes/:userName" element={<Quizzes />} />
-          <Route path="/edit-quiz/:userName" element={<AddEditQuiz />} />
-          <Route path="/edit-quiz/:userName/:id" element={<AddEditQuiz />} />
-          <Route path="/play-quiz/:userName/:id" element={<PlayQuiz />} />
+          <Route path="/:viewType" element={<HomePage />} />
+          <Route path=":viewType/:userName" element={<AppLayout />} />
+          <Route path=":viewType/:userName/:id" element={<AppLayout />} />
+          <Route path="*" element={<CheckAuthAndNavigate />} />
         </Routes>
       </BrowserRouter>
-      {!!confirmationModal && <ConfirmationModal {...confirmationModal} />}
+      {!!modal && <Modal />}
+      {!!alert && <Alert />}
+      {!!prompt && <Prompt />}
     </div>
   );
 }

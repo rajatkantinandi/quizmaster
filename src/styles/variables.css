@@ -1,10 +1,12 @@
 :root {
   /* colors */
   --border-gray: #ccc;
+  --border-light: #fef;
   --option-background: #ededff;
   --checked-color: #ffa;
-  --correct-color: #afa;
-  --incorrect-color: #faa;
+  --correct-color: rgb(64, 192, 87);
+  --incorrect-color: rgb(250, 82, 82);
+  --warning: rgb(250, 176, 5);
   --question-container-color: #cef;
   --question-grid-background: #fee;
   --dashed-border-color: #add8e6;
@@ -20,10 +22,37 @@
   --info-text-color: rgba(0, 0, 0, 0.67);
   --card-hover-bg: #557;
   --card-hover-color: white;
-  --badge-color: #772;
   --legend-bg: #65e;
   --legend-color: #fef;
   --shadow-color-dark: rgba(0, 0, 0, 0.5);
+  --qm-card-bg: #f5f6e6;
+  --qm-card-border: #adc3c7;
+  --qm-primary: #014751;
+  --input-bg: #e4fafc;
+  --checkbox-bg: #c4fceb;
+  --default-button-bg: #ffd700;
+  --default-button-bg-hover: #ffe30c;
+  --primary-button-bg-hover: #016c7b;
+  --primary-card-bg: #f5f6e6;
+  --secondary-card-bg: #afd0d4;
+  --off-white: #f3f3f3;
+  --off-white-hover: #f9f9f9;
+  --quiz-card-bg-1: #009688;
+  --quiz-card-bg-2: #2196f3;
+  --quiz-card-bg-3: #e91e63;
+  --quiz-card-bg-4: #4caf50;
+  --quiz-card-bg-5: #673ab7;
+  --dragging-question-bg: #d7e7e9;
+  --points-color-5: #fa5252;
+  --points-color-4: #fd7e14;
+  --points-color-3: #fab005;
+  --points-color-2: #82c91e;
+  --points-color-1: #20c027;
+  --points-bg-color-5: #f7ebeb;
+  --points-bg-color-4: #fff4e6;
+  --points-bg-color-3: #fff9db;
+  --points-bg-color-2: #f4fce3;
+  --points-bg-color-1: #ebfbee;
 
   /* fonts */
   --comfortaa: 'Comfortaa';

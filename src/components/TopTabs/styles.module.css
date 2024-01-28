@@ -1,0 +1,33 @@
+.tab {
+  text-decoration: none;
+  display: block;
+  padding: 20px 20px;
+  margin-top: 13px;
+  margin-right: 10px;
+  font-family: var(--comfortaa);
+  font-weight: bold;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  outline: none;
+}
+
+.tab:active,
+.tab:visited,
+.tab:focus,
+.tab {
+  color: #000;
+}
+
+.tab.active {
+  background: linear-gradient(to bottom, var(--primary-card-bg) 20%, var(--off-white) 80%, var(--off-white) 100%);
+  border-top: 2px solid var(--border-gray);
+}
+
+.tab.active::before {
+  background-color: var(--off-white);
+}
+
+.tab:hover,
+.tab:focus-visible {
+  background-color: var(--off-white-hover);
+}

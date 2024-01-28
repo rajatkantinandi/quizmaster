@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&family=Ubuntu&display=swap');
 
+/* html reset */
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -8,9 +9,70 @@ body {
   font-family: var(--body-font), sans-serif;
 }
 
+p,
+h1,
+h2,
+h3 {
+  font-family: var(--body-font), sans-serif;
+}
+
+fieldset {
+  border: 1px solid var(--border-gray);
+  padding: 15px 20px;
+  border-radius: 10px;
+}
+
+legend {
+  background-color: var(--legend-bg);
+  color: var(--legend-color);
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 5px;
+  letter-spacing: 1.2px;
+  font-size: 15px;
+}
+
+
+/* thin scrollbar */
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(120, 120, 120, .35);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(120, 120, 120, .35) transparent;
+}
+
+/* flexbox stuff */
 .flex {
   display: flex;
   align-items: flex-start;
+}
+
+.alignStart {
+  align-items: flex-start;
+}
+
+.grow {
+  flex: 1;
 }
 
 .justifyCenter {
@@ -27,6 +89,14 @@ body {
 
 .flexWrap {
   flex-wrap: wrap;
+}
+
+.noWrap {
+  flex-wrap: nowrap;
+}
+
+.noShrink {
+  flex-shrink: 0;
 }
 
 .alignCenter {
@@ -53,42 +123,17 @@ body {
   justify-content: flex-end;
 }
 
+/* layout */
 .fullWidth {
   width: 100%;
 }
 
-h4 {
-  margin: 10px 0 !important;
-}
-
-.ui.input {
-  margin: 10px 0;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.ui.input input {
-  width: auto !important;
-}
-
-fieldset {
-  border: 1px solid var(--border-gray);
-  padding: 15px 20px;
-  border-radius: 10px;
-}
-
-legend {
-  background-color: var(--legend-bg);
-  color: var(--legend-color);
-  font-weight: bold;
-  padding: 4px 10px;
-  border-radius: 5px;
-  letter-spacing: 1.2px;
-  font-size: 15px;
-}
-
 .absolute {
   position: absolute !important;
+}
+
+.relative {
+  position: relative;
 }
 
 .bold {
@@ -99,57 +144,100 @@ legend {
   text-align: center;
 }
 
-li.task-list-item {
-  list-style-type: none;
+.fullHeight {
+  height: 100%;
 }
 
-ul.contains-task-list {
-  padding-left: 15px;
+.truncatedOneLine {
+  display: -webkit-box !important;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 
-.react-markdown td,
-.react-markdown th {
-  border: 1px solid var(--gray-dark);
-  padding: 2px 8px;
+.clickable {
+  cursor: pointer;
 }
 
-.react-markdown th {
-  background-color: var(--gray-dark);
-  color: white;
-  border: 1px solid var(--border-gray);
+.displayNone {
+  display: none;
 }
 
-.react-markdown tr:nth-last-of-type(2n) {
-  background-color: var(--option-background);
+.resizeVertical textarea {
+  resize: vertical !important;
 }
 
-.react-markdown tr:nth-last-of-type(2n + 1) {
-  background-color: white;
+/* containers */
+.primaryCard {
+  background-color: var(--primary-card-bg);
 }
 
-.react-markdown tr {
-  color: black;
+.secondaryCard {
+  background-color: var(--secondary-card-bg);
 }
 
-.react-markdown table {
-  border-collapse: collapse;
+.container-md {
+  width: 40%;
+  min-width: 500px;
 }
 
-.react-markdown img {
-  max-width: 100%;
-  max-height: 400px;
-}
-
-.react-markdown code {
-  background-color: var(--card-hover-bg);
-  color: white;
-  padding: 2px 5px;
-  border-radius: 5px;
-}
-
-.react-markdown pre code {
-  background-color: var(--gray-dark);
-  padding: 10px;
+.container-md .input {
   width: 100%;
-  display: block;
+}
+
+.outline {
+  border: 2px solid var(--border-light);
+  border-radius: 10px;
+  padding: 5px 10px;
+}
+
+/* Button */
+.iconButton {
+  padding: 5px;
+  border-radius: 50% !important;
+  width: 35px;
+  height: 35px;
+}
+
+@media screen and (max-width: 940px) {
+  button.noTextOnSmallScreen [class*='mantine-Button-label'] {
+    display: none;
+  }
+
+  button.noTextOnSmallScreen [class*='mantine-Button-icon'] {
+    margin-right: 0;
+  }
+
+  button.noTextOnSmallScreen {
+    padding-right: 12px;
+  }
+}
+
+/* Animations */
+@keyframes slidedown {
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.slideDown {
+  transform: scaleY(0);
+  opacity: 0;
+  transform-origin: 50% 0%;
+  animation: slidedown 0.2s forwards ease-out;
+}
+
+@keyframes slideup {
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.slideUp {
+  transform: scaleY(1.5);
+  opacity: 0;
+  transform-origin: 50% 0%;
+  animation: slidedown 0.2s forwards ease-in;
 }

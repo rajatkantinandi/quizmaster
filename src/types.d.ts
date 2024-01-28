@@ -1,21 +1,29 @@
 export interface Question {
-  id: string;
+  questionId: any;
   text: string;
   options: Option[];
-  point: number;
-  correctOptionHash: string;
-  isWithoutOptions?: boolean;
+  points: number;
+  categoryId: string | number;
+  questionNum?: number;
 }
 
 export interface Option {
-  id: string;
-  optionText: string;
+  optionId: number;
+  text: string;
+  isCorrect: boolean;
 }
 
 export interface Category {
-  name: string;
-  id: string;
+  categoryName: string;
+  categoryId: string | number;
   questions: Question[];
+}
+
+export interface QuizInfo {
+  quizId: string | number;
+  name?: string;
+  categories: Category[];
+  isAddedFromCatalog?: boolean;
 }
 
 export interface User {
@@ -27,13 +35,53 @@ export interface User {
 export interface Quiz {
   name: string;
   categories: Category[];
-  isDraft: boolean;
-  userName: string;
-  id: string;
+  isDraft?: boolean;
+  isPublished?: boolean;
+  userName?: string;
+  quizId: number;
+  createDate: string;
+  updateDate: string;
+  isAddedFromCatalog?: boolean;
+  isDeleted?: boolean;
+}
+
+export type PreviewQuiz = Omit<Quiz, 'quizId'>;
+
+export interface GameInfo {
+  gameId?: number;
+  winnerTeamId?: string;
+  currentTeamId: number;
+  timeLimit: number;
+  selectionTimeLimit: number;
+  isComplete?: boolean;
+  teams: Team[];
+  isQuestionPointsHidden: boolean;
+  negativePointsMultiplier: number;
 }
 
 export interface Team {
+  teamId: number | string;
   name: string;
-  id: string;
   score: number;
+  selectedOptions: SelectedOptions[];
+  avatarColor: string;
+  players: string;
+}
+
+export interface SelectedOptions {
+  selectedOptionIds: number[] | null;
+  questionId: string;
+}
+
+export interface GameData {
+  gameId: number;
+  isComplete: boolean;
+  winnerTeamId: string | null;
+  nextTeamId: number;
+  currentTeam?: {
+    score: number;
+    selectedOptionIds: number[] | null;
+    questionId: number;
+    teamId: number;
+  };
 }

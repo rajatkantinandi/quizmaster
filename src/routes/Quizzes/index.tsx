@@ -1,54 +1,94 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { Button, Card } from 'semantic-ui-react';
-import { getQuizzes } from '../../helpers/quiz';
-import { useLoginCheckAndPageTitle } from '../../hooks/useLoginCheckAndPageTitle';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useStore } from '../../useStore';
+import { Helmet } from 'react-helmet';
+import { Group, Text } from '@mantine/core';
+import PageLoader from '../../components/PageLoader';
+import QuizSelectorBanner from '../../components/QuizSelectorBanner';
+import NoQuizzes from './NoQuizzes';
+import ActionBar from './ActionBar';
+import CreateQuizButton from '../../components/CreateQuizButton';
+import QuizCard from '../../components/QuizCard';
+import { getQuestionsCount } from '../../helpers';
+import { downloadQuiz } from '../../helpers/importExport';
 
-export default function Login() {
-  const { userName } = useParams();
-  const [quizzes, setQuizzes] = useState<any>([]);
-  const navigate = useNavigate();
-  useLoginCheckAndPageTitle();
+export default function Quizzes({ userName }) {
+  const [loading, setLoading] = useState(true);
+  const {
+    getQuizzes,
+    quizzesSelector,
+    setQuizzesSelectorState,
+    deleteQuizzes,
+    publishQuizzes,
+    toggleSelectedQuizzes,
+    showModal,
+    showAlert,
+    sortQuizzes,
+    getInCompletedGame,
+    ...rest
+  } = useStore();
+  const filteredQuizzes = useMemo(
+    () =>
+      rest.searchQuery
+        ? rest.quizzes.filter((quiz) => quiz.name.toLowerCase().includes(rest.searchQuery.toLowerCase()))
+        : rest.quizzes,
+    [rest.quizzes, rest.searchQuery],
+  );
 
   useEffect(() => {
-    getQuizzes(userName || '').then((quizzes) => {
-      if (quizzes) {
-        setQuizzes(quizzes);
-      }
+    getQuizzes().then((quizzes) => {
+      setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      <h1>Welcome: {userName}</h1>
-      <h2>Quizzes</h2>
-      <section className="mb-xl flex flexWrap">
-        {quizzes.map((quiz: any) => (
-          <Card
-            key={quiz.id}
-            className="flex alignCenter"
-            onClick={() => {
-              if (quiz.isDraft) {
-                navigate(`/edit-quiz/${userName}/${quiz.id}`);
-              } else {
-                navigate(`/play-quiz/${userName}/${quiz.id}`);
-              }
-            }}>
-            <div className="title">{quiz.name}</div>
-            <div className="details">
-              {quiz.categories.length} Categories
-              <br />
-              {quiz.categories[0].questions.length} Questions per category.
-              {quiz.isDraft && <div className="badge">Draft</div>}
-            </div>
-            <div className="action">{quiz.isDraft ? 'Edit' : 'Play'}</div>
-          </Card>
-        ))}
-      </section>
-      <Button onClick={() => navigate(`/edit-quiz/${userName}`)} size="large" color="green">
-        + Create Quiz
-      </Button>
+      <Helmet>
+        <title>Quizzes</title>
+      </Helmet>
+      {loading ? (
+        <PageLoader />
+      ) : filteredQuizzes.length === 0 && !rest.searchQuery.trim() ? (
+        <NoQuizzes userName={userName} />
+      ) : (
+        <>
+          <QuizSelectorBanner {...quizzesSelector} />
+          <ActionBar quizzes={filteredQuizzes} />
+          <Group>
+            {filteredQuizzes.map((quiz, index) => {
+              const { quizId, categories, createDate, name, isDraft, isPublished, isAddedFromCatalog } = quiz;
+
+              return (
+                <QuizCard
+                  quizMetadata={{
+                    quizId,
+                    numOfCategories: categories.length,
+                    numOfQuestions: getQuestionsCount(categories),
+                    createDate,
+                    name,
+                    isDraft,
+                    isPublished,
+                    isAddedFromCatalog,
+                  }}
+                  index={index}
+                  userName={userName}
+                  key={quizId}
+                  handleDownload={() => downloadQuiz(quiz)}
+                />
+              );
+            })}
+            {/* No search results */}
+            {filteredQuizzes.length === 0 && (
+              <div className="ml-xl mt-xl">
+                <Text color="gray" size="xl" mb="sm">
+                  No search results found
+                </Text>
+              </div>
+            )}
+          </Group>
+          <CreateQuizButton userName={userName} isFloating />
+        </>
+      )}
     </>
   );
 }

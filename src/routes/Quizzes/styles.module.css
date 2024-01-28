@@ -1,0 +1,56 @@
+.pageTitleWrapper {
+  padding: 0 12px;
+  width: 95%;
+}
+
+@media only screen and (max-width: 1240px) {
+  .quizCardWrapper {
+    width: 32%;
+  }
+
+  .pageTitleWrapper {
+    width: 98.5%;
+  }
+}
+
+@media only screen and (max-width: 850px) {
+  .quizCardWrapper {
+    width: 42%;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .quizCardWrapper {
+    width: 60%;
+  }
+}
+
+.quizCardWrapper>div {
+  height: inherit;
+}
+
+
+.notingHere {
+  margin: 10px auto;
+}
+
+.deleteButton {
+  background-color: #c10606 !important;
+}
+
+.publishQuiz {
+  background-color: #2e7d32 !important;
+}
+
+.sort {
+  max-width: 190px;
+}
+
+.welcomeHeader {
+  font-size: 34px;
+  margin-bottom: 15px;
+}
+
+.secondaryText {
+  font-size: 20px;
+}

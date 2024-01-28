@@ -1,40 +1,89 @@
-.scoreContainer th:first-of-type {
-  width: 160px;
-  text-align: left;
+.categoryGridContainer {
+  container-type: inline-size;
+  container-name: panel;
 }
 
-.scoreContainer th:last-of-type {
-  width: 50px;
-  text-align: right;
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, calc(33% - 40px));
+  gap: 20px;
+  justify-content: flex-start;
 }
 
-.scoreContainer th,
-.scoreContainer td {
-  padding: 5px 10px;
+@container panel (max-width: 980px) {
+  .categoryGrid {
+    grid-template-columns: repeat(auto-fit, calc(50% - 20px));
+  }
 }
 
-.scoreContainer td:last-of-type {
-  text-align: right;
+@container panel (max-width: 640px) {
+  .categoryGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.scoreContainer table {
-  background-color: var(--score-bg);
-  border-spacing: 0;
-  border-collapse: collapse;
-  font-size: 18px;
+.scoreAndTimer {
+  width: 320px;
 }
 
-.scoreContainer tr:first-of-type {
-  background-color: var(--score-header-bg);
-  color: var(--score-header-color);
-  font-family: var(--comfortaa);
-  font-weight: var(--semi-bold);
+.team.currentTeam {
+  background: rgb(34, 139, 230);
+  flex-wrap: nowrap;
 }
 
-.scoreContainer tr {
-  border-bottom: 1px solid #aaf;
+.team.currentTeam div {
+  color: white;
 }
 
-.scoreContainer tr.active {
-  background-color: #cfc;
+.team {
+  background: rgba(134, 142, 150, 0.1);
+}
+
+.teamWithoutPlayer {
+  padding: 3px 15px 3px 3px;
+  border-radius: 58px;
+}
+
+.winnerMessage {
+  background-color: var(--qm-primary);
+  border-radius: 10px;
+  position: relative;
+}
+
+.winnerMessage::before {
+  display: block;
+  position: absolute;
+  content: "";
+  width: calc(100% + 16px);
+  margin-left: -8px;
+  z-index: -1;
+  height: 78px;
+  margin-top: -24px;
+  border-radius: 10px;
+  background: repeating-linear-gradient(45deg, var(--correct-color) 1%, var(--qm-primary) 3%);
+  animation: borderRoll 0.5s linear infinite;
+}
+
+@keyframes borderRoll {
+  50% {
+    background: repeating-linear-gradient(45deg, var(--correct-color) 2%, var(--qm-primary) 4%);
+  }
+
+  to {
+    background: repeating-linear-gradient(45deg, var(--correct-color) 3%, var(--qm-primary) 5%);
+  }
+}
+
+.colorPallet {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.colorPallet .bar {
+  width: 200px;
+  height: 35px;
+  background: linear-gradient(to right, var(--points-color-1), var(--points-color-2), var(--points-color-3), var(--points-color-4), var(--points-color-5));
+  margin: 0 10px;
 }
