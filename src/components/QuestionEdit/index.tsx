@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import styles from './styles.module.css';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
@@ -14,18 +14,9 @@ interface Props {
   question: any;
   saveQuestion: any;
   onQuestionChange: Function;
-  deleteQuestion: Function;
-  resetQuestion: Function;
 }
 
-export default function QuestionEdit({
-  questionNum,
-  question,
-  saveQuestion,
-  onQuestionChange,
-  deleteQuestion,
-  resetQuestion,
-}: Props) {
+function QuestionEdit({ questionNum, question, saveQuestion, onQuestionChange }: Props, ref) {
   const formDefaultValues = {
     ...question,
     options: question.options.length > 0 ? question.options : getEmptyOptions(2),
@@ -84,6 +75,10 @@ export default function QuestionEdit({
   function addOption(ev: React.MouseEvent) {
     ev.preventDefault();
 
+    setTimeout(() => {
+      document.querySelector('#addOptionBtn')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+
     append(getEmptyOption());
   }
 
@@ -137,19 +132,9 @@ export default function QuestionEdit({
     }
   }
 
-  function onCancelClick(ev) {
-    ev.preventDefault();
-    resetQuestion();
-  }
-
-  function onDeleteClick(ev) {
-    ev.preventDefault();
-    deleteQuestion(ev);
-  }
-
   return (
-    <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard slideDown">
-      <form onSubmit={handleSubmit(onFormSubmit)}>
+    <Card shadow="sm" mx="auto" maw={800} withBorder className={'secondaryCard slideDown'}>
+      <form onSubmit={handleSubmit(onFormSubmit)} ref={ref}>
         <Group position="apart" mb="lg">
           <Group>
             <Title mr="xl" order={4}>
@@ -192,7 +177,7 @@ export default function QuestionEdit({
           autoFocus
           isRichText
         />
-        <Tabs variant="pills" pt="xl" pb="lg" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
+        <Tabs variant="pills" pt="xl" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
           <Tabs.List>
             <Tabs.Tab value="withOptions">With Options</Tabs.Tab>
             <Tabs.Tab value="withoutOptions">Without Options</Tabs.Tab>
@@ -227,7 +212,12 @@ export default function QuestionEdit({
                 </ActionIcon>
               </Group>
             ))}
-            <Button mt="lg" variant="default" onClick={addOption} leftIcon={<Icon name="plus" width={18} />}>
+            <Button
+              mt="md"
+              variant="default"
+              id="addOptionBtn"
+              onClick={addOption}
+              leftIcon={<Icon name="plus" width={18} />}>
               Add option
             </Button>
           </Tabs.Panel>
@@ -253,19 +243,6 @@ export default function QuestionEdit({
             ))}
           </Tabs.Panel>
         </Tabs>
-        <Group position="apart" mt="xl">
-          <Button color="red" variant="white" onClick={onDeleteClick}>
-            Delete
-          </Button>
-          <div>
-            <Button mr="sm" variant="light" onClick={onCancelClick}>
-              Cancel
-            </Button>
-            <Button variant="filled" type="submit">
-              Save
-            </Button>
-          </div>
-        </Group>
       </form>
     </Card>
   );
@@ -280,3 +257,5 @@ const MarkDownLogo = () => (
     <Icon name="markdown" width="20" className={styles.markdownImg} />
   </a>
 );
+
+export default forwardRef(QuestionEdit);

@@ -1,0 +1,5 @@
+.body {
+  max-height: calc(100vh - 250px);
+  overflow: auto;
+  padding-right: 20px;
+}
