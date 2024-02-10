@@ -187,32 +187,25 @@ export default function QuestionsListPanel({
         chosenClass={styles.chosenStyle}
         handle=".questionHandle"
         setList={onQuestionSwap}>
-        {questions.map((item: any, idx) =>
-          activeQuestionIndex === idx ? (
-            <QuestionEdit
-              questionNum={idx + 1}
-              question={item}
-              key={item.questionId}
-              saveQuestion={(data) => handleSaveQuestion(idx, data)}
-              onQuestionChange={(data) => updateQuestionData(idx, data)}
-            />
-          ) : (
-            <QuestionView
-              questionNum={idx + 1}
-              question={item}
-              key={item.questionId}
-              isValidQuestion={isValidQuestion(item)}
-              setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
-              deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
-              isExpanded={expandedQuestionIndex === 'all' || expandedQuestionIndex === idx}
-              setExpandedQuestionIndex={setExpandedQuestionIndex}
-              rearrangeMode={rearrangeMode}
-              handleMoveQuestions={handleMoveQuestions}
-            />
-          ),
-        )}
+        {questions.map((item: any, idx) => (
+          <QuestionView
+            questionNum={idx + 1}
+            question={item}
+            key={item.questionId}
+            isValidQuestion={isValidQuestion(item)}
+            setActiveQuestion={(ev) => {
+              ev.stopPropagation();
+              setActiveQuestionIndex(idx);
+            }}
+            deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
+            isExpanded={expandedQuestionIndex === 'all' || expandedQuestionIndex === idx}
+            setExpandedQuestionIndex={setExpandedQuestionIndex}
+            rearrangeMode={rearrangeMode}
+            handleMoveQuestions={handleMoveQuestions}
+          />
+        ))}
       </ReactSortable>
-      {activeQuestionIndex && !!questions[activeQuestionIndex] && (
+      {typeof activeQuestionIndex === 'number' && !!questions[activeQuestionIndex] && (
         <Modal
           modalProps={{
             title: isAddingQuestion ? 'Add new question' : 'Edit question',

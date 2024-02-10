@@ -46,13 +46,20 @@ export default function ExpandedView({
             )}
           </Group>
           <Group className="noShrink">
-            <Button variant="outline" radius="xl" compact onClick={() => handleMoveQuestions(question)}>
-              Move Question
+            <Button
+              variant="light"
+              radius="xl"
+              compact
+              onClick={(ev) => {
+                ev.stopPropagation();
+                handleMoveQuestions(question);
+              }}>
+              Move question
             </Button>
             <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
               Delete
             </Button>
-            <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
+            <ActionIcon variant="transparent" title="Edit" onClick={(ev) => setActiveQuestion}>
               <Icon name="pencil" width={22} />
             </ActionIcon>
             <ActionIcon variant="transparent">

@@ -399,32 +399,32 @@ export default function ConfigureQuiz({
               Submit
             </button>
           </form>
-          <QuestionsListPanel
-            activeCategoryName={activeCategoryName}
-            questions={(categories[activeCategoryIndex] as any)?.questions || []}
-            activeCategoryIndex={activeCategoryIndex}
-            activeCategoryId={categories[activeCategoryIndex]?.id}
-            activeQuestionIndex={activeQuestionIndex}
-            expandedQuestionIndex={expandedQuestionIndex}
-            control={control}
-            setActiveQuestionIndex={setActiveQuestionIndex}
-            isValidQuestion={isValidQuestion}
-            quizId={quizId}
-            setExpandedQuestionIndex={setExpandedQuestionIndex}
-            handleRearrangeQuestions={handleRearrangeQuestions}
-            rearrangeMode={rearrangeMode}
-            handleMoveQuestions={handleMoveQuestions}
-            updateQuizData={() => {
-              createOrUpdateQuiz({
-                categories,
-                quizId,
-                name: quizName,
-                isDraft: isDraftRef.current,
-                isPreview,
-              });
-            }}
-          />
         </div>
+        <QuestionsListPanel
+          activeCategoryName={activeCategoryName}
+          questions={(categories[activeCategoryIndex] as any)?.questions || []}
+          activeCategoryIndex={activeCategoryIndex}
+          activeCategoryId={categories[activeCategoryIndex]?.id}
+          activeQuestionIndex={activeQuestionIndex}
+          expandedQuestionIndex={expandedQuestionIndex}
+          control={control}
+          setActiveQuestionIndex={setActiveQuestionIndex}
+          isValidQuestion={isValidQuestion}
+          quizId={quizId}
+          setExpandedQuestionIndex={setExpandedQuestionIndex}
+          handleRearrangeQuestions={handleRearrangeQuestions}
+          rearrangeMode={rearrangeMode}
+          handleMoveQuestions={handleMoveQuestions}
+          updateQuizData={() => {
+            createOrUpdateQuiz({
+              categories,
+              quizId,
+              name: quizName,
+              isDraft: isDraftRef.current,
+              isPreview,
+            });
+          }}
+        />
       </div>
       <Grid columns={24} className={styles.btnCompleteQuiz}>
         <Grid.Col span={10} offset={7} py="xl" className="flex">
