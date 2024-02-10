@@ -292,7 +292,7 @@ export default function PlayQuiz({ gameId, userName }) {
       title: '',
       body: (
         <iframe
-          src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?usp=pp_url&entry.1743219011=${gameId}&entry.853348402=${userName}`}
+          src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?usp=pp_url&entry.1743219011=${quizInfo.name}`}
           width="640"
           title="Rate this quiz"
           height="700"
@@ -302,7 +302,7 @@ export default function PlayQuiz({ gameId, userName }) {
           Loading…
         </iframe>
       ),
-      size: '100%',
+      size: 'large',
       okCallback: () => {},
       cancelText: 'Cancel',
     });
