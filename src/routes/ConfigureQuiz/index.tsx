@@ -4,7 +4,7 @@ import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
 import { Quiz } from '../../types';
 import { Helmet } from 'react-helmet';
-import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge, Checkbox } from '@mantine/core';
+import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge } from '@mantine/core';
 import styles from './styles.module.css';
 import Icon from '../../components/Icon';
 import classNames from 'classnames';
