@@ -191,7 +191,10 @@ export default function QuestionsListPanel({
             question={item}
             key={item.questionId}
             isValidQuestion={isValidQuestion(item)}
-            setActiveQuestion={(ev) => setActiveQuestionIndex(idx)}
+            setActiveQuestion={(ev) => {
+              ev.stopPropagation();
+              setActiveQuestionIndex(idx);
+            }}
             deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
             isExpanded={expandedQuestionIndex === 'all' || expandedQuestionIndex === idx}
             setExpandedQuestionIndex={setExpandedQuestionIndex}
@@ -199,7 +202,7 @@ export default function QuestionsListPanel({
           />
         ))}
       </ReactSortable>
-      {activeQuestionIndex && !!questions[activeQuestionIndex] && (
+      {typeof activeQuestionIndex === 'number' && !!questions[activeQuestionIndex] && (
         <Modal
           modalProps={{
             title: isAddingQuestion ? 'Add new question' : 'Edit question',
