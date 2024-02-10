@@ -39,7 +39,7 @@ export default function PlayQuiz({ gameId, userName }) {
   const attemptedQuestionIds = selectedOptionsData.map((x) => x.questionId);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.questionId);
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
-  const { showModal, getGameData, updateGame, markGameCompleted, userData } = useStore();
+  const { showModal, getGameData, updateGame, markGameCompleted } = useStore();
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { categories } = quizInfo;
@@ -293,7 +293,7 @@ export default function PlayQuiz({ gameId, userName }) {
       body: (
         <iframe
           src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?usp=pp_url&entry.1743219011=${quizInfo.name}`}
-          width="640"
+          width="100%"
           title="Rate this quiz"
           height="700"
           frameBorder="0"
@@ -302,7 +302,7 @@ export default function PlayQuiz({ gameId, userName }) {
           Loading…
         </iframe>
       ),
-      size: 'large',
+      size: '70%',
       okCallback: () => {},
       cancelText: 'Cancel',
     });
@@ -378,14 +378,16 @@ export default function PlayQuiz({ gameId, userName }) {
               <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userName}`)}>
                 Go to home
               </Button>
-              <Button
-                size="lg"
-                m="lg"
-                variant="gradient"
-                leftIcon={<Icon name="rating" width={24} height={24} />}
-                onClick={openRateQuizModal}>
-                Rate this Quiz
-              </Button>
+              {quizInfo.isAddedFromCatalog && (
+                <Button
+                  size="lg"
+                  m="lg"
+                  variant="gradient"
+                  leftIcon={<Icon name="rating" width={24} height={24} />}
+                  onClick={openRateQuizModal}>
+                  Rate this Quiz
+                </Button>
+              )}
             </div>
           )}
         </div>

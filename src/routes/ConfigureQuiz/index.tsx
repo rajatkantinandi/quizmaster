@@ -149,6 +149,7 @@ export default function ConfigureQuiz({
         quizId: isPreview ? undefined : quizId,
         name: quizName,
         isDraft: false,
+        isAddedFromCatalog: isPreview,
       });
       track(TrackingEvent.QUIZ_CREATED, {
         quizName,
