@@ -4,7 +4,7 @@ import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
 import { Quiz } from '../../types';
 import { Helmet } from 'react-helmet';
-import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge } from '@mantine/core';
+import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge, Checkbox } from '@mantine/core';
 import styles from './styles.module.css';
 import Icon from '../../components/Icon';
 import classNames from 'classnames';
@@ -25,6 +25,7 @@ export default function ConfigureQuiz({
   const [quizName, setQuizName] = useState('');
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeCategoryName, setActiveCategoryName] = useState('');
+  const [categoryToMove, setCategoryToMove] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null | 'all'>(null);
   const [rearrangeMode, setRearrangeMode] = useState(false);
@@ -249,6 +250,37 @@ export default function ConfigureQuiz({
     document.getElementById('btnQuizFormSubmit')?.click();
   };
 
+  function handleMoveQuestions(question): void {
+    const otherCategories = categories.filter((category, index) => index !== activeCategoryIndex);
+
+    if (otherCategories.length === 0) {
+      showAlert({
+        message: 'There is no other category to move question.',
+        type: 'warning',
+      });
+    } else {
+      showModal({
+        title: 'Move question',
+        body: (
+          <Radio.Group value={categoryToMove} onChange={setCategoryToMove}>
+            <Radio value="react" label="React" />
+            <Radio value="svelte" label="Svelte" />
+            <Radio value="ng" label="Angular" />
+            <Radio value="vue" label="Vue" />
+            {otherCategories.map((category, idx) => (
+              <Radio value="vue" label="Vue" />
+            ))}
+          </Radio.Group>
+        ),
+        okCallback: () => {
+          console.log(question, categoryToMove);
+        },
+        okText: 'Move',
+        cancelText: 'Cancel',
+      });
+    }
+  }
+
   return (
     <>
       <Helmet>
@@ -367,31 +399,32 @@ export default function ConfigureQuiz({
               Submit
             </button>
           </form>
+          <QuestionsListPanel
+            activeCategoryName={activeCategoryName}
+            questions={(categories[activeCategoryIndex] as any)?.questions || []}
+            activeCategoryIndex={activeCategoryIndex}
+            activeCategoryId={categories[activeCategoryIndex]?.id}
+            activeQuestionIndex={activeQuestionIndex}
+            expandedQuestionIndex={expandedQuestionIndex}
+            control={control}
+            setActiveQuestionIndex={setActiveQuestionIndex}
+            isValidQuestion={isValidQuestion}
+            quizId={quizId}
+            setExpandedQuestionIndex={setExpandedQuestionIndex}
+            handleRearrangeQuestions={handleRearrangeQuestions}
+            rearrangeMode={rearrangeMode}
+            handleMoveQuestions={handleMoveQuestions}
+            updateQuizData={() => {
+              createOrUpdateQuiz({
+                categories,
+                quizId,
+                name: quizName,
+                isDraft: isDraftRef.current,
+                isPreview,
+              });
+            }}
+          />
         </div>
-        <QuestionsListPanel
-          activeCategoryName={activeCategoryName}
-          questions={(categories[activeCategoryIndex] as any)?.questions || []}
-          activeCategoryIndex={activeCategoryIndex}
-          activeCategoryId={categories[activeCategoryIndex]?.id}
-          activeQuestionIndex={activeQuestionIndex}
-          expandedQuestionIndex={expandedQuestionIndex}
-          control={control}
-          setActiveQuestionIndex={setActiveQuestionIndex}
-          isValidQuestion={isValidQuestion}
-          quizId={quizId}
-          setExpandedQuestionIndex={setExpandedQuestionIndex}
-          handleRearrangeQuestions={handleRearrangeQuestions}
-          rearrangeMode={rearrangeMode}
-          updateQuizData={() => {
-            createOrUpdateQuiz({
-              categories,
-              quizId,
-              name: quizName,
-              isDraft: isDraftRef.current,
-              isPreview,
-            });
-          }}
-        />
       </div>
       <Grid columns={24} className={styles.btnCompleteQuiz}>
         <Grid.Col span={10} offset={7} py="xl" className="flex">
