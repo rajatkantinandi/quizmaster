@@ -13,6 +13,7 @@ import styles from './styles.module.css';
 import classNames from 'classnames';
 import Confetti from 'react-confetti-boom';
 import { track } from '../../helpers/track';
+import Icon from '../../components/Icon';
 
 const defaultQuizInfo: QuizInfo = {
   quizId: '',
@@ -23,7 +24,7 @@ const defaultQuizInfo: QuizInfo = {
 
 const defaultSelectedQuestion: IQuestion | null = null;
 
-export default function PlayQuiz({ gameId }) {
+export default function PlayQuiz({ gameId, userName }) {
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
   const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
@@ -38,7 +39,7 @@ export default function PlayQuiz({ gameId }) {
   const attemptedQuestionIds = selectedOptionsData.map((x) => x.questionId);
   const isQuestionAttempted = !!selectedQuestion && attemptedQuestionIds.includes(selectedQuestion.questionId);
   const showQuestionTimer = !!timeLimit && !!selectedQuestion && !isQuestionAttempted;
-  const { showModal, getGameData, updateGame, markGameCompleted, userData } = useStore();
+  const { showModal, getGameData, updateGame, markGameCompleted } = useStore();
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { categories } = quizInfo;
@@ -280,8 +281,29 @@ export default function PlayQuiz({ gameId }) {
       okCallback: async () => {
         await markGameCompleted(parseInt(gameId));
 
-        navigate(`/configure-game/${userData.userName || 'guest'}/${quizInfo.quizId}`);
+        navigate(`/configure-game/${userName || 'guest'}/${quizInfo.quizId}`);
       },
+      cancelText: 'Cancel',
+    });
+  }
+
+  function openRateQuizModal() {
+    showModal({
+      title: '',
+      body: (
+        <iframe
+          src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?usp=pp_url&entry.1743219011=${quizInfo.name}`}
+          width="100%"
+          title="Rate this quiz"
+          height="700"
+          frameBorder="0"
+          marginHeight={0}
+          marginWidth={0}>
+          Loading…
+        </iframe>
+      ),
+      size: '70%',
+      okCallback: () => {},
       cancelText: 'Cancel',
     });
   }
@@ -353,9 +375,19 @@ export default function PlayQuiz({ gameId }) {
                   Show question list
                 </Button>
               )}
-              <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userData.userName}`)}>
+              <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userName}`)}>
                 Go to home
               </Button>
+              {quizInfo.isAddedFromCatalog && (
+                <Button
+                  size="lg"
+                  m="lg"
+                  variant="gradient"
+                  leftIcon={<Icon name="rating" width={24} height={24} />}
+                  onClick={openRateQuizModal}>
+                  Rate this Quiz
+                </Button>
+              )}
             </div>
           )}
         </div>
