@@ -25,6 +25,7 @@ export default function ConfigureQuiz({
   const [quizName, setQuizName] = useState('');
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeCategoryName, setActiveCategoryName] = useState('');
+  const [categoryToMove, setCategoryToMove] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null | 'all'>(null);
   const [rearrangeMode, setRearrangeMode] = useState(false);
@@ -250,6 +251,37 @@ export default function ConfigureQuiz({
     document.getElementById('btnQuizFormSubmit')?.click();
   };
 
+  function handleMoveQuestions(question): void {
+    const otherCategories = categories.filter((category, index) => index !== activeCategoryIndex);
+
+    if (otherCategories.length === 0) {
+      showAlert({
+        message: 'There is no other category to move question.',
+        type: 'warning',
+      });
+    } else {
+      showModal({
+        title: 'Move question',
+        body: (
+          <Radio.Group value={categoryToMove} onChange={setCategoryToMove}>
+            <Radio value="react" label="React" />
+            <Radio value="svelte" label="Svelte" />
+            <Radio value="ng" label="Angular" />
+            <Radio value="vue" label="Vue" />
+            {otherCategories.map((category, idx) => (
+              <Radio value="vue" label="Vue" />
+            ))}
+          </Radio.Group>
+        ),
+        okCallback: () => {
+          console.log(question, categoryToMove);
+        },
+        okText: 'Move',
+        cancelText: 'Cancel',
+      });
+    }
+  }
+
   return (
     <>
       <Helmet>
@@ -383,6 +415,7 @@ export default function ConfigureQuiz({
           setExpandedQuestionIndex={setExpandedQuestionIndex}
           handleRearrangeQuestions={handleRearrangeQuestions}
           rearrangeMode={rearrangeMode}
+          handleMoveQuestions={handleMoveQuestions}
           updateQuizData={() => {
             createOrUpdateQuiz({
               categories,

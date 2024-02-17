@@ -15,6 +15,7 @@ import mixpanel from 'mixpanel-browser';
 import { getDeviceId } from './helpers/device';
 import config from './config';
 
+console.log('mixpanel.init');
 try {
   mixpanel.init(process.env.REACT_APP_MIXPANEL_API_KEY, {
     debug: config.env === 'local',
