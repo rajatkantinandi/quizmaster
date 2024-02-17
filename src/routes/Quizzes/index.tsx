@@ -22,7 +22,6 @@ export default function Quizzes({ userName }) {
     toggleSelectedQuizzes,
     showModal,
     showAlert,
-    sortQuizzes,
     getInCompletedGame,
     ...rest
   } = useStore();

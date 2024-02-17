@@ -241,6 +241,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
       state.quizzes = getSortedQuizzes(sortBy, state.quizzes);
     });
   },
+  sortCatalogQuizzes: (sortBy) => {
+    set((state: QuizState) => {
+      state.catalogList = getSortedQuizzes(sortBy, state.catalogList || []);
+    });
+  },
   getInCompletedGame: async (quizId) => {
     if (isGuestUser()) {
       const response = await getInCompletedGameByQuizId(quizId);
@@ -272,12 +277,12 @@ export const getQuizStore = (set: Function, get: Function) => ({
 function getSortedQuizzes(sortBy, data) {
   switch (sortBy) {
     case 'createDate':
-      return data.sort((quiz1, quiz2) => new Date(quiz2.createDate).getTime() - new Date(quiz1.createDate).getTime());
+      return data.sort((quiz1, quiz2) => new Date(quiz2.createDate).valueOf() - new Date(quiz1.createDate).valueOf());
     case 'name':
       return data.sort((quiz1, quiz2) => quiz1.name.localeCompare(quiz2.name));
     case 'recency':
     default:
-      return data.sort((quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime());
+      return data.sort((quiz1, quiz2) => new Date(quiz2.updateDate).valueOf() - new Date(quiz1.updateDate).valueOf());
   }
 }
 
