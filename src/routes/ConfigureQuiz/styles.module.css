@@ -34,13 +34,13 @@
   max-width: 450px;
 }
 
-.questionsCard {
+.questionsListPanel {
   flex-grow: 4;
   max-width: 1300px;
   width: 100%;
   padding-left: 3%;
   padding-right: 3%;
-  max-height: calc(100vh - 180px);
+  height: calc(100vh - 180px);
   overflow-y: scroll;
   overflow-x: hidden;
 }

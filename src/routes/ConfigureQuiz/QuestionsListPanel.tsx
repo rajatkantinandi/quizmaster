@@ -147,7 +147,7 @@ export default function QuestionsListPanel({
   }
 
   return (
-    <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsCard}`}>
+    <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsListPanel}`}>
       <Group position="apart" align="center" mb="md">
         <Title order={4}>{activeCategoryName || 'Unnamed Category'}</Title>
         <div className="flex alignCenter">
