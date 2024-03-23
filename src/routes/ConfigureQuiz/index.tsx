@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router';
 import QuestionsListPanel from './QuestionsListPanel';
 import { track } from '../../helpers/track';
 import { TrackingEvent } from '../../constants';
+import { useSearchParams } from 'react-router-dom';
+import PageLoader from '../../components/PageLoader';
 
 export default function ConfigureQuiz({
   quizId,
@@ -23,22 +25,31 @@ export default function ConfigureQuiz({
   userName: string | undefined;
 }) {
   const [quizName, setQuizName] = useState('');
+  const [searchParams] = useSearchParams();
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeCategoryName, setActiveCategoryName] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null | 'all'>(null);
   const [rearrangeMode, setRearrangeMode] = useState(false);
-  const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName, updatePreviewQuiz } =
-    useStore();
+  const {
+    createOrUpdateQuiz,
+    getQuiz,
+    sendBeaconPost,
+    showAlert,
+    showModal,
+    updateQuizName,
+    updatePreviewQuiz,
+    saveCatalogQuizForPreview,
+  } = useStore();
   const navigate = useNavigate();
   const {
     handleSubmit,
     formState: { errors },
-    reset,
+    setValue,
     watch,
     control,
   } = useForm();
-  const { append, remove, replace } = useFieldArray({
+  const { append, remove } = useFieldArray({
     control,
     name: 'categories',
   });
@@ -50,9 +61,23 @@ export default function ConfigureQuiz({
   categoriesRef.current = categories;
   quizNameRef.current = quizName;
   const isPreview = quizId === 'preview';
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getQuiz(quizId, isPreview).then((quiz: Quiz) => {
+    (async () => {
+      if (isPreview) {
+        const quizName = searchParams.get('quizName');
+
+        if (quizName) {
+          // Download quiz by quizName from url & store
+          // If invalid quiz name then it will just skip downloading
+          await saveCatalogQuizForPreview(quizName);
+        }
+      }
+
+      // get quiz (preview quiz or from local storage or from backend in non guest user)
+      const quiz = await getQuiz(quizId, isPreview);
+
       if (!quiz) {
         navigate(`/my-quizzes`);
         return;
@@ -72,9 +97,10 @@ export default function ConfigureQuiz({
       setActiveCategoryIndex(index);
       setActiveCategoryName(quiz.categories[index].categoryName);
       setActiveQuestionIndex(activeQuestionIndex);
-      replace(quiz.categories);
-      setTimeout(() => reset(quiz), 0);
-    });
+      setValue('', quiz);
+      setValue('categories', quiz.categories);
+      setIsLoading(false);
+    })();
 
     return () => {
       if (!isQuizAlreadySaved.current && !isPreview) {
@@ -115,28 +141,28 @@ export default function ConfigureQuiz({
   }, [categories, quizName, quizId]);
 
   async function onFormSubmit(formData: FieldValues) {
-    let index = formData.categories.findIndex((category) =>
+    let invalidQuestionIndex = formData.categories.findIndex((category) =>
       category.questions.some((question) => !isValidQuestion(question)),
     );
 
-    if (index >= 0) {
+    if (invalidQuestionIndex >= 0) {
       showAlert({
         message: 'Some questions are not completed. Either complete them or remove them.',
         type: 'error',
       });
-      setActiveCategory(index);
+      setActiveCategory(invalidQuestionIndex);
 
       return;
     }
 
-    index = formData.categories.findIndex((category) => category.questions.length === 0);
+    invalidQuestionIndex = formData.categories.findIndex((category) => category.questions.length === 0);
 
-    if (index >= 0) {
+    if (invalidQuestionIndex >= 0) {
       showAlert({
         message: 'All categories must have atleast 1 question',
         type: 'error',
       });
-      setActiveCategory(index);
+      setActiveCategory(invalidQuestionIndex);
 
       return;
     }
@@ -249,6 +275,11 @@ export default function ConfigureQuiz({
   const submitQuizForm = () => {
     document.getElementById('btnQuizFormSubmit')?.click();
   };
+
+  if (isLoading) {
+    // Show loading spinner while quiz is downloaded
+    return <PageLoader />;
+  }
 
   return (
     <>
@@ -370,6 +401,7 @@ export default function ConfigureQuiz({
           </form>
         </div>
         <QuestionsListPanel
+          isPreview={isPreview}
           activeCategoryName={activeCategoryName}
           questions={(categories[activeCategoryIndex] as any)?.questions || []}
           activeCategoryIndex={activeCategoryIndex}

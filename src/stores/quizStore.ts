@@ -15,13 +15,17 @@ import {
   updateGame,
   unDraftQuiz,
   isGuestUser,
-  fixQuizData,
   deleteQuizzes,
   publishQuizzes,
   getInCompletedGameByQuizId,
   markGameCompleted,
 } from '../helpers';
+import { getQuizFromCatalog } from '../helpers/importExport';
 import { GameData, PreviewQuiz, Quiz } from '../types';
+
+// We are not storing previewQuiz in store as we don't need to update any UI when this changes
+// Also, it is to avoid errors when we change this value using react form hook
+let previewQuiz = null as PreviewQuiz | null;
 
 export const getQuizStore = (set: Function, get: Function) => ({
   quizzes: [],
@@ -56,7 +60,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   getQuiz: async (quizId: number | string, isPreview: boolean) => {
     if (isPreview) {
-      return get().previewQuiz;
+      return previewQuiz;
     }
 
     const quizIdNum = parseInt(quizId.toString());
@@ -69,7 +73,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
         const data = formatQuizzesData(response)[0];
 
         await saveQuiz(data);
-        return fixQuizData(data);
+        return data;
       } catch (err) {
         return getQuizFromLocalDB(quizIdNum);
       }
@@ -77,9 +81,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   createOrUpdateQuiz: async (data) => {
     if (data.isPreview) {
-      set((state: QuizState) => {
-        state.previewQuiz = data;
-      });
+      previewQuiz = data;
     } else if (isGuestUser()) {
       const response: any = await saveQuizInLocalDB(data);
 
@@ -93,9 +95,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   updateQuizName: async (data) => {
     if (data.isPreview) {
-      set((state: QuizState) => {
-        state.previewQuiz = data;
-      });
+      previewQuiz = data;
     } else if (isGuestUser()) {
       const response: any = await saveQuizInLocalDB(data);
       return response;
@@ -266,11 +266,24 @@ export const getQuizStore = (set: Function, get: Function) => ({
       });
     }
   },
-  previewQuiz: null as PreviewQuiz | null,
-  updatePreviewQuiz: (data: PreviewQuiz | null) => {
-    set((state: QuizState) => {
-      state.previewQuiz = data;
-    });
+  catalogQuizzes: {} as Record<string, PreviewQuiz>,
+  updatePreviewQuiz: (quiz: PreviewQuiz | null) => {
+    previewQuiz = quiz;
+  },
+  saveCatalogQuizForPreview: async (quizName: string) => {
+    let quiz = get().catalogQuizzes[quizName];
+
+    if (!quiz) {
+      quiz = await getQuizFromCatalog(quizName);
+    }
+
+    if (quiz) {
+      previewQuiz = quiz;
+
+      set((state: QuizState) => {
+        state.catalogQuizzes[quizName] = quiz;
+      });
+    }
   },
 });
 
@@ -289,7 +302,7 @@ function getSortedQuizzes(sortBy, data) {
 async function getQuizFromLocalDB(quizId) {
   const response = await getQuiz(quizId);
 
-  return fixQuizData(response);
+  return response;
 }
 
 async function saveQuizInLocalDB(data) {

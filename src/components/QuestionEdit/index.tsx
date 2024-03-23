@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, forwardRef } from 'react';
 import styles from './styles.module.css';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
@@ -13,35 +13,26 @@ interface Props {
   questionNum: number;
   question: any;
   saveQuestion: any;
-  onQuestionChange: Function;
 }
 
-function QuestionEdit({ questionNum, question, saveQuestion, onQuestionChange }: Props, ref) {
-  const formDefaultValues = {
-    ...question,
-    options: question.options.length > 0 ? question.options : getEmptyOptions(2),
-  };
-  const { handleSubmit, setValue, watch, control } = useForm({ defaultValues: formDefaultValues });
+function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref) {
+  const { handleSubmit, setValue, watch, control } = useForm({
+    defaultValues: {
+      ...question,
+      options: question.options.length > 0 ? question.options : getEmptyOptions(2),
+    },
+  });
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'options',
   });
+  const options = watch('options');
   const [optionType, setOptionType] = useState<TabsValue>(
-    question.options.length === 1 && question.options[0].isCorrect ? 'withoutOptions' : 'withOptions',
+    options.length === 1 && options[0].isCorrect ? 'withoutOptions' : 'withOptions',
   );
+  const [focusOnLastOption, setFocusOnLastOption] = useState(false);
   const { showAlert } = useStore();
-  const { points, text, options, questionId } = watch();
   const isWithoutOptions = options.length === 1;
-
-  useEffect(() => {
-    onQuestionChange({
-      questionId,
-      points,
-      text,
-      options,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [points, text, options, questionId]);
 
   function onFormSubmit(data: FieldValues) {
     const validationError = getValidationError();
@@ -80,6 +71,7 @@ function QuestionEdit({ questionNum, question, saveQuestion, onQuestionChange }:
     }, 100);
 
     append(getEmptyOption());
+    setFocusOnLastOption(true);
   }
 
   function getValidationError() {
@@ -206,6 +198,7 @@ function QuestionEdit({ questionNum, question, saveQuestion, onQuestionChange }:
                   className={classNames(styles.optionText)}
                   control={control}
                   isRichText
+                  autoFocus={idx === fields.length - 1 && focusOnLastOption}
                 />
                 <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(idx)}>
                   <Icon width="20" name="trash" />
@@ -239,6 +232,7 @@ function QuestionEdit({ questionNum, question, saveQuestion, onQuestionChange }:
                 control={control}
                 className={classNames(styles.optionText)}
                 isRichText
+                autoFocus
               />
             ))}
           </Tabs.Panel>
