@@ -66,6 +66,18 @@ export const saveQuestion = async (questionData: Question, quizId: string | numb
   await quizzesC.update({ quizId }, quiz);
 };
 
+export const updateQuestionCategory = async (data, quizId: string | number) => {
+  const quiz = (await quizzesC.findOne({ quizId })) as QuizParams;
+  quiz.categories.forEach((category) => {
+    const index = category.questions.findIndex((question) => question.questionId === data.questionId);
+
+    if (index >= 0) {
+      quiz.categories[data.categoryIndex].questions.push(category.questions[index]);
+      category.questions.splice(index);
+    }
+  });
+};
+
 export const getQuizzes = async (userId: number): Promise<Object[]> => {
   const quizzes = await quizzesC.find({ userId }).toArray();
 

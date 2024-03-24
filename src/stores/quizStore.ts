@@ -20,6 +20,7 @@ import {
   publishQuizzes,
   getInCompletedGameByQuizId,
   markGameCompleted,
+  updateQuestionCategory,
 } from '../helpers';
 import { GameData, PreviewQuiz, Quiz } from '../types';
 
@@ -142,6 +143,15 @@ export const getQuizStore = (set: Function, get: Function) => ({
         },
         quizId,
       );
+    }
+  },
+  updateQuestionCategory: async (data, quizId: string | number) => {
+    if (isGuestUser()) {
+      await updateQuestionCategory(data, quizId);
+    } else {
+      await post('question/updatecategory', data);
+
+      await updateQuestionCategory(data, quizId);
     }
   },
   addGame: async (data) => {

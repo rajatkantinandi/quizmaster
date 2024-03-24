@@ -52,7 +52,7 @@ export default function ExpandedView({
               compact
               onClick={(ev) => {
                 ev.stopPropagation();
-                handleMoveQuestions(question);
+                handleMoveQuestions(question.questionId);
               }}>
               Move question
             </Button>

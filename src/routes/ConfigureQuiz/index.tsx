@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router';
 import QuestionsListPanel from './QuestionsListPanel';
 import { track } from '../../helpers/track';
 import { TrackingEvent } from '../../constants';
+import MoveQuestionModal from '../../components/MoveQuestionModal';
 
 export default function ConfigureQuiz({
   quizId,
@@ -25,12 +26,23 @@ export default function ConfigureQuiz({
   const [quizName, setQuizName] = useState('');
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeCategoryName, setActiveCategoryName] = useState('');
-  const [categoryToMove, setCategoryToMove] = useState('');
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null | 'all'>(null);
   const [rearrangeMode, setRearrangeMode] = useState(false);
-  const { createOrUpdateQuiz, getQuiz, sendBeaconPost, showAlert, showModal, updateQuizName, updatePreviewQuiz } =
-    useStore();
+  const [moveQuestionModalState, setMoveQuestionModalState] = useState({
+    show: false,
+    questionId: null,
+  });
+  const {
+    createOrUpdateQuiz,
+    getQuiz,
+    sendBeaconPost,
+    showAlert,
+    showModal,
+    updateQuizName,
+    updatePreviewQuiz,
+    updateQuestionCategory,
+  } = useStore();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -250,35 +262,23 @@ export default function ConfigureQuiz({
     document.getElementById('btnQuizFormSubmit')?.click();
   };
 
-  function handleMoveQuestions(question): void {
-    const otherCategories = categories.filter((category, index) => index !== activeCategoryIndex);
-
-    if (otherCategories.length === 0) {
+  function openMoveQuestionModal(questionId): void {
+    if (categories.length === 1) {
       showAlert({
         message: 'There is no other category to move question.',
         type: 'warning',
       });
     } else {
-      showModal({
-        title: 'Move question',
-        body: (
-          <Radio.Group value={categoryToMove} onChange={setCategoryToMove}>
-            <Radio value="react" label="React" />
-            <Radio value="svelte" label="Svelte" />
-            <Radio value="ng" label="Angular" />
-            <Radio value="vue" label="Vue" />
-            {otherCategories.map((category, idx) => (
-              <Radio value="vue" label="Vue" />
-            ))}
-          </Radio.Group>
-        ),
-        okCallback: () => {
-          console.log(question, categoryToMove);
-        },
-        okText: 'Move',
-        cancelText: 'Cancel',
+      setMoveQuestionModalState({
+        show: true,
+        questionId,
       });
     }
+  }
+
+  function handleMoveQuestions(categoryIndex) {
+    updateQuestionCategory({ categoryIndex, questionId: moveQuestionModalState.questionId }, parseInt(quizId));
+    setMoveQuestionModalState({ show: false, questionId: null });
   }
 
   return (
@@ -414,7 +414,7 @@ export default function ConfigureQuiz({
           setExpandedQuestionIndex={setExpandedQuestionIndex}
           handleRearrangeQuestions={handleRearrangeQuestions}
           rearrangeMode={rearrangeMode}
-          handleMoveQuestions={handleMoveQuestions}
+          handleMoveQuestions={openMoveQuestionModal}
           updateQuizData={() => {
             createOrUpdateQuiz({
               categories,
@@ -458,6 +458,14 @@ export default function ConfigureQuiz({
           </Button>
         </Grid.Col>
       </Grid>
+      {moveQuestionModalState.show && (
+        <MoveQuestionModal
+          categories={categories}
+          activeCategoryIndex={activeCategoryIndex}
+          okCallback={handleMoveQuestions}
+          onClose={() => setMoveQuestionModalState({ show: false, questionId: null })}
+        />
+      )}
     </>
   );
 }
