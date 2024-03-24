@@ -150,7 +150,9 @@ export default function PlayQuiz({ gameId, userName }) {
       }
 
       setIsTimerRunning(false);
-      const isComplete = allQuestionCount === selectedOptionsData.length + 1;
+      const remainingTeamsCount = gameInfo.teams.length - nextTeamIndex;
+      const questionsRemaining = allQuestionCount - (selectedOptionsData.length + 1);
+      const isComplete = questionsRemaining < remainingTeamsCount;
       const winnerIdsCsv = isComplete ? setWinnerIds(clonedTeams) : null;
 
       await updateGame({

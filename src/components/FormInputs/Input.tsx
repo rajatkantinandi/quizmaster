@@ -36,7 +36,7 @@ function Input(
       name={name}
       control={control}
       rules={rules}
-      render={({ field: { onChange, value = '' }, fieldState: { error } }) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={classNames('grow', className)}>
           <TextInput
             onChange={(ev) => {
@@ -45,7 +45,7 @@ function Input(
               onChange(ev);
             }}
             label={label}
-            value={value}
+            value={value || ''}
             size={size}
             autoFocus={autoFocus}
             disabled={disabled}
