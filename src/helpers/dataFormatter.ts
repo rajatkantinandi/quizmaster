@@ -167,26 +167,3 @@ export const formatCategoryInfo = (categories: Category[], categoryIds: (string 
     return acc;
   }, {} as { [key: string]: Category });
 };
-
-export const fixQuizData = (data) => {
-  // Need atleast 2 categories to show when user refreshes the page after adding less than 2 category
-  if (data.categories.length === 0) {
-    data.categories = [getEmptyCategory()];
-  }
-
-  data.categories.forEach((category) => {
-    if (category.questions.length > 0) {
-      category.questions.forEach((question) => {
-        const { options } = question;
-
-        if (options.length === 0) {
-          question.options = getEmptyOptions(2);
-        } else if (!(options.length === 1 && options[0].isCorrect)) {
-          question.options.concat(getEmptyOptions(1));
-        }
-      });
-    }
-  });
-
-  return data;
-};
