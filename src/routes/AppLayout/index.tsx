@@ -18,6 +18,7 @@ import HeaderTabs from '../../components/TopTabs/HeaderTabs';
 import Catalog from '../Catalog';
 import { track } from '../../helpers/track';
 import { TrackingEvent } from '../../constants';
+import Footer from '../Quizzes/Footer';
 // import Cookies from 'js-cookie';
 
 function AppLayout() {
@@ -125,7 +126,8 @@ function AppLayout() {
               )} */}
             </Group>
           </Header>
-        }>
+        }
+        footer={<Footer />}>
         {getTabsView()}
       </AppShell>
     </>

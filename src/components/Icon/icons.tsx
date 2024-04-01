@@ -20,14 +20,17 @@ import { ReactComponent as download} from '../../images/icons/download.svg';
 import { ReactComponent as drag} from '../../images/icons/drag.svg';
 import { ReactComponent as expand} from '../../images/icons/expand.svg';
 import { ReactComponent as feedback} from '../../images/icons/feedback.svg';
+import { ReactComponent as github} from '../../images/icons/github.svg';
 import { ReactComponent as image} from '../../images/icons/image.svg';
 import { ReactComponent as link} from '../../images/icons/link.svg';
 import { ReactComponent as logo} from '../../images/icons/logo.svg';
 import { ReactComponent as markdown} from '../../images/icons/markdown.svg';
 import { ReactComponent as minus} from '../../images/icons/minus.svg';
 import { ReactComponent as orderedList} from '../../images/icons/orderedList.svg';
+import { ReactComponent as partyPopper} from '../../images/icons/partyPopper.svg';
 import { ReactComponent as pause} from '../../images/icons/pause.svg';
 import { ReactComponent as pencil} from '../../images/icons/pencil.svg';
+import { ReactComponent as peopleNearby} from '../../images/icons/peopleNearby.svg';
 import { ReactComponent as play} from '../../images/icons/play.svg';
 import { ReactComponent as playCircle} from '../../images/icons/playCircle.svg';
 import { ReactComponent as plus} from '../../images/icons/plus.svg';
@@ -49,10 +52,12 @@ import { ReactComponent as quiz_9} from '../../images/icons/quiz_9.svg';
 import { ReactComponent as randomTeam} from '../../images/icons/randomTeam.svg';
 import { ReactComponent as rating} from '../../images/icons/rating.svg';
 import { ReactComponent as search} from '../../images/icons/search.svg';
+import { ReactComponent as settingsWheels} from '../../images/icons/settingsWheels.svg';
 import { ReactComponent as sort} from '../../images/icons/sort.svg';
 import { ReactComponent as team} from '../../images/icons/team.svg';
 import { ReactComponent as trash} from '../../images/icons/trash.svg';
 import { ReactComponent as videoCamera} from '../../images/icons/videoCamera.svg';
+import { ReactComponent as youtube} from '../../images/icons/youtube.svg';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const icons = {
@@ -70,14 +75,17 @@ const icons = {
   drag,
   expand,
   feedback,
+  github,
   image,
   link,
   logo,
   markdown,
   minus,
   orderedList,
+  partyPopper,
   pause,
   pencil,
+  peopleNearby,
   play,
   playCircle,
   plus,
@@ -99,10 +107,12 @@ const icons = {
   randomTeam,
   rating,
   search,
+  settingsWheels,
   sort,
   team,
   trash,
   videoCamera,
+  youtube,
 };
 
 export default icons;
