@@ -1,0 +1,36 @@
+.button {
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+  border: none;
+  padding: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0.5px 0.5px 10px -2px var(--shadow-color-light);
+}
+
+.playIcon {
+  position: absolute;
+  transform: translateX(-50%) translateY(-50%);
+  margin-left: 50%;
+  margin-top: 150px;
+  width: 60px;
+  height: 60px;
+  background-color: var(--qm-primary);
+  border-radius: 50%;
+  fill: #fff;
+  padding: 8px;
+  z-index: 2;
+}
+
+.title {
+  position: absolute;
+  background-color: var(--info-text-color);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 10px;
+  transform: translateX(-50%) translateY(-50%);
+  margin-left: 50%;
+  margin-top: 210px;
+  z-index: 2;
+}
