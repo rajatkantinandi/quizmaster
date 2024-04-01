@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStore } from '../../useStore';
+import useVideoInModal from '../../helpers/useVideoInModal';
 import Icon from '../Icon';
 import styles from './styles.module.css';
 
@@ -11,26 +11,7 @@ type Props = {
 };
 
 export default function VideoPlayerOpenInModal({ thumbnailUrl, videoTitle, videoEmbedUrl, aspectRatio }: Props) {
-  const { showModal } = useStore();
-
-  const showVideo = () => {
-    showModal({
-      body: (
-        <iframe
-          title="Video demo"
-          width="100%"
-          height={Math.max(500, window.innerHeight - 300)}
-          allowFullScreen
-          allow="autoplay;"
-          src={videoEmbedUrl}
-          frameBorder="0"
-        />
-      ),
-      okText: '',
-      cancelText: '',
-      size: '70%',
-    });
-  };
+  const showVideo = useVideoInModal({ videoEmbedUrl, videoTitle });
 
   return (
     <button onClick={showVideo} className={styles.button}>
