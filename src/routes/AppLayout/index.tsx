@@ -18,11 +18,17 @@ import HeaderTabs from '../../components/TopTabs/HeaderTabs';
 import Catalog from '../Catalog';
 import { track } from '../../helpers/track';
 import { TrackingEvent } from '../../constants';
+import Footer from '../Quizzes/Footer';
+import useVideoInModal from '../../helpers/useVideoInModal';
 // import Cookies from 'js-cookie';
 
 function AppLayout() {
   const { userName, viewType, id } = useParams();
   const { searchQuiz, quizzes, searchQuery, clearSearch } = useStore();
+  const showDemoVideo = useVideoInModal({
+    videoEmbedUrl: 'https://www.youtube.com/embed/2aGqrP1lpFw?autoplay=1',
+    videoTitle: 'How to use the app',
+  });
 
   function getTabsView() {
     switch (viewType) {
@@ -103,12 +109,23 @@ function AppLayout() {
                   icon={<Icon name="search" width={16} />}
                 />
               )}
-              <Button
-                onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
-                variant="outline"
-                leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}>
-                Share feedback
-              </Button>
+              <div className="flex">
+                {(quizzes.length > 0 || viewType !== 'my-quizzes') && (
+                  <Button
+                    onClick={showDemoVideo}
+                    variant="gradient"
+                    mr={20}
+                    leftIcon={<Icon color="#fff" name="playCircle" width={20} />}>
+                    Watch demo
+                  </Button>
+                )}
+                <Button
+                  onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
+                  variant="outline"
+                  leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}>
+                  Share feedback
+                </Button>
+              </div>
               {/* TODO: make menu visible when we add real users */}
               {/* {userName !== 'guest' && (
                 <Menu shadow="md" width={200}>
@@ -125,7 +142,8 @@ function AppLayout() {
               )} */}
             </Group>
           </Header>
-        }>
+        }
+        footer={<Footer />}>
         {getTabsView()}
       </AppShell>
     </>

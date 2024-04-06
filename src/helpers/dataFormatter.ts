@@ -1,4 +1,3 @@
-import { getEmptyCategory, getEmptyOptions } from './dataCreator';
 import { Category } from '../types';
 
 const quizDataSchema = {
