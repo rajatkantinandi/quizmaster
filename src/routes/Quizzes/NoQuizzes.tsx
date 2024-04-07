@@ -14,8 +14,8 @@ export default function NoQuizzes({ userName }: { userName: string }) {
       <h2 className={styles.welcomeHeader}>Welcome to quizmaster</h2>
       <section className="flexCol flex alignCenter fullWidth">
         <p className={styles.secondaryText}>
-          Quizmaster is a free app that allows users to create and host quizzes, adding an entertaining and
-          knowledgeable element to any event.
+          Quizmaster is a free & open source app that allows users to create and host quizzes, adding an entertaining
+          and knowledgeable element to any event.
         </p>
         <VideoPlayerOpenInModal
           videoEmbedUrl="https://www.youtube.com/embed/2aGqrP1lpFw?autoplay=1"
