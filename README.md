@@ -21,7 +21,11 @@ Hosted via [vercel](https://quizmasterapp.in)
 
 ## Demo video
 
-<iframe title="Watch the demo" width="100%" height="728" allowfullscreen="" allow="autoplay;" src="https://www.youtube.com/embed/2aGqrP1lpFw" frameborder="0"></iframe>
+<div align="left">
+  <a href="https://www.youtube.com/embed/2aGqrP1lpFw" aria-label="Play demo video">
+    <img src="https://i.ytimg.com/vi/2aGqrP1lpFw/hqdefault.jpg" style="width:100%;">
+  </a>
+</div>
 
 ## Upcoming / Roadmap
 
