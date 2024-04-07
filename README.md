@@ -19,6 +19,10 @@ Hosted via [vercel](https://quizmasterapp.in)
 - Form teams by typing in team names or opt for random team generation.
 - Flexibility to modify quiz settings like negative points, time limits, and the display of points while you’re hosting.
 
+## Demo video
+
+<iframe title="Watch the demo" width="100%" height="728" allowfullscreen="" allow="autoplay;" src="https://www.youtube.com/embed/2aGqrP1lpFw" frameborder="0"></iframe>
+
 ## Upcoming / Roadmap
 
 - Follow the issues list for upcoming [features / enhancement](https://github.com/rajatkantinandi/quizmaster/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement)
