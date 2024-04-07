@@ -23,7 +23,7 @@ Hosted via [vercel](https://quizmasterapp.in)
 
 <div align="left">
   <a href="https://www.youtube.com/embed/2aGqrP1lpFw" aria-label="Play demo video">
-    <img src="https://i.ytimg.com/vi/2aGqrP1lpFw/hqdefault.jpg" style="width:100%;">
+    <img src="https://i.ytimg.com/vi/2aGqrP1lpFw/hqdefault.jpg" style="width:100%;aspect-ratio: 16 / 9;object-fit: cover;">
   </a>
 </div>
 
