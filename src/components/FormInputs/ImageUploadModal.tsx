@@ -45,7 +45,7 @@ function ImageUploadModal({ okCallback, hideModal, title }: Props) {
       size="lg">
       <Text size="sm" mb="sm">
         Find images from unsplash, or other image sites. Or, right-click and "Copy Image Address" from a web search or
-        anywhere on the internet.
+        anywhere on the internet and then paste the URL below.
       </Text>
       <form
         onSubmit={(ev) => {
