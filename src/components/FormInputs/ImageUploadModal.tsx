@@ -92,6 +92,7 @@ function ImageUploadModal({ okCallback, hideModal, title }: Props) {
                 setIsInvalid(true);
                 setIsLoading(false);
               }}
+              key={text}
               onLoad={() => {
                 setIsInvalid(false);
                 setDisableOkButton(false);
