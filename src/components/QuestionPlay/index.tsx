@@ -104,17 +104,22 @@ export default function QuestionPlay({
               </Badge>
             </Group>
           )}
+          {!isAttempted && isGameCompleted && (
+            <Badge color="orange" variant="filled">
+              Unanswered
+            </Badge>
+          )}
         </Group>
         <Box my="xs">
           <SanitizedHtml>{text}</SanitizedHtml>
         </Box>
         {isWithoutOptions ? (
           <WithoutOptions
-            isAnswerRevealed={isAnswerRevealed}
+            isAnswerRevealed={isAnswerRevealed || isGameCompleted}
             setIsTimerRunning={setIsTimerRunning}
             options={options}
             setIsAnswerRevealed={setIsAnswerRevealed}
-            isAttempted={isAttempted}
+            isAttempted={isAttempted || isGameCompleted}
             submitResponse={submitResponse}
             continueGame={continueGame}
           />
@@ -124,7 +129,7 @@ export default function QuestionPlay({
             setSelectedChoices={setSelectedChoices}
             selectedOptionIds={selectedOptionIds}
             selectedChoices={selectedChoices}
-            isAttempted={isAttempted}
+            isAttempted={isAttempted || isGameCompleted}
             isTimerRunning={isTimerRunning}
           />
         )}

@@ -74,6 +74,21 @@
   }
 }
 
+.extraQuestionsBanner {
+  background-color: var(--default-button-bg);
+  border-radius: 10px;
+  position: relative;
+}
+
+.closeBtn {
+  background-color: transparent;
+  border: none;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  left: auto;
+}
+
 .colorPallet {
   display: flex;
   align-items: center;
