@@ -22,12 +22,14 @@ const defaultQuizInfo: QuizInfo = {
   isAddedFromCatalog: false,
 };
 
-const defaultSelectedQuestion: IQuestion | null = null;
+function getAllQuestions(categories): IQuestion[] {
+  return categories.reduce((acc, category) => acc.concat(category.questions), [] as IQuestion[]);
+}
 
 export default function PlayQuiz({ gameId, userName }) {
   const [quizInfo, setQuizInfo] = useState(defaultQuizInfo);
   const [gameInfo, setGameInfo] = useState(defaultGameInfo);
-  const [selectedQuestion, setSelectedQuestion] = useState(defaultSelectedQuestion);
+  const [selectedQuestion, setSelectedQuestion] = useState<IQuestion | null>(null);
   const { timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier = 0 } = gameInfo;
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -42,9 +44,11 @@ export default function PlayQuiz({ gameId, userName }) {
   const { showModal, getGameData, updateGame, markGameCompleted } = useStore();
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
-  const { categories } = quizInfo;
+  const { categories, name: quizName, isAddedFromCatalog, quizId } = quizInfo;
   const minQuestionPoint = useMemo(() => getMinOrMaxPoints(categories, Math.min), [categories]);
   const maxQuestionPoint = useMemo(() => getMinOrMaxPoints(categories, Math.max), [categories]);
+  const allQuestions = useMemo(() => getAllQuestions(categories), [categories]);
+  const [showExtraQuestionBanner, setShowExtraQuestionBanner] = useState(false);
 
   function getMinOrMaxPoints(categories, func) {
     return func(
@@ -55,7 +59,7 @@ export default function PlayQuiz({ gameId, userName }) {
   useEffect(() => {
     if (gameId) {
       getGameData(parseInt(gameId)).then((game) => {
-        const { quiz, ...restData } = game;
+        const { quiz, ...gameInfo } = game;
         const quizData = quiz[0];
         let questionNum = 1;
         let allQuestionsCount = 0;
@@ -69,20 +73,20 @@ export default function PlayQuiz({ gameId, userName }) {
         });
 
         setQuizInfo(quizData);
-        setGameInfo(restData);
-        const attemptedQuestionsCount = restData.teams.reduce((count, team) => {
-          count += team.selectedOptions.length;
-          return count;
+        setGameInfo(gameInfo);
+        setShowExtraQuestionBanner(allQuestionsCount % gameInfo.teams.length > 0);
+        const attemptedQuestionsCount = gameInfo.teams.reduce((count, team) => {
+          return count + team.selectedOptions.length;
         }, 0);
-        const isCompleted = allQuestionsCount === attemptedQuestionsCount;
+        const { isComplete } = getNextGameState(gameInfo, allQuestionsCount, attemptedQuestionsCount);
 
-        if (isCompleted) {
-          setWinnerIds(restData.teams);
+        if (isComplete) {
+          setWinnerIds(gameInfo.teams);
         } else if (attemptedQuestionsCount > 0) {
-          setSelectedQuestion(getLastAttemptedQuestion(restData.teams, quizData.categories));
+          setSelectedQuestion(getLastAttemptedQuestion(gameInfo.teams, quizData.categories));
         }
 
-        setIsGameStarted(attemptedQuestionsCount > 0 || !restData.selectionTimeLimit);
+        setIsGameStarted(attemptedQuestionsCount > 0 || !gameInfo.selectionTimeLimit);
         setIsLoading(false);
       });
     }
@@ -101,9 +105,8 @@ export default function PlayQuiz({ gameId, userName }) {
     const lastTeamWhoAttemptedQuestion = teamsWithMaxAttemptedQuestion.pop();
     const lastAttemptedQuestionOption = lastTeamWhoAttemptedQuestion?.selectedOptions.pop();
     const questionId = lastAttemptedQuestionOption?.questionId;
-    const allQuestions = getAllQuestions(categories);
 
-    return allQuestions.find((x) => x.questionId === questionId);
+    return allQuestions.find((x) => x.questionId === questionId) || null;
   }
 
   function getWinners(teams: Team[]) {
@@ -122,13 +125,15 @@ export default function PlayQuiz({ gameId, userName }) {
 
   async function handleSubmitResponse(optionIds: number[]) {
     if (selectedQuestion) {
+      setIsTimerRunning(false);
       const correctOptionIds = selectedQuestion.options.filter((o) => o.isCorrect).map((x) => x.optionId);
       const isCorrect =
         correctOptionIds.length === optionIds.length && !optionIds.some((x) => !correctOptionIds.includes(x));
-      const currentTeamIndex = gameInfo.teams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
-      const nextTeamIndex = (currentTeamIndex + 1) % gameInfo.teams.length;
-      const clonedTeams = gameInfo.teams.map((x) => ({ ...x }));
-      const allQuestionCount = getAllQuestions(quizInfo.categories).length;
+      const { isComplete, clonedTeams, currentTeamIndex, nextTeamIndex } = getNextGameState(
+        gameInfo,
+        allQuestions.length,
+        selectedOptionsData.length + 1,
+      );
 
       if (currentTeamIndex >= 0) {
         const currentTeam = clonedTeams[currentTeamIndex];
@@ -144,46 +149,57 @@ export default function PlayQuiz({ gameId, userName }) {
 
         setGameInfo({
           ...gameInfo,
-          currentTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
+          currentTeamId: isComplete ? 0 : parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
           teams: clonedTeams,
         });
       }
 
-      setIsTimerRunning(false);
-      const remainingTeamsCount = gameInfo.teams.length - nextTeamIndex;
-      const questionsRemaining = allQuestionCount - (selectedOptionsData.length + 1);
-      const isComplete = questionsRemaining < remainingTeamsCount;
-      const winnerIdsCsv = isComplete ? setWinnerIds(clonedTeams) : null;
+      let winnerIdsCsv: string | null = null;
+
+      if (isComplete) {
+        setGameInfo({
+          ...gameInfo,
+          currentTeamId: 0,
+          teams: clonedTeams,
+        });
+        track(TrackingEvent.COMPLETED_GAME, {
+          quizName,
+          isAddedFromCatalog: !!isAddedFromCatalog,
+          numOfCategories: categories.length,
+          numOfQuestions: categories.reduce((sum, curr) => sum + curr.questions.length, 0),
+          scores: clonedTeams.map((x) => x.score),
+          winnerScore: Math.max(...clonedTeams.map((x) => x.score)),
+        });
+        winnerIdsCsv = setWinnerIds(clonedTeams);
+      }
 
       await updateGame({
         gameId: parseInt(`${gameId}`, 10),
         isComplete,
         winnerTeamId: winnerIdsCsv,
-        nextTeamId: parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
+        nextTeamId: isComplete ? 0 : parseInt(`${gameInfo.teams[nextTeamIndex].teamId}`),
         currentTeam: {
-          score: clonedTeams[currentTeamIndex].score,
+          score: currentTeamIndex >= 0 ? clonedTeams[currentTeamIndex].score : 0,
           selectedOptionIds: optionIds,
           questionId: parseInt(selectedQuestion.questionId),
-          teamId: parseInt(`${clonedTeams[currentTeamIndex].teamId}`),
+          teamId: gameInfo.currentTeamId,
         },
       });
-
-      if (isComplete) {
-        track(TrackingEvent.COMPLETED_GAME, {
-          quizName: quizInfo.name,
-          isAddedFromCatalog: !!quizInfo.isAddedFromCatalog,
-          numOfCategories: quizInfo.categories.length,
-          numOfQuestions: quizInfo.categories.reduce((sum, curr) => sum + curr.questions.length, 0),
-          scores: clonedTeams.map((x) => x.score),
-          winnerScore: Math.max(...clonedTeams.map((x) => x.score)),
-        });
-      }
     }
   }
 
-  function selectRandomQuestion() {
-    const allQuestions = getAllQuestions(quizInfo.categories);
+  function getNextGameState(gameInfo, allQuestionCount: number, attemptedQuestionsCount: number) {
+    const clonedTeams = gameInfo.teams.map((x) => ({ ...x }));
+    const currentTeamIndex = clonedTeams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
+    const nextTeamIndex = (currentTeamIndex + 1) % clonedTeams.length;
+    const remainingTeamsCount = clonedTeams.length - nextTeamIndex;
+    const questionsRemaining = allQuestionCount - attemptedQuestionsCount;
+    const isComplete = questionsRemaining < remainingTeamsCount;
 
+    return { isComplete, clonedTeams, currentTeamIndex, nextTeamIndex };
+  }
+
+  function selectRandomQuestion() {
     const allUnattemptedQuestions = allQuestions.filter(
       (q) => !selectedOptionsData.find((x) => x.questionId === q.questionId),
     );
@@ -192,10 +208,6 @@ export default function PlayQuiz({ gameId, userName }) {
       setSelectedQuestion(allUnattemptedQuestions[Math.floor(Math.random() * allUnattemptedQuestions.length)]);
       setIsTimerRunning(true);
     }
-  }
-
-  function getAllQuestions(categories) {
-    return categories.reduce((acc, category) => acc.concat(category.questions), [] as IQuestion[]);
   }
 
   function shouldShowTimer() {
@@ -264,7 +276,7 @@ export default function PlayQuiz({ gameId, userName }) {
   }
 
   function showQuestion(questionId: string | number, categoryId: string | number) {
-    const category = quizInfo.categories.find((x) => x.categoryId === categoryId);
+    const category = categories.find((x) => x.categoryId === categoryId);
 
     if (category) {
       const question = category.questions.find((q) => q.questionId === questionId);
@@ -274,7 +286,7 @@ export default function PlayQuiz({ gameId, userName }) {
     }
   }
 
-  const isGameCompleted = () => getAllQuestions(quizInfo.categories).length === selectedOptionsData.length;
+  const isGameCompleted = () => !!winnerIdsCsv;
 
   function confirmCreateNewGame() {
     showModal({
@@ -283,7 +295,7 @@ export default function PlayQuiz({ gameId, userName }) {
       okCallback: async () => {
         await markGameCompleted(parseInt(gameId));
 
-        navigate(`/configure-game/${userName || 'guest'}/${quizInfo.quizId}`);
+        navigate(`/configure-game/${userName || 'guest'}/${quizId}`);
       },
       cancelText: 'Cancel',
     });
@@ -294,7 +306,7 @@ export default function PlayQuiz({ gameId, userName }) {
       title: '',
       body: (
         <iframe
-          src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?usp=pp_url&entry.1743219011=${quizInfo.name}`}
+          src={`https://docs.google.com/forms/d/e/1FAIpQLSdl3HBQdKbjvI34TqZY-U6UiV4npurnNU_IQZ1OSYksuedU_A/viewform?usp=pp_url&entry.1743219011=${quizName}`}
           width="100%"
           title="Rate this quiz"
           height="700"
@@ -318,15 +330,26 @@ export default function PlayQuiz({ gameId, userName }) {
         <title>Play Quiz</title>
       </Helmet>
       <Group mb="xl">
-        {quizInfo.name && <Title order={2}>Play game for {quizInfo.name}</Title>}
+        {quizName && <Title order={2}>Play game for {quizName}</Title>}
         <Button onClick={confirmCreateNewGame} variant="outline">
           Start a new game
         </Button>
       </Group>
-      {!!winnerIdsCsv && (
+      {isGameCompleted() ? (
         <Title py="md" my="lg" color="white" className={styles.winnerMessage} align="center" order={3}>
           🎉 {getWinnerMessage()}
         </Title>
+      ) : (
+        showExtraQuestionBanner && (
+          <Title py="md" my="md" size="md" className={styles.extraQuestionsBanner} align="center" order={3}>
+            Note: There are {allQuestions.length} questions but {gameInfo.teams.length} teams. So, the game will
+            complete when each team answers equal number of questions with {allQuestions.length % gameInfo.teams.length}{' '}
+            questions remaining.
+            <Button className={styles.closeBtn} variant="outline" onClick={() => setShowExtraQuestionBanner(false)}>
+              &#x2715;
+            </Button>
+          </Title>
+        )
       )}
       <div className="flex grow">
         <div className={classNames('grow', { [styles.categoryGridContainer]: !selectedQuestion })}>
@@ -341,7 +364,7 @@ export default function PlayQuiz({ gameId, userName }) {
                 setSelectedQuestion(null);
                 setIsTimerRunning(true);
               }}
-              isGameCompleted={!!winnerIdsCsv}
+              isGameCompleted={isGameCompleted()}
               selectedOptionIds={getSelectedOptionId(selectedQuestion)}
               negativePointsMultiplier={negativePointsMultiplier}
               minQuestionPoint={minQuestionPoint}
@@ -357,7 +380,7 @@ export default function PlayQuiz({ gameId, userName }) {
                 </Container>
               )}
               <QuestionsList
-                categories={quizInfo.categories}
+                categories={categories}
                 selectedOptionsData={selectedOptionsData}
                 teams={gameInfo.teams}
                 attemptedQuestionIds={attemptedQuestionIds}
@@ -370,7 +393,7 @@ export default function PlayQuiz({ gameId, userName }) {
               />
             </>
           )}
-          {getAllQuestions(quizInfo.categories).length === selectedOptionsData.length && (
+          {isGameCompleted() && (
             <div className="flex justifyCenter">
               {!!selectedQuestion && (
                 <Button size="lg" my="lg" mr="md" variant="outline" onClick={() => setSelectedQuestion(null)}>
@@ -380,7 +403,7 @@ export default function PlayQuiz({ gameId, userName }) {
               <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userName}`)}>
                 Go to home
               </Button>
-              {quizInfo.isAddedFromCatalog && (
+              {isAddedFromCatalog && (
                 <Button
                   size="lg"
                   m="lg"
