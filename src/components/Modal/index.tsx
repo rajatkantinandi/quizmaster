@@ -50,9 +50,11 @@ function Modal({ modalProps }: { modalProps?: ModalState }) {
       opened
       overlayBlur={5}
       title={
-        <Text size="lg" weight="bold">
-          {title}
-        </Text>
+        title ? (
+          <Text size="lg" weight="bold">
+            {title}
+          </Text>
+        ) : null
       }
       size={size}>
       <div className={styles.body}>

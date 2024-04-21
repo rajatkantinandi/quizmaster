@@ -1,21 +1,17 @@
 .quizCardWrapper {
-  width: 23%;
-  height: 348px;
-  padding: 10px 12px;
-  position: relative;
+  width: 20%;
+  min-width: 250px;
+  height: 320px;
+  padding: 10px 16px 16px;
+  margin: 8px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
 }
-
 
 .tileIcon {
   opacity: 0.5;
-}
-
-.truncate2Lines {
-  display: -webkit-box;
-  max-width: 200px;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  padding-top: 10px;
 }
 
 

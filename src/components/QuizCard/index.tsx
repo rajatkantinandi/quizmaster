@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router';
 import Icon, { IconName } from '../../components/Icon';
 import { tilesBGColors, TrackingEvent } from '../../constants';
 import { plural } from '../../helpers';
-import { getQuizFromCatalog } from '../../helpers/importExport';
 import { track } from '../../helpers/track';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
@@ -30,7 +29,7 @@ type Props = {
 
 export default function QuizCard({ quizMetadata, index, userName, handleDownload }: Props) {
   const navigate = useNavigate();
-  const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame, updatePreviewQuiz } = useStore();
+  const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame } = useStore();
   const [isImportingFromCatalog, setIsImportingFromCatalog] = useState(false);
 
   async function handlePlayGame(quizId) {
@@ -52,7 +51,6 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
 
   async function previewQuiz(quizName: string) {
     setIsImportingFromCatalog(true);
-    const quiz = await getQuizFromCatalog(quizName);
     track(TrackingEvent.CATALOG_QUIZ_PREVIEWED, {
       quizName,
       isAddedFromCatalog: true,
@@ -60,52 +58,51 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
       numOfQuestions: quizMetadata.numOfQuestions,
     });
 
-    if (quiz) {
-      updatePreviewQuiz(quiz);
-      navigate(`/configure-quiz/${userName}/preview`);
-    }
+    navigate(`/configure-quiz/${userName}/preview?quizName=${quizName}`);
   }
 
   return (
-    <div className={styles.quizCardWrapper} key={quizMetadata.quizId}>
-      <Card shadow="sm" p="lg" withBorder>
-        <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
-          <Icon
-            name={`quiz_${(index % 13) + 1}` as IconName}
-            width="100%"
-            height={150}
-            color="#ffffff"
-            className={`my-lg ${styles.tileIcon}`}
-          />
-        </Card.Section>
-        <Group position="apart" mt="md">
-          <Text weight="bold" className={styles.truncate2Lines}>
-            {quizMetadata.name}
+    <Card shadow="sm" p="lg" withBorder className={styles.quizCardWrapper}>
+      <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
+        <Icon
+          name={`quiz_${(index % 13) + 1}` as IconName}
+          width="100%"
+          height={120}
+          color="#ffffff"
+          className={`my-lg ${styles.tileIcon}`}
+        />
+      </Card.Section>
+      <div className="flex flexCol spaceBetween grow">
+        <div className="flex flexCol">
+          <Group position="apart" mt="md">
+            <Text weight="bold" className="truncatedTwoLine" title={quizMetadata.name}>
+              {quizMetadata.name}
+            </Text>
+            {quizMetadata.isDraft && (
+              <Badge color="pink" variant="light">
+                Draft
+              </Badge>
+            )}
+            {quizMetadata.isPublished && (
+              <Badge color="green" variant="light">
+                Published
+              </Badge>
+            )}
+          </Group>
+          <Text mb="xs" size="xs" italic>
+            Created on:{' '}
+            {new Date(quizMetadata.createDate).toLocaleDateString('en-GB', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+            })}
           </Text>
-          {quizMetadata.isDraft && (
-            <Badge color="pink" variant="light">
-              Draft
-            </Badge>
-          )}
-          {quizMetadata.isPublished && (
-            <Badge color="green" variant="light">
-              Published
-            </Badge>
-          )}
-        </Group>
-        <Text mb="xs" size="xs" italic>
-          Created on:{' '}
-          {new Date(quizMetadata.createDate).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-          })}
-        </Text>
-        <Text>
-          {plural(quizMetadata.numOfCategories, '%count category', '%count categories')},{' '}
-          {plural(quizMetadata.numOfQuestions, '%count question', '%count questions')}
-        </Text>
-        <Group position="apart" className="mt-lg">
+          <Text>
+            {plural(quizMetadata.numOfCategories, '%count category', '%count categories')},{' '}
+            {plural(quizMetadata.numOfQuestions, '%count question', '%count questions')}
+          </Text>
+        </div>
+        <Group position="apart" className="mt-lg fullWidth">
           {quizMetadata.isInCatalog || quizMetadata.isDraft ? (
             <Button
               color="pink"
@@ -145,30 +142,30 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
             </>
           )}
         </Group>
-        {quizzesSelector.show && !quizMetadata.isInCatalog && (
-          <ActionIcon
-            variant="transparent"
-            className={styles.cardSelectBtn}
-            onClick={() => {
-              if (quizzesSelector.action === 'publish' && quizMetadata.isDraft) {
-                showAlert({
-                  message: 'Quiz in draft state is not allowed to publish.',
-                  type: 'info',
-                });
-              } else {
-                toggleSelectedQuizzes(quizMetadata.quizId);
-              }
-            }}>
-            <Icon
-              name={
-                quizzesSelector.selectedQuizzes.includes(quizMetadata.quizId) ? 'checkmarkFilled' : 'checkmarkOutline'
-              }
-              width={200}
-              height={200}
-            />
-          </ActionIcon>
-        )}
-      </Card>
-    </div>
+      </div>
+      {quizzesSelector.show && !quizMetadata.isInCatalog && (
+        <ActionIcon
+          variant="transparent"
+          className={styles.cardSelectBtn}
+          onClick={() => {
+            if (quizzesSelector.action === 'publish' && quizMetadata.isDraft) {
+              showAlert({
+                message: 'Quiz in draft state is not allowed to publish.',
+                type: 'info',
+              });
+            } else {
+              toggleSelectedQuizzes(quizMetadata.quizId);
+            }
+          }}>
+          <Icon
+            name={
+              quizzesSelector.selectedQuizzes.includes(quizMetadata.quizId) ? 'checkmarkFilled' : 'checkmarkOutline'
+            }
+            width={200}
+            height={200}
+          />
+        </ActionIcon>
+      )}
+    </Card>
   );
 }

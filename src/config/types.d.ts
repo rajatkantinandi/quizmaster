@@ -1,5 +1,5 @@
 export interface IConfig {
-  env: string;
+  env: 'local' | 'staging' | 'production';
   productName: string;
   productUrl: string;
 }

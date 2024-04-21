@@ -1,6 +1,6 @@
 import { Button, Group, Select } from '@mantine/core';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Icon from '../../components/Icon';
 import ImportQuizzesButton from '../../components/ImportQuizzesButton';
 import { Quiz } from '../../types';
@@ -11,9 +11,16 @@ type Props = {
   quizzes: Quiz[];
 };
 
+const DEFAULT_SORT_BY = 'recency';
+
 export default function ActionBar({ quizzes }: Props) {
   const { setQuizzesSelectorState, showModal, deleteQuizzes, sortQuizzes } = useStore();
-  const [sortBy, setSortBy] = useState('recency');
+  const [sortBy, setSortBy] = useState(DEFAULT_SORT_BY);
+
+  useEffect(() => {
+    sortQuizzes(sortBy);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortBy, quizzes]);
 
   function handleDeleteQuizzes() {
     setQuizzesSelectorState({
@@ -144,10 +151,7 @@ export default function ActionBar({ quizzes }: Props) {
       <Select
         placeholder="Sort by"
         className={styles.sort}
-        onChange={(val) => {
-          setSortBy(val || 'recency');
-          sortQuizzes(val || 'recency');
-        }}
+        onChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}
         data={[
           { value: 'recency', label: 'Recently Updated' },
           { value: 'createDate', label: 'Create Date' },

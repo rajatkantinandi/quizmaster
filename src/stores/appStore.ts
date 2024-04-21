@@ -86,7 +86,7 @@ export const getAppStore = (set: Function, get: Function) => ({
 });
 
 export interface ModalState {
-  title: string;
+  title?: string;
   body: React.ReactNode;
   okText?: string;
   okCallback?: Function;

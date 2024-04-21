@@ -47,10 +47,95 @@
 }
 
 .welcomeHeader {
-  font-size: 34px;
-  margin-bottom: 15px;
+  font-size: 32px;
+  margin-bottom: 10px;
+  margin-top: 15px;
+  color: var(--qm-primary);
 }
 
 .secondaryText {
+  font-size: 22px;
+  margin-bottom: 30px;
+  margin-top: 0;
+  max-width: 800px;
+  text-align: center;
+}
+
+.secondaryText2 {
   font-size: 20px;
+  margin-bottom: 10px;
+  color: var(--gray-dark);
+}
+
+.keyFeatures {
+  display: flex;
+  flex-direction: row;
+  max-width: 1200px;
+  padding: 20px;
+}
+
+.keyFeatures .feature {
+  padding: 0 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.keyFeatures .feature h4 {
+  font-size: 22px;
+  font-family: var(--body-font);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.keyFeatures .feature li {
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: var(--gray-dark);
+  font-family: var(--body-font);
+}
+
+.keyFeatures .feature svg {
+  align-self: center;
+}
+
+.keyFeatures .feature:nth-of-type(1) h4 {
+  color: var(--primary-button-bg-hover);
+}
+
+.keyFeatures .feature:nth-of-type(1) svg {
+  fill: var(--primary-button-bg-hover);
+}
+
+.keyFeatures .feature:nth-of-type(2) h4 {
+  color: #1971c2;
+}
+
+.keyFeatures .feature:nth-of-type(2) svg {
+  fill: #1971c2;
+}
+
+.keyFeatures .feature:nth-of-type(3) h4 {
+  color: var(--quiz-card-bg-1);
+}
+
+.keyFeatures .feature:nth-of-type(3) svg {
+  fill: var(--quiz-card-bg-1);
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  font-family: var(--comfortaa);
+}
+
+.footer a {
+  padding: 0 10px;
+}
+
+.followUs {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
 }

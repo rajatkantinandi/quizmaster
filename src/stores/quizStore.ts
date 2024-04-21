@@ -15,14 +15,18 @@ import {
   updateGame,
   unDraftQuiz,
   isGuestUser,
-  fixQuizData,
   deleteQuizzes,
   publishQuizzes,
   getInCompletedGameByQuizId,
   markGameCompleted,
   updateQuestionCategory,
 } from '../helpers';
+import { getQuizFromCatalog } from '../helpers/importExport';
 import { GameData, PreviewQuiz, Quiz } from '../types';
+
+// We are not storing previewQuiz in store as we don't need to update any UI when this changes
+// Also, it is to avoid errors when we change this value using react form hook
+let previewQuiz = null as PreviewQuiz | null;
 
 export const getQuizStore = (set: Function, get: Function) => ({
   quizzes: [],
@@ -57,7 +61,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   getQuiz: async (quizId: number | string, isPreview: boolean) => {
     if (isPreview) {
-      return get().previewQuiz;
+      return previewQuiz;
     }
 
     const quizIdNum = parseInt(quizId.toString());
@@ -70,7 +74,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
         const data = formatQuizzesData(response)[0];
 
         await saveQuiz(data);
-        return fixQuizData(data);
+        return data;
       } catch (err) {
         return getQuizFromLocalDB(quizIdNum);
       }
@@ -78,9 +82,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   createOrUpdateQuiz: async (data) => {
     if (data.isPreview) {
-      set((state: QuizState) => {
-        state.previewQuiz = data;
-      });
+      previewQuiz = data;
     } else if (isGuestUser()) {
       const response: any = await saveQuizInLocalDB(data);
 
@@ -94,9 +96,7 @@ export const getQuizStore = (set: Function, get: Function) => ({
   },
   updateQuizName: async (data) => {
     if (data.isPreview) {
-      set((state: QuizState) => {
-        state.previewQuiz = data;
-      });
+      previewQuiz = data;
     } else if (isGuestUser()) {
       const response: any = await saveQuizInLocalDB(data);
       return response;
@@ -251,6 +251,11 @@ export const getQuizStore = (set: Function, get: Function) => ({
       state.quizzes = getSortedQuizzes(sortBy, state.quizzes);
     });
   },
+  sortCatalogQuizzes: (sortBy) => {
+    set((state: QuizState) => {
+      state.catalogList = getSortedQuizzes(sortBy, state.catalogList || []);
+    });
+  },
   getInCompletedGame: async (quizId) => {
     if (isGuestUser()) {
       const response = await getInCompletedGameByQuizId(quizId);
@@ -271,30 +276,43 @@ export const getQuizStore = (set: Function, get: Function) => ({
       });
     }
   },
-  previewQuiz: null as PreviewQuiz | null,
-  updatePreviewQuiz: (data: PreviewQuiz | null) => {
-    set((state: QuizState) => {
-      state.previewQuiz = data;
-    });
+  catalogQuizzes: {} as Record<string, PreviewQuiz>,
+  updatePreviewQuiz: (quiz: PreviewQuiz | null) => {
+    previewQuiz = quiz;
+  },
+  saveCatalogQuizForPreview: async (quizName: string) => {
+    let quiz = get().catalogQuizzes[quizName];
+
+    if (!quiz) {
+      quiz = await getQuizFromCatalog(quizName);
+    }
+
+    if (quiz) {
+      previewQuiz = quiz;
+
+      set((state: QuizState) => {
+        state.catalogQuizzes[quizName] = quiz;
+      });
+    }
   },
 });
 
 function getSortedQuizzes(sortBy, data) {
   switch (sortBy) {
     case 'createDate':
-      return data.sort((quiz1, quiz2) => new Date(quiz2.createDate).getTime() - new Date(quiz1.createDate).getTime());
+      return data.sort((quiz1, quiz2) => new Date(quiz2.createDate).valueOf() - new Date(quiz1.createDate).valueOf());
     case 'name':
       return data.sort((quiz1, quiz2) => quiz1.name.localeCompare(quiz2.name));
     case 'recency':
     default:
-      return data.sort((quiz1, quiz2) => new Date(quiz2.updateDate).getTime() - new Date(quiz1.updateDate).getTime());
+      return data.sort((quiz1, quiz2) => new Date(quiz2.updateDate).valueOf() - new Date(quiz1.updateDate).valueOf());
   }
 }
 
 async function getQuizFromLocalDB(quizId) {
   const response = await getQuiz(quizId);
 
-  return fixQuizData(response);
+  return response;
 }
 
 async function saveQuizInLocalDB(data) {
