@@ -54,7 +54,7 @@ export default function ConfigureQuiz({
     watch,
     control,
   } = useForm();
-  const { append, remove } = useFieldArray({
+  const { append, remove, update } = useFieldArray({
     control,
     name: 'categories',
   });
@@ -296,7 +296,32 @@ export default function ConfigureQuiz({
   }
 
   function handleMoveQuestions(categoryIndex) {
-    updateQuestionCategory({ categoryIndex, questionId: moveQuestionModalState.questionId }, parseInt(quizId));
+    if (!isPreview) {
+      updateQuestionCategory({ categoryIndex, questionId: moveQuestionModalState.questionId }, parseInt(quizId));
+    }
+
+    let movingQuestion;
+    let movingFromCategoryIndex = 0;
+    for (const category of categories) {
+      movingQuestion = category.questions.find((question) => question.questionId === moveQuestionModalState.questionId);
+
+      if (movingQuestion) {
+        break;
+      } else {
+        movingFromCategoryIndex++;
+      }
+    }
+
+    update(categoryIndex, {
+      ...categories[categoryIndex],
+      questions: [...categories[categoryIndex].questions, movingQuestion],
+    });
+    update(movingFromCategoryIndex, {
+      ...categories[movingFromCategoryIndex],
+      questions: categories[movingFromCategoryIndex].questions.filter(
+        (x) => x.questionId !== moveQuestionModalState.questionId,
+      ),
+    });
     setMoveQuestionModalState({ show: false, questionId: null });
   }
 

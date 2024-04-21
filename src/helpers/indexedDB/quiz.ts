@@ -72,10 +72,16 @@ export const updateQuestionCategory = async (data, quizId: string | number) => {
     const index = category.questions.findIndex((question) => question.questionId === data.questionId);
 
     if (index >= 0) {
+      if (!quiz.categories[data.categoryIndex].questions) {
+        quiz.categories[data.categoryIndex].questions = [];
+      }
+
       quiz.categories[data.categoryIndex].questions.push(category.questions[index]);
       category.questions.splice(index);
     }
   });
+
+  await quizzesC.update({ quizId }, quiz);
 };
 
 export const getQuizzes = async (userId: number): Promise<Object[]> => {
