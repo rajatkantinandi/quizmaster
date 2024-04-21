@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router';
 import QuestionsListPanel from './QuestionsListPanel';
 import { track } from '../../helpers/track';
 import { TrackingEvent } from '../../constants';
+import MoveQuestionModal from '../../components/MoveQuestionModal';
 import { useSearchParams } from 'react-router-dom';
 import PageLoader from '../../components/PageLoader';
 
@@ -30,6 +31,10 @@ export default function ConfigureQuiz({
   const [activeQuestionIndex, setActiveQuestionIndex] = useState<number | null>(null);
   const [expandedQuestionIndex, setExpandedQuestionIndex] = useState<number | null | 'all'>(null);
   const [rearrangeMode, setRearrangeMode] = useState(false);
+  const [moveQuestionModalState, setMoveQuestionModalState] = useState({
+    show: false,
+    questionId: null,
+  });
   const {
     createOrUpdateQuiz,
     getQuiz,
@@ -38,6 +43,7 @@ export default function ConfigureQuiz({
     showModal,
     updateQuizName,
     updatePreviewQuiz,
+    updateQuestionCategory,
     saveCatalogQuizForPreview,
   } = useStore();
   const navigate = useNavigate();
@@ -48,7 +54,7 @@ export default function ConfigureQuiz({
     watch,
     control,
   } = useForm();
-  const { append, remove } = useFieldArray({
+  const { append, remove, update } = useFieldArray({
     control,
     name: 'categories',
   });
@@ -275,6 +281,50 @@ export default function ConfigureQuiz({
     document.getElementById('btnQuizFormSubmit')?.click();
   };
 
+  function openMoveQuestionModal(questionId): void {
+    if (categories.length === 1) {
+      showAlert({
+        message: 'There is no other category to move question.',
+        type: 'warning',
+      });
+    } else {
+      setMoveQuestionModalState({
+        show: true,
+        questionId,
+      });
+    }
+  }
+
+  function handleMoveQuestions(categoryIndex) {
+    if (!isPreview) {
+      updateQuestionCategory({ categoryIndex, questionId: moveQuestionModalState.questionId }, parseInt(quizId));
+    }
+
+    let movingQuestion;
+    let movingFromCategoryIndex = 0;
+    for (const category of categories) {
+      movingQuestion = category.questions.find((question) => question.questionId === moveQuestionModalState.questionId);
+
+      if (movingQuestion) {
+        break;
+      } else {
+        movingFromCategoryIndex++;
+      }
+    }
+
+    update(categoryIndex, {
+      ...categories[categoryIndex],
+      questions: [...categories[categoryIndex].questions, movingQuestion],
+    });
+    update(movingFromCategoryIndex, {
+      ...categories[movingFromCategoryIndex],
+      questions: categories[movingFromCategoryIndex].questions.filter(
+        (x) => x.questionId !== moveQuestionModalState.questionId,
+      ),
+    });
+    setMoveQuestionModalState({ show: false, questionId: null });
+  }
+
   if (isLoading) {
     // Show loading spinner while quiz is downloaded
     return <PageLoader />;
@@ -414,6 +464,7 @@ export default function ConfigureQuiz({
           setExpandedQuestionIndex={setExpandedQuestionIndex}
           handleRearrangeQuestions={handleRearrangeQuestions}
           rearrangeMode={rearrangeMode}
+          handleMoveQuestions={openMoveQuestionModal}
           updateQuizData={() => {
             createOrUpdateQuiz({
               categories,
@@ -457,6 +508,14 @@ export default function ConfigureQuiz({
           </Button>
         </Grid.Col>
       </Grid>
+      {moveQuestionModalState.show && (
+        <MoveQuestionModal
+          categories={categories}
+          activeCategoryIndex={activeCategoryIndex}
+          okCallback={handleMoveQuestions}
+          onClose={() => setMoveQuestionModalState({ show: false, questionId: null })}
+        />
+      )}
     </>
   );
 }

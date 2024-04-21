@@ -11,6 +11,7 @@ interface Props {
   setActiveQuestion: any;
   deleteQuestion: any;
   setExpandedQuestionIndex: Function;
+  handleMoveQuestions: Function;
 }
 
 export default function ExpandedView({
@@ -20,6 +21,7 @@ export default function ExpandedView({
   setActiveQuestion,
   deleteQuestion,
   setExpandedQuestionIndex,
+  handleMoveQuestions,
 }: Props) {
   const isWithoutOptions = question.options.length === 1;
   const getQuestionTextStyles = (theme, isCorrect = false) =>
@@ -44,10 +46,20 @@ export default function ExpandedView({
             )}
           </Group>
           <Group className="noShrink">
+            <Button
+              variant="light"
+              radius="xl"
+              compact
+              onClick={(ev) => {
+                ev.stopPropagation();
+                handleMoveQuestions(question.questionId);
+              }}>
+              Move question
+            </Button>
             <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
               Delete
             </Button>
-            <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
+            <ActionIcon variant="transparent" title="Edit" onClick={(ev) => setActiveQuestion}>
               <Icon name="pencil" width={22} />
             </ActionIcon>
             <ActionIcon variant="transparent">

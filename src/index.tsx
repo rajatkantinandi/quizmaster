@@ -16,13 +16,15 @@ import { getDeviceId } from './helpers/device';
 import config from './config';
 
 try {
-  mixpanel.init(process.env.REACT_APP_MIXPANEL_API_KEY, {
-    debug: config.env === 'local',
-    track_pageview: false,
-    persistence: 'localStorage',
-    ignore_dnt: true,
-  });
-  mixpanel.identify(getDeviceId());
+  if (config.env !== 'local') {
+    mixpanel.init(process.env.REACT_APP_MIXPANEL_API_KEY, {
+      debug: false,
+      track_pageview: false,
+      persistence: 'localStorage',
+      ignore_dnt: true,
+    });
+    mixpanel.identify(getDeviceId());
+  }
 } catch (e: any) {
   console.log(e.message);
 }

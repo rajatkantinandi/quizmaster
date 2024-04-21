@@ -26,6 +26,7 @@ type Props = {
   updateQuizData: () => void;
   handleRearrangeQuestions: () => void;
   rearrangeMode: boolean;
+  handleMoveQuestions: Function;
   isPreview: boolean;
 };
 
@@ -44,6 +45,7 @@ export default function QuestionsListPanel({
   updateQuizData,
   handleRearrangeQuestions,
   rearrangeMode,
+  handleMoveQuestions,
   isPreview,
 }: Props) {
   const {
@@ -202,6 +204,7 @@ export default function QuestionsListPanel({
             isExpanded={expandedQuestionIndex === 'all' || expandedQuestionIndex === idx}
             setExpandedQuestionIndex={setExpandedQuestionIndex}
             rearrangeMode={rearrangeMode}
+            handleMoveQuestions={handleMoveQuestions}
           />
         ))}
       </ReactSortable>
