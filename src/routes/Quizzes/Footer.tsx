@@ -17,28 +17,35 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               title="Subscribe us on Youtube">
-              <Icon name="youtube" width={30} height={30} style={{ marginTop: 5 }} />
+              <Icon name="youtube" width={30} height={30} />
             </a>
             <a
               href="https://github.com/rajatkantinandi/quizmaster"
               target="_blank"
               rel="noopener noreferrer"
               title="Star our repo on GitHub">
-              <Icon name="github" width={28} height={28} style={{ marginTop: 5 }} />
+              <Icon name="github" width={28} height={28} />
+            </a>
+            <a
+              href="https://twitter.com/quizmasterappin"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Follow us on X">
+              <Icon name="twitter" width={28} height={28} />
             </a>
             <a
               href="https://www.facebook.com/people/Quizmasterappin/61558566877158/"
               target="_blank"
               rel="noopener noreferrer"
               title="Follow us on Facebook">
-              <Icon name="facebook" width={28} height={28} style={{ marginTop: 5 }} />
+              <Icon name="facebook" width={28} height={28} />
             </a>
             <a
               href="https://www.instagram.com/quizmasterapp/"
               target="_blank"
               rel="noopener noreferrer"
               title="Follow us on Instagram">
-              <Icon name="instagram" width={28} height={28} style={{ marginTop: 5 }} />
+              <Icon name="instagram" width={28} height={28} />
             </a>
             <a
               href="https://www.producthunt.com/posts/quizmaster-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-quizmaster&#0045;2"
