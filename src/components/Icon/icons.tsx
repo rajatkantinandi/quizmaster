@@ -19,9 +19,11 @@ import { ReactComponent as done} from '../../images/icons/done.svg';
 import { ReactComponent as download} from '../../images/icons/download.svg';
 import { ReactComponent as drag} from '../../images/icons/drag.svg';
 import { ReactComponent as expand} from '../../images/icons/expand.svg';
+import { ReactComponent as facebook} from '../../images/icons/facebook.svg';
 import { ReactComponent as feedback} from '../../images/icons/feedback.svg';
 import { ReactComponent as github} from '../../images/icons/github.svg';
 import { ReactComponent as image} from '../../images/icons/image.svg';
+import { ReactComponent as instagram} from '../../images/icons/instagram.svg';
 import { ReactComponent as link} from '../../images/icons/link.svg';
 import { ReactComponent as logo} from '../../images/icons/logo.svg';
 import { ReactComponent as markdown} from '../../images/icons/markdown.svg';
@@ -74,9 +76,11 @@ const icons = {
   download,
   drag,
   expand,
+  facebook,
   feedback,
   github,
   image,
+  instagram,
   link,
   logo,
   markdown,
