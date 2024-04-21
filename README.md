@@ -1,21 +1,31 @@
 # Quizmaster
 
-> Edit & create quizzes with different categories & points, share screen and host a quiz.
+> Quizmaster is a free & open source app that allows users to create and host quizzes, adding an entertaining and knowledgeable element to any event.
 
-Hosted via [vercel](https://quizmaster.vercel.app/)
+Hosted via [vercel](https://quizmasterapp.in)
 
 ## Features
 
 - All data is stored offline in indexedDB.
-- Multiple local users can signup or continue as a guest & create quizzes.
-- One user can create multiple quizzes.
+- You can create custom quizzes with various categories and questions.
+- Or you can use a quiz from our curated catalog. (Files in the /data folder).
+- You can download quizzes & share them with your friends or keep them as a backup.
+- Later if you change your device or browser, you can import those downloaded quizzes. Or your friend can import quizzes you share with them and use them.
 - Editing quizzes are saved as `draft` automatically once you save a question.
-- The quiz editor supports github style `markdown` format.
+- The quiz editor supports `markdown` formatting or formatting like a Rich text editor.
 - Host the quiz after creating.
 - Can host the same quiz multiple times.
 - While playing, progress is saved locally & next time loaded from there.
-- Grid - Question - Scorecard.
-- Optional Timer for answering & choosing questions
+- Form teams by typing in team names or opt for random team generation.
+- Flexibility to modify quiz settings like negative points, time limits, and the display of points while you’re hosting.
+
+## Demo video
+
+<div align="left">
+  <a href="https://www.youtube.com/embed/2aGqrP1lpFw" aria-label="Play demo video" target="_blank">
+    <img src="https://i.ytimg.com/vi/2aGqrP1lpFw/hqdefault.jpg">
+  </a>
+</div>
 
 ## Upcoming / Roadmap
 
@@ -24,7 +34,9 @@ Hosted via [vercel](https://quizmaster.vercel.app/)
 
 ## Contributing
 
-- Clone repo:
+- Fork the repo.
+
+- Then clone your version on your computer:
 
 ```bash
 git clone git@github.com:rajatkantinandi/quizmaster.git

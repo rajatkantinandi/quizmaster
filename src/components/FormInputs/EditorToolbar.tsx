@@ -1,9 +1,10 @@
 import { ChainedCommands, Editor } from '@tiptap/react';
-import React, { useCallback, useMemo } from 'react';
-import { imageContentTypes, isValidUrl } from '../../helpers/url';
+import React, { useCallback, useMemo, useState } from 'react';
+import { isValidUrl } from '../../helpers/url';
 import { getEmbedUrlFromURL } from '../../helpers/video';
 import { useStore } from '../../useStore';
 import Icon from '../Icon';
+import ImageUploadModal from './ImageUploadModal';
 
 type Props = {
   editor: Editor;
@@ -22,6 +23,7 @@ type ButtonParams = {
 export default function EditorToolbar({ editor, isFocussed }: Props) {
   const showPrompt = useStore.use.showPrompt();
   const showAlert = useStore.use.showAlert();
+  const [showImageUploadModal, setShowImageUploadModal] = useState(false);
   const handleLink = useCallback(() => {
     const previousUrl = editor.getAttributes('link').href;
 
@@ -52,39 +54,7 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [editor]);
 
-  const handleImage = useCallback(() => {
-    // TODO: add ability to upload image
-    showPrompt({
-      title: 'Enter a valid image URL:',
-      textInputProps: { placeholder: 'https://example.com/image.png' },
-      okText: 'Save',
-      closeOnOkClick: false,
-      okCallback: async (url) => {
-        if (url) {
-          try {
-            const response = await fetch(url, { method: 'HEAD' });
-
-            if (response.ok && imageContentTypes.includes(response.headers.get('content-type') || '')) {
-              // update link
-              editor.chain().focus().setImage({ src: url }).run();
-              showPrompt(null);
-            } else {
-              showAlert({
-                message: 'Invalid image URL',
-                type: 'warning',
-              });
-            }
-          } catch (err) {
-            showAlert({
-              message: 'Not able to load the image',
-              type: 'error',
-            });
-          }
-        }
-      },
-    });
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [editor]);
+  const handleImage = () => setShowImageUploadModal(true);
 
   const handleIframe = useCallback(() => {
     showPrompt({
@@ -171,15 +141,27 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
           children: 'H4',
         },
       ] as ButtonParams[],
-    [handleLink, handleImage, handleIframe],
+    [handleLink, handleIframe],
   );
 
   return (
-    <div className="editor-toolbar" style={{ opacity: isFocussed ? 1 : 0.3 }}>
-      {BUTTONS.map((props) => (
-        <EditorButton editor={editor} {...props} key={props.title || props.actionName} />
-      ))}
-    </div>
+    <>
+      <div className="editor-toolbar" style={{ opacity: isFocussed ? 1 : 0.3 }}>
+        {BUTTONS.map((props) => (
+          <EditorButton editor={editor} {...props} key={props.title || props.actionName} />
+        ))}
+      </div>
+      {showImageUploadModal && (
+        <ImageUploadModal
+          hideModal={() => setShowImageUploadModal(false)}
+          okCallback={(url) => {
+            // update link
+            editor.chain().focus().setImage({ src: url }).run();
+          }}
+          title="Add an image"
+        />
+      )}
+    </>
   );
 }
 

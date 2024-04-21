@@ -26,6 +26,7 @@ type Props = {
   updateQuizData: () => void;
   handleRearrangeQuestions: () => void;
   rearrangeMode: boolean;
+  isPreview: boolean;
 };
 
 export default function QuestionsListPanel({
@@ -43,8 +44,14 @@ export default function QuestionsListPanel({
   updateQuizData,
   handleRearrangeQuestions,
   rearrangeMode,
+  isPreview,
 }: Props) {
-  const { append, remove, update, replace } = useFieldArray({
+  const {
+    append,
+    remove,
+    update: updateQuestionData,
+    replace,
+  } = useFieldArray({
     control,
     name: `categories[${activeCategoryIndex}].questions`,
   });
@@ -101,10 +108,10 @@ export default function QuestionsListPanel({
 
   const resetQuestion = () => {
     if (activeQuestionIndex !== null && activeQuestionIndex >= 0) {
-      getQuiz(quizId, false).then((quiz: Quiz) => {
+      getQuiz(quizId, isPreview).then((quiz: Quiz) => {
         const originalQuestion = (quiz.categories[activeCategoryIndex]?.questions || [])[activeQuestionIndex];
 
-        if (originalQuestion) {
+        if (originalQuestion && originalQuestion.categoryId) {
           updateQuestionData(activeQuestionIndex, originalQuestion);
         } else {
           remove(activeQuestionIndex);
@@ -114,10 +121,6 @@ export default function QuestionsListPanel({
       });
     }
   };
-
-  function updateQuestionData(index, data) {
-    update(index, data);
-  }
 
   async function handleSaveQuestion(idx, question) {
     updateQuestionData(idx, question);
@@ -211,7 +214,6 @@ export default function QuestionsListPanel({
                 questionNum={activeQuestionIndex + 1}
                 question={questions[activeQuestionIndex]}
                 saveQuestion={(data) => handleSaveQuestion(activeQuestionIndex, data)}
-                onQuestionChange={(data) => updateQuestionData(activeQuestionIndex, data)}
                 ref={questionEditRef}
               />
             ),

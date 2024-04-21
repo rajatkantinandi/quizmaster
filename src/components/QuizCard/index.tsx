@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router';
 import Icon, { IconName } from '../../components/Icon';
 import { tilesBGColors, TrackingEvent } from '../../constants';
 import { plural } from '../../helpers';
-import { getQuizFromCatalog } from '../../helpers/importExport';
 import { track } from '../../helpers/track';
 import { useStore } from '../../useStore';
 import styles from './styles.module.css';
@@ -30,7 +29,7 @@ type Props = {
 
 export default function QuizCard({ quizMetadata, index, userName, handleDownload }: Props) {
   const navigate = useNavigate();
-  const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame, updatePreviewQuiz } = useStore();
+  const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame } = useStore();
   const [isImportingFromCatalog, setIsImportingFromCatalog] = useState(false);
 
   async function handlePlayGame(quizId) {
@@ -52,7 +51,6 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
 
   async function previewQuiz(quizName: string) {
     setIsImportingFromCatalog(true);
-    const quiz = await getQuizFromCatalog(quizName);
     track(TrackingEvent.CATALOG_QUIZ_PREVIEWED, {
       quizName,
       isAddedFromCatalog: true,
@@ -60,10 +58,7 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
       numOfQuestions: quizMetadata.numOfQuestions,
     });
 
-    if (quiz) {
-      updatePreviewQuiz(quiz);
-      navigate(`/configure-quiz/${userName}/preview`);
-    }
+    navigate(`/configure-quiz/${userName}/preview?quizName=${quizName}`);
   }
 
   return (
