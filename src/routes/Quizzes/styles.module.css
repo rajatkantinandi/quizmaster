@@ -132,6 +132,8 @@
 
 .footer a {
   padding: 0 10px;
+  display: flex;
+  align-items: center;
 }
 
 .followUs {
@@ -139,4 +141,5 @@
   align-items: center;
   font-size: 18px;
   margin-top: 10px;
+  margin-bottom: 10px;
 }

@@ -58,6 +58,7 @@ import { ReactComponent as settingsWheels} from '../../images/icons/settingsWhee
 import { ReactComponent as sort} from '../../images/icons/sort.svg';
 import { ReactComponent as team} from '../../images/icons/team.svg';
 import { ReactComponent as trash} from '../../images/icons/trash.svg';
+import { ReactComponent as twitter} from '../../images/icons/twitter.svg';
 import { ReactComponent as videoCamera} from '../../images/icons/videoCamera.svg';
 import { ReactComponent as youtube} from '../../images/icons/youtube.svg';
 
@@ -115,6 +116,7 @@ const icons = {
   sort,
   team,
   trash,
+  twitter,
   videoCamera,
   youtube,
 };
