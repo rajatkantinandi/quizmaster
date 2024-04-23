@@ -8,5 +8,5 @@ export const track = (eventName: TrackingEvent, data?: Record<string, any>) => {
     return;
   }
 
-  mixpanel.track(eventName, { ...getDeviceDetails(), ...(data || {}) });
+  mixpanel.track(eventName, { ...getDeviceDetails(), env: config.env, ...(data || {}) });
 };
