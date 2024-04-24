@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet';
 import { Grid } from '@mantine/core';
 import AddOrUpdateQuizName from '../../components/AddOrUpdateQuizName';
 import styles from './styles.module.css';
+import { getEmptyCategory } from '../../helpers';
 
 export default function ConfigureQuiz({ userName = 'guest' }) {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function ConfigureQuiz({ userName = 'guest' }) {
   async function handleAddQuizName(formData: FieldValues) {
     const data: any = {
       name: formData.name,
-      categories: [],
+      categories: [getEmptyCategory()],
       isDraft: true,
     };
     const resp = await createOrUpdateQuiz(data);

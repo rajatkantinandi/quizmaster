@@ -32,7 +32,7 @@ export const appPaths = [
   '/play-game/:userName/:gameId',
 ];
 
-export const MIN_NUM_OF_CATEGORIES = 2;
+export const MIN_NUM_OF_OPTIONS = 2;
 
 export const DEFAULT_NEW_QUESTION_POINTS = 100;
 
