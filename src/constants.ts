@@ -48,4 +48,6 @@ export enum TrackingEvent {
   USED_RANDOM_TEAM_GENERATOR = 'usedRandomTeamGenerator',
   COMPLETED_GAME = 'completedGame',
   SEARCH = 'search',
+  VIDEO_PLAYED = 'videoPlayed',
+  VIDEO_CLOSED = 'videoClosed',
 }
