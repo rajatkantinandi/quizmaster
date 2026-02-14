@@ -1,7 +1,6 @@
-import { Tabs } from '@mantine/core';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import classNames from 'classnames';
 import { useNavigate } from 'react-router';
-import styles from './styles.module.css';
 
 type Tab = {
   title: string;
@@ -18,22 +17,23 @@ export default function HeaderTabs({ tabs, onChange }: Props) {
 
   return (
     <Tabs
-      variant="outline"
       value={window.location.pathname}
-      onTabChange={(value) => {
-        onChange(value!);
-        navigate(value!);
-      }}>
-      <Tabs.List>
+      onValueChange={(value) => {
+        onChange(value);
+        navigate(value);
+      }}
+    >
+      <TabsList>
         {tabs.map((tab) => (
-          <Tabs.Tab
+          <TabsTrigger
             value={tab.url}
             key={tab.title}
-            className={classNames(styles.tab, { [styles.active]: window.location.pathname === tab.url })}>
+            className={classNames('tab', { active: window.location.pathname === tab.url })}
+          >
             {tab.title}
-          </Tabs.Tab>
+          </TabsTrigger>
         ))}
-      </Tabs.List>
+      </TabsList>
     </Tabs>
   );
 }

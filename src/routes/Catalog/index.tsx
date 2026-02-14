@@ -1,4 +1,4 @@
-import { Group, Select } from '@mantine/core';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { useEffect, useMemo, useState } from 'react';
 import Icon from '../../components/Icon';
 import PageLoader from '../../components/PageLoader';
@@ -33,22 +33,22 @@ export default function Catalog({ userName }: any) {
   }
 
   return (
-    <Group>
-      <Select
-        placeholder="Sort by"
-        onChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}
-        data={[
-          { value: 'createDate', label: 'Create Date' },
-          { value: 'name', label: 'Name' },
-        ]}
-        icon={<Icon width="16" name="sort" />}
-        value={sortBy}
-        transition="pop-top-left"
-        transitionDuration={100}
-        transitionTimingFunction="ease"
-        style={{ marginLeft: 10 }}
-      />
-      <Group>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2" style={{ marginLeft: 10 }}>
+        <Select value={sortBy} onValueChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}>
+          <SelectTrigger>
+            <div className="flex items-center gap-2">
+              <Icon width="16" name="sort" />
+              <SelectValue placeholder="Sort by" />
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="createDate">Create Date</SelectItem>
+            <SelectItem value="name">Name</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="flex flex-wrap gap-2">
         {filteredCatalogList.map((item, index) => (
           <QuizCard
             quizMetadata={{
@@ -64,7 +64,7 @@ export default function Catalog({ userName }: any) {
             key={item.quizId}
           />
         ))}
-      </Group>
-    </Group>
+      </div>
+    </div>
   );
 }

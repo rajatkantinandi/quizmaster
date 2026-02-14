@@ -16,7 +16,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "downlevelIteration": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src"]
 }

@@ -3,7 +3,8 @@ import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
 import { useNavigate } from 'react-router';
-import { Card, Button, Title, Text } from '@mantine/core';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 export default function SignUpFormCard() {
@@ -31,10 +32,8 @@ export default function SignUpFormCard() {
   const shouldMatchWithPassword = (value: string) => value === getValues('password') || 'Should match with password';
 
   return (
-    <Card shadow="xs" p="lg" radius="xs" withBorder className="primaryCard">
-      <Title align="center" order={4}>
-        Sign up
-      </Title>
+    <Card className="primaryCard p-6 border rounded-lg shadow-xs">
+      <h4 className="text-center text-lg font-semibold mb-4">Sign up</h4>
       <form onSubmit={handleSubmit(handleSignUp)}>
         <FormInput
           name="name"
@@ -84,13 +83,13 @@ export default function SignUpFormCard() {
           label="Password (min 8 chars)"
           type="password"
         />
-        <Button mt="xs" size="md" type="submit" fullWidth variant="filled">
+        <Button size="lg" className="mt-1" type="submit" fullWidth variant="filled">
           Sign up
         </Button>
       </form>
-      <Text size="sm" align="center" mt="sm">
+      <p className="text-sm text-center mt-4">
         Already have an account? <Link to="/login">Log in</Link>
-      </Text>
+      </p>
     </Card>
   );
 }

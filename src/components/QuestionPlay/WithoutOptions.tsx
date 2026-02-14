@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Title, Button, Group, Box } from '@mantine/core';
+import { Button } from '@/components/ui/button';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
 import UndoButton from '../UndoButton';
@@ -68,59 +68,57 @@ export default function WithoutOptions({
     setWasUndoClickedOnce(true);
   }
 
-  const getQuestionTextStyles = (theme, isCorrect = false) =>
+  const getQuestionTextStyles = (isCorrect = false) =>
     isCorrect
       ? {
-          backgroundColor: theme.colors.green[2],
-          borderRadius: theme.radius.xs,
+          backgroundColor: '#dcfce7',
+          borderRadius: '4px',
         }
       : {};
+
   return isAnswerRevealed ? (
     <>
-      <Title mt="xl" order={6}>
-        Correct Answer
-      </Title>
-      <Box
-        className="py-md mt-md"
-        px="xs"
-        mb="md"
+      <h6 className="text-base font-semibold mt-6">Correct Answer</h6>
+      <div
+        className="py-3 mt-3 px-2 mb-4"
         key={options[0].optionId}
-        sx={(theme) => getQuestionTextStyles(theme, !!options[0].text && options[0].isCorrect)}>
+        style={getQuestionTextStyles(!!options[0].text && options[0].isCorrect)}
+      >
         <SanitizedHtml>{options[0].text}</SanitizedHtml>
-      </Box>
+      </div>
       {showUndoButton ? (
-        <Group>
+        <div className="flex gap-2">
           <Button variant="default" onClick={() => handleContinueClick(userResponse.current)}>
             Continue
           </Button>
           {isUndoTimerRunning && <UndoButton time={time} onClick={() => undoSubmit()} />}
-        </Group>
+        </div>
       ) : (
         <>
           {!isAttempted && (
-            <Group>
-              <Button color="red" onClick={() => handleSubmitResponse([])}>
+            <div className="flex gap-2">
+              <Button variant="destructive" onClick={() => handleSubmitResponse([])}>
                 Incorrect
               </Button>
-              <Button color="green" onClick={() => handleSubmitResponse([options[0].optionId])}>
+              <Button variant="green" onClick={() => handleSubmitResponse([options[0].optionId])}>
                 Correct
               </Button>
-            </Group>
+            </div>
           )}
         </>
       )}
     </>
   ) : (
     <Button
-      color="green"
+      variant="green"
       onClick={() => {
         setIsAnswerRevealed(true);
 
-        // pause timer when the answer is revealed
         if (setIsTimerRunning) {
           setIsTimerRunning(false);
         }
-      }}>
+      }}
+    >
       Reveal answer
     </Button>
   );

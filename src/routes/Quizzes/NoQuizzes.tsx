@@ -1,4 +1,5 @@
-import { Button, Divider, Group } from '@mantine/core';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router';
 import CreateQuizButton from '../../components/CreateQuizButton';
 import Icon from '../../components/Icon';
@@ -26,21 +27,20 @@ export default function NoQuizzes({ userName }: { userName: string }) {
         <p className={styles.secondaryText2}>
           It is ideal for quizmasters looking to customise and host their quizzes.
         </p>
-        <Group position="center" mt="xl" spacing={50}>
+        <div className="flex justify-center gap-[50px] mt-xl">
           <CreateQuizButton userName={userName} />
           <Button
             size="lg"
             onClick={() => navigate(`/catalog/${userName}`)}
-            variant="filled"
-            sx={(theme) => ({ boxShadow: theme.shadows.sm, backgroundColor: theme.colors.blue[8] })}
-            radius="xl"
-            leftIcon={<Icon color="white" width="16" name="download" />}>
+            className="rounded-full shadow-sm bg-blue-800 hover:bg-blue-700"
+            leftIcon={<Icon color="white" width="16" name="download" />}
+          >
             Add from catalog
           </Button>
           <ImportQuizzesButton size="lg" radius="xl" />
-        </Group>
+        </div>
       </section>
-      <Divider style={{ width: '80%', marginTop: 60, marginBottom: 50 }} />
+      <Separator className="w-4/5 mt-[60px] mb-[50px]" />
       <section className={styles.keyFeatures}>
         <div className={styles.feature}>
           <Icon name="peopleNearby" width={100} height={100} />
@@ -65,7 +65,7 @@ export default function NoQuizzes({ userName }: { userName: string }) {
             <li>Form teams by typing in team names or opt for random team generation.</li>
             <li>
               Flexibility to modify quiz settings like negative points, time limits, and the display of points while
-              you’re hosting.
+              you're hosting.
             </li>
           </ul>
         </div>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Question as IQuestion } from '../../types';
-import { Badge, ActionIcon, Text, List, Group, Button, Card } from '@mantine/core';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import Icon from '../Icon';
 import SanitizedHtml from '../SanitizedHtml';
 
@@ -27,50 +29,41 @@ export default function CollapsedView({
 
   return (
     <Card
-      shadow="sm"
-      p="lg"
-      my="sm"
-      withBorder
-      className="secondaryCard clickable slideUp"
-      onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
-      <Group position="apart" noWrap>
-        <Group>
+      className="secondaryCard clickable slideUp shadow-sm p-6 my-4 border cursor-pointer"
+      onClick={() => setExpandedQuestionIndex(questionNum - 1)}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <div className="flex">
             {questionNum}.{' '}
-            {<SanitizedHtml className="truncatedOneLine ml-md">{question.text}</SanitizedHtml> || (
-              <Text italic size="sm" span>
-                (No question text)
-              </Text>
+            {<SanitizedHtml className="truncatedOneLine ml-2">{question.text}</SanitizedHtml> || (
+              <span className="italic text-sm ml-2">(No question text)</span>
             )}
           </div>
-          {!isValidQuestion && (
-            <Badge variant="filled" color="red">
-              Incomplete
-            </Badge>
-          )}
-        </Group>
+          {!isValidQuestion && <Badge variant="destructive">Incomplete</Badge>}
+        </div>
         {rearrangeMode ? (
-          <ActionIcon variant="transparent" className="questionHandle">
+          <Button variant="ghost" size="icon" className="questionHandle">
             <Icon name="drag" />
-          </ActionIcon>
+          </Button>
         ) : (
-          <Group className="noShrink">
-            <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
+          <div className="flex items-center gap-2">
+            <Button variant="light" size="sm" className="rounded-full text-red-500" onClick={deleteQuestion}>
               Delete
             </Button>
-            <ActionIcon variant="transparent" title="Edit" onClick={setActiveQuestion}>
+            <Button variant="ghost" size="icon" title="Edit" onClick={setActiveQuestion}>
               <Icon name="pencil" width={22} />
-            </ActionIcon>
-            <ActionIcon variant="transparent">
+            </Button>
+            <Button variant="ghost" size="icon">
               <Icon name="caretDown" />
-            </ActionIcon>
-          </Group>
+            </Button>
+          </div>
         )}
-      </Group>
-      <List className="flex" ml="lg">
-        <List.Item mr="xl">{question.points} points</List.Item>
-        <List.Item>{isWithoutOptions ? 'Without options' : 'With Options'}</List.Item>
-      </List>
+      </div>
+      <ul className="flex ml-4 list-disc">
+        <li className="mr-6">{question.points} points</li>
+        <li>{isWithoutOptions ? 'Without options' : 'With Options'}</li>
+      </ul>
     </Card>
   );
 }

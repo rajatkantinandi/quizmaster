@@ -3,7 +3,10 @@ import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
 import { Helmet } from 'react-helmet';
-import { Title, Card, Grid, Button, ActionIcon, Text, Radio, Badge } from '@mantine/core';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { RadioGroup, RadioGroupItem as Radio } from '@/components/ui/radio-group';
 import styles from './styles.module.css';
 import Icon from '../../components/Icon';
 import classNames from 'classnames';
@@ -74,13 +77,10 @@ export default function ConfigureQuiz({
         const quizName = searchParams.get('quizName');
 
         if (quizName) {
-          // Download quiz by quizName from url & store
-          // If invalid quiz name then it will just skip downloading
           await saveCatalogQuizForPreview(quizName);
         }
       }
 
-      // get quiz (preview quiz or from local storage or from backend in non guest user)
       const quiz = await getQuiz(quizId, isPreview);
 
       if (!quiz) {
@@ -195,7 +195,6 @@ export default function ConfigureQuiz({
       });
 
       if (isPreview) {
-        // Reset preview quiz
         updatePreviewQuiz(null);
       }
 
@@ -326,7 +325,6 @@ export default function ConfigureQuiz({
   }
 
   if (isLoading) {
-    // Show loading spinner while quiz is downloaded
     return <PageLoader />;
   }
 
@@ -338,98 +336,93 @@ export default function ConfigureQuiz({
       <div className={styles.wrapper}>
         <div className={styles.categoriesList}>
           <form onSubmit={handleSubmit(onFormSubmit)}>
-            <Title order={2} mb="xl" pb="lg" className="flex" align="end">
-              {quizName}
-              <ActionIcon ml="sm" className="mt-md" onClick={changeQuizName}>
-                <Icon name="pencil" width={22} />
-              </ActionIcon>
-            </Title>
-            <Title order={4}>Categories</Title>
-            <Radio.Group
-              className="flexCol"
+            <div className="flex items-end pb-lg mb-xl">
+              <h2 className="text-2xl font-bold flex items-end">
+                {quizName}
+                <Button size="icon" variant="ghost" className="ml-2 mt-md" onClick={changeQuizName}>
+                  <Icon name="pencil" width={22} />
+                </Button>
+              </h2>
+            </div>
+            <h4 className="text-lg font-semibold">Categories</h4>
+            <RadioGroup
+              className="flex flex-col gap-2"
               name="activeCategory"
               value={`${activeCategoryIndex}`}
-              onChange={setActiveCategory}>
+              onValueChange={setActiveCategory}
+            >
               {categories.map((item: any, idx: number) => (
                 <Card
-                  shadow={idx === activeCategoryIndex ? 'sm' : ''}
-                  withBorder={idx === activeCategoryIndex}
-                  key={item.categoryId || idx}
+                  shadow={idx === activeCategoryIndex ? 'sm' : undefined}
                   className={classNames({
                     [styles.activeCategory]: idx === activeCategoryIndex,
                     [styles.nonActiveCard]: idx !== activeCategoryIndex,
                     primaryCard: true,
                     fullWidth: true,
-                  })}>
-                  <Radio
-                    mr="md"
-                    value={`${idx}`}
-                    className={styles.radio}
-                    label={
-                      <div className="flex fullWidth">
-                        <Text weight="bold" mr="md">
-                          {idx + 1}.
-                        </Text>
-                        <div className="noShrink grow">
-                          {idx === activeCategoryIndex ? (
-                            <FormInput
-                              name={`categories.${idx}.categoryName`}
-                              id={`categories.${idx}.categoryName`}
-                              rules={{ required: 'Please enter category name' }}
-                              type="text"
-                              placeholder="Enter category name"
-                              variant={'filled'}
-                              size="md"
-                              autoFocus
-                              onChange={(ev) => setActiveCategoryName(ev.target.value)}
-                              className={styles.categoryNameInput}
-                              control={control}
-                            />
-                          ) : (
-                            <Text size="md" weight="bold">
-                              {item.categoryName}
-                            </Text>
-                          )}
-                          {!errors.categories?.[idx]?.categoryName?.message && (
-                            <Text
-                              weight="bold"
-                              color="dimmed"
-                              align="left"
-                              size="xs"
-                              className={classNames({
-                                'mt-md': idx === activeCategoryIndex,
-                              })}>
-                              {item.questions.length > 0 && (
-                                <Text component="span" mr="sm">
-                                  {plural(item.questions.length, '%count question', '%count questions')}
-                                </Text>
+                    border: idx === activeCategoryIndex,
+                  })}
+                  key={item.categoryId || idx}
+                >
+                  <div className="flex items-center gap-2">
+                    <Radio value={`${idx}`} className={styles.radio} />
+                    <div className="flex fullWidth">
+                      <span className="font-bold mr-md">{idx + 1}.</span>
+                      <div className="flex-grow">
+                        {idx === activeCategoryIndex ? (
+                          <FormInput
+                            name={`categories.${idx}.categoryName`}
+                            id={`categories.${idx}.categoryName`}
+                            rules={{ required: 'Please enter category name' }}
+                            type="text"
+                            placeholder="Enter category name"
+                            variant={'filled'}
+                            size="md"
+                            autoFocus
+                            onChange={(ev) => setActiveCategoryName(ev.target.value)}
+                            className={styles.categoryNameInput}
+                            control={control}
+                          />
+                        ) : (
+                          <p className="text-md font-bold">{item.categoryName}</p>
+                        )}
+                        {!errors.categories?.[idx]?.categoryName?.message && (
+                          <p
+                            className={classNames('font-bold text-gray-500 text-left text-xs', {
+                              'mt-md': idx === activeCategoryIndex,
+                            })}
+                          >
+                            {item.questions.length > 0 && (
+                              <span className="mr-sm">
+                                {plural(item.questions.length, '%count question', '%count questions')}
+                              </span>
+                            )}
+                            {(item.questions.length === 0 ||
+                              item.questions.some((question) => !isValidQuestion(question))) &&
+                              idx !== activeCategoryIndex && (
+                                <Badge variant="destructive" className="mt-sm">
+                                  Incomplete
+                                </Badge>
                               )}
-                              {(item.questions.length === 0 ||
-                                item.questions.some((question) => !isValidQuestion(question))) &&
-                                idx !== activeCategoryIndex && (
-                                  <Badge color="red" variant="filled" mt="sm">
-                                    Incomplete
-                                  </Badge>
-                                )}
-                            </Text>
-                          )}
-                        </div>
-                        {categories.length > 1 && (
-                          <ActionIcon
-                            variant="transparent"
-                            ml="md"
-                            onClick={() => confirmRemoveCategory(idx, item.questions.length > 0)}>
-                            <Icon width={20} name="trash" />
-                          </ActionIcon>
+                          </p>
                         )}
                       </div>
-                    }
-                  />
+                      {categories.length > 1 && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="ml-md"
+                          onClick={() => confirmRemoveCategory(idx, item.questions.length > 0)}
+                        >
+                          <Icon width={20} name="trash" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </Card>
               ))}
-            </Radio.Group>
+            </RadioGroup>
             <Button
-              mt="xl"
+              className="mt-xl"
               onClick={() => {
                 setActiveCategoryIndex(categories.length);
                 setActiveCategoryName('');
@@ -441,7 +434,8 @@ export default function ConfigureQuiz({
                 });
               }}
               variant="default"
-              leftIcon={<Icon name="plus" width={18} />}>
+              leftIcon={<Icon name="plus" width={18} />}
+            >
               Add Category
             </Button>
             <button className="displayNone" id="btnQuizFormSubmit" type="submit">
@@ -476,15 +470,13 @@ export default function ConfigureQuiz({
           }}
         />
       </div>
-      <Grid columns={24} className={styles.btnCompleteQuiz}>
-        <Grid.Col span={10} offset={7} py="xl" className="flex">
+      <div className="grid grid-cols-24">
+        <div className="col-span-10 col-start-8 py-xl flex">
           {isPreview && (
             <Button
               variant="outline"
               size="lg"
-              fullWidth
-              radius="xl"
-              mr="lg"
+              className="w-full rounded-full mr-lg"
               onClick={() => {
                 track(TrackingEvent.CATALOG_QUIZ_NOT_SAVED, {
                   quizName,
@@ -493,21 +485,22 @@ export default function ConfigureQuiz({
                   numOfQuestions: categories.reduce((sum, curr) => sum + curr.questions.length, 0),
                 });
                 navigate(`/catalog/${userName}`);
-              }}>
+              }}
+            >
               Cancel
             </Button>
           )}
           <Button
-            variant="gradient"
+            variant="default"
             size="lg"
-            fullWidth
-            radius="xl"
+            className="w-full rounded-full"
             leftIcon={<Icon name="done" color="#ffffff" />}
-            onClick={submitQuizForm}>
+            onClick={submitQuizForm}
+          >
             {isPreview ? 'Add to my quizzes' : 'Complete quiz'}
           </Button>
-        </Grid.Col>
-      </Grid>
+        </div>
+      </div>
       {moveQuestionModalState.show && (
         <MoveQuestionModal
           categories={categories}

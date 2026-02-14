@@ -1,12 +1,10 @@
 import React from 'react';
-import { AppShell, Header, Group, TextInput, Button } from '@mantine/core';
 import { Helmet } from 'react-helmet';
 import Quizzes from '../Quizzes';
 import ConfigureQuiz from '../ConfigureQuiz';
 import CreateQuiz from '../CreateQuiz';
 import ConfigureGame from '../ConfigureGame';
 import PlayQuiz from '../PlayQuiz';
-import styles from './styles.module.css';
 import { useParams } from 'react-router';
 import { useStore } from '../../useStore';
 import Icon from '../../components/Icon';
@@ -20,7 +18,8 @@ import { track } from '../../helpers/track';
 import { TrackingEvent } from '../../constants';
 import Footer from '../Quizzes/Footer';
 import useVideoInModal from '../../helpers/useVideoInModal';
-// import Cookies from 'js-cookie';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 function AppLayout() {
   const { userName, viewType, id } = useParams();
@@ -52,100 +51,72 @@ function AppLayout() {
     }
   }
 
-  // function getNameInitials() {
-  //   const name = userData.name || Cookies.get('userName') || '';
-  //   const firstNameLastNameArr = name.split(' ');
-
-  //   if (firstNameLastNameArr[1]) {
-  //     return `${firstNameLastNameArr[0]?.charAt(0)?.toUpperCase()}${firstNameLastNameArr[1]?.charAt(0)?.toUpperCase()}`;
-  //   } else {
-  //     return firstNameLastNameArr[0]?.charAt(0)?.toUpperCase();
-  //   }
-  // }
-
   return isValidUser ? (
     <>
       <Helmet>
         <title>{capitalizeFirstLetter(viewType).replace('-', ' ')} - Quizmaster</title>
       </Helmet>
-      <AppShell
-        styles={(theme) => ({
-          main: window.location.pathname.includes('/my-quizzes') ? { backgroundColor: 'var(--off-white)' } : {},
-        })}
-        header={
-          <Header height={70}>
-            <Group position="apart" className={styles.headerTabs} pr="xl">
-              <Group>
-                <Link to={`/my-quizzes/${userName}`}>
-                  <Icon name="logo" className="ml-lg mt-lg" width={150} height={50} />
-                </Link>
-                <HeaderTabs
-                  tabs={[
-                    { title: 'My quizzes', url: `/my-quizzes/${userName}` },
-                    { title: 'Catalog', url: `/catalog/${userName}` },
-                  ]}
-                  onChange={() => clearSearch()}
-                />
-              </Group>
-              {((quizzes.length > 0 && viewType === 'my-quizzes') || viewType === 'catalog') && (
-                <TextInput
-                  mr="xl"
-                  type="text"
-                  placeholder="Search by quiz name"
-                  variant="filled"
-                  radius="xl"
-                  size="md"
-                  className={styles.searchInput}
-                  value={searchQuery}
-                  onChange={(ev) => searchQuiz(ev.target.value)}
-                  onBlur={() => {
-                    if (searchQuery.trim() && searchQuery.trim().length > 3) {
-                      track(TrackingEvent.SEARCH, {
-                        searchQuery,
-                        isInCatalog: viewType === 'catalog',
-                      });
-                    }
-                  }}
-                  icon={<Icon name="search" width={16} />}
-                />
-              )}
-              <div className="flex">
-                {(quizzes.length > 0 || viewType !== 'my-quizzes') && (
-                  <Button
-                    onClick={showDemoVideo}
-                    variant="gradient"
-                    mr={20}
-                    leftIcon={<Icon color="#fff" name="playCircle" width={20} />}>
-                    Watch demo
-                  </Button>
-                )}
+      <div className="min-h-screen flex flex-col">
+        <header className="h-[70px] border-b bg-[var(--card-background)] w-full sticky top-0 z-50">
+          <div className="flex justify-between items-center h-full px-6">
+            <div className="flex items-center gap-4">
+              <Link to={`/my-quizzes/${userName}`}>
+                <Icon name="logo" className="ml-4" width={150} height={50} />
+              </Link>
+              <HeaderTabs
+                tabs={[
+                  { title: 'My quizzes', url: `/my-quizzes/${userName}` },
+                  { title: 'Catalog', url: `/catalog/${userName}` },
+                ]}
+                onChange={() => clearSearch()}
+              />
+            </div>
+            {((quizzes.length > 0 && viewType === 'my-quizzes') || viewType === 'catalog') && (
+              <Input
+                type="text"
+                placeholder="Search by quiz name"
+                className="mr-6 w-[200px]"
+                value={searchQuery}
+                onChange={(ev) => searchQuiz(ev.target.value)}
+                onBlur={() => {
+                  if (searchQuery.trim() && searchQuery.trim().length > 3) {
+                    track(TrackingEvent.SEARCH, {
+                      searchQuery,
+                      isInCatalog: viewType === 'catalog',
+                    });
+                  }
+                }}
+              />
+            )}
+            <div className="flex">
+              {(quizzes.length > 0 || viewType !== 'my-quizzes') && (
                 <Button
-                  onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
-                  variant="outline"
-                  leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}>
-                  Share feedback
+                  onClick={showDemoVideo}
+                  className="mr-5"
+                  leftIcon={<Icon color="#fff" name="playCircle" width={20} />}
+                >
+                  Watch demo
                 </Button>
-              </div>
-              {/* TODO: make menu visible when we add real users */}
-              {/* {userName !== 'guest' && (
-                <Menu shadow="md" width={200}>
-                  <Menu.Target>
-                    <Avatar color="cyan" radius="xl">
-                      {getNameInitials()}
-                    </Avatar>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    <Menu.Label>Hi, {userName}</Menu.Label>
-                    <Menu.Item onClick={logout}>Sign out</Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
-              )} */}
-            </Group>
-          </Header>
-        }
-        footer={<Footer />}>
-        {getTabsView()}
-      </AppShell>
+              )}
+              <Button
+                onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
+                variant="outline"
+                leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}
+              >
+                Share feedback
+              </Button>
+            </div>
+          </div>
+        </header>
+        <main
+          className={`flex-1 min-h-[calc(100vh-70px)] w-full ${
+            window.location.pathname.includes('/my-quizzes') ? 'bg-[var(--off-white)]' : 'bg-white'
+          } px-6 pt-4`}
+        >
+          {getTabsView()}
+        </main>
+        <Footer />
+      </div>
     </>
   ) : (
     <CheckAuthAndNavigate />

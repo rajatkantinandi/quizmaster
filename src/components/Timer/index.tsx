@@ -1,10 +1,8 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import styles from './styles.module.css';
-import { ActionIcon } from '@mantine/core';
+import { Button } from '@/components/ui/button';
 import Icon from '../../components/Icon';
 
-// Source: https://css-tricks.com/how-to-create-an-animated-countdown-timer-with-html-css-and-javascript/
 interface Props {
   duration: number;
   isTimerRunning?: boolean;
@@ -32,7 +30,6 @@ export default function Timer({
 
     if (isTimerRunning) {
       timer = setTimeout(() => {
-        // allow 3s grace time to click the submit button by host
         if (remainingTime === 0) {
           setIsTimerRunning(false);
           handleTimeUp();
@@ -55,14 +52,13 @@ export default function Timer({
     return () => {
       clearTimeout(timer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTimerRunning, remainingTime]);
+  }, [isTimerRunning, remainingTime, duration, handleTimeUp, setIsTimerRunning]);
 
   useEffect(() => {
     setRemainingTime(duration);
   }, [selectedQuestionId, duration]);
 
-  function formatTimeLeft(time) {
+  function formatTimeLeft(time: number) {
     const minutes = Math.floor(time / 60);
     let seconds = `${time % 60}`;
 
@@ -74,36 +70,44 @@ export default function Timer({
   }
 
   return (
-    <div className={styles.baseTimer}>
-      <svg className={styles.baseTimerSvg} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <g className={styles.baseTimerCircle}>
-          <circle className={styles.baseTimerPathElapsed} cx="50" cy="50" r="45" />
+    <div className="relative h-[150px] w-[150px] mx-auto my-2.5">
+      <svg className="[transform:scaleX(-1)]" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g className="fill-none stroke-none">
+          <circle className="stroke-[7px] stroke-gray-400" cx="50" cy="50" r="45" />
           <path
             id="base-timer-path-remaining"
             strokeDasharray={circleDasharray}
             className={classNames({
-              [styles.baseTimerPathRemaining]: true,
-              [styles.green]: !alert && !warning,
-              [styles.yellow]: warning,
-              [styles.red]: alert,
+              'stroke-[7px] stroke-linecap-round [transform:rotate(90deg)] [transform-origin:center] transition-all duration-1000 stroke-current':
+                true,
+              'text-green-500': !alert && !warning,
+              'text-yellow-500': warning,
+              'text-red-500': alert,
             })}
             d="
               M 50, 50
               m -45, 0
               a 45,45 0 1,0 90,0
               a 45,45 0 1,0 -90,0
-            "></path>
+            "
+          ></path>
         </g>
       </svg>
-      <span className={styles.baseTimerLabel}>{formatTimeLeft(remainingTime)}</span>
-      <ActionIcon
+      <span className="absolute w-[150px] h-[150px] top-0 flex items-center justify-center text-4xl">
+        {formatTimeLeft(remainingTime)}
+      </span>
+      <Button
+        variant="ghost"
+        size="icon"
         className={classNames({
-          [styles.playButton]: !isTimerRunning,
-          [styles.pauseButton]: true,
+          'opacity-100': !isTimerRunning,
+          'absolute left-3 top-3 rounded-full h-[124px] w-[124px] bg-transparent opacity-0 hover:opacity-100 transition-opacity duration-300':
+            true,
         })}
-        onClick={() => setIsTimerRunning(!isTimerRunning)}>
+        onClick={() => setIsTimerRunning(!isTimerRunning)}
+      >
         <Icon color="rgba(0,0,0,0.7)" name={isTimerRunning ? 'pause' : 'play'} width={70} height={70} />
-      </ActionIcon>
+      </Button>
     </div>
   );
 }

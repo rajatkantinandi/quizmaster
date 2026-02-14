@@ -1,9 +1,17 @@
 import React from 'react';
-import styles from './styles.module.css';
 import { pickTextColorBasedOnBgColorSimple } from '../../helpers';
 
-export default function TeamAvatar({ shouldShowAvatar = true, size = '', team }) {
-  function getAvatarStyles(avatarColor) {
+interface TeamAvatarProps {
+  shouldShowAvatar?: boolean;
+  size?: string;
+  team: {
+    name: string;
+    avatarColor: string;
+  };
+}
+
+export default function TeamAvatar({ shouldShowAvatar = true, size = '', team }: TeamAvatarProps) {
+  function getAvatarStyles(avatarColor: string) {
     const color = pickTextColorBasedOnBgColorSimple(avatarColor);
 
     return {
@@ -13,25 +21,23 @@ export default function TeamAvatar({ shouldShowAvatar = true, size = '', team })
     };
   }
 
-  function getNameInitials(name) {
+  function getNameInitials(name: string) {
     const arr = name.replace(/\s\s+/g, ' ').split(' ');
-
-    // If team name has two words then take 1st character of each word
-    // else take first two characters to first word
-    // ex. Team Name - John Doe than name Initials are JD
-    // Team Name - John than name Initials are JO
     return arr[0][0].toUpperCase() + (arr[1] ? arr[1][0].toUpperCase() : arr[0][1]?.toUpperCase() || '');
   }
+
+  const sizeClasses = size === 'small' ? 'rounded-[28px] w-7 h-7 text-xs' : 'rounded-[32px] w-9 h-9 font-bold';
 
   if (shouldShowAvatar) {
     return (
       <div
-        className={`flex justifyCenter alignCenter ${styles[size]} ${styles.avatar}`}
-        style={getAvatarStyles(team.avatarColor)}>
+        className={`flex items-center justify-center ${sizeClasses} shrink-0`}
+        style={getAvatarStyles(team.avatarColor)}
+      >
         {getNameInitials(team.name)}
       </div>
     );
   } else {
-    return <div className={`${styles[size]} ${styles.avatar}`}></div>;
+    return <div className={sizeClasses}></div>;
   }
 }

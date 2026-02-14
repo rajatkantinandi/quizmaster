@@ -1,35 +1,49 @@
 import React, { useState } from 'react';
-import { Radio, Modal, Group, Button, Text } from '@mantine/core';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
-export default function MoveQuestionModal({ categories, activeCategoryIndex, okCallback, onClose }) {
+export default function MoveQuestionModal({
+  categories,
+  activeCategoryIndex,
+  okCallback,
+  onClose,
+}: {
+  categories: any[];
+  activeCategoryIndex: number;
+  okCallback: (index: number) => void;
+  onClose: () => void;
+}) {
   const [categoryToMove, setCategoryToMove] = useState(activeCategoryIndex === 0 ? 1 : 0);
 
   return (
-    <Modal
-      title={
-        <Text size="lg" weight="bold">
-          Move question to category
-        </Text>
-      }
-      opened
-      onClose={onClose}>
-      <Radio.Group
-        value={`${categoryToMove}`}
-        label="Choose a category to move question to"
-        orientation="vertical"
-        onChange={(val) => setCategoryToMove(parseInt(val))}>
-        {categories.map((category, idx) =>
-          idx === activeCategoryIndex ? <></> : <Radio value={`${idx}`} label={`${category.categoryName}`} key={idx} />,
-        )}
-      </Radio.Group>
-      <Group mt="xl" position="right">
-        <Button color="dark" variant="outline" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant="filled" onClick={() => okCallback(categoryToMove)}>
-          Move
-        </Button>
-      </Group>
-    </Modal>
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Move question to category</DialogTitle>
+        </DialogHeader>
+        <div className="py-4">
+          <p className="text-sm text-muted-foreground mb-4">Choose a category to move question to</p>
+          <RadioGroup value={`${categoryToMove}`} onValueChange={(val) => setCategoryToMove(parseInt(val))}>
+            {categories.map((category, idx) =>
+              idx === activeCategoryIndex ? null : (
+                <div key={idx} className="flex items-center space-x-2">
+                  <RadioGroupItem value={`${idx}`} id={`category-${idx}`} />
+                  <label htmlFor={`category-${idx}`}>{category.categoryName}</label>
+                </div>
+              ),
+            )}
+          </RadioGroup>
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" color="dark" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="default" onClick={() => okCallback(categoryToMove)}>
+            Move
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,13 +1,14 @@
-import React, { useState, forwardRef } from 'react';
-import styles from './styles.module.css';
+import { useState, forwardRef } from 'react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
-import { FormInput, FormTextArea } from '../FormInputs';
 import { getEmptyOptions, getEmptyOption } from '../../helpers';
-import { Title, Card, Button, ActionIcon, Text, Checkbox, Tabs, Group, TabsValue } from '@mantine/core';
-import Icon from '../Icon';
-import classNames from 'classnames';
+import { FormInput, FormTextArea } from '../FormInputs';
 import { getTextContent, getImageOrTextContent, getCleanText } from '../../helpers/dom';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import Icon from '../Icon';
 
 interface Props {
   questionNum: number;
@@ -15,7 +16,7 @@ interface Props {
   saveQuestion: any;
 }
 
-function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref) {
+function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) {
   const { handleSubmit, setValue, watch, control } = useForm({
     defaultValues: {
       ...question,
@@ -27,7 +28,7 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref) {
     name: 'options',
   });
   const options = watch('options');
-  const [optionType, setOptionType] = useState<TabsValue>(
+  const [optionType, setOptionType] = useState<string>(
     options.length === 1 && options[0].isCorrect ? 'withoutOptions' : 'withOptions',
   );
   const [focusOnLastOption, setFocusOnLastOption] = useState(false);
@@ -46,112 +47,116 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref) {
     saveQuestion(data);
   }
 
-  function setCorrectOption(optionId: string | number, ev: any) {
-    const optionsData = options.map((option) => ({
+  function getValidationError() {
+    const questionText = getTextContent(data.text);
+
+    if (!questionText) {
+      return 'Question text should not be empty!';
+    }
+
+    const options = data.options;
+
+    if (isWithoutOptions) {
+      const correctAnswerText = getTextContent(options[0].text);
+
+      if (!correctAnswerText) {
+        return 'Correct answer should not be empty!';
+      }
+    } else {
+      const isCorrectOptions = options.filter((option: any) => option.isCorrect);
+
+      if (isCorrectOptions.length === 0) {
+        return 'At least one option should be marked as correct!';
+      }
+    }
+  }
+
+  function setCorrectOption(optionId: number, ev: { target: { checked: boolean } }) {
+    const newOptions = options.map((option: any) => ({
       ...option,
       isCorrect: option.optionId === optionId ? ev.target.checked : option.isCorrect,
     }));
 
-    setValue('options', optionsData);
+    setValue('options', newOptions);
   }
 
-  function removeOption(index: number) {
-    if (options.length === 2) {
-      showAlert({ message: 'At least 2 options are mandatory!', type: 'error' });
-    } else {
-      remove(index);
-    }
-  }
-
-  function addOption(ev: React.MouseEvent) {
-    ev.preventDefault();
-
-    setTimeout(() => {
-      document.querySelector('#addOptionBtn')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-
+  function addOption() {
     append(getEmptyOption());
     setFocusOnLastOption(true);
   }
 
-  function getValidationError() {
+  function removeOption(idx: number) {
+    if (options.length === 2) {
+      showAlert({
+        message: 'At least 2 options are required!',
+        type: 'error',
+      });
+
+      return;
+    }
+
+    remove(idx);
+  }
+
+  function onTabChange(value: string) {
     if (isWithoutOptions && options[0].isCorrect) {
-      return '';
-    } else if (!options.some((option) => option.isCorrect)) {
-      return 'Please select 1 correct option!';
-    } else if (options.length < 2) {
-      return 'At least 2 options are mandatory!';
-    } else {
-      const optionTexts = options.map((x) => x.text);
+    } else if (!options.some((option: any) => option.isCorrect)) {
+      showAlert({
+        message: 'At least one option should be marked as correct!',
+        type: 'error',
+      });
 
-      if (optionTexts.length >= 2) {
-        const el = document.createElement('div');
-
-        for (let i = 0; i < optionTexts.length - 1; i++) {
-          el.innerHTML = optionTexts[i];
-          const option1Text = getCleanText(el.innerText);
-
-          for (let j = i + 1; j < optionTexts.length; j++) {
-            el.innerHTML = optionTexts[j];
-            const option2Text = getCleanText(el.innerText); // replacing multiple space with single space
-
-            if (option1Text === option2Text) {
-              return 'All options must have different text';
-            } else {
-              continue;
-            }
-          }
-        }
-      }
+      return;
     }
 
-    return '';
-  }
-
-  function onTabChange(value) {
     setOptionType(value);
-
-    if (value === 'withoutOptions') {
-      const optionData = options[0];
-      optionData.isCorrect = true;
-
-      setValue('options', [optionData]);
-    } else if (isWithoutOptions) {
-      const optionData = options.concat(getEmptyOptions(1));
-
-      optionData[1].isCorrect = false;
-      setValue('options', optionData);
-    }
   }
+
+  function isValidQuestion(question: any) {
+    const questionText = getCleanText(question.text);
+
+    if (!questionText) {
+      return false;
+    }
+
+    const options = question.options;
+
+    if (options.length === 1 && options[0].isCorrect) {
+      return !!getTextContent(options[0].text);
+    }
+
+    const isCorrectOptions = options.filter((option: any) => option.isCorrect);
+
+    if (isCorrectOptions.length === 0) {
+      return false;
+    }
+
+    return options.every((option: any) => !!getTextContent(option.text));
+  }
+
+  const data = watch();
 
   return (
-    <Card shadow="sm" mx="auto" maw={800} withBorder className={'secondaryCard slideDown'}>
-      <form onSubmit={handleSubmit(onFormSubmit)} ref={ref}>
-        <Group position="apart" mb="lg">
-          <Group>
-            <Title mr="xl" order={4}>
-              Question {questionNum}
-            </Title>
-            <Text weight="bold" component="span" size="sm">
-              Points:
-            </Text>
-            <FormInput
-              name="points"
-              id="points"
-              rules={{
-                required: 'Required',
-                validate: (value: number) => (value && value > 0) || 'Must be greater than 0',
-              }}
-              className={styles.pointsInput}
-              type="number"
-              placeholder="Points"
-              variant="filled"
-              size="sm"
-              radius="sm"
-              control={control}
-            />
-          </Group>
-        </Group>
+    <Card className="secondaryCard slideDown shadow-sm max-w-[800px] mx-auto border">
+      <form onSubmit={handleSubmit(onFormSubmit)}>
+        <div className="mb-4">
+          <span className="text-sm font-bold">Points:</span>
+          <FormInput
+            name="points"
+            id="points"
+            rules={{
+              required: 'Required',
+              validate: (value: number) => (value && value > 0) || 'Must be greater than 0',
+            }}
+            className="w-[75px]"
+            type="number"
+            placeholder="Points"
+            variant="filled"
+            size="sm"
+            radius="sm"
+            control={control}
+          />
+        </div>
         <FormTextArea
           name="text"
           rules={{
@@ -159,30 +164,27 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref) {
             validate: (value: string) => !!getTextContent(value) || 'The question text should not be empty!',
           }}
           label={
-            <Text weight="bold" className="mb-md">
+            <span className="font-bold mb-3 block">
               Question text <MarkDownLogo />
-            </Text>
+            </span>
           }
           size="md"
-          className={classNames('resizeVertical', styles.questionText)}
+          className="resize-vertical w-full"
           control={control}
           autoFocus
           isRichText
         />
-        <Tabs variant="pills" pt="xl" defaultValue={optionType} keepMounted={false} onTabChange={onTabChange}>
-          <Tabs.List>
-            <Tabs.Tab value="withOptions">With Options</Tabs.Tab>
-            <Tabs.Tab value="withoutOptions">Without Options</Tabs.Tab>
-          </Tabs.List>
-          <Tabs.Panel value="withOptions">
-            {fields.map((item, idx) => (
-              <Group pt="sm" pb="sm" key={options[idx].optionId}>
+        <Tabs defaultValue={optionType} onValueChange={onTabChange} className="pt-6">
+          <TabsList>
+            <TabsTrigger value="withOptions">With Options</TabsTrigger>
+            <TabsTrigger value="withoutOptions">Without Options</TabsTrigger>
+          </TabsList>
+          <TabsContent value="withOptions">
+            {fields.map((item: any, idx: number) => (
+              <div className="flex items-start gap-3 pt-4 pb-4" key={options[idx].optionId}>
                 <Checkbox
-                  radius="xl"
-                  size="md"
-                  mb="xs"
                   checked={options[idx].isCorrect}
-                  onChange={(ev) => setCorrectOption(options[idx].optionId, ev)}
+                  onCheckedChange={(ev: any) => setCorrectOption(options[idx].optionId, { target: { checked: ev } })}
                 />
                 <FormTextArea
                   name={`options[${idx}].text`}
@@ -191,31 +193,27 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref) {
                     validate: (value: string) => !!getImageOrTextContent(value) || 'Option should not be empty!',
                   }}
                   label={
-                    <Text weight="bold" className="mb-md">
+                    <span className="font-bold mb-3 block">
                       Option {idx + 1} <MarkDownLogo />
-                    </Text>
+                    </span>
                   }
-                  className={classNames(styles.optionText)}
+                  className="max-w-full w-[calc(100%-70px)] mr-2.5 mb-2.5"
                   control={control}
                   isRichText
                   autoFocus={idx === fields.length - 1 && focusOnLastOption}
                 />
-                <ActionIcon mb="xs" variant="transparent" onClick={() => removeOption(idx)}>
+                <Button variant="ghost" size="icon" className="mb-2" onClick={() => removeOption(idx)}>
                   <Icon width="20" name="trash" />
-                </ActionIcon>
-              </Group>
+                </Button>
+              </div>
             ))}
-            <Button
-              mt="md"
-              variant="default"
-              id="addOptionBtn"
-              onClick={addOption}
-              leftIcon={<Icon name="plus" width={18} />}>
+            <Button variant="default" id="addOptionBtn" onClick={addOption} className="mt-3">
+              <Icon name="plus" width={18} className="mr-2" />
               Add option
             </Button>
-          </Tabs.Panel>
-          <Tabs.Panel value="withoutOptions">
-            {fields.map((item, idx) => (
+          </TabsContent>
+          <TabsContent value="withoutOptions">
+            {fields.map((item: any, idx: number) => (
               <FormTextArea
                 name={`options[${idx}].text`}
                 key={item.id}
@@ -225,17 +223,17 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref) {
                     !!getImageOrTextContent(value) || 'The correct answer should not be empty!',
                 }}
                 label={
-                  <Text weight="bold" mt="lg" className="mb-md">
+                  <span className="font-bold mt-4 mb-3 block">
                     Correct answer <MarkDownLogo />
-                  </Text>
+                  </span>
                 }
                 control={control}
-                className={classNames(styles.optionText)}
+                className="max-w-full w-[calc(100%-70px)] mr-2.5 mb-2.5"
                 isRichText
                 autoFocus
               />
             ))}
-          </Tabs.Panel>
+          </TabsContent>
         </Tabs>
       </form>
     </Card>
@@ -248,7 +246,7 @@ const MarkDownLogo = () => (
     href="https://commonmark.org/help/"
     target="_blank"
     rel="noreferrer">
-    <Icon name="markdown" width="20" className={styles.markdownImg} />
+    <Icon name="markdown" width="20" className="align-middle" />
   </a>
 );
 

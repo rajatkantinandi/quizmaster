@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './styles.module.css';
-import { Title, Card, Button, Group, Text } from '@mantine/core';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import Icon from '../../components/Icon';
 import QuestionEdit from '../../components/QuestionEdit';
 import QuestionView from '../../components/QuestionView';
@@ -63,7 +64,7 @@ export default function QuestionsListPanel({
 
   useEffect(() => {
     if (!activeQuestionIndex) {
-      setIsAddingQuestion(false); // When edit mode is closed, reset isAddingQuestion
+      setIsAddingQuestion(false);
     }
   }, [activeQuestionIndex]);
 
@@ -142,7 +143,6 @@ export default function QuestionsListPanel({
 
     if (initialQuestionIds !== updatedQuestionIds) {
       replace(
-        // Remove id required for react sortable before updating questions state
         data.map((x) => {
           delete x.id;
           return x;
@@ -152,44 +152,44 @@ export default function QuestionsListPanel({
   }
 
   return (
-    <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsListPanel}`}>
-      <Group position="apart" align="center" mb="md">
-        <Title order={4}>{activeCategoryName || 'Unnamed Category'}</Title>
-        <div className="flex alignCenter">
+    <Card className={`fullHeight primaryCard ${styles.questionsListPanel}`}>
+      <div className="flex justify-between items-center mb-md">
+        <h4 className="text-lg font-semibold">{activeCategoryName || 'Unnamed Category'}</h4>
+        <div className="flex items-center">
           {rearrangeMode ? (
-            <Button size="sm" style={{ width: 130 }} color="teal" onClick={handleRearrangeQuestions}>
+            <Button size="sm" className="w-[130px] bg-teal-600 hover:bg-teal-700" onClick={handleRearrangeQuestions}>
               Done
             </Button>
           ) : (
             <>
               <Button
-                size="xs"
-                mr="md"
-                variant="white"
-                color="dark"
-                miw={170}
+                size="sm"
+                className="mr-md min-w-[170px] bg-white text-gray-800 hover:bg-gray-100 border border-gray-300"
                 onClick={() => setExpandedQuestionIndex(expandedQuestionIndex === 'all' ? null : 'all')}
-                leftIcon={<Icon name={expandedQuestionIndex === 'all' ? 'minus' : 'plus'} width={14} />}>
+                leftIcon={<Icon name={expandedQuestionIndex === 'all' ? 'minus' : 'plus'} width={14} />}
+              >
                 {expandedQuestionIndex === 'all' ? 'Collapse' : 'Expand'} questions
               </Button>
-              <Button size="xs" color="green" onClick={handleRearrangeQuestions}>
+              <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={handleRearrangeQuestions}>
                 Rearrange Questions
               </Button>
             </>
           )}
         </div>
-      </Group>
+      </div>
       {rearrangeMode && (
-        <Text mb="md">
+        <p className="mb-md">
           Drag the questions using the drag handle on the right corner of each question to rearrange them. Click the
           "Done" button above, after rearranging them.
-        </Text>
+        </p>
       )}
+      {/* @ts-expect-error - react-sortablejs types are incompatible with React 18/19 */}
       <ReactSortable
         list={questions.map((item, idx) => ({ ...item, id: idx + 1, name: item.text }))}
         chosenClass={styles.chosenStyle}
         handle=".questionHandle"
-        setList={onQuestionSwap}>
+        setList={onQuestionSwap}
+      >
         {questions.map((item: any, idx) => (
           <QuestionView
             questionNum={idx + 1}
@@ -229,7 +229,7 @@ export default function QuestionsListPanel({
         />
       )}
       {!rearrangeMode && (
-        <Button mt="xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
+        <Button className="mt-xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
           Add Question
         </Button>
       )}

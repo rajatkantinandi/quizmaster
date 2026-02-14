@@ -1,43 +1,35 @@
 import React from 'react';
-import { Dialog, Text, Button, Group } from '@mantine/core';
+import { Button } from '@/components/ui/button';
 import { plural } from '../../helpers/textHelpers';
 import { QuizzesSelectorState } from '../../stores/appStore';
 
 function QuizSelectorBanner({ show, message, selectedQuizzes, onNextClick, onCancelClick }: QuizzesSelectorState) {
+  if (!show) return null;
+
   return (
-    <Dialog
-      opened={show}
-      size="lg"
-      shadow="xl"
-      styles={() => ({
-        root: {
-          backgroundColor: 'var(--qm-primary)',
-          color: 'white',
-          width: '600px',
-        },
-      })}
-      position={{
-        top: 70,
-        left: 'calc(50% - 300px)',
-      }}>
-      <Group position="apart">
-        <Text size="lg">
-          {message}
+    <div
+      className="fixed top-[70px] left-1/2 -translate-x-1/2 w-[600px] bg-primary text-white p-4 rounded-lg shadow-xl z-50"
+      style={{ backgroundColor: 'var(--qm-primary)' }}
+    >
+      <div className="flex justify-between items-center">
+        <div>
+          <span className="text-lg">{message}</span>
           {selectedQuizzes.length > 0 ? (
-            <Text ml="md" component="span" size="xs" weight="bold">
+            <span className="ml-2 text-xs font-bold">
               {plural(selectedQuizzes.length, ' (%count quiz selected)', ' (%count quizzes selected)')}
-            </Text>
+            </span>
           ) : (
             ''
           )}
-        </Text>
-        <Group position="left">
+        </div>
+        <div className="flex gap-2">
           {!!onNextClick && (
             <Button
               variant="light"
               size="sm"
               disabled={selectedQuizzes.length === 0}
-              onClick={() => onNextClick(selectedQuizzes)}>
+              onClick={() => onNextClick(selectedQuizzes)}
+            >
               Next
             </Button>
           )}
@@ -46,9 +38,9 @@ function QuizSelectorBanner({ show, message, selectedQuizzes, onNextClick, onCan
               Cancel
             </Button>
           )}
-        </Group>
-      </Group>
-    </Dialog>
+        </div>
+      </div>
+    </div>
   );
 }
 

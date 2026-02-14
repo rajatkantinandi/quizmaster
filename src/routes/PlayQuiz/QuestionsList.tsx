@@ -1,6 +1,8 @@
 import React from 'react';
 import TeamAvatar from '../../components/TeamAvatar';
-import { Button, Text, Accordion, Group, Badge, Title } from '@mantine/core';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Question as IQuestion } from '../../types';
 import styles from './styles.module.css';
 import { getPointsColor } from '../../helpers';
@@ -60,65 +62,57 @@ export default function QuestionsList({
         <span>Highest point</span>
       </div>
       <Accordion
-        multiple
+        type="multiple"
         defaultValue={categories.map((x) => `${x.categoryId}`)}
         className={styles.categoryGrid}
-        variant="filled">
+      >
         {categories.map((category) => (
-          <Accordion.Item className="grow" key={category.categoryId} value={`${category.categoryId}`}>
-            <Accordion.Control>
-              <Title order={6}>{category.categoryName}</Title>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <Button.Group orientation="vertical">
+          <AccordionItem className="grow" key={category.categoryId} value={`${category.categoryId}`}>
+            <AccordionTrigger>
+              <h6 className="text-base font-semibold">{category.categoryName}</h6>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2">
                 {category.questions.map((question) => (
                   <Button
-                    my="sm"
-                    styles={{
-                      inner: {
-                        display: 'inherit',
-                        color: getQuestionColor(question),
-                      },
-                      root: {
-                        backgroundColor: getQuestionBackgroundColor(question),
-                        ':hover': {
-                          backgroundColor: getQuestionBackgroundColor(question),
-                        },
-                      },
+                    key={question.questionId}
+                    className="w-full hover:opacity-90 my-2"
+                    style={{
+                      display: 'inherit',
+                      color: getQuestionColor(question),
+                      backgroundColor: getQuestionBackgroundColor(question),
                     }}
                     disabled={!shouldEnableQuestion(question)}
-                    variant={selectedQuestion?.questionId === question.questionId ? 'filled' : 'light'}
-                    fullWidth
+                    variant={selectedQuestion?.questionId === question.questionId ? 'default' : 'secondary'}
                     onClick={() => showQuestion(question.questionId, category.categoryId)}
-                    key={question.questionId}>
-                    <Group position="apart" style={{ width: '100%' }}>
+                  >
+                    <div className="flex justify-between items-center w-full">
                       {isQuestionPointsHidden &&
                       !attemptedQuestionIds.includes(question.questionId) &&
                       selectedQuestion?.questionId !== question.questionId ? (
-                        <Text>Question {question.questionNum}</Text>
+                        <span>Question {question.questionNum}</span>
                       ) : (
-                        <Group>
-                          <Text>Question {question.questionNum}</Text>
+                        <div className="flex items-center gap-2">
+                          <span>Question {question.questionNum}</span>
                           <Badge
-                            variant="filled"
-                            styles={{
-                              root: {
-                                backgroundColor: attemptedQuestionIds.includes(question.questionId)
-                                  ? 'var(--gray-dark)' // Show a neutral color when question is attempted
-                                  : getPointsColor(question.points, minQuestionPoint, maxQuestionPoint).color,
-                              },
-                            }}>
+                            variant="secondary"
+                            style={{
+                              backgroundColor: attemptedQuestionIds.includes(question.questionId)
+                                ? 'var(--gray-dark)'
+                                : getPointsColor(question.points, minQuestionPoint, maxQuestionPoint).color,
+                            }}
+                          >
                             {question.points} pts
                           </Badge>
-                        </Group>
+                        </div>
                       )}
                       <TeamAvatar {...getAvatarProps(question)} />
-                    </Group>
+                    </div>
                   </Button>
                 ))}
-              </Button.Group>
-            </Accordion.Panel>
-          </Accordion.Item>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         ))}
       </Accordion>
     </>

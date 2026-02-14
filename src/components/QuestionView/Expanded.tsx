@@ -1,6 +1,8 @@
 import React from 'react';
 import { Question as IQuestion } from '../../types';
-import { Title, Badge, ActionIcon, Text, List, Group, Button, Box, Card } from '@mantine/core';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import Icon from '../Icon';
 import SanitizedHtml from '../SanitizedHtml';
 
@@ -24,81 +26,69 @@ export default function ExpandedView({
   handleMoveQuestions,
 }: Props) {
   const isWithoutOptions = question.options.length === 1;
-  const getQuestionTextStyles = (theme, isCorrect = false) =>
+
+  const getQuestionTextStyles = (isCorrect = false) =>
     isCorrect
       ? {
-          backgroundColor: theme.colors.green[2],
-          borderRadius: theme.radius.xs,
+          backgroundColor: '#dcfce7',
+          borderRadius: '4px',
         }
       : {};
 
   return (
-    <Card shadow="sm" p="lg" my="sm" withBorder className="secondaryCard slideDown">
-      <Card className="secondaryCard clickable" p={0} onClick={() => setExpandedQuestionIndex(null)}>
-        <Group position="apart" noWrap>
-          <Group>
-            <Title order={4}>Question {questionNum}</Title>
-            <Text>{question.points} points</Text>
-            {!isValidQuestion && (
-              <Badge variant="filled" color="red">
-                Incomplete
-              </Badge>
-            )}
-          </Group>
-          <Group className="noShrink">
-            <Button
-              variant="light"
-              radius="xl"
-              compact
-              onClick={(ev) => {
-                ev.stopPropagation();
-                handleMoveQuestions(question.questionId);
-              }}>
-              Move question
-            </Button>
-            <Button variant="light" radius="xl" compact color="red" onClick={deleteQuestion}>
-              Delete
-            </Button>
-            <ActionIcon variant="transparent" title="Edit" onClick={(ev) => setActiveQuestion}>
-              <Icon name="pencil" width={22} />
-            </ActionIcon>
-            <ActionIcon variant="transparent">
-              <Icon name="caretUp" />
-            </ActionIcon>
-          </Group>
-        </Group>
-      </Card>
-      <Box my="xs">
+    <Card className="secondaryCard slideDown shadow-sm p-6 my-4 border">
+      <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedQuestionIndex(null)}>
+        <div className="flex items-center gap-3">
+          <h4 className="text-lg font-semibold">Question {questionNum}</h4>
+          <span className="text-sm">{question.points} points</span>
+          {!isValidQuestion && <Badge variant="destructive">Incomplete</Badge>}
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="light"
+            size="sm"
+            className="rounded-full"
+            onClick={(ev) => {
+              ev.stopPropagation();
+              handleMoveQuestions(question.questionId);
+            }}
+          >
+            Move question
+          </Button>
+          <Button variant="light" size="sm" className="rounded-full text-red-500" onClick={deleteQuestion}>
+            Delete
+          </Button>
+          <Button variant="ghost" size="icon" title="Edit" onClick={(ev) => setActiveQuestion}>
+            <Icon name="pencil" width={22} />
+          </Button>
+          <Button variant="ghost" size="icon">
+            <Icon name="caretUp" />
+          </Button>
+        </div>
+      </div>
+      <div className="my-2">
         {question.text ? (
           <SanitizedHtml>{question.text}</SanitizedHtml>
         ) : (
-          <Text italic size="sm" span>
-            (No question text)
-          </Text>
+          <span className="italic text-sm">(No question text)</span>
         )}
-      </Box>
-      <Title mt="xl" order={6}>
-        {isWithoutOptions ? 'Correct Answer' : 'Options'}
-      </Title>
-      <List type="ordered" listStyleType="none">
+      </div>
+      <h6 className="text-base font-semibold mt-6">{isWithoutOptions ? 'Correct Answer' : 'Options'}</h6>
+      <ol className="list-none">
         {question.options.map((option) => (
-          <Box
-            className="py-md mt-md outline"
-            component={List.Item}
-            px="xs"
-            mb="md"
+          <li
+            className="py-3 mt-3 px-2 mb-4 outline"
             key={option.optionId}
-            sx={(theme) => getQuestionTextStyles(theme, !!option.text && option.isCorrect)}>
+            style={getQuestionTextStyles(!!option.text && option.isCorrect)}
+          >
             {option.text ? (
               <SanitizedHtml>{option.text}</SanitizedHtml>
             ) : (
-              <Text italic size="sm" span>
-                (No option text)
-              </Text>
+              <span className="italic text-sm">(No option text)</span>
             )}
-          </Box>
+          </li>
         ))}
-      </List>
+      </ol>
     </Card>
   );
 }

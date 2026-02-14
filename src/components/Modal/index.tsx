@@ -1,13 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useStore } from '../../useStore';
-import { Modal as MTModal, Button, Group, Checkbox, Text } from '@mantine/core';
 import { ModalState } from '../../stores/appStore';
-import styles from './styles.module.css';
 
-function Modal({ modalProps }: { modalProps?: ModalState }) {
+interface ModalProps {
+  modalProps?: ModalState;
+}
+
+function Modal({ modalProps }: ModalProps) {
   const showModal = useStore.use.showModal();
   const modal = useStore.use.modal();
-  const okRef = useRef<any>();
+  const okRef = useRef<HTMLButtonElement>(null);
   const [shouldNotShowAgain, setShouldNotShowAgain] = useState(false);
   const {
     body,
@@ -32,7 +37,7 @@ function Modal({ modalProps }: { modalProps?: ModalState }) {
     if (okRef.current && isAlert) {
       okRef.current.focus();
     }
-  }, [isAlert, okRef]);
+  }, [isAlert]);
 
   const onClose = () => {
     hideModal();
@@ -42,62 +47,74 @@ function Modal({ modalProps }: { modalProps?: ModalState }) {
     }
   };
 
-  return (
-    <MTModal
-      className={className}
-      onClose={onClose}
-      closeOnClickOutside={isAlert}
-      opened
-      overlayBlur={5}
-      title={
-        title ? (
-          <Text size="lg" weight="bold">
-            {title}
-          </Text>
-        ) : null
-      }
-      size={size}>
-      <div className={styles.body}>
-        {body}
-        {!!doNotShowAgainKey && (
-          <Checkbox
-            className="mt-xl"
-            label="Do not show this message again"
-            checked={shouldNotShowAgain}
-            onChange={() => setShouldNotShowAgain(!shouldNotShowAgain)}
-          />
-        )}
-      </div>
-      {(!!cancelText || !!okText) && (
-        <Group mt="xl" position="right">
-          {!!cancelText && (
-            <Button color="dark" variant="outline" onClick={onClose}>
-              {cancelText}
-            </Button>
-          )}
-          {!!okText && (
-            <Button
-              ref={okRef}
-              variant="filled"
-              disabled={disableOkButton}
-              onClick={() => {
-                if (okCallback) {
-                  okCallback();
-                }
-                if (doNotShowAgainKey && shouldNotShowAgain) {
-                  localStorage.setItem('DoNotShow' + doNotShowAgainKey, 'true');
-                }
+  const getSizeClass = () => {
+    switch (size) {
+      case 'xl':
+        return 'max-w-4xl';
+      case 'lg':
+        return 'max-w-2xl';
+      case 'sm':
+        return 'max-w-sm';
+      default:
+        return 'max-w-lg';
+    }
+  };
 
-                if (closeOnOkClick) {
-                  hideModal();
-                }
-              }}>
-              {okText}
-            </Button>
+  return (
+    <Dialog open={!!modal || !!modalProps} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className={`${getSizeClass()} ${className}`}>
+        {title && (
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold">{title}</DialogTitle>
+          </DialogHeader>
+        )}
+        <div className="max-h-[calc(100vh-250px)] overflow-auto pr-5">
+          {body}
+          {!!doNotShowAgainKey && (
+            <div className="mt-6 flex items-center gap-2">
+              <Checkbox
+                id="do-not-show-again"
+                checked={shouldNotShowAgain}
+                onCheckedChange={() => setShouldNotShowAgain(!shouldNotShowAgain)}
+              />
+              <label htmlFor="do-not-show-again" className="text-sm cursor-pointer">
+                Do not show this message again
+              </label>
+            </div>
           )}
-        </Group>
-      )}
-    </MTModal>
+        </div>
+        {(!!cancelText || !!okText) && (
+          <DialogFooter className="justify-end gap-2">
+            {!!cancelText && (
+              <Button variant="outline" onClick={onClose}>
+                {cancelText}
+              </Button>
+            )}
+            {!!okText && (
+              <Button
+                ref={okRef}
+                variant="filled"
+                disabled={disableOkButton}
+                onClick={() => {
+                  if (okCallback) {
+                    okCallback();
+                  }
+                  if (doNotShowAgainKey && shouldNotShowAgain) {
+                    localStorage.setItem('DoNotShow' + doNotShowAgainKey, 'true');
+                  }
+
+                  if (closeOnOkClick) {
+                    hideModal();
+                  }
+                }}
+              >
+                {okText}
+              </Button>
+            )}
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 

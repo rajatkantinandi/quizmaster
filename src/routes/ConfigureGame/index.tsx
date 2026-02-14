@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container, Select } from '@mantine/core';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
@@ -140,24 +143,18 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
   };
 
   return (
-    <Grid columns={12}>
+    <div className="grid grid-cols-12">
       <Helmet>
         <title>Create Game</title>
       </Helmet>
       <div className={classNames('fullWidth', styles.scrollable)}>
-        <Grid.Col lg={6} md={8} sm={10} px="lg" mx="lg" mb="xl">
-          {quizName && (
-            <Title order={2} mb="xl">
-              Configure game for {quizName}
-            </Title>
-          )}
+        <div className="col-span-6 col-start-3 lg:col-span-6 md:col-span-8 sm:col-span-10 px-lg mx-lg mb-xl">
+          {quizName && <h2 className="text-2xl font-bold mb-xl pb-lg flex items-end">Configure game for {quizName}</h2>}
           <form onSubmit={handleSubmit(handleGameConfig)}>
-            <Title order={4}>Team names</Title>
+            <h4 className="text-lg font-semibold">Team names</h4>
             {fields.map((team, idx) => (
-              <Group position="left" grow key={idx} className={styles.teamInputWrapper}>
-                <Text weight="bold" className={styles.teamInputCount}>
-                  {idx + 1}.
-                </Text>
+              <div className={`flex items-center gap-2 grow mb-md ${styles.teamInputWrapper}`}>
+                <span className={`font-bold ${styles.teamInputCount}`}>{idx + 1}.</span>
                 <FormInput
                   name={`teams.${idx}.name`}
                   id={`teams.${idx}.name`}
@@ -174,121 +171,100 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                   my="md"
                 />
                 {mode === 'automatic' && (
-                  <Text color="dimmed" size="sm" className={styles.playerNames}>
-                    {players[idx]}
-                  </Text>
+                  <span className={`text-sm text-gray-500 ${styles.playerNames}`}>{players[idx]}</span>
                 )}
                 {fields.length > 2 ? (
-                  <ActionIcon variant="transparent" className={styles.teamInputCount} onClick={() => remove(idx)}>
+                  <Button size="icon" variant="ghost" className={styles.teamInputCount} onClick={() => remove(idx)}>
                     <Icon width={20} name="trash" />
-                  </ActionIcon>
+                  </Button>
                 ) : (
                   <div className={styles.teamInputCount}></div>
                 )}
-              </Group>
+              </div>
             ))}
-            <Container my="xl">
+            <div className="my-xl">
               {mode !== 'automatic' && (
                 <>
                   <Button
-                    mt="xl"
                     onClick={() => append(getEmptyTeam())}
                     className={styles.button}
                     variant="default"
-                    leftIcon={<Icon name="plus" width={18} />}>
+                    leftIcon={<Icon name="plus" width={18} />}
+                  >
                     Add team
                   </Button>
-                  <Divider
-                    my="xl"
-                    labelProps={{ weight: 'bold', size: 'md' }}
-                    label="OR"
-                    labelPosition="center"
-                    color="black"
-                  />
+                  <Separator className="my-xl" />
+                  <p className="text-center font-bold text-lg my-xl">OR</p>
                 </>
               )}
               <Button
-                variant="filled"
+                variant="default"
                 className={styles.button}
                 leftIcon={<Icon color="white" name="randomTeam" width={20} />}
-                onClick={showTeamGenerator}>
+                onClick={showTeamGenerator}
+              >
                 Random team generator
               </Button>
-            </Container>
-            <Title pt="xl" mb="sm" order={4}>
-              Points
-            </Title>
-            <Checkbox
-              radius="xl"
-              size="md"
-              mb="xl"
-              ml="md"
-              name="isQuestionPointsHidden"
-              checked={isQuestionPointsHidden}
-              label="Hide points until the question is revealed"
-              onChange={() => {
-                setValue('isQuestionPointsHidden', !isQuestionPointsHidden);
-              }}
-            />
-            <Group position="apart" mb="xl">
+            </div>
+            <h4 className="text-lg font-semibold pt-xl mb-sm">Points</h4>
+            <div className="flex items-center gap-2 mb-xl ml-md">
               <Checkbox
-                radius="xl"
-                size="md"
-                mb="xs"
-                ml="md"
-                label="Allow negative points for incorrect response"
-                checked={negativePointsMultiplier !== 0}
-                onChange={() => {
-                  if (negativePointsMultiplier === 0) {
-                    setValue('negativePointsMultiplier', -0.25);
-                  } else {
-                    setValue('negativePointsMultiplier', 0);
-                  }
+                id="isQuestionPointsHidden"
+                checked={isQuestionPointsHidden}
+                onCheckedChange={() => {
+                  setValue('isQuestionPointsHidden', !isQuestionPointsHidden);
                 }}
               />
+              <label htmlFor="isQuestionPointsHidden">Hide points until the question is revealed</label>
+            </div>
+            <div className="flex justify-between items-center mb-xl">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="negativePoints"
+                  checked={negativePointsMultiplier !== 0}
+                  onCheckedChange={() => {
+                    if (negativePointsMultiplier === 0) {
+                      setValue('negativePointsMultiplier', -0.25);
+                    } else {
+                      setValue('negativePointsMultiplier', 0);
+                    }
+                  }}
+                />
+                <label htmlFor="negativePoints">Allow negative points for incorrect response</label>
+              </div>
               <Select
-                placeholder="Negative points"
-                data={[
-                  {
-                    value: '-0.25',
-                    label: '1/4 of question points',
-                  },
-                  {
-                    value: '-0.33',
-                    label: '1/3 of question points',
-                  },
-                  {
-                    value: '-0.5',
-                    label: '1/2 of question points',
-                  },
-                ]}
                 value={negativePointsMultiplier.toString()}
-                id="negativePointsMultiplier"
-                disabled={negativePointsMultiplier === 0}
-                onChange={(value) => {
+                onValueChange={(value) => {
                   setValue('negativePointsMultiplier', parseFloat(value || '-0.25'));
                 }}
-              />
-            </Group>
-            <Title pt="xl" mb="sm" order={4}>
-              Time limits
-            </Title>
-            <Group position="apart" mb="xl">
-              <Checkbox
-                radius="xl"
-                size="md"
-                mb="xs"
-                ml="md"
-                label="Time limit per question (in seconds)"
-                checked={timeLimit !== null}
-                onChange={() => {
-                  if (timeLimit === null) {
-                    setValue('timeLimit', 30);
-                  } else {
-                    setValue('timeLimit', null);
-                  }
-                }}
-              />
+                disabled={negativePointsMultiplier === 0}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Negative points" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="-0.25">1/4 of question points</SelectItem>
+                  <SelectItem value="-0.33">1/3 of question points</SelectItem>
+                  <SelectItem value="-0.5">1/2 of question points</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <h4 className="text-lg font-semibold pt-xl mb-sm">Time limits</h4>
+            <div className="flex justify-between items-center mb-xl">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="timeLimit"
+                  checked={timeLimit !== null}
+                  onCheckedChange={() => {
+                    if (timeLimit === null) {
+                      setValue('timeLimit', 30);
+                    } else {
+                      setValue('timeLimit', null);
+                    }
+                  }}
+                />
+                <label htmlFor="timeLimit">Time limit per question (in seconds)</label>
+              </div>
               <FormInput
                 name="timeLimit"
                 id="timeLimit"
@@ -301,23 +277,22 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                 className={styles.timeInput}
                 control={control}
               />
-            </Group>
-            <Group position="apart">
-              <Checkbox
-                radius="xl"
-                size="md"
-                mb="xs"
-                ml="md"
-                label="Time limit to choose a question (in seconds)"
-                checked={selectionTimeLimit !== null}
-                onChange={() => {
-                  if (selectionTimeLimit === null) {
-                    setValue('selectionTimeLimit', 30);
-                  } else {
-                    setValue('selectionTimeLimit', null);
-                  }
-                }}
-              />
+            </div>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="selectionTimeLimit"
+                  checked={selectionTimeLimit !== null}
+                  onCheckedChange={() => {
+                    if (selectionTimeLimit === null) {
+                      setValue('selectionTimeLimit', 30);
+                    } else {
+                      setValue('selectionTimeLimit', null);
+                    }
+                  }}
+                />
+                <label htmlFor="selectionTimeLimit">Time limit to choose a question (in seconds)</label>
+              </div>
               <FormInput
                 name="selectionTimeLimit"
                 id="selectionTimeLimit"
@@ -330,23 +305,24 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                 className={styles.timeInput}
                 control={control}
               />
-            </Group>
+            </div>
             <button className="displayNone" id="btnGameFormSubmit" type="submit">
               Submit
             </button>
           </form>
-        </Grid.Col>
+        </div>
       </div>
-      <Grid.Col span={6} offset={3} mt="md">
+      <div className="col-span-6 col-start-4 mt-md">
         <Button
           onClick={submitGameForm}
-          variant="gradient"
+          variant="default"
           size="lg"
-          fullWidth
-          leftIcon={<Icon name="done" color="#ffffff" />}>
+          className="w-full"
+          leftIcon={<Icon name="done" color="#ffffff" />}
+        >
           Play Game
         </Button>
-      </Grid.Col>
-    </Grid>
+      </div>
+    </div>
   );
 }

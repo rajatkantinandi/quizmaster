@@ -1,8 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&family=Ubuntu&display=swap');
 
+@layer base {
+  html {
+    min-height: 100vh;
+  }
+
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 189 83% 16%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 60 29% 87%;
+    --secondary-foreground: 189 83% 16%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 189 83% 16%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 183 65% 45%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 183 65% 45%;
+  }
+}
+
+:root {
+  /* colors */
+  --border-gray: #ccc;
+  --border-light: #fef;
+  --option-background: #ededff;
+  --checked-color: #ffa;
+  --correct-color: rgb(64, 192, 87);
+  --incorrect-color: rgb(250, 82, 82);
+  --warning: rgb(250, 176, 5);
+  --question-container-color: #cef;
+  --question-grid-background: #fee;
+  --dashed-border-color: #add8e6;
+  --shadow-color-light: rgba(0, 0, 0, 0.3);
+  --gray-dark: #455;
+  --divider-color: rgb(126, 125, 125, 0.5);
+  --score-header-bg: #77f;
+  --score-header-color: white;
+  --score-bg: #eef;
+  --score-border-color: #aaf;
+  --score-active-color: #cfc;
+  --card-background: #efe;
+  --info-text-color: rgba(0, 0, 0, 0.67);
+  --card-hover-bg: #557;
+  --card-hover-color: white;
+  --legend-bg: #65e;
+  --legend-color: #fef;
+  --shadow-color-dark: rgba(0, 0, 0, 0.5);
+  --qm-card-bg: #f5f6e6;
+  --qm-card-border: #adc3c7;
+  --qm-primary: #014751;
+  --input-bg: #e4fafc;
+  --checkbox-bg: #c4fceb;
+  --default-button-bg: #ffd700;
+  --default-button-bg-hover: #ffe30c;
+  --primary-button-bg-hover: #016c7b;
+  --primary-card-bg: #f5f6e6;
+  --secondary-card-bg: #afd0d4;
+  --off-white: #f3f3f3;
+  --off-white-hover: #f9f9f9;
+  --quiz-card-bg-1: #009688;
+  --quiz-card-bg-2: #2196f3;
+  --quiz-card-bg-3: #e91e63;
+  --quiz-card-bg-4: #4caf50;
+  --quiz-card-bg-5: #673ab7;
+  --dragging-question-bg: #d7e7e9;
+  --points-color-5: #fa5252;
+  --points-color-4: #fd7e14;
+  --points-color-3: #fab005;
+  --points-color-2: #82c91e;
+  --points-color-1: #20c027;
+  --points-bg-color-5: #f7ebeb;
+  --points-bg-color-4: #fff4e6;
+  --points-bg-color-3: #fff9db;
+  --points-bg-color-2: #f4fce3;
+  --points-bg-color-1: #ebfbee;
+
+  /* fonts */
+  --comfortaa: 'Comfortaa';
+  --semi-bold: 600;
+  --body-font: 'Ubuntu';
+}
+
+/* Dark mode variables */
+.dark {
+  --border-gray: #404040;
+  --border-light: #333;
+  --option-background: #2a2a4a;
+  --checked-color: #443;
+  --correct-color: rgb(64, 192, 87);
+  --incorrect-color: rgb(250, 82, 82);
+  --question-container-color: #223;
+  --question-grid-background: #322;
+  --shadow-color-light: rgba(255, 255, 255, 0.1);
+  --gray-dark: #889;
+  --divider-color: rgba(200, 200, 200, 0.3);
+  --score-header-bg: #446;
+  --score-bg: #222;
+  --score-border-color: #334;
+  --card-background: #2a2a2a;
+  --info-text-color: rgba(255, 255, 255, 0.67);
+  --legend-bg: #446;
+  --qm-card-bg: #2a2a2a;
+  --qm-card-border: #444;
+  --input-bg: #2a3a3f;
+  --checkbox-bg: #1a3a2a;
+  --qm-primary: #4ecdc4;
+  --default-button-bg: #b8a000;
+  --default-button-bg-hover: #ccb700;
+  --primary-button-bg-hover: #3a8a94;
+  --primary-card-bg: #2a2a2a;
+  --secondary-card-bg: #2a3a3d;
+  --off-white: #1a1a1a;
+  --off-white-hover: #252525;
+  --dragging-question-bg: #2a3a3c;
+}
+
 /* html reset */
+html {
+  min-height: 100vh;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 18px;
@@ -32,7 +188,6 @@ legend {
   font-size: 15px;
 }
 
-
 /* thin scrollbar */
 *::-webkit-scrollbar {
   width: 5px;
@@ -49,7 +204,7 @@ legend {
 }
 
 *:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(120, 120, 120, .35);
+  background-color: rgba(120, 120, 120, 0.35);
 }
 
 * {
@@ -58,7 +213,7 @@ legend {
 }
 
 *:hover {
-  scrollbar-color: rgba(120, 120, 120, .35) transparent;
+  scrollbar-color: rgba(120, 120, 120, 0.35) transparent;
 }
 
 /* flexbox stuff */
@@ -208,11 +363,11 @@ legend {
 }
 
 @media screen and (max-width: 940px) {
-  button.noTextOnSmallScreen [class*='mantine-Button-label'] {
+  button.noTextOnSmallScreen [class*='Button-label'] {
     display: none;
   }
 
-  button.noTextOnSmallScreen [class*='mantine-Button-icon'] {
+  button.noTextOnSmallScreen [class*='Button-icon'] {
     margin-right: 0;
   }
 
@@ -248,4 +403,31 @@ legend {
   opacity: 0;
   transform-origin: 50% 0%;
   animation: slidedown 0.2s forwards ease-in;
+}
+
+/* shadcn/ui accordion animations */
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.animate-accordion-down {
+  animation: accordion-down 0.2s ease-out;
+}
+
+.animate-accordion-up {
+  animation: accordion-up 0.2s ease-out;
 }

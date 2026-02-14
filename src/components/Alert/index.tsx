@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import { Alert as MTAlert, Text } from '@mantine/core';
+import { Alert as ShadcnAlert, AlertTitle } from '@/components/ui/alert';
 import { useStore } from '../../useStore';
-import styles from './styles.module.css';
 
 function Alert() {
   const { showAlert, alert } = useStore();
@@ -9,36 +8,28 @@ function Alert() {
 
   useEffect(() => {
     if (autoClose) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         showAlert(null);
 
         if (callback) {
           callback();
         }
       }, 4000);
+      return () => clearTimeout(timer);
     }
-  });
+  }, [autoClose, callback, showAlert]);
 
-  function getColor(): string {
-    switch (type) {
-      case 'success':
-        return 'green';
-      case 'error':
-        return 'red';
-      case 'warning':
-        return 'yellow';
-      default:
-        return '';
-    }
+  function getVariant(): 'default' | 'destructive' {
+    return type === 'error' ? 'destructive' : 'default';
   }
 
+  if (!message) return null;
+
   return (
-    <div className={styles.alertWrapper}>
-      <MTAlert withCloseButton closeButtonLabel="Close" variant="filled" color={getColor()}>
-        <Text weight="bold" size="md">
-          {message}
-        </Text>
-      </MTAlert>
+    <div className="fixed top-0 z-[500] w-full px-[30%] py-2.5">
+      <ShadcnAlert variant={getVariant()} className="shadow-lg">
+        <AlertTitle className="font-bold">{message}</AlertTitle>
+      </ShadcnAlert>
     </div>
   );
 }

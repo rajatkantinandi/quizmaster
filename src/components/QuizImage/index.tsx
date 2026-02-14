@@ -1,6 +1,4 @@
 import React from 'react';
-import styles from './styles.module.css';
-import { Image } from '@mantine/core';
 import quiz_1 from '../../images/icons/quiz_1.svg';
 import quiz_2 from '../../images/icons/quiz_2.svg';
 import quiz_3 from '../../images/icons/quiz_3.svg';
@@ -31,6 +29,7 @@ const images = [
   quiz_13,
 ];
 
-export default function QuizImage({ index }) {
-  return images[index % 13];
+export default function QuizImage({ index }: { index: number }) {
+  const ImageComponent = images[index % 13];
+  return <ImageComponent />;
 }

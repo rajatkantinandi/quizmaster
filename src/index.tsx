@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import './styles/variables.css';
 import './styles/index.css';
 import './styles/spacing.css';
@@ -9,8 +9,7 @@ import reportWebVitals from './reportWebVitals';
 import { useStore } from './useStore';
 import Cookies from 'js-cookie';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import { MantineProvider } from '@mantine/core';
-import theme from './styles/theme';
+import { ThemeProvider } from './components/providers/theme-provider';
 import mixpanel from 'mixpanel-browser';
 import { getDeviceId } from './helpers/device';
 import config from './config';
@@ -86,12 +85,12 @@ document.addEventListener('wheel', function () {
 });
 
 function renderDom() {
-  return ReactDOM.render(
+  const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+  root.render(
     <React.StrictMode>
-      <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
+      <ThemeProvider>
         <App />
-      </MantineProvider>
+      </ThemeProvider>
     </React.StrictMode>,
-    document.getElementById('root'),
   );
 }

@@ -1,4 +1,5 @@
-import { Button, Group, Select } from '@mantine/core';
+import { Button } from '@/components/ui/button';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import Icon from '../../components/Icon';
@@ -73,96 +74,30 @@ export default function ActionBar({ quizzes }: Props) {
     });
   }
 
-  // function handlePublishQuizzes() {
-  //   if (quizzes.some((quiz) => !quiz.isDraft && !quiz.isPublished)) {
-  //     setQuizzesSelectorState({
-  //       action: 'publish',
-  //       message: 'Select quizzes to publish',
-  //       show: true,
-  //       selectedQuizzes: [],
-  //       onNextClick: (selectedQuizzes) => {
-  //         showModal({
-  //           title: 'Publish Quizzes',
-  //           body: (
-  //             <>
-  //               <p>Are you sure you want to publish following quizzes ?</p>
-  //               <ol>
-  //                 {selectedQuizzes.map((quizId) => (
-  //                   <li key={quizId}>{quizzes.find((quiz) => quiz.quizId === quizId)?.name}</li>
-  //                 ))}
-  //               </ol>
-  //             </>
-  //           ),
-  //           okCallback: async () => {
-  //             await publishQuizzes(selectedQuizzes);
-  //             setQuizzesSelectorState({
-  //               action: '',
-  //               message: '',
-  //               show: false,
-  //               selectedQuizzes: [],
-  //             });
-  //           },
-  //           cancelCallback: () => {
-  //             setQuizzesSelectorState({
-  //               action: '',
-  //               message: '',
-  //               show: false,
-  //               selectedQuizzes: [],
-  //             });
-  //           },
-  //           okText: 'Publish Quizzes',
-  //           cancelText: 'Cancel',
-  //         });
-  //       },
-  //       onCancelClick: () => {
-  //         setQuizzesSelectorState({
-  //           action: '',
-  //           message: '',
-  //           show: false,
-  //           selectedQuizzes: [],
-  //         });
-  //       },
-  //     });
-  //   } else {
-  //     showAlert({
-  //       message: 'No quiz to publish. Please complete the quizzes before publish if they are in draft state.',
-  //       type: 'info',
-  //     });
-  //   }
-  // }
-
   return (
-    <Group className={styles.pageTitleWrapper} spacing={25} mt="md" mb="lg">
+    <div className={`flex gap-[25px] mt-md mb-lg ${styles.pageTitleWrapper}`}>
       <ImportQuizzesButton />
       <Button
         onClick={handleDeleteQuizzes}
         className={classNames('noTextOnSmallScreen', styles.deleteButton)}
         title="Delete Quizzes"
-        leftIcon={<Icon color="white" width="16" name="trash" />}>
+        leftIcon={<Icon color="white" width="16" name="trash" />}
+      >
         Delete Quizzes
       </Button>
-      {/* TODO: enable publish button when we have backend */}
-      {/* <Button
-        onClick={handlePublishQuizzes}
-        className={styles.publishQuiz}
-        leftIcon={<Icon color="white" width="16" name="publish" />}>
-        Publish Quizzes
-      </Button> */}
-      <Select
-        placeholder="Sort by"
-        className={styles.sort}
-        onChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}
-        data={[
-          { value: 'recency', label: 'Recently Updated' },
-          { value: 'createDate', label: 'Create Date' },
-          { value: 'name', label: 'Name' },
-        ]}
-        icon={<Icon width="16" name="sort" />}
-        value={sortBy}
-        transition="pop-top-left"
-        transitionDuration={100}
-        transitionTimingFunction="ease"
-      />
-    </Group>
+      <Select value={sortBy} onValueChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}>
+        <SelectTrigger className={styles.sort}>
+          <div className="flex items-center gap-2">
+            <Icon width="16" name="sort" />
+            <SelectValue placeholder="Sort by" />
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="recency">Recently Updated</SelectItem>
+          <SelectItem value="createDate">Create Date</SelectItem>
+          <SelectItem value="name">Name</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

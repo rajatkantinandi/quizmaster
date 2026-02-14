@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Button, Title, Container, Group } from '@mantine/core';
+import { Button } from '@/components/ui/button';
 import QuestionPlay from '../../components/QuestionPlay';
 import { Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
 import Timer from '../../components/Timer';
@@ -211,9 +211,6 @@ export default function PlayQuiz({ gameId, userName }) {
   }
 
   function shouldShowTimer() {
-    // show timer when game is running and
-    // (question is selected and question timer exists) or
-    // (question is not selected and question selection timer exists)
     return !!(
       ((!selectedQuestion && !!selectionTimeLimit) || (selectedQuestion && !!showQuestionTimer)) &&
       !winnerIdsCsv &&
@@ -251,19 +248,13 @@ export default function PlayQuiz({ gameId, userName }) {
     if (isGameStarted) {
       if (shouldShowTimer()) {
         if (isTimerRunning) {
-          // if user selected a question, enable only attempted or selected questions
-          // else enable all questions
           return !!selectedQuestion ? isQuestionAttemptedOrSelected(question.questionId) : true;
         } else {
-          // if timer is paused
-          // 1. user already selected a question, enable only attempted or selected questions
-          // 2. user not selected any question, enable only attempted questions only
           return !!selectedQuestion
             ? isQuestionAttemptedOrSelected(question.questionId)
             : attemptedQuestionIds.includes(question.questionId);
         }
       } else {
-        // Same case when timer is running
         return !!selectedQuestion ? isQuestionAttemptedOrSelected(question.questionId) : true;
       }
     } else {
@@ -312,7 +303,8 @@ export default function PlayQuiz({ gameId, userName }) {
           height="700"
           frameBorder="0"
           marginHeight={0}
-          marginWidth={0}>
+          marginWidth={0}
+        >
           Loading…
         </iframe>
       ),
@@ -329,26 +321,24 @@ export default function PlayQuiz({ gameId, userName }) {
       <Helmet>
         <title>Play Quiz</title>
       </Helmet>
-      <Group mb="xl">
-        {quizName && <Title order={2}>Play game for {quizName}</Title>}
+      <div className="flex gap-2 mb-xl">
+        {quizName && <h2 className="text-2xl font-bold">Play game for {quizName}</h2>}
         <Button onClick={confirmCreateNewGame} variant="outline">
           Start a new game
         </Button>
-      </Group>
+      </div>
       {isGameCompleted() ? (
-        <Title py="md" my="lg" color="white" className={styles.winnerMessage} align="center" order={3}>
-          🎉 {getWinnerMessage()}
-        </Title>
+        <h3 className={`py-3 my-lg text-white text-center ${styles.winnerMessage}`}>🎉 {getWinnerMessage()}</h3>
       ) : (
         showExtraQuestionBanner && (
-          <Title py="md" my="md" size="md" className={styles.extraQuestionsBanner} align="center" order={3}>
+          <h3 className={`py-3 my-md text-base text-center ${styles.extraQuestionsBanner}`}>
             Note: There are {allQuestions.length} questions but {gameInfo.teams.length} teams. So, the game will
             complete when each team answers equal number of questions with {allQuestions.length % gameInfo.teams.length}{' '}
             questions remaining.
             <Button className={styles.closeBtn} variant="outline" onClick={() => setShowExtraQuestionBanner(false)}>
               &#x2715;
             </Button>
-          </Title>
+          </h3>
         )
       )}
       <div className="flex grow">
@@ -373,11 +363,11 @@ export default function PlayQuiz({ gameId, userName }) {
           ) : (
             <>
               {!winnerIdsCsv && attemptedQuestionIds.length === 0 && !isGameStarted && (
-                <Container my="xl" className="textAlignCenter">
-                  <Button size="lg" variant="gradient" onClick={startGame}>
+                <div className="my-xl text-center">
+                  <Button size="lg" onClick={startGame}>
                     Start Game
                   </Button>
-                </Container>
+                </div>
               )}
               <QuestionsList
                 categories={categories}
@@ -394,22 +384,23 @@ export default function PlayQuiz({ gameId, userName }) {
             </>
           )}
           {isGameCompleted() && (
-            <div className="flex justifyCenter">
+            <div className="flex justify-center">
               {!!selectedQuestion && (
-                <Button size="lg" my="lg" mr="md" variant="outline" onClick={() => setSelectedQuestion(null)}>
+                <Button size="lg" className="my-lg mr-md" variant="outline" onClick={() => setSelectedQuestion(null)}>
                   Show question list
                 </Button>
               )}
-              <Button size="lg" my="lg" onClick={() => navigate(`/my-quizzes/${userName}`)}>
+              <Button size="lg" className="my-lg" onClick={() => navigate(`/my-quizzes/${userName}`)}>
                 Go to home
               </Button>
               {isAddedFromCatalog && (
                 <Button
                   size="lg"
-                  m="lg"
-                  variant="gradient"
+                  className="m-lg"
+                  variant="default"
                   leftIcon={<Icon name="rating" width={24} height={24} />}
-                  onClick={openRateQuizModal}>
+                  onClick={openRateQuizModal}
+                >
                   Rate this Quiz
                 </Button>
               )}
@@ -421,13 +412,9 @@ export default function PlayQuiz({ gameId, userName }) {
             <>
               <div style={{ opacity: isTimerRunning ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>
                 {showQuestionTimer ? (
-                  <Title color="grey" align="center" order={3}>
-                    Answer the question before timer ends
-                  </Title>
+                  <h3 className="text-center text-gray-500">Answer the question before timer ends</h3>
                 ) : (
-                  <Title color="grey" align="center" order={3}>
-                    Select a question before timer ends
-                  </Title>
+                  <h3 className="text-center text-gray-500">Select a question before timer ends</h3>
                 )}
               </div>
               <Timer

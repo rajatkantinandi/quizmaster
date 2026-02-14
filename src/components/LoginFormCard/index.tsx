@@ -4,7 +4,9 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router';
-import { Card, Button, Title, Text, Divider } from '@mantine/core';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
 
 export default function LoginFormCard() {
@@ -54,10 +56,8 @@ export default function LoginFormCard() {
   }
 
   return (
-    <Card shadow="xs" p="lg" radius="xs" withBorder className="primaryCard">
-      <Title align="center" order={4}>
-        Log in
-      </Title>
+    <Card className="primaryCard p-6 border rounded-lg shadow-xs">
+      <h4 className="text-center text-lg font-semibold mb-4">Log in</h4>
       <form onSubmit={handleSubmit(handleLogin)}>
         <FormInput
           name="userName"
@@ -76,20 +76,24 @@ export default function LoginFormCard() {
           label="Password"
           type="password"
         />
-        <Text size="sm" align="right" mt="sm">
+        <p className="text-sm text-right mt-2">
           <Link to="/forgot-password">Forgot password?</Link>
-        </Text>
-        <Button mt="xs" size="md" type="submit" fullWidth variant="filled">
+        </p>
+        <Button size="lg" className="mt-1 w-full" type="submit" variant="filled">
           Login
         </Button>
-        <Divider my="sm" labelProps={{ weight: 'bold', size: 'md' }} label="OR" labelPosition="center" color="black" />
-        <Button mt="xs" size="md" fullWidth variant="default" onClick={loginAsGuest}>
+        <div className="flex items-center my-4">
+          <Separator className="flex-1" />
+          <span className="px-4 text-sm font-bold">OR</span>
+          <Separator className="flex-1" />
+        </div>
+        <Button size="lg" className="mt-1 w-full" variant="default" onClick={loginAsGuest}>
           Login as a guest
         </Button>
       </form>
-      <Text size="sm" align="center" mt="sm">
+      <p className="text-sm text-center mt-4">
         Don't have an account? <Link to="/signup">Sign up</Link>
-      </Text>
+      </p>
     </Card>
   );
 }
