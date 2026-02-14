@@ -11,7 +11,7 @@ function ImportQuizzesButton({
   radius?: MantineSize;
 }): JSX.Element {
   return (
-    <FileButton onChange={(files) => importQuizzes(files)} accept="text/csv" multiple>
+    <FileButton onChange={(files) => importQuizzes(files)} accept="text/csv,application/json" multiple>
       {(props) => (
         <Button
           {...props}

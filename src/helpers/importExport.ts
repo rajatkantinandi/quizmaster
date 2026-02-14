@@ -63,11 +63,36 @@ const addParsedCsvDataToMyQuizzes = async (csvArray: string[][], name: string) =
 
 export const importQuizzes = (files: File[]) => {
   for (let file of files) {
-    Papa.parse<string[]>(file as any, {
-      complete: async (results) => {
-        await addParsedCsvDataToMyQuizzes(results.data, file.name.split('.')[0]);
-      },
-    });
+    if (file.name.endsWith('.csv')) {
+      Papa.parse<string[]>(file as any, {
+        complete: async (results) => {
+          await addParsedCsvDataToMyQuizzes(results.data, file.name.split('.')[0]);
+        },
+      });
+    } else if (file.name.endsWith('.json')) {
+      const fileReader = new FileReader();
+      fileReader.onload = async (ev) => {
+        const text = ev.target?.result;
+
+        if (text && typeof text === 'string') {
+          const { createOrUpdateQuiz, getQuizzes, showAlert } = useStore.getState();
+
+          try {
+            const json = JSON.parse(text);
+            const quiz = getQuizFromJSON(json);
+
+            if (quiz.categories.length > 0) {
+              const savedQuiz = await createOrUpdateQuiz(quiz);
+              getQuizzes(); // Update state
+              return savedQuiz.quizId;
+            }
+          } catch (err: any) {
+            showAlert({ message: 'Invalid json file. Please check the file and try again.', type: 'error' });
+          }
+        }
+      };
+      fileReader.readAsText(file);
+    }
   }
 };
 
@@ -101,6 +126,50 @@ const getQuizFromCsv = (csvArray: string[][], name: string) => {
       };
       currentCategory.questions.push(question);
     }
+  }
+
+  return quiz;
+};
+
+type QuizJSON = {
+  title: string;
+  questions: {
+    id: number;
+    text: string;
+    options: string[];
+    correctAnswer: string;
+    points: number;
+  }[];
+};
+
+const getQuizFromJSON = (quizJson: QuizJSON) => {
+  const quiz: Omit<Quiz, 'quizId'> = {
+    name: quizJson.title,
+    categories: [
+      {
+        categoryName: 'Default',
+        categoryId: getRandomId(),
+        questions: [],
+      },
+    ],
+    createDate: new Date().toISOString(),
+    updateDate: new Date().toISOString(),
+  };
+
+  for (let question of quizJson.questions) {
+    const questionToAdd = {
+      text: question.text,
+      points: question.points,
+      options: question.options.map((o, idx) => ({
+        optionId: getRandomId(),
+        text: o,
+        isCorrect: o === question.correctAnswer,
+      })),
+      questionId: getRandomId(),
+      categoryId: quiz.categories[0].categoryId,
+    };
+
+    quiz.categories[0].questions.push(questionToAdd);
   }
 
   return quiz;

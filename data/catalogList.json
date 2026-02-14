@@ -75,5 +75,12 @@
     "numOfCategories": 2,
     "numOfQuestions": 23,
     "quizId": 11
+  },
+  {
+    "name": "Big Business Groups of India",
+    "createDate": "2024-09-07T11:26:08.299Z",
+    "numOfQuestions": 20,
+    "numOfCategories": 2,
+    "quizId": 12
   }
 ]
