@@ -83,7 +83,7 @@ export default function SignUpFormCard() {
           label="Password (min 8 chars)"
           type="password"
         />
-        <Button size="lg" className="mt-1" type="submit" fullWidth variant="filled">
+        <Button size="lg" className="mt-1 w-full" type="submit" variant="filled">
           Sign up
         </Button>
       </form>

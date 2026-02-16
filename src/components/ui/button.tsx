@@ -41,21 +41,18 @@ export interface ButtonProps
   asChild?: boolean;
   leftIcon?: React.ReactNode;
   radius?: string | number;
-  fullWidth?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, leftIcon, radius, fullWidth, style, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, leftIcon, radius, style, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
     const radiusStyle = radius ? { borderRadius: radius as string } : {};
-    const fullWidthStyle = fullWidth ? { width: '100%' } : {};
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        style={{ ...radiusStyle, ...fullWidthStyle, ...style }}
-        {...props}
-      >
+        style={{ ...radiusStyle, ...style }}
+        {...props}>
         {leftIcon && <span className="mr-2">{leftIcon}</span>}
         {props.children}
       </Comp>

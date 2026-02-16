@@ -65,17 +65,17 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
   return (
     <Card
       shadow="sm"
-      className="w-[20%] min-w-[250px] h-[320px] p-[10px_16px_16px] m-2 rounded-[10px] flex flex-col relative overflow-hidden">
-      <div style={{ backgroundColor: tilesBGColors[index % 5] }} className="py-4">
+      className="w-[20%] min-w-[250px] h-[320px] m-2 rounded-[10px] flex flex-col relative overflow-hidden">
+      <div style={{ backgroundColor: tilesBGColors[index % 5] }} className="py-4 w-full">
         <Icon
           name={`quiz_${(index % 13) + 1}` as IconName}
           width="100%"
           height={120}
           color="#ffffff"
-          className="my-4 opacity-50"
+          className="opacity-50"
         />
       </div>
-      <CardContent className="flex flex-col justify-between flex-1">
+      <CardContent className="flex flex-col justify-between flex-1 p-4 w-full">
         <div className="flex flex-col">
           <div className="flex justify-between items-start mt-4">
             <h3 className="font-bold text-sm truncate-2-line" title={quizMetadata.name}>
@@ -105,11 +105,11 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
             {plural(quizMetadata.numOfQuestions, '%count question', '%count questions')}
           </p>
         </div>
-        <div className="flex justify-between items-center mt-4 w-full gap-2">
+        <div className="flex justify-between mt-4 self-stretch gap-2">
           {quizMetadata.isInCatalog || quizMetadata.isDraft ? (
             <Button
-              variant="secondary"
-              fullWidth
+              variant="destructive"
+              className="w-full"
               leftIcon={<Icon color="#ffffff" name={quizMetadata.isInCatalog ? 'play' : 'pencil'} width={16} />}
               disabled={isImportingFromCatalog}
               onClick={() => {
