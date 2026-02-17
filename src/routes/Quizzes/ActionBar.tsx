@@ -6,7 +6,6 @@ import Icon from '../../components/Icon';
 import ImportQuizzesButton from '../../components/ImportQuizzesButton';
 import { Quiz } from '../../types';
 import { useStore } from '../../useStore';
-import styles from './styles.module.css';
 
 type Props = {
   quizzes: Quiz[];
@@ -75,18 +74,18 @@ export default function ActionBar({ quizzes }: Props) {
   }
 
   return (
-    <div className={`flex gap-[25px] mt-md mb-lg ${styles.pageTitleWrapper}`}>
+    <div className="mt-md mb-lg flex w-[95%] gap-[25px] px-3 max-[1240px]:w-[98.5%]">
       <ImportQuizzesButton />
       <Button
         onClick={handleDeleteQuizzes}
-        className={classNames('noTextOnSmallScreen', styles.deleteButton)}
+        className={classNames('bg-[#c10606] text-white hover:bg-[#a80505]')}
         title="Delete Quizzes"
         leftIcon={<Icon color="white" width="16" name="trash" />}
       >
         Delete Quizzes
       </Button>
       <Select value={sortBy} onValueChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}>
-        <SelectTrigger className={styles.sort}>
+        <SelectTrigger className="max-w-[190px]">
           <div className="flex items-center gap-2">
             <Icon width="16" name="sort" />
             <SelectValue placeholder="Sort by" />

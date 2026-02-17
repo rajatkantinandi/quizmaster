@@ -155,7 +155,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
             disabled={isEditingTeams}
             mb-4
             type="submit"
-            variant="default-button"
+            variant="default"
             leftIcon={<Icon name="team" width={20} />}
           >
             Generate team
@@ -192,7 +192,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               minRows={5}
               control={teamsForm.control}
             />
-            <button className="displayNone" id="teamNameFormSubmit" type="submit">
+            <button className="hidden" id="teamNameFormSubmit" type="submit">
               Submit
             </button>
           </form>

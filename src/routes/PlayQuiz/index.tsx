@@ -9,7 +9,6 @@ import { Helmet } from 'react-helmet';
 import Scorecard from './Scorecard';
 import QuestionsList from './QuestionsList';
 import { useNavigate } from 'react-router';
-import styles from './styles.module.css';
 import classNames from 'classnames';
 import Confetti from 'react-confetti-boom';
 import { track } from '../../helpers/track';
@@ -303,8 +302,7 @@ export default function PlayQuiz({ gameId, userName }) {
           height="700"
           frameBorder="0"
           marginHeight={0}
-          marginWidth={0}
-        >
+          marginWidth={0}>
           Loading…
         </iframe>
       ),
@@ -328,21 +326,29 @@ export default function PlayQuiz({ gameId, userName }) {
         </Button>
       </div>
       {isGameCompleted() ? (
-        <h3 className={`py-3 my-lg text-white text-center ${styles.winnerMessage}`}>🎉 {getWinnerMessage()}</h3>
+        <h3 className="relative my-lg rounded-[10px] bg-[var(--qm-primary)] py-3 text-center text-white before:absolute before:z-[-1] before:ml-[-8px] before:mt-[-24px] before:block before:h-[78px] before:w-[calc(100%+16px)] before:rounded-[10px] before:bg-[repeating-linear-gradient(45deg,var(--correct-color)_1%,var(--qm-primary)_3%)] before:content-[''] before:animate-border-roll">
+          🎉 {getWinnerMessage()}
+        </h3>
       ) : (
         showExtraQuestionBanner && (
-          <h3 className={`py-3 my-md text-base text-center ${styles.extraQuestionsBanner}`}>
+          <h3 className="relative my-md rounded-[10px] bg-[var(--default-button-bg)] py-3 text-center text-base">
             Note: There are {allQuestions.length} questions but {gameInfo.teams.length} teams. So, the game will
             complete when each team answers equal number of questions with {allQuestions.length % gameInfo.teams.length}{' '}
             questions remaining.
-            <Button className={styles.closeBtn} variant="outline" onClick={() => setShowExtraQuestionBanner(false)}>
+            <Button
+              className="!absolute !left-auto !right-[5px] !top-[5px] !h-auto !min-w-0 !border-0 !bg-transparent !p-0"
+              variant="outline"
+              onClick={() => setShowExtraQuestionBanner(false)}>
               &#x2715;
             </Button>
           </h3>
         )
       )}
-      <div className="flex grow">
-        <div className={classNames('grow', { [styles.categoryGridContainer]: !selectedQuestion })}>
+      <div className="flex flex-1 gap-6">
+        <div
+          className={classNames('flex-1', {
+            '[container-type:inline-size] [container-name:panel]': !selectedQuestion,
+          })}>
           {selectedQuestion ? (
             <QuestionPlay
               submitResponse={handleSubmitResponse}
@@ -399,15 +405,14 @@ export default function PlayQuiz({ gameId, userName }) {
                   className="m-lg"
                   variant="default"
                   leftIcon={<Icon name="rating" width={24} height={24} />}
-                  onClick={openRateQuizModal}
-                >
+                  onClick={openRateQuizModal}>
                   Rate this Quiz
                 </Button>
               )}
             </div>
           )}
         </div>
-        <div className={styles.scoreAndTimer}>
+        <div className="w-[320px] shrink-0">
           {shouldShowTimer() && (
             <>
               <div style={{ opacity: isTimerRunning ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}>

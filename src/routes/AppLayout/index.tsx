@@ -59,9 +59,9 @@ function AppLayout() {
       <div className="min-h-screen flex flex-col">
         <header className="h-[70px] border-b bg-[var(--card-background)] w-full sticky top-0 z-50">
           <div className="flex justify-between items-center h-full px-6">
-            <div className="flex items-center gap-4">
-              <Link to={`/my-quizzes/${userName}`}>
-                <Icon name="logo" className="ml-4" width={150} height={50} />
+            <div className="flex h-full items-center gap-4">
+              <Link to={`/my-quizzes/${userName}`} className="ml-4 flex h-full items-center">
+                <Icon name="logo" className="block" width={150} height={50} />
               </Link>
               <HeaderTabs
                 tabs={[
@@ -75,7 +75,7 @@ function AppLayout() {
               <Input
                 type="text"
                 placeholder="Search by quiz name"
-                className="mr-6 w-[200px]"
+                className="ml-5 mr-6 min-w-[240px] self-center rounded-full"
                 value={searchQuery}
                 onChange={(ev) => searchQuiz(ev.target.value)}
                 onBlur={() => {
@@ -88,11 +88,11 @@ function AppLayout() {
                 }}
               />
             )}
-            <div className="flex">
+            <div className="flex h-full items-center">
               {(quizzes.length > 0 || viewType !== 'my-quizzes') && (
                 <Button
                   onClick={showDemoVideo}
-                  className="mr-5"
+                  className="mr-5 my-auto"
                   leftIcon={<Icon color="#fff" name="playCircle" width={20} />}
                 >
                   Watch demo
@@ -101,6 +101,7 @@ function AppLayout() {
               <Button
                 onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
                 variant="outline"
+                className="my-auto"
                 leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}
               >
                 Share feedback
@@ -110,7 +111,7 @@ function AppLayout() {
         </header>
         <main
           className={`flex-1 min-h-[calc(100vh-70px)] w-full ${
-            window.location.pathname.includes('/my-quizzes') ? 'bg-[var(--off-white)]' : 'bg-white'
+            window.location.pathname.includes('/my-quizzes') ? 'bg-[var(--off-white)]' : 'bg-[var(--background)]'
           } px-6 pt-4`}
         >
           {getTabsView()}

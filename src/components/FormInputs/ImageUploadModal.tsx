@@ -48,8 +48,7 @@ function ImageUploadModal({ okCallback, hideModal, title }: Props) {
           onSubmit={(ev) => {
             ev.stopPropagation();
             handleSubmit(onSubmit)(ev);
-          }}
-        >
+          }}>
           <FormInput
             variant="filled"
             autoFocus
@@ -58,7 +57,7 @@ function ImageUploadModal({ okCallback, hideModal, title }: Props) {
             control={control}
             label="Enter a valid image URL"
             value={text}
-            className="grow"
+            className="flex-1"
             rules={{ required: 'This field is required' }}
             onChange={(ev) => {
               setText(ev.target.value);

@@ -108,7 +108,8 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
         <div className="flex justify-between mt-4 self-stretch gap-2">
           {quizMetadata.isInCatalog || quizMetadata.isDraft ? (
             <Button
-              variant="destructive"
+              variant="filled"
+              color="pink"
               className="w-full"
               leftIcon={<Icon color="#ffffff" name={quizMetadata.isInCatalog ? 'play' : 'pencil'} width={16} />}
               disabled={isImportingFromCatalog}

@@ -97,10 +97,10 @@ export default function WithoutOptions({
         <>
           {!isAttempted && (
             <div className="flex gap-2">
-              <Button variant="destructive" onClick={() => handleSubmitResponse([])}>
+              <Button variant="filled" color="red" onClick={() => handleSubmitResponse([])}>
                 Incorrect
               </Button>
-              <Button variant="green" onClick={() => handleSubmitResponse([options[0].optionId])}>
+              <Button variant="filled" color="green" onClick={() => handleSubmitResponse([options[0].optionId])}>
                 Correct
               </Button>
             </div>
@@ -110,7 +110,8 @@ export default function WithoutOptions({
     </>
   ) : (
     <Button
-      variant="green"
+      variant="filled"
+      color="green"
       onClick={() => {
         setIsAnswerRevealed(true);
 

@@ -53,7 +53,7 @@ function Modal({ modalProps }: ModalProps) {
         return 'max-w-4xl';
       case 'lg':
         return 'max-w-2xl';
-      case 'sm':
+      case 'small':
         return 'max-w-sm';
       default:
         return 'max-w-lg';
@@ -62,7 +62,13 @@ function Modal({ modalProps }: ModalProps) {
 
   return (
     <Dialog open={!!modal || !!modalProps} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={`${getSizeClass()} ${className}`}>
+      <DialogContent
+        className={`${getSizeClass()} max-h-[92vh] ${className}`}
+        onInteractOutside={(ev) => {
+          if (!isAlert) {
+            ev.preventDefault();
+          }
+        }}>
         {title && (
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">{title}</DialogTitle>
@@ -106,8 +112,7 @@ function Modal({ modalProps }: ModalProps) {
                   if (closeOnOkClick) {
                     hideModal();
                   }
-                }}
-              >
+                }}>
                 {okText}
               </Button>
             )}

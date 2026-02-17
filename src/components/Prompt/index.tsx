@@ -61,7 +61,7 @@ function Prompt() {
             name="text"
             control={control}
             value={text}
-            className="grow"
+            className="flex-1"
             rules={{ required: textInputProps.required ? 'This field is required' : undefined }}
             onChange={(ev) => {
               setText(ev.target.value);
@@ -80,13 +80,12 @@ function Prompt() {
                   if (cancelCallback) {
                     cancelCallback();
                   }
-                }}
-              >
+                }}>
                 {cancelText}
               </Button>
             )}
             {!!okText && (
-              <Button variant="default" type="submit" disabled={disableOkButton}>
+              <Button variant="filled" type="submit" disabled={disableOkButton}>
                 {okText}
               </Button>
             )}

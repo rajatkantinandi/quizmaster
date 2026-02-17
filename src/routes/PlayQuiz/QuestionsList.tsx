@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Question as IQuestion } from '../../types';
-import styles from './styles.module.css';
 import { getPointsColor } from '../../helpers';
 
 export default function QuestionsList({
@@ -56,18 +55,20 @@ export default function QuestionsList({
 
   return (
     <>
-      <div className={styles.colorPallet}>
+      <div className="my-5 flex items-center">
         <span>Lowest point</span>
-        <div className={styles.bar} />
+        <div className="mx-[10px] h-[35px] w-[200px] bg-[linear-gradient(to_right,var(--points-color-1),var(--points-color-2),var(--points-color-3),var(--points-color-4),var(--points-color-5))]" />
         <span>Highest point</span>
       </div>
       <Accordion
         type="multiple"
         defaultValue={categories.map((x) => `${x.categoryId}`)}
-        className={styles.categoryGrid}
-      >
+        className="grid grid-cols-1 justify-start gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {categories.map((category) => (
-          <AccordionItem className="grow" key={category.categoryId} value={`${category.categoryId}`}>
+          <AccordionItem
+            className="flex-1 border-0 bg-[#eceef1] px-5 pb-5"
+            key={category.categoryId}
+            value={`${category.categoryId}`}>
             <AccordionTrigger>
               <h6 className="text-base font-semibold">{category.categoryName}</h6>
             </AccordionTrigger>
@@ -83,9 +84,8 @@ export default function QuestionsList({
                       backgroundColor: getQuestionBackgroundColor(question),
                     }}
                     disabled={!shouldEnableQuestion(question)}
-                    variant={selectedQuestion?.questionId === question.questionId ? 'default' : 'secondary'}
-                    onClick={() => showQuestion(question.questionId, category.categoryId)}
-                  >
+                    variant={selectedQuestion?.questionId === question.questionId ? 'default' : 'light'}
+                    onClick={() => showQuestion(question.questionId, category.categoryId)}>
                     <div className="flex justify-between items-center w-full">
                       {isQuestionPointsHidden &&
                       !attemptedQuestionIds.includes(question.questionId) &&
@@ -96,13 +96,13 @@ export default function QuestionsList({
                           <span>Question {question.questionNum}</span>
                           <Badge
                             variant="secondary"
+                            className="font-bold uppercase text-white"
                             style={{
                               backgroundColor: attemptedQuestionIds.includes(question.questionId)
                                 ? 'var(--gray-dark)'
                                 : getPointsColor(question.points, minQuestionPoint, maxQuestionPoint).color,
-                            }}
-                          >
-                            {question.points} pts
+                            }}>
+                            {question.points} PTS
                           </Badge>
                         </div>
                       )}

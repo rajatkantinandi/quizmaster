@@ -21,7 +21,7 @@ export default function Login() {
   }
 
   return (
-    <Card className="primaryCard p-6 border rounded-lg shadow-xs">
+    <Card className="rounded-lg border bg-[var(--primary-card-bg)] p-6 shadow-xs">
       <Helmet>
         <title>Forgot password</title>
       </Helmet>

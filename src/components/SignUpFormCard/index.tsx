@@ -32,7 +32,7 @@ export default function SignUpFormCard() {
   const shouldMatchWithPassword = (value: string) => value === getValues('password') || 'Should match with password';
 
   return (
-    <Card className="primaryCard p-6 border rounded-lg shadow-xs">
+    <Card className="rounded-lg border bg-[var(--primary-card-bg)] p-6 shadow-xs">
       <h4 className="text-center text-lg font-semibold mb-4">Sign up</h4>
       <form onSubmit={handleSubmit(handleSignUp)}>
         <FormInput

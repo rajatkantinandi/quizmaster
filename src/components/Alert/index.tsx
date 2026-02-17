@@ -19,15 +19,24 @@ function Alert() {
     }
   }, [autoClose, callback, showAlert]);
 
-  function getVariant(): 'default' | 'destructive' {
-    return type === 'error' ? 'destructive' : 'default';
+  function getAlertClass() {
+    switch (type) {
+      case 'success':
+        return 'border-transparent bg-correct-color text-white';
+      case 'error':
+        return 'border-transparent bg-incorrect-color text-white';
+      case 'warning':
+        return 'border-transparent bg-warning text-white';
+      default:
+        return 'border-transparent bg-primary text-white';
+    }
   }
 
   if (!message) return null;
 
   return (
     <div className="fixed top-0 z-[500] w-full px-[30%] py-2.5">
-      <ShadcnAlert variant={getVariant()} className="shadow-lg">
+      <ShadcnAlert className={`shadow-lg ${getAlertClass()}`}>
         <AlertTitle className="font-bold">{message}</AlertTitle>
       </ShadcnAlert>
     </div>

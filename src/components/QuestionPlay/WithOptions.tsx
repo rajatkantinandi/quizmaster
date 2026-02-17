@@ -33,7 +33,7 @@ export default function WithOptions({
       <div className="flex items-start gap-4">
         {isAttempted && (
           <div className="flex flex-col gap-2">
-            <h6 className="text-base font-semibold my-4">ANSWER</h6>
+            <h6 className="mb-3 mt-4 text-base font-semibold">ANSWER</h6>
             {options.map((x, idx) =>
               x.isCorrect ? (
                 <Checkbox
@@ -50,9 +50,9 @@ export default function WithOptions({
           </div>
         )}
         <div className="flex flex-col gap-2">
-          <h6 className="text-base font-semibold my-4">{isAttempted ? 'ME' : 'OPTIONS'}</h6>
+          <h6 className="mb-3 mt-4 text-base font-semibold">{isAttempted ? 'ME' : 'OPTIONS'}</h6>
           {options.map((option) => (
-            <div key={option.optionId} className="flex items-center gap-2">
+            <div key={option.optionId} className="flex items-center gap-2 py-0.5">
               <Checkbox
                 id={`option-${option.optionId}`}
                 checked={selectedChoices?.includes(option.optionId)}
@@ -74,7 +74,11 @@ export default function WithOptions({
         </div>
       </div>
       {!isAttempted && isTimerRunning && (
-        <Button variant="green" className="mt-4" onClick={() => document.getElementById('btnSubmitResponse')?.click()}>
+        <Button
+          variant="filled"
+          color="green"
+          className="mt-5"
+          onClick={() => document.getElementById('btnSubmitResponse')?.click()}>
           Submit
         </Button>
       )}

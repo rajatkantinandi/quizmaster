@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './styles/variables.css';
 import './styles/index.css';
 import './styles/spacing.css';
 import './styles/editor.css';

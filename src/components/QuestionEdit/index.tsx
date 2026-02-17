@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, MouseEvent } from 'react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { getEmptyOptions, getEmptyOption } from '../../helpers';
@@ -80,7 +80,8 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) 
     setValue('options', newOptions);
   }
 
-  function addOption() {
+  function addOption(ev: MouseEvent<HTMLButtonElement>) {
+    ev.preventDefault();
     append(getEmptyOption());
     setFocusOnLastOption(true);
   }
@@ -137,25 +138,28 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) 
   const data = watch();
 
   return (
-    <Card className="secondaryCard slideDown shadow-sm max-w-[800px] mx-auto border">
+    <Card className="w-full max-w-none border bg-[var(--secondary-card-bg)] p-6 shadow-sm [transform:scaleY(0)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-out]">
       <form onSubmit={handleSubmit(onFormSubmit)}>
-        <div className="mb-4">
-          <span className="text-sm font-bold">Points:</span>
-          <FormInput
-            name="points"
-            id="points"
-            rules={{
-              required: 'Required',
-              validate: (value: number) => (value && value > 0) || 'Must be greater than 0',
-            }}
-            className="w-[75px]"
-            type="number"
-            placeholder="Points"
-            variant="filled"
-            size="sm"
-            radius="sm"
-            control={control}
-          />
+        <div className="mb-5 flex items-center gap-8">
+          <h4 className="text-lg font-bold">Question {questionNum}</h4>
+          <div className="flex items-center gap-4">
+            <div className="text-sm font-bold">Points:</div>
+            <FormInput
+              name="points"
+              id="points"
+              rules={{
+                required: 'Required',
+                validate: (value: number) => (value && value > 0) || 'Must be greater than 0',
+              }}
+              className="w-[110px]"
+              type="number"
+              placeholder="Points"
+              variant="filled"
+              size="sm"
+              radius="sm"
+              control={control}
+            />
+          </div>
         </div>
         <FormTextArea
           name="text"
@@ -164,26 +168,27 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) 
             validate: (value: string) => !!getTextContent(value) || 'The question text should not be empty!',
           }}
           label={
-            <span className="font-bold mb-3 block">
+            <span className="font-bold mb-3 flex gap-2 items-center">
               Question text <MarkDownLogo />
             </span>
           }
           size="md"
-          className="resize-vertical w-full"
+          className="w-full"
           control={control}
           autoFocus
           isRichText
         />
         <Tabs defaultValue={optionType} onValueChange={onTabChange} className="pt-6">
-          <TabsList>
+          <TabsList className="w-fit">
             <TabsTrigger value="withOptions">With Options</TabsTrigger>
             <TabsTrigger value="withoutOptions">Without Options</TabsTrigger>
           </TabsList>
-          <TabsContent value="withOptions">
+          <TabsContent value="withOptions" className="mt-6">
             {fields.map((item: any, idx: number) => (
-              <div className="flex items-start gap-3 pt-4 pb-4" key={options[idx].optionId}>
+              <div className="flex items-start gap-4 py-3" key={options[idx].optionId}>
                 <Checkbox
                   checked={options[idx].isCorrect}
+                  className="mt-[54px] h-8 w-8 rounded-[8px]"
                   onCheckedChange={(ev: any) => setCorrectOption(options[idx].optionId, { target: { checked: ev } })}
                 />
                 <FormTextArea
@@ -193,7 +198,7 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) 
                     validate: (value: string) => !!getImageOrTextContent(value) || 'Option should not be empty!',
                   }}
                   label={
-                    <span className="font-bold mb-3 block">
+                    <span className="font-bold mb-3 flex gap-2 items-center">
                       Option {idx + 1} <MarkDownLogo />
                     </span>
                   }
@@ -202,17 +207,22 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) 
                   isRichText
                   autoFocus={idx === fields.length - 1 && focusOnLastOption}
                 />
-                <Button variant="ghost" size="icon" className="mb-2" onClick={() => removeOption(idx)}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="mb-2 mt-[54px]"
+                  onClick={() => removeOption(idx)}>
                   <Icon width="20" name="trash" />
                 </Button>
               </div>
             ))}
-            <Button variant="default" id="addOptionBtn" onClick={addOption} className="mt-3">
+            <Button type="button" variant="default" id="addOptionBtn" onClick={addOption} className="mt-3 rounded-xl">
               <Icon name="plus" width={18} className="mr-2" />
               Add option
             </Button>
           </TabsContent>
-          <TabsContent value="withoutOptions">
+          <TabsContent value="withoutOptions" className="mt-6">
             {fields.map((item: any, idx: number) => (
               <FormTextArea
                 name={`options[${idx}].text`}
@@ -223,7 +233,7 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) 
                     !!getImageOrTextContent(value) || 'The correct answer should not be empty!',
                 }}
                 label={
-                  <span className="font-bold mt-4 mb-3 block">
+                  <span className="font-bold mb-3 flex gap-2 items-center">
                     Correct answer <MarkDownLogo />
                   </span>
                 }

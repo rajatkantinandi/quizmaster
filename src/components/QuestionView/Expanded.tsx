@@ -36,7 +36,7 @@ export default function ExpandedView({
       : {};
 
   return (
-    <Card className="secondaryCard slideDown shadow-sm p-6 my-4 border">
+    <Card className="my-3 border bg-[var(--secondary-card-bg)] p-6 text-black shadow-sm [transform:scaleY(0)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-out]">
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedQuestionIndex(null)}>
         <div className="flex items-center gap-3">
           <h4 className="text-lg font-semibold">Question {questionNum}</h4>
@@ -58,7 +58,7 @@ export default function ExpandedView({
           <Button variant="light" size="sm" className="rounded-full text-red-500" onClick={deleteQuestion}>
             Delete
           </Button>
-          <Button variant="ghost" size="icon" title="Edit" onClick={(ev) => setActiveQuestion}>
+          <Button variant="ghost" size="icon" title="Edit" onClick={setActiveQuestion}>
             <Icon name="pencil" width={22} />
           </Button>
           <Button variant="ghost" size="icon">
@@ -77,7 +77,7 @@ export default function ExpandedView({
       <ol className="list-none">
         {question.options.map((option) => (
           <li
-            className="py-3 mt-3 px-2 mb-4 outline"
+            className="mb-4 mt-3 rounded-[10px] border-2 border-[var(--border-light)] px-[10px] py-[5px]"
             key={option.optionId}
             style={getQuestionTextStyles(!!option.text && option.isCorrect)}
           >

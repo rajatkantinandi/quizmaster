@@ -34,20 +34,18 @@ export default function Catalog({ userName }: any) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-2" style={{ marginLeft: 10 }}>
-        <Select value={sortBy} onValueChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}>
-          <SelectTrigger>
-            <div className="flex items-center gap-2">
-              <Icon width="16" name="sort" />
-              <SelectValue placeholder="Sort by" />
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="createDate">Create Date</SelectItem>
-            <SelectItem value="name">Name</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <Select value={sortBy} onValueChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}>
+        <SelectTrigger className="max-w-[190px] ml-2">
+          <div className="flex items-center gap-2">
+            <Icon width="16" name="sort" />
+            <SelectValue placeholder="Sort by" />
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="createDate">Create Date</SelectItem>
+          <SelectItem value="name">Name</SelectItem>
+        </SelectContent>
+      </Select>
       <div className="flex flex-wrap gap-2">
         {filteredCatalogList.map((item, index) => (
           <QuizCard

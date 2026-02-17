@@ -61,7 +61,7 @@ export default function QuestionPlay({
   }, [selectedOptionIds]);
 
   return (
-    <Card className="max-h-[calc(90vh-120px)] overflow-auto shadow-sm p-6 my-4 border">
+    <Card className="my-0 max-h-[calc(90vh-120px)] overflow-auto border border-[var(--qm-card-border)] bg-[var(--secondary-card-bg)] px-6 py-5 shadow-sm">
       <form
         onSubmit={handleSubmit(() => {
           if (selectedChoices) {
@@ -74,7 +74,7 @@ export default function QuestionPlay({
           }
         })}
       >
-        <div className="flex items-center gap-4 mb-2">
+        <div className="mb-2 flex items-center gap-4">
           <h4 className="text-lg font-semibold mr-4">Question {selectedQuestion.questionNum}</h4>
           {negativePointsMultiplier === 0 ? (
             <Badge
@@ -102,7 +102,7 @@ export default function QuestionPlay({
             </Badge>
           )}
         </div>
-        <div className="my-2">
+        <div className="mb-3 mt-2 text-black">
           <SanitizedHtml>{text}</SanitizedHtml>
         </div>
         {isWithoutOptions ? (
@@ -130,7 +130,7 @@ export default function QuestionPlay({
             Continue
           </Button>
         )}
-        <button className="displayNone" id="btnSubmitResponse" type="submit">
+        <button className="hidden" id="btnSubmitResponse" type="submit">
           Submit
         </button>
       </form>

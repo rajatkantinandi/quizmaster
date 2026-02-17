@@ -35,7 +35,7 @@ export default function FormTextArea({
       control={control}
       rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className={classNames('grow', className)}>
+        <div className={classNames('flex-1', className)}>
           {isRichText ? (
             <ContentEditable
               onChange={onChange}

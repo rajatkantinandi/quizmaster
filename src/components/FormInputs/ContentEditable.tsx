@@ -59,7 +59,7 @@ export default function ContentEditable({
 
   return (
     <div
-      className={classNames('grow relative', className)}
+      className={classNames('flex-1 relative', className)}
       onFocus={() => setIsFocussed(true)}
       onBlur={() => setIsFocussed(false)}>
       <label>{label}</label>

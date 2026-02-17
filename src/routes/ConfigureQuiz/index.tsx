@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem as Radio } from '@/components/ui/radio-group';
-import styles from './styles.module.css';
 import Icon from '../../components/Icon';
 import classNames from 'classnames';
 import { plural } from '../../helpers/textHelpers';
@@ -333,8 +332,8 @@ export default function ConfigureQuiz({
       <Helmet>
         <title>Create Quiz</title>
       </Helmet>
-      <div className={styles.wrapper}>
-        <div className={styles.categoriesList}>
+      <div className="flex w-full flex-row items-start">
+        <div className="max-w-[470px] flex-1">
           <form onSubmit={handleSubmit(onFormSubmit)}>
             <div className="flex items-end pb-lg mb-xl">
               <h2 className="text-2xl font-bold flex items-end">
@@ -344,85 +343,79 @@ export default function ConfigureQuiz({
                 </Button>
               </h2>
             </div>
-            <h4 className="text-lg font-semibold">Categories</h4>
+            <h4 className="mb-3 text-lg font-semibold">Categories</h4>
             <RadioGroup
-              className="flex flex-col gap-2"
+              className="flex flex-col gap-3"
               name="activeCategory"
               value={`${activeCategoryIndex}`}
-              onValueChange={setActiveCategory}
-            >
+              onValueChange={setActiveCategory}>
               {categories.map((item: any, idx: number) => (
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : undefined}
-                  className={classNames({
-                    [styles.activeCategory]: idx === activeCategoryIndex,
-                    [styles.nonActiveCard]: idx !== activeCategoryIndex,
-                    primaryCard: true,
-                    fullWidth: true,
-                    border: idx === activeCategoryIndex,
-                  })}
-                  key={item.categoryId || idx}
-                >
-                  <div className="flex items-center gap-2">
-                    <Radio value={`${idx}`} className={styles.radio} />
-                    <div className="flex fullWidth">
-                      <span className="font-bold mr-md">{idx + 1}.</span>
-                      <div className="flex-grow">
-                        {idx === activeCategoryIndex ? (
-                          <FormInput
-                            name={`categories.${idx}.categoryName`}
-                            id={`categories.${idx}.categoryName`}
-                            rules={{ required: 'Please enter category name' }}
-                            type="text"
-                            placeholder="Enter category name"
-                            variant={'filled'}
-                            size="md"
-                            autoFocus
-                            onChange={(ev) => setActiveCategoryName(ev.target.value)}
-                            className={styles.categoryNameInput}
-                            control={control}
-                          />
-                        ) : (
-                          <p className="text-md font-bold">{item.categoryName}</p>
-                        )}
-                        {!errors.categories?.[idx]?.categoryName?.message && (
-                          <p
-                            className={classNames('font-bold text-gray-500 text-left text-xs', {
-                              'mt-md': idx === activeCategoryIndex,
-                            })}
-                          >
-                            {item.questions.length > 0 && (
-                              <span className="mr-sm">
-                                {plural(item.questions.length, '%count question', '%count questions')}
-                              </span>
+                  className={classNames(
+                    'bg-[var(--primary-card-bg)] w-full flex gap-4 px-4 py-5 border-0  rounded-none',
+                    {
+                      'z-[1]': idx === activeCategoryIndex,
+                      'bg-white': idx !== activeCategoryIndex,
+                    },
+                  )}
+                  key={item.categoryId || idx}>
+                  <Radio value={`${idx}`} className="items-start" />
+                  <div className="flex flex-1 items-start self-start">
+                    <span className="font-bold mr-md">{idx + 1}.</span>
+                    <div className="flex flex-col flex-1">
+                      {idx === activeCategoryIndex ? (
+                        <FormInput
+                          name={`categories.${idx}.categoryName`}
+                          id={`categories.${idx}.categoryName`}
+                          rules={{ required: 'Please enter category name' }}
+                          type="text"
+                          placeholder="Enter category name"
+                          variant={'filled'}
+                          size="md"
+                          autoFocus
+                          onChange={(ev) => setActiveCategoryName(ev.target.value)}
+                          className="[&_input]:mr-[27px] [&_input]:mt-[-10px] [&_input]:font-bold"
+                          control={control}
+                        />
+                      ) : (
+                        <p className="text-md font-bold">{item.categoryName}</p>
+                      )}
+                      {!errors.categories?.[idx]?.categoryName?.message && (
+                        <p
+                          className={classNames('font-bold text-gray-500 text-left text-xs', {
+                            'mt-md': idx === activeCategoryIndex,
+                          })}>
+                          {item.questions.length > 0 && (
+                            <span className="mr-sm">
+                              {plural(item.questions.length, '%count question', '%count questions')}
+                            </span>
+                          )}
+                          {(item.questions.length === 0 ||
+                            item.questions.some((question) => !isValidQuestion(question))) &&
+                            idx !== activeCategoryIndex && (
+                              <Badge variant="destructive" className="mt-sm">
+                                Incomplete
+                              </Badge>
                             )}
-                            {(item.questions.length === 0 ||
-                              item.questions.some((question) => !isValidQuestion(question))) &&
-                              idx !== activeCategoryIndex && (
-                                <Badge variant="destructive" className="mt-sm">
-                                  Incomplete
-                                </Badge>
-                              )}
-                          </p>
-                        )}
-                      </div>
-                      {categories.length > 1 && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="ml-md"
-                          onClick={() => confirmRemoveCategory(idx, item.questions.length > 0)}
-                        >
-                          <Icon width={20} name="trash" />
-                        </Button>
+                        </p>
                       )}
                     </div>
+                    {categories.length > 1 && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="ml-md shrink-0"
+                        onClick={() => confirmRemoveCategory(idx, item.questions.length > 0)}>
+                        <Icon width={20} name="trash" />
+                      </Button>
+                    )}
                   </div>
                 </Card>
               ))}
             </RadioGroup>
             <Button
-              className="mt-xl"
+              className="mt-xl rounded-xl"
               onClick={() => {
                 setActiveCategoryIndex(categories.length);
                 setActiveCategoryName('');
@@ -434,11 +427,10 @@ export default function ConfigureQuiz({
                 });
               }}
               variant="default"
-              leftIcon={<Icon name="plus" width={18} />}
-            >
+              leftIcon={<Icon name="plus" width={18} />}>
               Add Category
             </Button>
-            <button className="displayNone" id="btnQuizFormSubmit" type="submit">
+            <button className="hidden" id="btnQuizFormSubmit" type="submit">
               Submit
             </button>
           </form>
@@ -471,12 +463,12 @@ export default function ConfigureQuiz({
         />
       </div>
       <div className="grid grid-cols-24">
-        <div className="col-span-10 col-start-8 py-xl flex">
+        <div className="col-span-10 col-start-6 py-xl flex items-center gap-5">
           {isPreview && (
             <Button
               variant="outline"
-              size="lg"
-              className="w-full rounded-full mr-lg"
+              size="xl"
+              className="rounded-full w-5/12"
               onClick={() => {
                 track(TrackingEvent.CATALOG_QUIZ_NOT_SAVED, {
                   quizName,
@@ -485,18 +477,16 @@ export default function ConfigureQuiz({
                   numOfQuestions: categories.reduce((sum, curr) => sum + curr.questions.length, 0),
                 });
                 navigate(`/catalog/${userName}`);
-              }}
-            >
+              }}>
               Cancel
             </Button>
           )}
           <Button
-            variant="default"
-            size="lg"
-            className="w-full rounded-full"
+            variant="filled"
+            size="xl"
+            className="w-7/12 rounded-full"
             leftIcon={<Icon name="done" color="#ffffff" />}
-            onClick={submitQuizForm}
-          >
+            onClick={submitQuizForm}>
             {isPreview ? 'Add to my quizzes' : 'Complete quiz'}
           </Button>
         </div>

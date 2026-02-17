@@ -34,7 +34,7 @@ export default function FormInput({
       control={control}
       rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className={classNames('grow', className)}>
+        <div className={classNames('flex-1', className)}>
           {label && <label className="text-sm font-medium mb-1 block">{label}</label>}
           <Input
             onChange={(ev: any) => {

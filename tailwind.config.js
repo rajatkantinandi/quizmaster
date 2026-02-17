@@ -11,13 +11,13 @@ module.exports = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#014751',
-          hover: '#016c7b',
+          DEFAULT: 'var(--qm-primary)',
+          hover: 'var(--primary-button-bg-hover)',
           foreground: '#ffffff',
         },
         secondary: {
-          DEFAULT: '#f5f6e6',
-          foreground: '#014751',
+          DEFAULT: 'var(--secondary-card-bg)',
+          foreground: 'var(--qm-primary)',
         },
         destructive: {
           DEFAULT: 'rgb(250, 82, 82)',
@@ -36,18 +36,18 @@ module.exports = {
           foreground: 'hsl(var(--popover-foreground))',
         },
         card: {
-          DEFAULT: '#f5f6e6',
-          foreground: '#014751',
+          DEFAULT: 'var(--qm-card-bg)',
+          foreground: 'var(--qm-primary)',
         },
-        'input-bg': '#e4fafc',
-        'checkbox-bg': '#c4fceb',
+        'input-bg': 'var(--input-bg)',
+        'checkbox-bg': 'var(--checkbox-bg)',
         'default-button': {
-          DEFAULT: '#ffd700',
-          hover: '#ffe30c',
+          DEFAULT: 'var(--default-button-bg)',
+          hover: 'var(--default-button-bg-hover)',
         },
         'qm-card': {
-          DEFAULT: '#f5f6e6',
-          border: '#adc3c7',
+          DEFAULT: 'var(--qm-card-bg)',
+          border: 'var(--qm-card-border)',
         },
         'quiz-teal': '#009688',
         'quiz-blue': '#2196f3',
@@ -80,10 +80,19 @@ module.exports = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'border-roll': {
+          '50%': {
+            background: 'repeating-linear-gradient(45deg, var(--correct-color) 2%, var(--qm-primary) 4%)',
+          },
+          '100%': {
+            background: 'repeating-linear-gradient(45deg, var(--correct-color) 3%, var(--qm-primary) 5%)',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'border-roll': 'border-roll 0.5s linear infinite',
       },
     },
   },

@@ -29,14 +29,17 @@ export default function CollapsedView({
 
   return (
     <Card
-      className="secondaryCard clickable slideUp shadow-sm p-6 my-4 border cursor-pointer"
-      onClick={() => setExpandedQuestionIndex(questionNum - 1)}
-    >
+      className="my-3 cursor-pointer border bg-[var(--secondary-card-bg)] p-6 text-black shadow-sm [transform:scaleY(1.5)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-in]"
+      onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex">
             {questionNum}.{' '}
-            {<SanitizedHtml className="truncatedOneLine ml-2">{question.text}</SanitizedHtml> || (
+            {question.text ? (
+              <SanitizedHtml className="ml-2 [display:-webkit-box] overflow-hidden [-webkit-box-orient:vertical] [-webkit-line-clamp:1]">
+                {question.text}
+              </SanitizedHtml>
+            ) : (
               <span className="italic text-sm ml-2">(No question text)</span>
             )}
           </div>
@@ -60,7 +63,7 @@ export default function CollapsedView({
           </div>
         )}
       </div>
-      <ul className="flex ml-4 list-disc">
+      <ul className="ml-4 mt-1 flex list-disc text-base">
         <li className="mr-6">{question.points} points</li>
         <li>{isWithoutOptions ? 'Without options' : 'With Options'}</li>
       </ul>

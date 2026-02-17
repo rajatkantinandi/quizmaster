@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './styles.module.css';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import TeamAvatar from '../../components/TeamAvatar';
 import classNames from 'classnames';
@@ -17,8 +16,8 @@ export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
           {teams.map((team) => (
             <AccordionItem
               className={classNames({
-                [styles.currentTeam]: team.teamId === currentTeamId,
-                [styles.team]: true,
+                'bg-[rgba(134,142,150,0.1)]': true,
+                'flex-nowrap bg-[rgb(34,139,230)] [&_div]:text-white': team.teamId === currentTeamId,
               })}
               key={team.teamId}
               value={`${team.teamId}`}
@@ -53,9 +52,9 @@ export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
         teams.map((t: Team) => (
           <div
             className={classNames('flex justify-between items-center my-xl mx-xl', {
-              [styles.currentTeam]: t.teamId === currentTeamId,
-              [styles.team]: true,
-              [styles.teamWithoutPlayer]: true,
+              'bg-[rgba(134,142,150,0.1)]': true,
+              'flex-nowrap bg-[rgb(34,139,230)] [&_div]:text-white': t.teamId === currentTeamId,
+              'rounded-[58px] px-[15px] py-[3px] pl-[3px]': true,
             })}
           >
             <div className="flex items-center gap-2">
