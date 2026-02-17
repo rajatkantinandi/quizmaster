@@ -1,4 +1,4 @@
-import { useState, forwardRef, MouseEvent } from 'react';
+import { useState, forwardRef } from 'react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { getEmptyOptions, getEmptyOption } from '../../helpers';
@@ -47,99 +47,87 @@ function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) 
     saveQuestion(data);
   }
 
-  function getValidationError() {
-    const questionText = getTextContent(data.text);
-
-    if (!questionText) {
-      return 'Question text should not be empty!';
-    }
-
-    const options = data.options;
-
-    if (isWithoutOptions) {
-      const correctAnswerText = getTextContent(options[0].text);
-
-      if (!correctAnswerText) {
-        return 'Correct answer should not be empty!';
-      }
-    } else {
-      const isCorrectOptions = options.filter((option: any) => option.isCorrect);
-
-      if (isCorrectOptions.length === 0) {
-        return 'At least one option should be marked as correct!';
-      }
-    }
-  }
-
-  function setCorrectOption(optionId: number, ev: { target: { checked: boolean } }) {
-    const newOptions = options.map((option: any) => ({
+  function setCorrectOption(optionId: string | number, ev: any) {
+    const optionsData = options.map((option) => ({
       ...option,
       isCorrect: option.optionId === optionId ? ev.target.checked : option.isCorrect,
     }));
 
-    setValue('options', newOptions);
+    setValue('options', optionsData);
   }
 
-  function addOption(ev: MouseEvent<HTMLButtonElement>) {
+  function removeOption(index: number) {
+    if (options.length === 2) {
+      showAlert({ message: 'At least 2 options are mandatory!', type: 'error' });
+    } else {
+      remove(index);
+    }
+  }
+
+  function addOption(ev: React.MouseEvent) {
     ev.preventDefault();
+
+    setTimeout(() => {
+      document.querySelector('#addOptionBtn')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+
     append(getEmptyOption());
     setFocusOnLastOption(true);
   }
 
-  function removeOption(idx: number) {
-    if (options.length === 2) {
-      showAlert({
-        message: 'At least 2 options are required!',
-        type: 'error',
-      });
-
-      return;
-    }
-
-    remove(idx);
-  }
-
-  function onTabChange(value: string) {
+  function getValidationError() {
     if (isWithoutOptions && options[0].isCorrect) {
-    } else if (!options.some((option: any) => option.isCorrect)) {
-      showAlert({
-        message: 'At least one option should be marked as correct!',
-        type: 'error',
-      });
+      return '';
+    } else if (!options.some((option) => option.isCorrect)) {
+      return 'Please select 1 correct option!';
+    } else if (options.length < 2) {
+      return 'At least 2 options are mandatory!';
+    } else {
+      const optionTexts = options.map((x) => x.text);
 
-      return;
+      if (optionTexts.length >= 2) {
+        const el = document.createElement('div');
+
+        for (let i = 0; i < optionTexts.length - 1; i++) {
+          el.innerHTML = optionTexts[i];
+          const option1Text = getCleanText(el.innerText);
+
+          for (let j = i + 1; j < optionTexts.length; j++) {
+            el.innerHTML = optionTexts[j];
+            const option2Text = getCleanText(el.innerText); // replacing multiple space with single space
+
+            if (option1Text === option2Text) {
+              return 'All options must have different text';
+            } else {
+              continue;
+            }
+          }
+        }
+      }
     }
 
+    return '';
+  }
+
+  function onTabChange(value) {
     setOptionType(value);
+
+    if (value === 'withoutOptions') {
+      const optionData = options[0];
+      optionData.isCorrect = true;
+
+      setValue('options', [optionData]);
+    } else if (isWithoutOptions) {
+      const optionData = options.concat(getEmptyOptions(1));
+
+      optionData[1].isCorrect = false;
+      setValue('options', optionData);
+    }
   }
-
-  function isValidQuestion(question: any) {
-    const questionText = getCleanText(question.text);
-
-    if (!questionText) {
-      return false;
-    }
-
-    const options = question.options;
-
-    if (options.length === 1 && options[0].isCorrect) {
-      return !!getTextContent(options[0].text);
-    }
-
-    const isCorrectOptions = options.filter((option: any) => option.isCorrect);
-
-    if (isCorrectOptions.length === 0) {
-      return false;
-    }
-
-    return options.every((option: any) => !!getTextContent(option.text));
-  }
-
-  const data = watch();
 
   return (
     <Card className="w-full max-w-none border bg-[var(--secondary-card-bg)] p-6 shadow-sm [transform:scaleY(0)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-out]">
-      <form onSubmit={handleSubmit(onFormSubmit)}>
+      <form onSubmit={handleSubmit(onFormSubmit)} ref={ref}>
         <div className="mb-5 flex items-center gap-8">
           <h4 className="text-lg font-bold">Question {questionNum}</h4>
           <div className="flex items-center gap-4">

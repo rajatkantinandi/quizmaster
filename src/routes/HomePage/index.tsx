@@ -27,23 +27,14 @@ export default function HomePage() {
   return isValidUser ? (
     <CheckAuthAndNavigate />
   ) : (
-    <section style={{ minHeight: '100vh', backgroundColor: 'var(--qm-primary)' }}>
+    <section className="min-h-screen bg-[var(--qm-primary)]">
       <Helmet>
         <title>Homepage - Quizmaster</title>
       </Helmet>
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          backgroundColor: 'var(--qm-primary)',
-        }}
-      >
-        <div style={{ width: '100%', maxWidth: '28rem' }}>
-          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-            <Icon color="#ffffff" name="logo" style={{ marginBottom: '1rem' }} width={200} height={60} />
+      <div className="flex min-h-screen items-center justify-center bg-[var(--qm-primary)] p-4">
+        <div className="w-full max-w-md">
+          <div className="mb-6 text-center">
+            <Icon color="#ffffff" name="logo" className="mb-4" width={200} height={60} />
           </div>
           {getViewType()}
         </div>
