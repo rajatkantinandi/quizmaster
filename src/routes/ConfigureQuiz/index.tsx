@@ -83,6 +83,7 @@ export default function ConfigureQuiz({
   const quizNameRef = useRef('');
   const isDraftRef = useRef(true);
   const isQuizAlreadySaved = useRef(false);
+  const hasLoadedQuizRef = useRef(false);
   categoriesRef.current = categories;
   quizNameRef.current = quizName;
   const isPreview = quizId === 'preview';
@@ -120,17 +121,23 @@ export default function ConfigureQuiz({
       setActiveQuestionIndex(activeQuestionIndex);
       setValue('categories', quiz.categories);
       setIsLoading(false);
+      categoriesRef.current = quiz.categories;
+      quizNameRef.current = quiz.name;
+      hasLoadedQuizRef.current = true;
     })();
 
     return () => {
-      if (!isQuizAlreadySaved.current && !isPreview) {
-        sendBeaconPost({
-          name: quizNameRef.current,
-          quizId,
-          categories: categoriesRef.current,
-          isDraft: isDraftRef.current,
-        });
+      if (!hasLoadedQuizRef.current || isQuizAlreadySaved.current || isPreview) {
+        return;
       }
+
+      console.log('unmount');
+      sendBeaconPost({
+        name: quizNameRef.current,
+        quizId,
+        categories: categoriesRef.current,
+        isDraft: isDraftRef.current,
+      });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -143,7 +150,7 @@ export default function ConfigureQuiz({
   }, [categories, activeCategoryIndex]);
 
   useEffect(() => {
-    if (!isPreview) {
+    if (!isPreview && hasLoadedQuizRef.current) {
       window.onbeforeunload = function () {
         sendBeaconPost({
           name: quizName,
