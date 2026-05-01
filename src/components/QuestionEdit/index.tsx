@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useMemo, useState, forwardRef } from 'react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { getEmptyOptions, getEmptyOption } from '../../helpers';
@@ -17,10 +17,11 @@ interface Props {
 }
 
 function QuestionEdit({ questionNum, question, saveQuestion }: Props, ref: any) {
+  const draftQuestion = useMemo(() => JSON.parse(JSON.stringify(question)), [question]);
   const { handleSubmit, setValue, watch, control } = useForm({
     defaultValues: {
-      ...question,
-      options: question.options.length > 0 ? question.options : getEmptyOptions(2),
+      ...draftQuestion,
+      options: draftQuestion.options.length > 0 ? draftQuestion.options : getEmptyOptions(2),
     },
   });
   const { fields, append, remove } = useFieldArray({

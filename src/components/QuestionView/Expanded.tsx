@@ -43,23 +43,22 @@ export default function ExpandedView({
           <span className="text-sm">{question.points} points</span>
           {!isValidQuestion && <Badge variant="destructive">Incomplete</Badge>}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Button
-            variant="light"
+            variant="filled"
+            color="dark"
             size="sm"
-            className="rounded-full"
             onClick={(ev) => {
               ev.stopPropagation();
               handleMoveQuestions(question.questionId);
-            }}
-          >
+            }}>
             Move question
           </Button>
-          <Button variant="light" size="sm" className="rounded-full text-red-500" onClick={deleteQuestion}>
-            Delete
+          <Button variant="light" color="teal" size="sm" title="Edit" onClick={setActiveQuestion}>
+            Edit
           </Button>
-          <Button variant="ghost" size="icon" title="Edit" onClick={setActiveQuestion}>
-            <Icon name="pencil" width={22} />
+          <Button variant="ghost" size="icon" title="Delete" onClick={deleteQuestion}>
+            <Icon name="trash" width={18} color="var(--bg-red-50)" />
           </Button>
           <Button variant="ghost" size="icon">
             <Icon name="caretUp" />
@@ -79,8 +78,7 @@ export default function ExpandedView({
           <li
             className="mb-4 mt-3 rounded-[10px] border-2 border-[var(--border-light)] px-[10px] py-[5px]"
             key={option.optionId}
-            style={getQuestionTextStyles(!!option.text && option.isCorrect)}
-          >
+            style={getQuestionTextStyles(!!option.text && option.isCorrect)}>
             {option.text ? (
               <SanitizedHtml>{option.text}</SanitizedHtml>
             ) : (

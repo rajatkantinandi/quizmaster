@@ -1,71 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '../../components/Icon';
-import QuestionEdit from '../../components/QuestionEdit';
 import QuestionView from '../../components/QuestionView';
 import { Control, useFieldArray } from 'react-hook-form';
-import { getEmptyQuestion } from '../../helpers';
 import { useStore } from '../../useStore';
-import { Question, Quiz } from '../../types';
+import { Category, Question } from '../../types';
 import { ReactSortable } from 'react-sortablejs';
-import Modal from '../../components/Modal';
+import type { ConfigureQuizFormValues } from './index';
 
 type Props = {
-  activeCategoryName: string;
-  questions: Question[];
+  activeCategory?: Category;
   activeCategoryIndex: number;
-  control: Control<any, any>;
+  control: Control<ConfigureQuizFormValues>;
   expandedQuestionIndex: number | null | 'all';
   activeQuestionIndex: number | null;
-  activeCategoryId?: number;
   setActiveQuestionIndex: (idx: number | null) => void;
   isValidQuestion: (question: Question) => boolean;
   setExpandedQuestionIndex: (idx: number | null | 'all') => void;
-  quizId: string;
-  updateQuizData: () => void;
   handleRearrangeQuestions: () => void;
   rearrangeMode: boolean;
   handleMoveQuestions: Function;
-  isPreview: boolean;
+  onAddQuestion: () => void;
+  onEditQuestion: (idx: number) => void;
 };
 
 export default function QuestionsListPanel({
-  activeCategoryName,
-  questions,
+  activeCategory,
   activeCategoryIndex,
   control,
   expandedQuestionIndex,
   activeQuestionIndex,
-  activeCategoryId,
   setActiveQuestionIndex,
   isValidQuestion,
   setExpandedQuestionIndex,
-  quizId,
-  updateQuizData,
   handleRearrangeQuestions,
   rearrangeMode,
   handleMoveQuestions,
-  isPreview,
+  onAddQuestion,
+  onEditQuestion,
 }: Props) {
-  const {
-    append,
-    remove,
-    update: updateQuestionData,
-    replace,
-  } = useFieldArray({
+  const { remove, replace } = useFieldArray({
     control,
-    name: `categories[${activeCategoryIndex}].questions`,
+    name: `categories.${activeCategoryIndex}.questions` as const,
   });
-  const { getQuiz, showAlert, showModal } = useStore();
-  const questionEditRef = useRef<HTMLFormElement>();
-  const [isAddingQuestion, setIsAddingQuestion] = useState(false);
-
-  useEffect(() => {
-    if (!activeQuestionIndex) {
-      setIsAddingQuestion(false);
-    }
-  }, [activeQuestionIndex]);
+  const { showAlert, showModal } = useStore();
+  const questions = activeCategory?.questions || [];
+  const activeCategoryName = activeCategory?.categoryName || '';
 
   const addQuestion = () => {
     if (!activeCategoryName) {
@@ -76,11 +57,7 @@ export default function QuestionsListPanel({
       return;
     }
 
-    const question = getEmptyQuestion(activeCategoryId!);
-    append(question);
-    setActiveQuestionIndex(questions.length);
-    setExpandedQuestionIndex(null);
-    setIsAddingQuestion(true);
+    onAddQuestion();
   };
 
   function handleDeleteQuestion(ev, index: number) {
@@ -106,34 +83,6 @@ export default function QuestionsListPanel({
     if (index === activeQuestionIndex) {
       setActiveQuestionIndex(null);
     }
-  }
-
-  const resetQuestion = () => {
-    if (activeQuestionIndex !== null && activeQuestionIndex >= 0) {
-      getQuiz(quizId, isPreview).then((quiz: Quiz) => {
-        const originalQuestion = (quiz.categories[activeCategoryIndex]?.questions || [])[activeQuestionIndex];
-
-        if (originalQuestion && originalQuestion.categoryId) {
-          updateQuestionData(activeQuestionIndex, originalQuestion);
-        } else {
-          remove(activeQuestionIndex);
-        }
-
-        setActiveQuestionIndex(null);
-      });
-    }
-  };
-
-  async function handleSaveQuestion(idx, question) {
-    updateQuestionData(idx, question);
-    await updateQuizData();
-    setActiveQuestionIndex(null);
-    setExpandedQuestionIndex(idx);
-
-    showAlert({
-      message: 'Question has been saved successfully.',
-      type: 'success',
-    });
   }
 
   function onQuestionSwap(data) {
@@ -201,7 +150,7 @@ export default function QuestionsListPanel({
             isValidQuestion={isValidQuestion(item)}
             setActiveQuestion={(ev) => {
               ev.stopPropagation();
-              setActiveQuestionIndex(idx);
+              onEditQuestion(idx);
             }}
             deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
             isExpanded={expandedQuestionIndex === 'all' || expandedQuestionIndex === idx}
@@ -211,26 +160,6 @@ export default function QuestionsListPanel({
           />
         ))}
       </ReactSortable>
-      {typeof activeQuestionIndex === 'number' && !!questions[activeQuestionIndex] && (
-        <Modal
-          modalProps={{
-            title: isAddingQuestion ? 'Add new question' : 'Edit question',
-            body: (
-              <QuestionEdit
-                questionNum={activeQuestionIndex + 1}
-                question={questions[activeQuestionIndex]}
-                saveQuestion={(data) => handleSaveQuestion(activeQuestionIndex, data)}
-                ref={questionEditRef}
-              />
-            ),
-            okText: 'Save',
-            size: 'xl',
-            cancelCallback: resetQuestion,
-            okCallback: () => questionEditRef.current?.requestSubmit(),
-            closeOnOkClick: false,
-          }}
-        />
-      )}
       {!rearrangeMode && (
         <Button className="mt-xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
           Add Question

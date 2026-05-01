@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
@@ -18,7 +17,7 @@ const buttonVariants = cva(
       },
       size: {
         default: 'h-10 px-4 py-2',
-        sm: 'h-9 px-3',
+        sm: 'h-7 px-3',
         lg: 'h-11 px-8',
         xl: 'h-14 rounded-full px-10 text-base',
         icon: 'h-10 w-10',
@@ -52,19 +51,19 @@ const buttonVariants = cva(
       },
       { variant: 'filled', color: 'red', className: 'bg-incorrect-color hover:opacity-90 text-white' },
       { variant: 'outline', color: 'red', className: 'text-incorrect-color border-incorrect-color hover:bg-red-50' },
-      { variant: 'light', color: 'red', className: 'text-incorrect-color hover:bg-red-50' },
+      { variant: 'light', color: 'red', className: 'text-incorrect-color hover:bg-red-50 bg-[var(--background)]' },
       { variant: 'ghost', color: 'red', className: 'text-incorrect-color hover:bg-red-50' },
       { variant: 'filled', color: 'green', className: 'bg-correct-color hover:opacity-90 text-white' },
       { variant: 'outline', color: 'green', className: 'text-correct-color border-correct-color hover:bg-green-50' },
-      { variant: 'light', color: 'green', className: 'text-correct-color hover:bg-green-50' },
+      { variant: 'light', color: 'green', className: 'text-correct-color hover:bg-green-50 bg-[var(--background)]' },
       { variant: 'ghost', color: 'green', className: 'text-correct-color hover:bg-green-50' },
       { variant: 'filled', color: 'pink', className: 'bg-quiz-pink hover:opacity-90 text-white' },
       { variant: 'outline', color: 'pink', className: 'text-quiz-pink border-quiz-pink hover:bg-pink-50' },
-      { variant: 'light', color: 'pink', className: 'text-quiz-pink hover:bg-pink-50' },
+      { variant: 'light', color: 'pink', className: 'text-quiz-pink hover:bg-pink-50 bg-[var(--background)]' },
       { variant: 'ghost', color: 'pink', className: 'text-quiz-pink hover:bg-pink-50' },
       { variant: 'filled', color: 'teal', className: 'bg-primary hover:bg-primary-hover text-white' },
       { variant: 'outline', color: 'teal', className: 'text-primary border-primary hover:bg-primary/10' },
-      { variant: 'light', color: 'teal', className: 'text-primary hover:bg-primary/10' },
+      { variant: 'light', color: 'teal', className: 'text-primary hover:bg-primary/10 bg-[var(--background)]' },
       { variant: 'ghost', color: 'teal', className: 'text-primary hover:bg-primary/10' },
     ],
     defaultVariants: {
@@ -78,25 +77,24 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
   leftIcon?: React.ReactNode;
   radius?: string | number;
   color?: 'default' | 'dark' | 'red' | 'green' | 'pink' | 'teal';
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, color, asChild = false, leftIcon, radius, style, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
+  ({ className, variant, size, color, leftIcon, radius, style, ...props }, ref) => {
     const radiusStyle = radius ? { borderRadius: radius as string } : {};
     return (
-      <Comp
+      <button
+        type="button"
         className={cn(buttonVariants({ variant, size, color, className }))}
         ref={ref}
         style={{ ...radiusStyle, ...style }}
         {...props}>
         {leftIcon && <span className="mr-2">{leftIcon}</span>}
         {props.children}
-      </Comp>
+      </button>
     );
   },
 );

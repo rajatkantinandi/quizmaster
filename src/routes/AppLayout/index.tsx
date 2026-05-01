@@ -57,7 +57,7 @@ function AppLayout() {
         <title>{capitalizeFirstLetter(viewType).replace('-', ' ')} - Quizmaster</title>
       </Helmet>
       <div className="min-h-screen flex flex-col">
-        <header className="h-[70px] border-b bg-[var(--card-background)] w-full sticky top-0 z-50">
+        <header className="h-[70px] border-b w-full sticky top-0 z-50 bg-[var(--background)]">
           <div className="flex justify-between items-center h-full px-6">
             <div className="flex h-full items-center gap-4">
               <Link to={`/my-quizzes/${userName}`} className="ml-4 flex h-full items-center">
@@ -93,8 +93,7 @@ function AppLayout() {
                 <Button
                   onClick={showDemoVideo}
                   className="mr-5 my-auto"
-                  leftIcon={<Icon color="#fff" name="playCircle" width={20} />}
-                >
+                  leftIcon={<Icon color="#fff" name="playCircle" width={20} />}>
                   Watch demo
                 </Button>
               )}
@@ -102,8 +101,7 @@ function AppLayout() {
                 onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
                 variant="outline"
                 className="my-auto"
-                leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}
-              >
+                leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}>
                 Share feedback
               </Button>
             </div>
@@ -112,8 +110,7 @@ function AppLayout() {
         <main
           className={`flex-1 min-h-[calc(100vh-70px)] w-full ${
             window.location.pathname.includes('/my-quizzes') ? 'bg-[var(--off-white)]' : 'bg-[var(--background)]'
-          } px-6 pt-4`}
-        >
+          } px-6 pt-4`}>
           {getTabsView()}
         </main>
         <Footer />

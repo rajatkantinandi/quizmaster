@@ -1,5 +1,5 @@
 import { Textarea } from '@/components/ui/textarea';
-import classNames from 'classnames';
+import { cn } from '@/lib/utils';
 import React from 'react';
 import { Control, Controller, UseControllerProps } from 'react-hook-form';
 import ContentEditable from './ContentEditable';
@@ -35,7 +35,7 @@ export default function FormTextArea({
       control={control}
       rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className={classNames('flex-1', className)}>
+        <div className={cn('flex-1', className)}>
           {isRichText ? (
             <ContentEditable
               onChange={onChange}

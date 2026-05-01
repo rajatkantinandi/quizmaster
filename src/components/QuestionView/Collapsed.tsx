@@ -29,7 +29,7 @@ export default function CollapsedView({
 
   return (
     <Card
-      className="my-3 cursor-pointer border bg-[var(--secondary-card-bg)] p-6 text-black shadow-sm [transform:scaleY(1.5)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-in]"
+      className="my-3 cursor-pointer border bg-[var(--secondary-card-bg)] p-5 text-black shadow-sm [transform:scaleY(1.5)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-in]"
       onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -50,12 +50,12 @@ export default function CollapsedView({
             <Icon name="drag" />
           </Button>
         ) : (
-          <div className="flex items-center gap-2">
-            <Button variant="light" size="sm" className="rounded-full text-red-500" onClick={deleteQuestion}>
-              Delete
+          <div className="flex items-center gap-3">
+            <Button variant="light" color="teal" size="sm" title="Edit" onClick={setActiveQuestion}>
+              Edit
             </Button>
-            <Button variant="ghost" size="icon" title="Edit" onClick={setActiveQuestion}>
-              <Icon name="pencil" width={22} />
+            <Button variant="ghost" size="icon" title="Delete" onClick={deleteQuestion}>
+              <Icon name="trash" width={18} color="var(--bg-red-50)" />
             </Button>
             <Button variant="ghost" size="icon">
               <Icon name="caretDown" />
@@ -63,7 +63,7 @@ export default function CollapsedView({
           </div>
         )}
       </div>
-      <ul className="ml-4 mt-1 flex list-disc text-base">
+      <ul className="ml-10 flex list-disc text-base">
         <li className="mr-6">{question.points} points</li>
         <li>{isWithoutOptions ? 'Without options' : 'With Options'}</li>
       </ul>

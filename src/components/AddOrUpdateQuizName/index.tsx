@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
 import { Button } from '@/components/ui/button';
-import classNames from 'classnames';
+import { cn } from '@/lib/utils';
 
 export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = false, handleFormSubmit }) {
   const { control, handleSubmit } = useForm({ defaultValues: { name } });
@@ -20,7 +20,7 @@ export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = fals
       />
       <Button
         id="btnUpdateQuizNameForm"
-        className={classNames({ hidden: hideSubmitButton }, 'mt-6 w-full rounded-full', 'lg')}
+        className={cn({ hidden: hideSubmitButton }, 'mt-6 w-full rounded-full')}
         size="lg"
         type="submit"
         variant="filled">

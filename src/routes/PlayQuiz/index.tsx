@@ -9,7 +9,7 @@ import { Helmet } from 'react-helmet';
 import Scorecard from './Scorecard';
 import QuestionsList from './QuestionsList';
 import { useNavigate } from 'react-router';
-import classNames from 'classnames';
+import { cn } from '@/lib/utils';
 import Confetti from 'react-confetti-boom';
 import { track } from '../../helpers/track';
 import Icon from '../../components/Icon';
@@ -346,7 +346,7 @@ export default function PlayQuiz({ gameId, userName }) {
       )}
       <div className="flex flex-1 gap-6">
         <div
-          className={classNames('flex-1', {
+          className={cn('flex-1', {
             '[container-type:inline-size] [container-name:panel]': !selectedQuestion,
           })}>
           {selectedQuestion ? (

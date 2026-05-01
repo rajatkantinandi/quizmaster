@@ -28,8 +28,8 @@ export default function MoveQuestionModal({
             {categories.map((category, idx) =>
               idx === activeCategoryIndex ? null : (
                 <div key={idx} className="flex items-center space-x-2">
-                  <RadioGroupItem value={`${idx}`} id={`category-${idx}`} />
-                  <label htmlFor={`category-${idx}`}>{category.categoryName}</label>
+                  <RadioGroupItem value={`${idx}`} id={`move-question-category-${idx}`} />
+                  <label htmlFor={`move-question-category-${idx}`}>{category.categoryName}</label>
                 </div>
               ),
             )}

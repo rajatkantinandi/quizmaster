@@ -12,7 +12,7 @@ import { getEmptyTeam } from '../../helpers';
 import TeamGenerator from '../../components/TeamGenerator';
 import { Helmet } from 'react-helmet';
 import Icon from '../../components/Icon';
-import classNames from 'classnames';
+import { cn } from '@/lib/utils';
 import { TrackingEvent } from '../../constants';
 import { track } from '../../helpers/track';
 
@@ -164,7 +164,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                     type="text"
                     variant="filled"
                     placeholder="Enter team name"
-                    className={classNames('max-w-full', {
+                    className={cn('max-w-full', {
                       '[&_input]:h-[60px] [&_input]:pb-[15px]': mode === 'automatic',
                     })}
                     size="md"

@@ -1,6 +1,6 @@
-import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import Icon from '../../components/Icon';
 
 interface Props {
@@ -77,7 +77,7 @@ export default function Timer({
           <path
             id="base-timer-path-remaining"
             strokeDasharray={circleDasharray}
-            className={classNames({
+            className={cn({
               'stroke-[7px] stroke-linecap-round [transform:rotate(90deg)] [transform-origin:center] transition-all duration-1000 stroke-current':
                 true,
               'text-green-500': !alert && !warning,
@@ -99,7 +99,7 @@ export default function Timer({
       <Button
         variant="ghost"
         size="icon"
-        className={classNames({
+        className={cn({
           'opacity-100': !isTimerRunning,
           'absolute left-3 top-3 rounded-full h-[124px] w-[124px] bg-transparent opacity-0 hover:opacity-100 transition-opacity duration-300':
             true,

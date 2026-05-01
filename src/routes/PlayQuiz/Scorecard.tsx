@@ -1,7 +1,7 @@
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { cn } from '@/lib/utils';
 import TeamAvatar from '../../components/TeamAvatar';
-import classNames from 'classnames';
 import { Team } from '../../types';
 
 export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
@@ -15,7 +15,7 @@ export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
         <Accordion type="multiple" className="my-5">
           {teams.map((team) => (
             <AccordionItem
-              className={classNames({
+              className={cn({
                 'bg-[rgba(134,142,150,0.1)]': true,
                 'flex-nowrap bg-[rgb(34,139,230)] [&_div]:text-white': team.teamId === currentTeamId,
               })}
@@ -26,7 +26,7 @@ export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
                 <TeamAvatar team={team} />
                 <AccordionTrigger>
                   <div className="flex justify-between items-center w-full ml-2">
-                    <p className={classNames('truncate', { 'text-white': team.teamId === currentTeamId })}>
+                    <p className={cn('truncate', { 'text-white': team.teamId === currentTeamId })}>
                       {team.name}
                     </p>
                     <div>
@@ -51,7 +51,7 @@ export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
       ) : (
         teams.map((t: Team) => (
           <div
-            className={classNames('flex justify-between items-center my-xl mx-xl', {
+            className={cn('flex justify-between items-center my-xl mx-xl', {
               'bg-[rgba(134,142,150,0.1)]': true,
               'flex-nowrap bg-[rgb(34,139,230)] [&_div]:text-white': t.teamId === currentTeamId,
               'rounded-[58px] px-[15px] py-[3px] pl-[3px]': true,
@@ -59,7 +59,7 @@ export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
           >
             <div className="flex items-center gap-2">
               <TeamAvatar team={t} />
-              <p className={classNames('text-lg truncate', { 'text-white': t.teamId === currentTeamId })}>{t.name}</p>
+              <p className={cn('text-lg truncate', { 'text-white': t.teamId === currentTeamId })}>{t.name}</p>
             </div>
             <div>
               {t.score.toFixed(2)}

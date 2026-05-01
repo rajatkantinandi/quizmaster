@@ -6,7 +6,7 @@ import Image from '@tiptap/extension-image';
 import Underline from '@tiptap/extension-underline';
 import Iframe from '../../helpers/TipTapIframe';
 import EditorToolbar from './EditorToolbar';
-import classNames from 'classnames';
+import { cn } from '@/lib/utils';
 
 type Props = {
   autofocus?: boolean;
@@ -59,7 +59,7 @@ export default function ContentEditable({
 
   return (
     <div
-      className={classNames('flex-1 relative', className)}
+      className={cn('flex-1 relative', className)}
       onFocus={() => setIsFocussed(true)}
       onBlur={() => setIsFocussed(false)}>
       <label>{label}</label>

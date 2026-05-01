@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input';
-import classNames from 'classnames';
+import { cn } from '@/lib/utils';
 import React from 'react';
 import { Control, Controller, UseControllerProps } from 'react-hook-form';
 
@@ -34,7 +34,7 @@ export default function FormInput({
       control={control}
       rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className={classNames('flex-1', className)}>
+        <div className={cn('flex-1', className)}>
           {label && <label className="text-sm font-medium mb-1 block">{label}</label>}
           <Input
             onChange={(ev: any) => {

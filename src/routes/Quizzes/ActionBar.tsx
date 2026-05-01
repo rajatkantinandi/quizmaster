@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
-import classNames from 'classnames';
+import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import Icon from '../../components/Icon';
 import ImportQuizzesButton from '../../components/ImportQuizzesButton';
@@ -78,7 +78,7 @@ export default function ActionBar({ quizzes }: Props) {
       <ImportQuizzesButton />
       <Button
         onClick={handleDeleteQuizzes}
-        className={classNames('bg-[#c10606] text-white hover:bg-[#a80505]')}
+        className={cn('bg-[#c10606] text-white hover:bg-[#a80505]')}
         title="Delete Quizzes"
         leftIcon={<Icon color="white" width="16" name="trash" />}
       >

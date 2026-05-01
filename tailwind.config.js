@@ -5,11 +5,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
         primary: {
           DEFAULT: 'var(--qm-primary)',
           hover: 'var(--primary-button-bg-hover)',
@@ -20,20 +20,20 @@ module.exports = {
           foreground: 'var(--qm-primary)',
         },
         destructive: {
-          DEFAULT: 'rgb(250, 82, 82)',
+          DEFAULT: '#fa5252',
           foreground: '#ffffff',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: 'var(--accent)',
+          foreground: 'var(--accent-foreground)',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'var(--popover)',
+          foreground: 'var(--popover-foreground)',
         },
         card: {
           DEFAULT: 'var(--qm-card-bg)',
@@ -54,9 +54,9 @@ module.exports = {
         'quiz-pink': '#e91e63',
         'quiz-green': '#4caf50',
         'quiz-purple': '#673ab7',
-        'correct-color': 'rgb(64, 192, 87)',
-        'incorrect-color': 'rgb(250, 82, 82)',
-        warning: 'rgb(250, 176, 5)',
+        'correct-color': '#40c057',
+        'incorrect-color': '#fa5252',
+        warning: '#fab005',
         'points-1': '#20c027',
         'points-2': '#82c91e',
         'points-3': '#fab005',
