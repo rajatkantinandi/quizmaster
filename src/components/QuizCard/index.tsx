@@ -148,7 +148,7 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
       </CardContent>
       {quizzesSelector.show && !quizMetadata.isInCatalog && (
         <button
-          className="absolute inset-0 bg-white/50 border-0 cursor-pointer"
+          className="absolute inset-0 bg-white/50 border-0 cursor-pointer flex items-center justify-center"
           onClick={() => {
             if (quizzesSelector.action === 'publish' && quizMetadata.isDraft) {
               showAlert({
@@ -164,7 +164,8 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
               quizzesSelector.selectedQuizzes.includes(quizMetadata.quizId) ? 'checkmarkFilled' : 'checkmarkOutline'
             }
             width={200}
-            height={200}
+            height={150}
+            className="mt-[-50px]"
           />
         </button>
       )}

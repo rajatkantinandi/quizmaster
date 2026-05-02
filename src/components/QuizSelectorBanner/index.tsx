@@ -7,10 +7,7 @@ function QuizSelectorBanner({ show, message, selectedQuizzes, onNextClick, onCan
   if (!show) return null;
 
   return (
-    <div
-      className="fixed top-[70px] left-1/2 -translate-x-1/2 w-[600px] bg-primary text-white p-4 rounded-lg shadow-xl z-50"
-      style={{ backgroundColor: 'var(--qm-primary)' }}
-    >
+    <div className="fixed top-[70px] left-1/2 -translate-x-1/2 w-[600px] bg-primary text-white p-4 rounded-lg shadow-xl z-50">
       <div className="flex justify-between items-center">
         <div>
           <span className="text-lg">{message}</span>
@@ -26,15 +23,15 @@ function QuizSelectorBanner({ show, message, selectedQuizzes, onNextClick, onCan
           {!!onNextClick && (
             <Button
               variant="light"
+              color="teal"
               size="sm"
               disabled={selectedQuizzes.length === 0}
-              onClick={() => onNextClick(selectedQuizzes)}
-            >
+              onClick={() => onNextClick(selectedQuizzes)}>
               Next
             </Button>
           )}
           {!!onCancelClick && (
-            <Button variant="light" size="sm" onClick={() => onCancelClick()}>
+            <Button variant="ghost" className="text-white" size="sm" onClick={() => onCancelClick()}>
               Cancel
             </Button>
           )}

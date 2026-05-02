@@ -38,12 +38,12 @@ export default function ExpandedView({
   return (
     <Card className="my-3 border bg-[var(--secondary-card-bg)] p-6 text-black shadow-sm [transform:scaleY(0)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-out]">
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedQuestionIndex(null)}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <h4 className="text-lg font-semibold">Question {questionNum}</h4>
           <span className="text-sm">{question.points} points</span>
           {!isValidQuestion && <Badge variant="destructive">Incomplete</Badge>}
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Button
             variant="filled"
             color="dark"

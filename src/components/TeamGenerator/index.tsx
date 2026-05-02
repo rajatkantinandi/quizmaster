@@ -32,14 +32,14 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const [isEditingTeams, setIsEditingTeams] = useState(!!rest.players);
   const [shouldShowTeams, setShouldShowTeams] = useState(!!rest.players);
   const [players, setPlayers] = useState<string[]>(rest.teams.map((x) => x.players));
-  const { showAlert, enableOkButton, disableOkButton } = useStore();
+  const { showAlert, enableOkButton } = useStore();
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       playerNames: rest.players,
       teamCount: rest.teamCount,
     },
   });
-  const { playerNames, teamCount } = watch();
+  const { teamCount } = watch();
   const teamsForm = useForm({
     defaultValues: {
       teams:
@@ -55,12 +55,11 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const teamList = getValidValuesFromColumns(teamsData);
 
   useEffect(() => {
-    if (shouldShowTeams) {
-      setShouldShowTeams(false);
-      setIsEditingTeams(false);
-      disableOkButton();
+    if (rest.teamCount > 0) {
+      enableOkButton();
     }
-  }, [playerNames, teamCount, shouldShowTeams, disableOkButton]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rest.teamCount]);
 
   function generateTeams(data: { teamCount: number; playerNames: string }) {
     const count = data.teamCount;
@@ -151,13 +150,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               control={control}
             />
           </div>
-          <Button
-            disabled={isEditingTeams}
-            mb-4
-            type="submit"
-            variant="default"
-            leftIcon={<Icon name="team" width={20} />}
-          >
+          <Button mb-4 type="submit" variant="default" leftIcon={<Icon name="team" width={20} />}>
             Generate team
           </Button>
         </div>

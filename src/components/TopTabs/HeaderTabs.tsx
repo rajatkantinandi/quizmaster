@@ -16,13 +16,12 @@ export default function HeaderTabs({ tabs, onChange }: Props) {
 
   return (
     <Tabs
-      className="h-full"
+      className="h-full mb-[-5px] rounded-b-none"
       value={window.location.pathname}
       onValueChange={(value) => {
         onChange(value);
         navigate(value);
-      }}
-    >
+      }}>
       <TabsList className="h-full items-end gap-0 border-0 bg-transparent p-0">
         {tabs.map((tab) => (
           <TabsTrigger

@@ -23,7 +23,7 @@ export default function NoQuizzes({ userName }: { userName: string }) {
           thumbnailUrl="https://i.ytimg.com/vi/2aGqrP1lpFw/hqdefault.jpg"
           videoTitle="Watch the demo"
         />
-        <p className="mb-[10px] text-[20px] text-[var(--gray-dark)]">
+        <p className="my-4 text-[20px] text-[var(--gray-dark)]">
           It is ideal for quizmasters looking to customise and host their quizzes.
         </p>
         <div className="flex justify-center gap-[50px] mt-xl">
@@ -31,21 +31,19 @@ export default function NoQuizzes({ userName }: { userName: string }) {
           <Button
             size="lg"
             onClick={() => navigate(`/catalog/${userName}`)}
-            className="rounded-full shadow-sm bg-blue-800 hover:bg-blue-700"
-            leftIcon={<Icon color="white" width="16" name="download" />}>
+            className="shadow-sm bg-blue-800 hover:bg-blue-700 text-lg"
+            leftIcon={<Icon color="white" width={18} height={18} name="download" />}>
             Add from catalog
           </Button>
-          <ImportQuizzesButton size="lg" radius="xl" />
+          <ImportQuizzesButton size="lg" radius="xl" className="text-lg" />
         </div>
       </section>
       <Separator className="w-4/5 mt-[60px] mb-[50px]" />
       <section className="flex max-w-[1200px] flex-row p-5">
-        <div className="flex flex-1 flex-col px-[10px]">
-          <Icon name="peopleNearby" width={100} height={100} />
-          <h4 className="mb-[10px] text-center font-body text-[22px] text-[var(--primary-button-bg-hover)]">
-            Free for everyone
-          </h4>
-          <ul>
+        <div className="flex flex-1 flex-col px-[10px] items-center gap-4">
+          <Icon name="peopleNearby" width={100} height={100} color="var(--primary)" />
+          <h4 className="mb-[10px] text-center font-bold text-[22px] text-[var(--primary)]">Free for everyone</h4>
+          <ul className="list-disc pl-6">
             <li className="mb-2 font-body text-[18px] text-[var(--gray-dark)]">
               Create quizzes or use curated ones from our catalog for free.
             </li>
@@ -54,10 +52,12 @@ export default function NoQuizzes({ userName }: { userName: string }) {
             </li>
           </ul>
         </div>
-        <div className="flex flex-1 flex-col px-[10px]">
-          <Icon name="settingsWheels" width={100} height={100} />
-          <h4 className="mb-[10px] text-center font-body text-[22px] text-[#1971c2]">Make your own quizzes!</h4>
-          <ul>
+        <div className="flex flex-1 flex-col px-[10px] items-center gap-4">
+          <Icon name="settingsWheels" width={100} height={100} color="var(--score-header-bg" />
+          <h4 className="mb-[10px] text-center font-bold text-[22px] text-[var(--score-header-bg)]">
+            Make your own quizzes!
+          </h4>
+          <ul className="list-disc pl-6">
             <li className="mb-2 font-body text-[18px] text-[var(--gray-dark)]">
               Create custom quizzes with various categories and questions.
             </li>
@@ -66,12 +66,12 @@ export default function NoQuizzes({ userName }: { userName: string }) {
             </li>
           </ul>
         </div>
-        <div className="flex flex-1 flex-col px-[10px]">
-          <Icon name="partyPopper" width={100} height={100} />
-          <h4 className="mb-[10px] text-center font-body text-[22px] text-[var(--quiz-card-bg-1)]">
+        <div className="flex flex-1 flex-col px-[10px] items-center gap-4">
+          <Icon name="partyPopper" width={100} height={100} color="var(--quiz-card-bg-1)" />
+          <h4 className="mb-[10px] text-center font-bold text-[22px] text-[var(--quiz-card-bg-1)]">
             Make quiz hosting fun
           </h4>
-          <ul>
+          <ul className="list-disc pl-6">
             <li className="mb-2 font-body text-[18px] text-[var(--gray-dark)]">
               Form teams by typing in team names or opt for random team generation.
             </li>

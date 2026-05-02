@@ -432,10 +432,10 @@ export default function ConfigureQuiz({
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : undefined}
                   className={cn(
-                    'bg-[var(--primary-card-bg)] w-full flex gap-4 px-4 py-2 border-0 shadow-none',
+                    'w-full flex gap-4 px-4 py-2 border-0 shadow-none',
                     {
                       'z-[1]': idx === activeCategoryIndex,
-                      'bg-white': idx !== activeCategoryIndex,
+                      'bg-[var(--primary-card-bg)]': idx === activeCategoryIndex,
                       border: idx === activeCategoryIndex,
                       'border-r-0': idx === activeCategoryIndex,
                       'rounded-lg': idx === activeCategoryIndex,

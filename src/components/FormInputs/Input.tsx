@@ -41,7 +41,7 @@ export default function FormInput({
               onChangeProp?.(ev);
               onChange(ev);
             }}
-            value={value || ''}
+            value={value ?? ''}
             autoFocus={autoFocus}
             disabled={disabled}
             {...rest}

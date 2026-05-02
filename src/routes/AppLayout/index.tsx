@@ -107,10 +107,7 @@ function AppLayout() {
             </div>
           </div>
         </header>
-        <main
-          className={`flex-1 min-h-[calc(100vh-70px)] w-full ${
-            window.location.pathname.includes('/my-quizzes') ? 'bg-[var(--off-white)]' : 'bg-[var(--background)]'
-          } px-6 pt-4`}>
+        <main className={`flex-1 min-h-[calc(100vh-70px)] w-full bg-[var(--off-white)] px-6 pt-4`}>
           {getTabsView()}
         </main>
         <Footer />

@@ -16,10 +16,9 @@ function CreateQuizButton({ userName, isFloating = false }: Props): JSX.Element 
       size={isFloating ? 'xl' : 'lg'}
       onClick={() => navigate(`/configure-quiz/${userName}`)}
       variant="filled"
-      className={isFloating ? 'shadow-lg' : 'shadow-sm'}
+      className={isFloating ? 'shadow-lg' : 'shadow-sm text-lg'}
       radius="xl"
-      leftIcon={<Icon name="plus" color="#ffffff" width={20} height={20} />}
-    >
+      leftIcon={<Icon name="plus" color="#ffffff" width={18} height={18} />}>
       Create Quiz
     </Button>
   );

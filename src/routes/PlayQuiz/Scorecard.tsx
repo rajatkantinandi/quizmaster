@@ -7,39 +7,31 @@ import { Team } from '../../types';
 export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
   return (
     <div>
-      <div className="flex justify-between items-center mt-xl mx-xl pt-xl">
+      <div className="flex justify-between items-center mt-xl pt-xl px-2">
         <h4 className="text-lg font-semibold">Team</h4>
         <h4 className="text-lg font-semibold">Score</h4>
       </div>
       {teams.some((x) => x.players) ? (
         <Accordion type="multiple" className="my-5">
           {teams.map((team) => (
-            <AccordionItem
-              className={cn({
-                'bg-[rgba(134,142,150,0.1)]': true,
-                'flex-nowrap bg-[rgb(34,139,230)] [&_div]:text-white': team.teamId === currentTeamId,
-              })}
-              key={team.teamId}
-              value={`${team.teamId}`}
-            >
-              <div className="flex items-center">
+            <AccordionItem key={team.teamId} value={`${team.teamId}`} className="bg-white">
+              <AccordionTrigger
+                className={cn('flex items-center px-3', {
+                  'flex-nowrap bg-[rgb(34,139,230)] text-white': team.teamId === currentTeamId,
+                })}>
                 <TeamAvatar team={team} />
-                <AccordionTrigger>
-                  <div className="flex justify-between items-center w-full ml-2">
-                    <p className={cn('truncate', { 'text-white': team.teamId === currentTeamId })}>
-                      {team.name}
-                    </p>
-                    <div>
-                      {(team.score || 0).toFixed(2)}
-                      {team.teamId && winnerIdsCsv.includes(`${team.teamId}`) && <span title="winner"> 👑</span>}
-                    </div>
+                <div className="flex justify-between items-center w-full px-2">
+                  <p className={cn('truncate', { 'text-white': team.teamId === currentTeamId })}>{team.name}</p>
+                  <div>
+                    {(team.score || 0).toFixed(2)}
+                    {team.teamId && winnerIdsCsv.includes(`${team.teamId}`) && <span title="winner"> 👑</span>}
                   </div>
-                </AccordionTrigger>
-              </div>
+                </div>
+              </AccordionTrigger>
               <AccordionContent>
-                <ol>
+                <ol className="list-decimal pl-6">
                   {team.players.split(',').map((player) => (
-                    <li key={player} className="truncate">
+                    <li key={player} className="truncate pt-2">
                       {player}
                     </li>
                   ))}
@@ -51,12 +43,9 @@ export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
       ) : (
         teams.map((t: Team) => (
           <div
-            className={cn('flex justify-between items-center my-xl mx-xl', {
-              'bg-[rgba(134,142,150,0.1)]': true,
-              'flex-nowrap bg-[rgb(34,139,230)] [&_div]:text-white': t.teamId === currentTeamId,
-              'rounded-[58px] px-[15px] py-[3px] pl-[3px]': true,
-            })}
-          >
+            className={cn('flex justify-between items-center my-lg mx-xl bg-white rounded-lg py-2 px-3', {
+              'flex-nowrap bg-[rgb(34,139,230)] text-white': t.teamId === currentTeamId,
+            })}>
             <div className="flex items-center gap-2">
               <TeamAvatar team={t} />
               <p className={cn('text-lg truncate', { 'text-white': t.teamId === currentTeamId })}>{t.name}</p>

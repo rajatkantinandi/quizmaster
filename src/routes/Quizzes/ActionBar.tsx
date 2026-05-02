@@ -74,16 +74,7 @@ export default function ActionBar({ quizzes }: Props) {
   }
 
   return (
-    <div className="mt-md mb-lg flex w-[95%] gap-[25px] px-3 max-[1240px]:w-[98.5%]">
-      <ImportQuizzesButton />
-      <Button
-        onClick={handleDeleteQuizzes}
-        className={cn('bg-[#c10606] text-white hover:bg-[#a80505]')}
-        title="Delete Quizzes"
-        leftIcon={<Icon color="white" width="16" name="trash" />}
-      >
-        Delete Quizzes
-      </Button>
+    <div className="flex items-center gap-4 mb-5 mt-2 justify-between">
       <Select value={sortBy} onValueChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}>
         <SelectTrigger className="max-w-[190px]">
           <div className="flex items-center gap-2">
@@ -97,6 +88,16 @@ export default function ActionBar({ quizzes }: Props) {
           <SelectItem value="name">Name</SelectItem>
         </SelectContent>
       </Select>
+      <div className="flex items-center gap-4">
+        <ImportQuizzesButton />
+        <Button
+          onClick={handleDeleteQuizzes}
+          className={cn('bg-[#c10606] text-white hover:bg-[#a80505]')}
+          title="Delete Quizzes"
+          leftIcon={<Icon color="white" width="16" name="trash" />}>
+          Delete Quizzes
+        </Button>
+      </div>
     </div>
   );
 }
