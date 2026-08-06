@@ -2,7 +2,7 @@
 
 > Quizmaster is a free & open source app that allows users to create and host quizzes, adding an entertaining and knowledgeable element to any event.
 
-Hosted via [vercel](https://quizmasterapp.in)
+Hosted via [vercel](https://quizmaster.vercel.app/)
 
 ## Features
 
