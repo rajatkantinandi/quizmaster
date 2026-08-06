@@ -1,7 +1,5 @@
-import { Tabs } from '@mantine/core';
-import classNames from 'classnames';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router';
-import styles from './styles.module.css';
 
 type Tab = {
   title: string;
@@ -18,22 +16,26 @@ export default function HeaderTabs({ tabs, onChange }: Props) {
 
   return (
     <Tabs
-      variant="outline"
+      className="h-full mb-[-5px] rounded-b-none"
       value={window.location.pathname}
-      onTabChange={(value) => {
-        onChange(value!);
-        navigate(value!);
+      onValueChange={(value) => {
+        onChange(value);
+        navigate(value);
       }}>
-      <Tabs.List>
+      <TabsList className="h-full items-end gap-0 border-0 bg-transparent p-0">
         {tabs.map((tab) => (
-          <Tabs.Tab
+          <TabsTrigger
             value={tab.url}
             key={tab.title}
-            className={classNames(styles.tab, { [styles.active]: window.location.pathname === tab.url })}>
+            className={`mr-2 block h-[60px] border border-transparent px-5 py-0 font-display font-bold text-[var(--qm-primary)] outline-none hover:bg-[var(--off-white-hover)] focus-visible:bg-[var(--off-white-hover)] data-[state=active]:text-[var(--qm-primary)] dark:text-white dark:data-[state=active]:text-white ${
+              window.location.pathname === tab.url
+                ? 'rounded-t-[10px] border-t-2 border-t-[var(--border-gray)] bg-[linear-gradient(to_bottom,var(--primary-card-bg)_20%,var(--off-white)_80%,var(--off-white)_100%)]'
+                : 'rounded-t-[10px]'
+            }`}>
             {tab.title}
-          </Tabs.Tab>
+          </TabsTrigger>
         ))}
-      </Tabs.List>
+      </TabsList>
     </Tabs>
   );
 }

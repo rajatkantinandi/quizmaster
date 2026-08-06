@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import { cn } from '@/lib/utils';
 import React, { useMemo } from 'react';
 import { sanitize } from '../../helpers/dom';
 
@@ -31,7 +31,7 @@ function SanitizedHtml({
   );
 
   return (
-    <Tag className={classNames(className, 'html')} dangerouslySetInnerHTML={{ __html: sanitizedHtml }} {...rest} />
+    <Tag className={cn(className, 'html')} dangerouslySetInnerHTML={{ __html: sanitizedHtml }} {...rest} />
   );
 }
 

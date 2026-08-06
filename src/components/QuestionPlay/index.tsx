@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Title, Card, Group, Box, Button, Badge } from '@mantine/core';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
 import { useForm } from 'react-hook-form';
 import WithoutOptions from './WithoutOptions';
 import WithOptions from './WithOptions';
 import { useStore } from '../../useStore';
-import styles from './styles.module.css';
-import classNames from 'classnames';
 import { getPointsColor } from '../../helpers';
 
 interface Props {
@@ -52,7 +52,6 @@ export default function QuestionPlay({
 
   useEffect(() => {
     if (isAttempted) {
-      // reveal answer when question is attempted due to timeout
       setIsAnswerRevealed(true);
     }
   }, [isAttempted]);
@@ -62,7 +61,7 @@ export default function QuestionPlay({
   }, [selectedOptionIds]);
 
   return (
-    <Card shadow="sm" p="lg" my="sm" withBorder className={classNames('secondaryCard', styles.container)}>
+    <Card className="my-0 max-h-[calc(90vh-120px)] overflow-auto border border-[var(--qm-card-border)] bg-[var(--secondary-card-bg)] px-6 py-5 shadow-sm">
       <form
         onSubmit={handleSubmit(() => {
           if (selectedChoices) {
@@ -73,46 +72,39 @@ export default function QuestionPlay({
               type: 'warning',
             });
           }
-        })}>
-        <Group>
-          <Title mr="xl" order={4}>
-            Question {selectedQuestion.questionNum}
-          </Title>
+        })}
+      >
+        <div className="mb-2 flex items-center gap-4">
+          <h4 className="text-lg font-semibold mr-4">Question {selectedQuestion.questionNum}</h4>
           {negativePointsMultiplier === 0 ? (
             <Badge
-              styles={{
-                root: {
-                  backgroundColor: getPointsColor(points, minQuestionPoint, maxQuestionPoint).color,
-                },
+              style={{
+                backgroundColor: getPointsColor(points, minQuestionPoint, maxQuestionPoint).color,
               }}
-              variant="filled">
+            >
               {points} pts
             </Badge>
           ) : (
-            <Group spacing="xl">
+            <div className="flex gap-4">
               <Badge
-                styles={{
-                  root: {
-                    backgroundColor: getPointsColor(points, minQuestionPoint, maxQuestionPoint).color,
-                  },
+                style={{
+                  backgroundColor: getPointsColor(points, minQuestionPoint, maxQuestionPoint).color,
                 }}
-                variant="filled">
+              >
                 Correct: {points} points
               </Badge>
-              <Badge color="red" variant="filled">
-                Incorrect: {(points * negativePointsMultiplier).toFixed(2)} points
-              </Badge>
-            </Group>
+              <Badge variant="destructive">Incorrect: {(points * negativePointsMultiplier).toFixed(2)} points</Badge>
+            </div>
           )}
           {!isAttempted && isGameCompleted && (
-            <Badge color="orange" variant="filled">
+            <Badge variant="secondary" className="bg-orange-500">
               Unanswered
             </Badge>
           )}
-        </Group>
-        <Box my="xs">
+        </div>
+        <div className="mb-3 mt-2 text-black">
           <SanitizedHtml>{text}</SanitizedHtml>
-        </Box>
+        </div>
         {isWithoutOptions ? (
           <WithoutOptions
             isAnswerRevealed={isAnswerRevealed || isGameCompleted}
@@ -134,11 +126,11 @@ export default function QuestionPlay({
           />
         )}
         {isAttempted && !isGameCompleted && (
-          <Button mt="xl" variant="default" onClick={continueGame}>
+          <Button className="mt-6" variant="default" onClick={continueGame}>
             Continue
           </Button>
         )}
-        <button className="displayNone" id="btnSubmitResponse" type="submit">
+        <button className="hidden" id="btnSubmitResponse" type="submit">
           Submit
         </button>
       </form>

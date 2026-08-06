@@ -1,4 +1,6 @@
-import { ActionIcon, Badge, Button, Card, Group, Text } from '@mantine/core';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Icon, { IconName } from '../../components/Icon';
@@ -6,7 +8,6 @@ import { tilesBGColors, TrackingEvent } from '../../constants';
 import { plural } from '../../helpers';
 import { track } from '../../helpers/track';
 import { useStore } from '../../useStore';
-import styles from './styles.module.css';
 
 type QuizMetadata = {
   name: string;
@@ -32,7 +33,7 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
   const { quizzesSelector, showAlert, toggleSelectedQuizzes, getInCompletedGame } = useStore();
   const [isImportingFromCatalog, setIsImportingFromCatalog] = useState(false);
 
-  async function handlePlayGame(quizId) {
+  async function handlePlayGame(quizId: number) {
     const gameId = await getInCompletedGame(quizId);
 
     track(TrackingEvent.PLAY_QUIZ, {
@@ -62,51 +63,54 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
   }
 
   return (
-    <Card shadow="sm" p="lg" withBorder className={styles.quizCardWrapper}>
-      <Card.Section style={{ backgroundColor: tilesBGColors[index % 5] }}>
+    <Card
+      shadow="sm"
+      className="w-[20%] min-w-[250px] h-[320px] m-2 rounded-[10px] flex flex-col relative overflow-hidden">
+      <div style={{ backgroundColor: tilesBGColors[index % 5] }} className="py-4 w-full">
         <Icon
           name={`quiz_${(index % 13) + 1}` as IconName}
           width="100%"
           height={120}
           color="#ffffff"
-          className={`my-lg ${styles.tileIcon}`}
+          className="opacity-50"
         />
-      </Card.Section>
-      <div className="flex flexCol spaceBetween grow">
-        <div className="flex flexCol">
-          <Group position="apart" mt="md">
-            <Text weight="bold" className="truncatedTwoLine" title={quizMetadata.name}>
+      </div>
+      <CardContent className="flex flex-col justify-between flex-1 p-4 w-full">
+        <div className="flex flex-col">
+          <div className="flex justify-between items-start mt-4">
+            <h3 className="font-bold text-sm truncate-2-line" title={quizMetadata.name}>
               {quizMetadata.name}
-            </Text>
+            </h3>
             {quizMetadata.isDraft && (
-              <Badge color="pink" variant="light">
+              <Badge variant="secondary" className="ml-2 shrink-0">
                 Draft
               </Badge>
             )}
             {quizMetadata.isPublished && (
-              <Badge color="green" variant="light">
+              <Badge variant="success" className="ml-2 shrink-0">
                 Published
               </Badge>
             )}
-          </Group>
-          <Text mb="xs" size="xs" italic>
+          </div>
+          <p className="text-xs italic text-gray-500 mb-1">
             Created on:{' '}
             {new Date(quizMetadata.createDate).toLocaleDateString('en-GB', {
               day: 'numeric',
               month: 'short',
               year: 'numeric',
             })}
-          </Text>
-          <Text>
+          </p>
+          <p className="text-sm">
             {plural(quizMetadata.numOfCategories, '%count category', '%count categories')},{' '}
             {plural(quizMetadata.numOfQuestions, '%count question', '%count questions')}
-          </Text>
+          </p>
         </div>
-        <Group position="apart" className="mt-lg fullWidth">
+        <div className="flex justify-between mt-4 self-stretch gap-2">
           {quizMetadata.isInCatalog || quizMetadata.isDraft ? (
             <Button
+              variant="filled"
               color="pink"
-              fullWidth
+              className="w-full"
               leftIcon={<Icon color="#ffffff" name={quizMetadata.isInCatalog ? 'play' : 'pencil'} width={16} />}
               disabled={isImportingFromCatalog}
               onClick={() => {
@@ -121,8 +125,7 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
           ) : (
             <>
               <Button
-                color="teal"
-                className="grow"
+                className="flex-1"
                 leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
                 onClick={() => handlePlayGame(quizMetadata.quizId)}>
                 Play
@@ -130,23 +133,22 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
               <Button
                 title="Edit quiz"
                 variant="light"
-                className="iconButton"
+                size="icon"
                 onClick={() => navigate(`/configure-quiz/${userName}/${quizMetadata.quizId}`)}>
                 <Icon color="var(--gray-dark)" name="pencil" width={18} />
               </Button>
               {!!handleDownload && (
-                <Button title="Download quiz" variant="light" className="iconButton" onClick={handleDownload}>
+                <Button title="Download quiz" variant="light" size="icon" onClick={handleDownload}>
                   <Icon color="var(--gray-dark)" name="download" width={18} />
                 </Button>
               )}
             </>
           )}
-        </Group>
-      </div>
+        </div>
+      </CardContent>
       {quizzesSelector.show && !quizMetadata.isInCatalog && (
-        <ActionIcon
-          variant="transparent"
-          className={styles.cardSelectBtn}
+        <button
+          className="absolute inset-0 bg-white/50 border-0 cursor-pointer flex items-center justify-center"
           onClick={() => {
             if (quizzesSelector.action === 'publish' && quizMetadata.isDraft) {
               showAlert({
@@ -162,9 +164,10 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
               quizzesSelector.selectedQuizzes.includes(quizMetadata.quizId) ? 'checkmarkFilled' : 'checkmarkOutline'
             }
             width={200}
-            height={200}
+            height={150}
+            className="mt-[-50px]"
           />
-        </ActionIcon>
+        </button>
       )}
     </Card>
   );

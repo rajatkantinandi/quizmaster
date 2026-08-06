@@ -1,7 +1,5 @@
 import React from 'react';
-import styles from './styles.module.css';
 import { Helmet } from 'react-helmet';
-import { Grid, AppShell } from '@mantine/core';
 import LoginFormCard from '../../components/LoginFormCard';
 import SignUpFormCard from '../../components/SignUpFormCard';
 import ForgotPassword from '../../components/ForgotPassword';
@@ -29,23 +27,18 @@ export default function HomePage() {
   return isValidUser ? (
     <CheckAuthAndNavigate />
   ) : (
-    <section>
+    <section className="min-h-screen bg-[var(--qm-primary)]">
       <Helmet>
         <title>Homepage - Quizmaster</title>
       </Helmet>
-      <AppShell
-        styles={(theme) => ({
-          main: { backgroundColor: 'var(--qm-primary)', padding: 0 },
-        })}>
-        <Grid align="center" className={styles.loginCardWrapper}>
-          <Grid.Col span={4} offset={4}>
-            <div className="textAlignCenter">
-              <Icon color="#ffffff" name="logo" className="mb-xl" width={200} height={60} />
-            </div>
-            {getViewType()}
-          </Grid.Col>
-        </Grid>
-      </AppShell>
+      <div className="flex min-h-screen items-center justify-center bg-[var(--qm-primary)] p-4">
+        <div className="w-full max-w-md">
+          <div className="mb-6 text-center">
+            <Icon color="#ffffff" name="logo" className="mb-4" width={200} height={60} />
+          </div>
+          {getViewType()}
+        </div>
+      </div>
     </section>
   );
 }

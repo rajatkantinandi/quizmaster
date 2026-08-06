@@ -1,73 +1,60 @@
 import React from 'react';
-import styles from './styles.module.css';
-import { Text, Accordion, Group, Title } from '@mantine/core';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { cn } from '@/lib/utils';
 import TeamAvatar from '../../components/TeamAvatar';
-import classNames from 'classnames';
 import { Team } from '../../types';
 
 export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
   return (
     <div>
-      <Group position="apart" mt="xl" mx="xl" pt="xl">
-        <Title order={4}>Team</Title>
-        <Title order={4}>Score</Title>
-      </Group>
+      <div className="flex justify-between items-center mt-xl pt-xl px-2">
+        <h4 className="text-lg font-semibold">Team</h4>
+        <h4 className="text-lg font-semibold">Score</h4>
+      </div>
       {teams.some((x) => x.players) ? (
-        <Accordion my="xl" multiple variant="separated">
+        <Accordion type="multiple" className="my-5">
           {teams.map((team) => (
-            <Accordion.Item
-              className={classNames({
-                [styles.currentTeam]: team.teamId === currentTeamId,
-                [styles.team]: true,
-              })}
-              key={team.teamId}
-              value={`${team.teamId}`}>
-              <Accordion.Control icon={<TeamAvatar team={team} />}>
-                <Group position="apart" key={team.teamId}>
-                  <Text color={team.teamId === currentTeamId ? 'white' : ''} className="truncatedOneLine">
-                    {team.name}
-                  </Text>
+            <AccordionItem key={team.teamId} value={`${team.teamId}`} className="bg-white">
+              <AccordionTrigger
+                className={cn('flex items-center px-3', {
+                  'flex-nowrap bg-[rgb(34,139,230)] text-white': team.teamId === currentTeamId,
+                })}>
+                <TeamAvatar team={team} />
+                <div className="flex justify-between items-center w-full px-2">
+                  <p className={cn('truncate', { 'text-white': team.teamId === currentTeamId })}>{team.name}</p>
                   <div>
                     {(team.score || 0).toFixed(2)}
                     {team.teamId && winnerIdsCsv.includes(`${team.teamId}`) && <span title="winner"> 👑</span>}
                   </div>
-                </Group>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <ol>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <ol className="list-decimal pl-6">
                   {team.players.split(',').map((player) => (
-                    <li key={player} className="truncatedOneLine">
+                    <li key={player} className="truncate pt-2">
                       {player}
                     </li>
                   ))}
                 </ol>
-              </Accordion.Panel>
-            </Accordion.Item>
+              </AccordionContent>
+            </AccordionItem>
           ))}
         </Accordion>
       ) : (
         teams.map((t: Team) => (
-          <Group
-            position="apart"
-            my="xl"
-            mx="xl"
-            key={t.teamId}
-            className={classNames({
-              [styles.currentTeam]: t.teamId === currentTeamId,
-              [styles.team]: true,
-              [styles.teamWithoutPlayer]: true,
+          <div
+            className={cn('flex justify-between items-center my-lg mx-xl bg-white rounded-lg py-2 px-3', {
+              'flex-nowrap bg-[rgb(34,139,230)] text-white': t.teamId === currentTeamId,
             })}>
-            <Group noWrap>
+            <div className="flex items-center gap-2">
               <TeamAvatar team={t} />
-              <Text size="lg" className="truncatedOneLine" color={t.teamId === currentTeamId ? 'white' : ''}>
-                {t.name}
-              </Text>
-            </Group>
+              <p className={cn('text-lg truncate', { 'text-white': t.teamId === currentTeamId })}>{t.name}</p>
+            </div>
             <div>
               {t.score.toFixed(2)}
               {t.teamId && winnerIdsCsv.includes(`${t.teamId}`) && <span title="winner"> 👑</span>}
             </div>
-          </Group>
+          </div>
         ))
       )}
     </div>

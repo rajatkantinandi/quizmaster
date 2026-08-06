@@ -39,7 +39,7 @@
 .ProseMirror th,
 .html th {
   background-color: var(--gray-dark);
-  color: white;
+  color: #ffffff;
   border: 1px solid var(--border-gray);
 }
 
@@ -50,12 +50,12 @@
 
 .ProseMirror tr:nth-last-of-type(2n + 1),
 .html tr:nth-last-of-type(2n + 1) {
-  background-color: white;
+  background-color: #ffffff;
 }
 
 .ProseMirror tr,
 .html tr {
-  color: black;
+  color: #000000;
 }
 
 .ProseMirror table,
@@ -74,7 +74,7 @@
   background-color: var(--gray-dark);
   width: 100%;
   display: block;
-  color: white;
+  color: #ffffff;
   padding: 5px 10px;
   border-radius: 5px;
 }
@@ -82,7 +82,7 @@
 .ProseMirror code,
 .html code {
   background-color: var(--card-hover-bg);
-  color: white;
+  color: #ffffff;
   padding: 2px 5px;
   border-radius: 5px;
 }

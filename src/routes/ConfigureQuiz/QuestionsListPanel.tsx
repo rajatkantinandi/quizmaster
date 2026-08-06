@@ -1,71 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styles from './styles.module.css';
-import { Title, Card, Button, Group, Text } from '@mantine/core';
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import Icon from '../../components/Icon';
-import QuestionEdit from '../../components/QuestionEdit';
 import QuestionView from '../../components/QuestionView';
 import { Control, useFieldArray } from 'react-hook-form';
-import { getEmptyQuestion } from '../../helpers';
 import { useStore } from '../../useStore';
-import { Question, Quiz } from '../../types';
+import { Category, Question } from '../../types';
 import { ReactSortable } from 'react-sortablejs';
-import Modal from '../../components/Modal';
+import type { ConfigureQuizFormValues } from './index';
 
 type Props = {
-  activeCategoryName: string;
-  questions: Question[];
+  activeCategory?: Category;
   activeCategoryIndex: number;
-  control: Control<any, any>;
+  control: Control<ConfigureQuizFormValues>;
   expandedQuestionIndex: number | null | 'all';
   activeQuestionIndex: number | null;
-  activeCategoryId?: number;
   setActiveQuestionIndex: (idx: number | null) => void;
   isValidQuestion: (question: Question) => boolean;
   setExpandedQuestionIndex: (idx: number | null | 'all') => void;
-  quizId: string;
-  updateQuizData: () => void;
   handleRearrangeQuestions: () => void;
   rearrangeMode: boolean;
   handleMoveQuestions: Function;
-  isPreview: boolean;
+  onAddQuestion: () => void;
+  onEditQuestion: (idx: number) => void;
 };
 
 export default function QuestionsListPanel({
-  activeCategoryName,
-  questions,
+  activeCategory,
   activeCategoryIndex,
   control,
   expandedQuestionIndex,
   activeQuestionIndex,
-  activeCategoryId,
   setActiveQuestionIndex,
   isValidQuestion,
   setExpandedQuestionIndex,
-  quizId,
-  updateQuizData,
   handleRearrangeQuestions,
   rearrangeMode,
   handleMoveQuestions,
-  isPreview,
+  onAddQuestion,
+  onEditQuestion,
 }: Props) {
-  const {
-    append,
-    remove,
-    update: updateQuestionData,
-    replace,
-  } = useFieldArray({
+  const { remove, replace } = useFieldArray({
     control,
-    name: `categories[${activeCategoryIndex}].questions`,
+    name: `categories.${activeCategoryIndex}.questions` as const,
   });
-  const { getQuiz, showAlert, showModal } = useStore();
-  const questionEditRef = useRef<HTMLFormElement>();
-  const [isAddingQuestion, setIsAddingQuestion] = useState(false);
-
-  useEffect(() => {
-    if (!activeQuestionIndex) {
-      setIsAddingQuestion(false); // When edit mode is closed, reset isAddingQuestion
-    }
-  }, [activeQuestionIndex]);
+  const { showAlert, showModal } = useStore();
+  const questions = activeCategory?.questions || [];
+  const activeCategoryName = activeCategory?.categoryName || '';
 
   const addQuestion = () => {
     if (!activeCategoryName) {
@@ -76,11 +57,7 @@ export default function QuestionsListPanel({
       return;
     }
 
-    const question = getEmptyQuestion(activeCategoryId!);
-    append(question);
-    setActiveQuestionIndex(questions.length);
-    setExpandedQuestionIndex(null);
-    setIsAddingQuestion(true);
+    onAddQuestion();
   };
 
   function handleDeleteQuestion(ev, index: number) {
@@ -108,41 +85,12 @@ export default function QuestionsListPanel({
     }
   }
 
-  const resetQuestion = () => {
-    if (activeQuestionIndex !== null && activeQuestionIndex >= 0) {
-      getQuiz(quizId, isPreview).then((quiz: Quiz) => {
-        const originalQuestion = (quiz.categories[activeCategoryIndex]?.questions || [])[activeQuestionIndex];
-
-        if (originalQuestion && originalQuestion.categoryId) {
-          updateQuestionData(activeQuestionIndex, originalQuestion);
-        } else {
-          remove(activeQuestionIndex);
-        }
-
-        setActiveQuestionIndex(null);
-      });
-    }
-  };
-
-  async function handleSaveQuestion(idx, question) {
-    updateQuestionData(idx, question);
-    await updateQuizData();
-    setActiveQuestionIndex(null);
-    setExpandedQuestionIndex(idx);
-
-    showAlert({
-      message: 'Question has been saved successfully.',
-      type: 'success',
-    });
-  }
-
   function onQuestionSwap(data) {
     const updatedQuestionIds = data.map((x) => x.questionId).join(',');
     const initialQuestionIds = questions.map((x) => x.questionId).join(',');
 
     if (initialQuestionIds !== updatedQuestionIds) {
       replace(
-        // Remove id required for react sortable before updating questions state
         data.map((x) => {
           delete x.id;
           return x;
@@ -152,42 +100,46 @@ export default function QuestionsListPanel({
   }
 
   return (
-    <Card shadow="sm" withBorder className={`fullHeight primaryCard ${styles.questionsListPanel}`}>
-      <Group position="apart" align="center" mb="md">
-        <Title order={4}>{activeCategoryName || 'Unnamed Category'}</Title>
-        <div className="flex alignCenter">
+    <Card className="h-[calc(100vh-180px)] w-full max-w-[1300px] flex-1 overflow-x-hidden overflow-y-scroll bg-[var(--primary-card-bg)] px-6 py-5 text-black">
+      <div className="mb-md flex items-center justify-between">
+        <h4 className="text-lg font-semibold">{activeCategoryName || 'Unnamed Category'}</h4>
+        <div className="flex items-center">
           {rearrangeMode ? (
-            <Button size="sm" style={{ width: 130 }} color="teal" onClick={handleRearrangeQuestions}>
+            <Button
+              size="sm"
+              className="h-9 w-[150px] rounded-[10px] bg-teal-600 px-4 text-sm hover:bg-teal-700"
+              onClick={handleRearrangeQuestions}>
               Done
             </Button>
           ) : (
             <>
               <Button
-                size="xs"
-                mr="md"
-                variant="white"
-                color="dark"
-                miw={170}
+                size="sm"
+                className="mr-md h-9 min-w-[180px] rounded-[10px] border border-gray-300 bg-white px-4 text-sm text-gray-800 hover:bg-gray-100"
                 onClick={() => setExpandedQuestionIndex(expandedQuestionIndex === 'all' ? null : 'all')}
                 leftIcon={<Icon name={expandedQuestionIndex === 'all' ? 'minus' : 'plus'} width={14} />}>
                 {expandedQuestionIndex === 'all' ? 'Collapse' : 'Expand'} questions
               </Button>
-              <Button size="xs" color="green" onClick={handleRearrangeQuestions}>
+              <Button
+                size="sm"
+                className="h-9 rounded-[10px] bg-green-600 px-5 text-sm hover:bg-green-700"
+                onClick={handleRearrangeQuestions}>
                 Rearrange Questions
               </Button>
             </>
           )}
         </div>
-      </Group>
+      </div>
       {rearrangeMode && (
-        <Text mb="md">
+        <p className="mb-md">
           Drag the questions using the drag handle on the right corner of each question to rearrange them. Click the
           "Done" button above, after rearranging them.
-        </Text>
+        </p>
       )}
+      {/* @ts-expect-error - react-sortablejs types are incompatible with React 18/19 */}
       <ReactSortable
         list={questions.map((item, idx) => ({ ...item, id: idx + 1, name: item.text }))}
-        chosenClass={styles.chosenStyle}
+        chosenClass="bg-[var(--dragging-question-bg)]"
         handle=".questionHandle"
         setList={onQuestionSwap}>
         {questions.map((item: any, idx) => (
@@ -198,7 +150,7 @@ export default function QuestionsListPanel({
             isValidQuestion={isValidQuestion(item)}
             setActiveQuestion={(ev) => {
               ev.stopPropagation();
-              setActiveQuestionIndex(idx);
+              onEditQuestion(idx);
             }}
             deleteQuestion={(ev) => handleDeleteQuestion(ev, idx)}
             isExpanded={expandedQuestionIndex === 'all' || expandedQuestionIndex === idx}
@@ -208,28 +160,8 @@ export default function QuestionsListPanel({
           />
         ))}
       </ReactSortable>
-      {typeof activeQuestionIndex === 'number' && !!questions[activeQuestionIndex] && (
-        <Modal
-          modalProps={{
-            title: isAddingQuestion ? 'Add new question' : 'Edit question',
-            body: (
-              <QuestionEdit
-                questionNum={activeQuestionIndex + 1}
-                question={questions[activeQuestionIndex]}
-                saveQuestion={(data) => handleSaveQuestion(activeQuestionIndex, data)}
-                ref={questionEditRef}
-              />
-            ),
-            okText: 'Save',
-            size: 'xl',
-            cancelCallback: resetQuestion,
-            okCallback: () => questionEditRef.current?.requestSubmit(),
-            closeOnOkClick: false,
-          }}
-        />
-      )}
       {!rearrangeMode && (
-        <Button mt="xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
+        <Button className="mt-xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
           Add Question
         </Button>
       )}

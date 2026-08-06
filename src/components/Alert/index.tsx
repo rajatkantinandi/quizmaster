@@ -1,44 +1,54 @@
-import React, { useEffect } from 'react';
-import { Alert as MTAlert, Text } from '@mantine/core';
+import React, { useCallback, useEffect } from 'react';
+import { Alert as ShadcnAlert, AlertTitle } from '@/components/ui/alert';
 import { useStore } from '../../useStore';
-import styles from './styles.module.css';
 
 function Alert() {
   const { showAlert, alert } = useStore();
   const { message, type = 'info', autoClose = true, callback } = alert || {};
 
+  const handleClose = useCallback(() => {
+    showAlert(null);
+    if (callback) {
+      callback();
+    }
+  }, [callback, showAlert]);
+
   useEffect(() => {
     if (autoClose) {
-      setTimeout(() => {
-        showAlert(null);
-
-        if (callback) {
-          callback();
-        }
+      const timer = setTimeout(() => {
+        handleClose();
       }, 4000);
+      return () => clearTimeout(timer);
     }
-  });
+  }, [autoClose, handleClose]);
 
-  function getColor(): string {
+  function getAlertClass() {
     switch (type) {
       case 'success':
-        return 'green';
+        return 'border-transparent bg-correct-color text-white';
       case 'error':
-        return 'red';
+        return 'border-transparent bg-incorrect-color text-white';
       case 'warning':
-        return 'yellow';
+        return 'border-transparent bg-warning text-white';
       default:
-        return '';
+        return 'border-transparent bg-primary text-white';
     }
   }
 
+  if (!message) return null;
+
   return (
-    <div className={styles.alertWrapper}>
-      <MTAlert withCloseButton closeButtonLabel="Close" variant="filled" color={getColor()}>
-        <Text weight="bold" size="md">
-          {message}
-        </Text>
-      </MTAlert>
+    <div className="fixed top-0 z-[500] w-full px-[30%] py-2.5">
+      <ShadcnAlert className={`shadow-lg ${getAlertClass()}`}>
+        <AlertTitle className="pr-8 font-bold">{message}</AlertTitle>
+        <button
+          aria-label="Close alert"
+          className="absolute right-3 top-3 text-2xl leading-none text-white/90 transition-opacity hover:text-white hover:opacity-100"
+          onClick={handleClose}
+          type="button">
+          ×
+        </button>
+      </ShadcnAlert>
     </div>
   );
 }

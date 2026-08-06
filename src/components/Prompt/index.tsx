@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../useStore';
-import { Modal as MTModal, Button, Group, Text } from '@mantine/core';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
 
@@ -17,7 +18,6 @@ function Prompt() {
     className = '',
     okCallback,
     cancelCallback,
-    size = 'lg',
     closeOnOkClick = true,
     textInputProps = {},
   } = prompt || {};
@@ -48,57 +48,51 @@ function Prompt() {
   };
 
   return (
-    <MTModal
-      className={className}
-      onClose={hidePrompt}
-      opened
-      overlayBlur={5}
-      title={
-        <Text size="lg" weight="bold">
-          {title}
-        </Text>
-      }
-      size={size}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <FormInput
-          variant="filled"
-          autoFocus
-          type="text"
-          name="text"
-          control={control}
-          value={text}
-          className="grow"
-          rules={{ required: textInputProps.required ? 'This field is required' : undefined }}
-          onChange={(ev) => {
-            setText(ev.target.value);
-          }}
-          ref={ref}
-          {...textInputProps}
-        />
-        <Group mt="xl" pt="xl" position="right">
-          {!!cancelText && (
-            <Button
-              color="dark"
-              variant="outline"
-              type="button"
-              onClick={() => {
-                hidePrompt();
+    <Dialog open onOpenChange={hidePrompt}>
+      <DialogContent className={className}>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormInput
+            variant="filled"
+            autoFocus
+            type="text"
+            name="text"
+            control={control}
+            value={text}
+            className="flex-1"
+            rules={{ required: textInputProps.required ? 'This field is required' : undefined }}
+            onChange={(ev) => {
+              setText(ev.target.value);
+            }}
+            ref={ref}
+            {...textInputProps}
+          />
+          <div className="flex justify-end gap-2 pt-6 mt-6">
+            {!!cancelText && (
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => {
+                  hidePrompt();
 
-                if (cancelCallback) {
-                  cancelCallback();
-                }
-              }}>
-              {cancelText}
-            </Button>
-          )}
-          {!!okText && (
-            <Button variant="filled" type="submit" disabled={disableOkButton}>
-              {okText}
-            </Button>
-          )}
-        </Group>
-      </form>
-    </MTModal>
+                  if (cancelCallback) {
+                    cancelCallback();
+                  }
+                }}>
+                {cancelText}
+              </Button>
+            )}
+            {!!okText && (
+              <Button variant="filled" type="submit" disabled={disableOkButton}>
+                {okText}
+              </Button>
+            )}
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

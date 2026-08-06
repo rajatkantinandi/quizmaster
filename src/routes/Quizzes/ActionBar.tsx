@@ -1,11 +1,11 @@
-import { Button, Group, Select } from '@mantine/core';
-import classNames from 'classnames';
+import { Button } from '@/components/ui/button';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import Icon from '../../components/Icon';
 import ImportQuizzesButton from '../../components/ImportQuizzesButton';
 import { Quiz } from '../../types';
 import { useStore } from '../../useStore';
-import styles from './styles.module.css';
 
 type Props = {
   quizzes: Quiz[];
@@ -73,96 +73,31 @@ export default function ActionBar({ quizzes }: Props) {
     });
   }
 
-  // function handlePublishQuizzes() {
-  //   if (quizzes.some((quiz) => !quiz.isDraft && !quiz.isPublished)) {
-  //     setQuizzesSelectorState({
-  //       action: 'publish',
-  //       message: 'Select quizzes to publish',
-  //       show: true,
-  //       selectedQuizzes: [],
-  //       onNextClick: (selectedQuizzes) => {
-  //         showModal({
-  //           title: 'Publish Quizzes',
-  //           body: (
-  //             <>
-  //               <p>Are you sure you want to publish following quizzes ?</p>
-  //               <ol>
-  //                 {selectedQuizzes.map((quizId) => (
-  //                   <li key={quizId}>{quizzes.find((quiz) => quiz.quizId === quizId)?.name}</li>
-  //                 ))}
-  //               </ol>
-  //             </>
-  //           ),
-  //           okCallback: async () => {
-  //             await publishQuizzes(selectedQuizzes);
-  //             setQuizzesSelectorState({
-  //               action: '',
-  //               message: '',
-  //               show: false,
-  //               selectedQuizzes: [],
-  //             });
-  //           },
-  //           cancelCallback: () => {
-  //             setQuizzesSelectorState({
-  //               action: '',
-  //               message: '',
-  //               show: false,
-  //               selectedQuizzes: [],
-  //             });
-  //           },
-  //           okText: 'Publish Quizzes',
-  //           cancelText: 'Cancel',
-  //         });
-  //       },
-  //       onCancelClick: () => {
-  //         setQuizzesSelectorState({
-  //           action: '',
-  //           message: '',
-  //           show: false,
-  //           selectedQuizzes: [],
-  //         });
-  //       },
-  //     });
-  //   } else {
-  //     showAlert({
-  //       message: 'No quiz to publish. Please complete the quizzes before publish if they are in draft state.',
-  //       type: 'info',
-  //     });
-  //   }
-  // }
-
   return (
-    <Group className={styles.pageTitleWrapper} spacing={25} mt="md" mb="lg">
-      <ImportQuizzesButton />
-      <Button
-        onClick={handleDeleteQuizzes}
-        className={classNames('noTextOnSmallScreen', styles.deleteButton)}
-        title="Delete Quizzes"
-        leftIcon={<Icon color="white" width="16" name="trash" />}>
-        Delete Quizzes
-      </Button>
-      {/* TODO: enable publish button when we have backend */}
-      {/* <Button
-        onClick={handlePublishQuizzes}
-        className={styles.publishQuiz}
-        leftIcon={<Icon color="white" width="16" name="publish" />}>
-        Publish Quizzes
-      </Button> */}
-      <Select
-        placeholder="Sort by"
-        className={styles.sort}
-        onChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}
-        data={[
-          { value: 'recency', label: 'Recently Updated' },
-          { value: 'createDate', label: 'Create Date' },
-          { value: 'name', label: 'Name' },
-        ]}
-        icon={<Icon width="16" name="sort" />}
-        value={sortBy}
-        transition="pop-top-left"
-        transitionDuration={100}
-        transitionTimingFunction="ease"
-      />
-    </Group>
+    <div className="flex items-center gap-4 mb-5 mt-2 justify-between">
+      <Select value={sortBy} onValueChange={(val) => setSortBy(val || DEFAULT_SORT_BY)}>
+        <SelectTrigger className="max-w-[190px]">
+          <div className="flex items-center gap-2">
+            <Icon width="16" name="sort" />
+            <SelectValue placeholder="Sort by" />
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="recency">Recently Updated</SelectItem>
+          <SelectItem value="createDate">Create Date</SelectItem>
+          <SelectItem value="name">Name</SelectItem>
+        </SelectContent>
+      </Select>
+      <div className="flex items-center gap-4">
+        <ImportQuizzesButton />
+        <Button
+          onClick={handleDeleteQuizzes}
+          className={cn('bg-[#c10606] text-white hover:bg-[#a80505]')}
+          title="Delete Quizzes"
+          leftIcon={<Icon color="white" width="16" name="trash" />}>
+          Delete Quizzes
+        </Button>
+      </div>
+    </div>
   );
 }

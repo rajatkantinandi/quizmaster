@@ -1,18 +1,18 @@
-import { Divider } from '@mantine/core';
+import { Separator } from '@/components/ui/separator';
 import React from 'react';
 import Icon from '../../components/Icon';
-import styles from './styles.module.css';
 
 export default function Footer() {
   return (
-    <div className="fullWidth flex flexCol alignCenter">
-      <Divider style={{ width: '80%', marginBottom: 30 }} />
-      <footer className={styles.footer}>
-        <div className="flex flexCol alignCenter">
+    <div className="w-full">
+      <Separator className="w-4/5 mb-[30px]" />
+      <footer className="flex justify-center font-display text-[18px]">
+        <div className="flex flex-col items-center">
           <div>© {new Date().getFullYear()} Quizmaster</div>
-          <div className={styles.followUs}>
+          <div className="my-[10px] flex items-center text-[18px]">
             Find us on
             <a
+              className="flex items-center px-[10px]"
               href="https://www.youtube.com/@Quizmasterapp_in"
               target="_blank"
               rel="noopener noreferrer"
@@ -20,6 +20,7 @@ export default function Footer() {
               <Icon name="youtube" width={30} height={30} />
             </a>
             <a
+              className="flex items-center px-[10px]"
               href="https://github.com/rajatkantinandi/quizmaster"
               target="_blank"
               rel="noopener noreferrer"
@@ -27,6 +28,7 @@ export default function Footer() {
               <Icon name="github" width={28} height={28} />
             </a>
             <a
+              className="flex items-center px-[10px]"
               href="https://twitter.com/quizmasterappin"
               target="_blank"
               rel="noopener noreferrer"
@@ -34,6 +36,7 @@ export default function Footer() {
               <Icon name="twitter" width={28} height={28} />
             </a>
             <a
+              className="flex items-center px-[10px]"
               href="https://www.facebook.com/people/Quizmasterappin/61558566877158/"
               target="_blank"
               rel="noopener noreferrer"
@@ -41,6 +44,7 @@ export default function Footer() {
               <Icon name="facebook" width={28} height={28} />
             </a>
             <a
+              className="flex items-center px-[10px]"
               href="https://www.instagram.com/quizmasterapp/"
               target="_blank"
               rel="noopener noreferrer"
@@ -48,6 +52,7 @@ export default function Footer() {
               <Icon name="instagram" width={28} height={28} />
             </a>
             <a
+              className="flex items-center px-[10px]"
               href="https://www.producthunt.com/posts/quizmaster-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-quizmaster&#0045;2"
               target="_blank"
               title="Upvote us on Product hunt"

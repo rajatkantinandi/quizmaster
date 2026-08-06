@@ -1,5 +1,5 @@
 import React from 'react';
-import { Affix, Button } from '@mantine/core';
+import { Button } from '@/components/ui/button';
 import Icon from '../../components/Icon';
 import { useNavigate } from 'react-router';
 
@@ -16,15 +16,15 @@ function CreateQuizButton({ userName, isFloating = false }: Props): JSX.Element 
       size={isFloating ? 'xl' : 'lg'}
       onClick={() => navigate(`/configure-quiz/${userName}`)}
       variant="filled"
-      sx={(theme) => ({ boxShadow: isFloating ? theme.shadows.lg : theme.shadows.sm })}
+      className={isFloating ? 'shadow-lg' : 'shadow-sm text-lg'}
       radius="xl"
-      leftIcon={<Icon name="plus" color="#ffffff" width={20} height={20} />}>
+      leftIcon={<Icon name="plus" color="#ffffff" width={18} height={18} />}>
       Create Quiz
     </Button>
   );
 
   if (isFloating) {
-    return <Affix position={{ bottom: 30, right: 30 }}>{Btn}</Affix>;
+    return <div className="fixed bottom-8 right-8">{Btn}</div>;
   }
 
   return Btn;

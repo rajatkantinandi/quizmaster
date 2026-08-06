@@ -1,5 +1,6 @@
 import React from 'react';
-import { Title, Button, Checkbox, Group, createStyles } from '@mantine/core';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
 
@@ -12,13 +13,6 @@ interface Props {
   isTimerRunning: Boolean;
 }
 
-const useStyles = createStyles((theme) => ({
-  input: {
-    backgroundColor: 'rgb(255, 198, 198)',
-    borderColor: theme.colors.red,
-  },
-}));
-
 export default function WithOptions({
   options,
   setSelectedChoices,
@@ -27,80 +21,64 @@ export default function WithOptions({
   isAttempted,
   isTimerRunning,
 }: Props) {
-  const { classes } = useStyles();
-
-  function getCheckboxColor(option) {
-    if (selectedOptionIds && option.isCorrect && selectedOptionIds.includes(option.optionId)) {
-      return 'green';
-    } else if (
-      selectedOptionIds &&
-      ((!option.isCorrect && selectedOptionIds.includes(option.optionId)) ||
-        (option.isCorrect && !selectedOptionIds.includes(option.optionId)))
-    ) {
-      return 'red';
-    } else {
-      return '';
+  const inputClass = (option: IOption) => {
+    if (selectedOptionIds && option.isCorrect && !selectedOptionIds.includes(option.optionId)) {
+      return 'bg-red-200 border-red-500';
     }
-  }
+    return '';
+  };
 
   return (
     <>
-      <Group align="flex-start">
+      <div className="flex items-start gap-4">
         {isAttempted && (
-          <Checkbox.Group
-            value={options.filter((x) => x.isCorrect).map((x) => x.optionId.toString())}
-            orientation="vertical"
-            label={<Title order={6}>ANSWER</Title>}
-            size="md"
-            my="lg">
+          <div className="flex flex-col gap-2">
+            <h6 className="mb-3 mt-4 text-base font-semibold">ANSWER</h6>
             {options.map((x, idx) =>
               x.isCorrect ? (
                 <Checkbox
-                  value={x.optionId.toString()}
                   key={x.optionId}
                   checked
-                  color="green"
-                  className="justifyCenter"
+                  className="justify-center"
                   style={{ pointerEvents: 'none' }}
-                  radius="xl"
                   tabIndex={-1}
-                  size="lg"
                 />
               ) : (
                 <div style={{ width: '24px', height: '24px' }} key={`empty_${idx}`}></div>
               ),
             )}
-          </Checkbox.Group>
+          </div>
         )}
-        <Checkbox.Group
-          value={selectedChoices ? selectedChoices.map((x) => x.toString()) : undefined}
-          orientation="vertical"
-          label={<Title order={6}>{isAttempted ? 'ME' : 'OPTIONS'}</Title>}
-          size="md"
-          my="lg"
-          onChange={(value) => setSelectedChoices(value.map((x) => parseInt(x)))}>
+        <div className="flex flex-col gap-2">
+          <h6 className="mb-3 mt-4 text-base font-semibold">{isAttempted ? 'ME' : 'OPTIONS'}</h6>
           {options.map((option) => (
-            <Checkbox
-              label={<SanitizedHtml>{option.text}</SanitizedHtml>}
-              color={getCheckboxColor(option)}
-              value={option.optionId.toString()}
-              classNames={{
-                input:
-                  selectedOptionIds && option.isCorrect && !selectedOptionIds.includes(option.optionId)
-                    ? classes.input
-                    : '',
-              }}
-              tabIndex={isAttempted || !isTimerRunning ? -1 : undefined}
-              style={isAttempted || !isTimerRunning ? { pointerEvents: 'none' } : {}}
-              radius="xl"
-              size="lg"
-              key={option.optionId}
-            />
+            <div key={option.optionId} className="flex items-center gap-2 py-0.5">
+              <Checkbox
+                id={`option-${option.optionId}`}
+                checked={selectedChoices?.includes(option.optionId)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setSelectedChoices([...(selectedChoices || []), option.optionId]);
+                  } else {
+                    setSelectedChoices((selectedChoices || []).filter((id) => id !== option.optionId));
+                  }
+                }}
+                disabled={isAttempted || !isTimerRunning}
+                className={inputClass(option)}
+              />
+              <label htmlFor={`option-${option.optionId}`} className="flex-1 cursor-pointer">
+                <SanitizedHtml>{option.text}</SanitizedHtml>
+              </label>
+            </div>
           ))}
-        </Checkbox.Group>
-      </Group>
+        </div>
+      </div>
       {!isAttempted && isTimerRunning && (
-        <Button color="green" onClick={() => document.getElementById('btnSubmitResponse')?.click()}>
+        <Button
+          variant="filled"
+          color="green"
+          className="mt-5"
+          onClick={() => document.getElementById('btnSubmitResponse')?.click()}>
           Submit
         </Button>
       )}
