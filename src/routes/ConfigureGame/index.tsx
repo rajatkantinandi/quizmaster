@@ -43,7 +43,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
   });
   const [quizName, setQuizName] = useState('');
   const [numOfCategories, setNumOfCategories] = useState(0);
-  const [numOfQuestions, setNumOfQuestions] = useState(0);
+  const [numOfQuestions, setNumOfQuestions] = useState<number | null>(null);
   const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier, mode, players } =
     watch();
   const { getQuiz, addGame, showModal } = useStore();
@@ -57,6 +57,10 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
   }, [getQuiz, quizId]);
 
   async function handleGameConfig(data: FieldValues) {
+    if (numOfQuestions === null || data.teams.length > numOfQuestions) {
+      return;
+    }
+
     if (quizId) {
       const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier } = data;
       const { gameId } = await addGame({
@@ -179,7 +183,11 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                   </Text>
                 )}
                 {fields.length > 2 ? (
-                  <ActionIcon variant="transparent" className={styles.teamInputCount} onClick={() => remove(idx)}>
+                  <ActionIcon
+                    aria-label={`Remove team ${idx + 1}`}
+                    variant="transparent"
+                    className={styles.teamInputCount}
+                    onClick={() => remove(idx)}>
                     <Icon width={20} name="trash" />
                   </ActionIcon>
                 ) : (
@@ -338,8 +346,15 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
         </Grid.Col>
       </div>
       <Grid.Col span={6} offset={3} mt="md">
+        {numOfQuestions !== null && teams.length > numOfQuestions && (
+          <Text role="alert" mb="md">
+            This quiz has fewer questions ({numOfQuestions}) than teams ({teams.length}). Add questions or use fewer
+            teams so each team can answer the same number of questions.
+          </Text>
+        )}
         <Button
           onClick={submitGameForm}
+          disabled={numOfQuestions === null || teams.length > numOfQuestions}
           variant="gradient"
           size="lg"
           fullWidth

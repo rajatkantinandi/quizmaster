@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Button, Title, Container, Group } from '@mantine/core';
+import { Button, Title, Container, Group, Text } from '@mantine/core';
 import QuestionPlay from '../../components/QuestionPlay';
 import { Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../types';
 import Timer from '../../components/Timer';
@@ -80,7 +80,7 @@ export default function PlayQuiz({ gameId, userName }) {
         }, 0);
         const { isComplete } = getNextGameState(gameInfo, allQuestionsCount, attemptedQuestionsCount);
 
-        if (isComplete) {
+        if (gameInfo.isComplete || isComplete) {
           setWinnerIds(gameInfo.teams);
         } else if (attemptedQuestionsCount > 0) {
           setSelectedQuestion(getLastAttemptedQuestion(gameInfo.teams, quizData.categories));
@@ -106,7 +106,7 @@ export default function PlayQuiz({ gameId, userName }) {
     const lastAttemptedQuestionOption = lastTeamWhoAttemptedQuestion?.selectedOptions.pop();
     const questionId = lastAttemptedQuestionOption?.questionId;
 
-    return allQuestions.find((x) => x.questionId === questionId) || null;
+    return getAllQuestions(categories).find((x) => x.questionId === questionId) || null;
   }
 
   function getWinners(teams: Team[]) {
@@ -192,9 +192,9 @@ export default function PlayQuiz({ gameId, userName }) {
     const clonedTeams = gameInfo.teams.map((x) => ({ ...x }));
     const currentTeamIndex = clonedTeams.findIndex((t) => t.teamId === gameInfo.currentTeamId);
     const nextTeamIndex = (currentTeamIndex + 1) % clonedTeams.length;
-    const remainingTeamsCount = clonedTeams.length - nextTeamIndex;
-    const questionsRemaining = allQuestionCount - attemptedQuestionsCount;
-    const isComplete = questionsRemaining < remainingTeamsCount;
+    const questionsPerTeam = Math.floor(allQuestionCount / clonedTeams.length);
+    const playableQuestionCount = questionsPerTeam * clonedTeams.length;
+    const isComplete = playableQuestionCount > 0 && attemptedQuestionsCount >= playableQuestionCount;
 
     return { isComplete, clonedTeams, currentTeamIndex, nextTeamIndex };
   }
@@ -320,6 +320,21 @@ export default function PlayQuiz({ gameId, userName }) {
       okCallback: () => {},
       cancelText: 'Cancel',
     });
+  }
+
+  if (!isLoading && !isGameCompleted() && allQuestions.length < gameInfo.teams.length) {
+    return (
+      <Container>
+        <Title order={2}>Not enough questions</Title>
+        <Text role="alert" my="md">
+          This quiz has fewer questions ({allQuestions.length}) than teams ({gameInfo.teams.length}). Add questions or
+          use fewer teams so each team can answer the same number of questions.
+        </Text>
+        <Button onClick={() => navigate(`/configure-game/${userName || 'guest'}/${quizId}`)}>
+          Configure a new game
+        </Button>
+      </Container>
+    );
   }
 
   return isLoading ? (
