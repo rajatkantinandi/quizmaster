@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router';
 import { Team } from '../../types';
 import { getEmptyTeam } from '../../helpers';
 import TeamGenerator from '../../components/TeamGenerator';
-import { Helmet } from 'react-helmet';
 import Icon from '../../components/Icon';
 import { cn } from '@/lib/utils';
 import { TrackingEvent } from '../../constants';
@@ -149,9 +148,6 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
 
   return (
     <div className="w-full px-6 pb-36 pt-4">
-      <Helmet>
-        <title>Create Game</title>
-      </Helmet>
       <div className="w-full max-w-[980px]">
         <h2 className="mb-xl flex items-end pb-lg text-2xl font-bold">Configure game for {quizName}</h2>
         <form onSubmit={handleSubmit(handleGameConfig)} className="flex flex-col max-w-[860px] gap-4">
@@ -192,7 +188,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                   onClick={() => append(getEmptyTeam())}
                   className="mx-auto w-[70%] rounded-[10px]"
                   variant="default"
-                  leftIcon={<Icon name="plus" width={18} />}>
+                  leftIcon={<Icon name="plus" width={18} />}
+                >
                   Add team
                 </Button>
                 <Separator className="mt-xl" />
@@ -203,7 +200,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               variant="filled"
               className="mx-auto w-[70%] rounded-[10px]"
               leftIcon={<Icon color="white" name="randomTeam" width={20} />}
-              onClick={showTeamGenerator}>
+              onClick={showTeamGenerator}
+            >
               Random team generator
             </Button>
           </div>
@@ -241,7 +239,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                     shouldTouch: true,
                   });
                 }}
-                disabled={!hasNegativePoints}>
+                disabled={!hasNegativePoints}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Negative points" />
                 </SelectTrigger>
@@ -315,14 +314,15 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
           </button>
         </form>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-white/95 px-6 py-4 backdrop-blur-sm">
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background px-6 py-4 backdrop-blur-sm">
         <div className="mx-auto w-full max-w-[980px]">
           <Button
             onClick={submitGameForm}
             variant="filled"
             size="lg"
             className="w-full rounded-xl border-0 bg-[linear-gradient(90deg,#4f6df5_0%,#20a7c9_100%)] text-white hover:opacity-95"
-            leftIcon={<Icon name="done" color="#ffffff" />}>
+            leftIcon={<Icon name="done" color="#ffffff" />}
+          >
             Play Game
           </Button>
         </div>

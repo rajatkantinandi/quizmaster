@@ -11,9 +11,9 @@ module.exports = {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         primary: {
-          DEFAULT: 'var(--qm-primary)',
+          DEFAULT: 'rgb(var(--qm-primary-rgb) / <alpha-value>)',
           hover: 'var(--primary-button-bg-hover)',
-          foreground: '#ffffff',
+          foreground: 'var(--primary-foreground)',
         },
         secondary: {
           DEFAULT: 'var(--secondary-card-bg)',
@@ -96,5 +96,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 };

@@ -2,11 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import {
-  getCommaSeparatedStringWithAndBeforeTheLastItem,
-  getRandomColor,
-  getValidValuesFromColumns,
-} from '../../helpers';
+import { getCommaSeparatedStringWithAndBeforeTheLastItem, getRandomColor } from '../../helpers/common';
+import { getValidValuesFromColumns } from '../../helpers/textHelpers';
 import { FormTextArea, FormInput } from '../FormInputs';
 import { useForm } from 'react-hook-form';
 import Icon from '../../components/Icon';
@@ -32,7 +29,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const [isEditingTeams, setIsEditingTeams] = useState(!!rest.players);
   const [shouldShowTeams, setShouldShowTeams] = useState(!!rest.players);
   const [players, setPlayers] = useState<string[]>(rest.teams.map((x) => x.players));
-  const { showAlert, enableOkButton } = useStore();
+  const { showAlert, enableOkButton, disableOkButton } = useStore();
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       playerNames: rest.players,
@@ -55,14 +52,20 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const teamList = getValidValuesFromColumns(teamsData);
 
   useEffect(() => {
-    if (rest.teamCount > 0) {
+    if (rest.players) {
       enableOkButton();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rest.teamCount]);
+  }, []);
+
+  function resetGeneratedTeams() {
+    setShouldShowTeams(false);
+    setIsEditingTeams(false);
+    disableOkButton();
+  }
 
   function generateTeams(data: { teamCount: number; playerNames: string }) {
-    const count = data.teamCount;
+    const count = Number(data.teamCount);
 
     let validPlayerNames = getValidValuesFromColumns(data.playerNames);
 
@@ -102,7 +105,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
 
   function submitTeamNamesForm({ teams: teamsValue }: { teams: string }) {
     createTeams({
-      teams: teamsValue.split('\n').map((name, idx) => ({
+      teams: getValidValuesFromColumns(teamsValue).map((name, idx) => ({
         name,
         players: players[idx],
         avatarColor: getRandomColor(),
@@ -112,9 +115,10 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
     });
   }
 
-  const shouldBeMoreThanOne = (value: number) => value >= 2 || 'Should be more than 1';
+  const shouldBeMoreThanOne = (value: number) =>
+    (Number.isInteger(Number(value)) && Number(value) >= 2) || 'Enter a whole number of at least 2';
   const validateNumberOfTeams = (value: string) =>
-    value.split('\n').length === parseInt(`${teamCount}`) || `Number of teams should not be more than ${teamCount}`;
+    getValidValuesFromColumns(value).length === Number(teamCount) || `Enter exactly ${teamCount} team names`;
 
   return (
     <>
@@ -131,10 +135,13 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
           size="md"
           minRows={7}
           control={control}
+          onChange={resetGeneratedTeams}
         />
         <div className="flex justify-between items-center my-6 py-2">
           <div className="flex items-center gap-2 mb-4">
-            <span className="font-bold">Number of teams</span>
+            <label htmlFor="teamCount" className="font-bold">
+              Number of teams
+            </label>
             <FormInput
               name="teamCount"
               id="teamCount"
@@ -148,9 +155,10 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               size="md"
               min={2}
               control={control}
+              onChange={resetGeneratedTeams}
             />
           </div>
-          <Button mb-4 type="submit" variant="default" leftIcon={<Icon name="team" width={20} />}>
+          <Button className="mb-4" type="submit" variant="default" leftIcon={<Icon name="team" width={20} />}>
             Generate team
           </Button>
         </div>

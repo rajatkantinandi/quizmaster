@@ -50,12 +50,12 @@
 
 .ProseMirror tr:nth-last-of-type(2n + 1),
 .html tr:nth-last-of-type(2n + 1) {
-  background-color: #ffffff;
+  background-color: var(--background);
 }
 
 .ProseMirror tr,
 .html tr {
-  color: #000000;
+  color: var(--foreground);
 }
 
 .ProseMirror table,
@@ -156,7 +156,7 @@
 
 .errorText {
   color: var(--incorrect-color);
-  background-color: #fff;
+  background-color: var(--background);
   padding: 5px 10px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;

@@ -7,7 +7,7 @@ function QuizSelectorBanner({ show, message, selectedQuizzes, onNextClick, onCan
   if (!show) return null;
 
   return (
-    <div className="fixed top-[70px] left-1/2 -translate-x-1/2 w-[600px] bg-primary text-white p-4 rounded-lg shadow-xl z-50">
+    <div className="fixed top-[70px] left-1/2 -translate-x-1/2 w-[600px] max-w-full bg-[var(--primary-button-bg)] text-white p-4 rounded-lg shadow-xl z-50">
       <div className="flex justify-between items-center">
         <div>
           <span className="text-lg">{message}</span>
@@ -26,7 +26,8 @@ function QuizSelectorBanner({ show, message, selectedQuizzes, onNextClick, onCan
               color="teal"
               size="sm"
               disabled={selectedQuizzes.length === 0}
-              onClick={() => onNextClick(selectedQuizzes)}>
+              onClick={() => onNextClick(selectedQuizzes)}
+            >
               Next
             </Button>
           )}

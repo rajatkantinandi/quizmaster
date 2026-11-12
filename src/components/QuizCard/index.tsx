@@ -65,7 +65,8 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
   return (
     <Card
       shadow="sm"
-      className="w-[20%] min-w-[250px] h-[320px] m-2 rounded-[10px] flex flex-col relative overflow-hidden">
+      className="w-[20%] min-w-[250px] h-[320px] m-2 rounded-[10px] flex flex-col relative overflow-hidden"
+    >
       <div style={{ backgroundColor: tilesBGColors[index % 5] }} className="py-4 w-full">
         <Icon
           name={`quiz_${(index % 13) + 1}` as IconName}
@@ -78,7 +79,7 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
       <CardContent className="flex flex-col justify-between flex-1 p-4 w-full">
         <div className="flex flex-col">
           <div className="flex justify-between items-start mt-4">
-            <h3 className="font-bold text-sm truncate-2-line" title={quizMetadata.name}>
+            <h3 className="font-bold text-sm line-clamp-2" title={quizMetadata.name}>
               {quizMetadata.name}
             </h3>
             {quizMetadata.isDraft && (
@@ -119,7 +120,8 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
                 } else {
                   navigate(`/configure-quiz/${userName}/${quizMetadata.quizId}`);
                 }
-              }}>
+              }}
+            >
               {quizMetadata.isInCatalog ? 'Preview' : 'Edit'}
             </Button>
           ) : (
@@ -127,14 +129,16 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
               <Button
                 className="flex-1"
                 leftIcon={<Icon color="#ffffff" name="playCircle" width={16} />}
-                onClick={() => handlePlayGame(quizMetadata.quizId)}>
+                onClick={() => handlePlayGame(quizMetadata.quizId)}
+              >
                 Play
               </Button>
               <Button
                 title="Edit quiz"
                 variant="light"
                 size="icon"
-                onClick={() => navigate(`/configure-quiz/${userName}/${quizMetadata.quizId}`)}>
+                onClick={() => navigate(`/configure-quiz/${userName}/${quizMetadata.quizId}`)}
+              >
                 <Icon color="var(--gray-dark)" name="pencil" width={18} />
               </Button>
               {!!handleDownload && (
@@ -158,7 +162,8 @@ export default function QuizCard({ quizMetadata, index, userName, handleDownload
             } else {
               toggleSelectedQuizzes(quizMetadata.quizId);
             }
-          }}>
+          }}
+        >
           <Icon
             name={
               quizzesSelector.selectedQuizzes.includes(quizMetadata.quizId) ? 'checkmarkFilled' : 'checkmarkOutline'

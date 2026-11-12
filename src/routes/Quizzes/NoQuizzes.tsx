@@ -32,7 +32,8 @@ export default function NoQuizzes({ userName }: { userName: string }) {
             size="lg"
             onClick={() => navigate(`/catalog/${userName}`)}
             className="shadow-sm bg-blue-800 hover:bg-blue-700 text-lg"
-            leftIcon={<Icon color="white" width={18} height={18} name="download" />}>
+            leftIcon={<Icon color="white" width={18} height={18} name="download" />}
+          >
             Add from catalog
           </Button>
           <ImportQuizzesButton size="lg" radius="xl" className="text-lg" />
@@ -53,7 +54,7 @@ export default function NoQuizzes({ userName }: { userName: string }) {
           </ul>
         </div>
         <div className="flex flex-1 flex-col px-[10px] items-center gap-4">
-          <Icon name="settingsWheels" width={100} height={100} color="var(--score-header-bg" />
+          <Icon name="settingsWheels" width={100} height={100} color="var(--score-header-bg)" />
           <h4 className="mb-[10px] text-center font-bold text-[22px] text-[var(--score-header-bg)]">
             Make your own quizzes!
           </h4>

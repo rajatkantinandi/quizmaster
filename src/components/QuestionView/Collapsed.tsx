@@ -29,8 +29,9 @@ export default function CollapsedView({
 
   return (
     <Card
-      className="my-3 cursor-pointer border bg-[var(--secondary-card-bg)] p-5 text-black shadow-sm [transform:scaleY(1.5)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-in]"
-      onClick={() => setExpandedQuestionIndex(questionNum - 1)}>
+      className="my-3 cursor-pointer border bg-[var(--secondary-card-bg)] p-5 text-foreground shadow-sm [transform:scaleY(1.5)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-in]"
+      onClick={() => setExpandedQuestionIndex(questionNum - 1)}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex">
@@ -55,7 +56,7 @@ export default function CollapsedView({
               Edit
             </Button>
             <Button variant="ghost" size="icon" title="Delete" onClick={deleteQuestion}>
-              <Icon name="trash" width={18} color="var(--bg-red-50)" />
+              <Icon name="trash" width={18} color="var(--incorrect-color)" />
             </Button>
             <Button variant="ghost" size="icon">
               <Icon name="caretDown" />

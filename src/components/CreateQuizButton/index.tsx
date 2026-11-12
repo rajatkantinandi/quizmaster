@@ -8,7 +8,7 @@ type Props = {
   isFloating?: boolean;
 };
 
-function CreateQuizButton({ userName, isFloating = false }: Props): JSX.Element {
+function CreateQuizButton({ userName, isFloating = false }: Props): React.JSX.Element {
   const navigate = useNavigate();
 
   const Btn = (
@@ -18,7 +18,8 @@ function CreateQuizButton({ userName, isFloating = false }: Props): JSX.Element 
       variant="filled"
       className={isFloating ? 'shadow-lg' : 'shadow-sm text-lg'}
       radius="xl"
-      leftIcon={<Icon name="plus" color="#ffffff" width={18} height={18} />}>
+      leftIcon={<Icon name="plus" color="#ffffff" width={18} height={18} />}
+    >
       Create Quiz
     </Button>
   );

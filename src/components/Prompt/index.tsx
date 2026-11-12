@@ -22,7 +22,7 @@ function Prompt() {
     textInputProps = {},
   } = prompt || {};
   const [text, setText] = useState(initialValue);
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit } = useForm({ defaultValues: { text: initialValue } });
 
   useEffect(() => {
     setTimeout(() => {
@@ -53,7 +53,12 @@ function Prompt() {
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+          onSubmit={(event) => {
+            event.stopPropagation();
+            handleSubmit(onSubmit)(event);
+          }}
+        >
           <FormInput
             variant="filled"
             autoFocus
@@ -80,7 +85,8 @@ function Prompt() {
                   if (cancelCallback) {
                     cancelCallback();
                   }
-                }}>
+                }}
+              >
                 {cancelText}
               </Button>
             )}

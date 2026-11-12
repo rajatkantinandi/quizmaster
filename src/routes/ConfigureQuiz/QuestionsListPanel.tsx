@@ -100,7 +100,7 @@ export default function QuestionsListPanel({
   }
 
   return (
-    <Card className="h-[calc(100vh-180px)] w-full max-w-[1300px] flex-1 overflow-x-hidden overflow-y-scroll bg-[var(--primary-card-bg)] px-6 py-5 text-black">
+    <Card className="h-[calc(100vh-180px)] w-full max-w-[1300px] flex-1 overflow-x-hidden overflow-y-scroll bg-[var(--primary-card-bg)] px-6 py-5 text-foreground">
       <div className="mb-md flex items-center justify-between">
         <h4 className="text-lg font-semibold">{activeCategoryName || 'Unnamed Category'}</h4>
         <div className="flex items-center">
@@ -108,22 +108,25 @@ export default function QuestionsListPanel({
             <Button
               size="sm"
               className="h-9 w-[150px] rounded-[10px] bg-teal-600 px-4 text-sm hover:bg-teal-700"
-              onClick={handleRearrangeQuestions}>
+              onClick={handleRearrangeQuestions}
+            >
               Done
             </Button>
           ) : (
             <>
               <Button
                 size="sm"
-                className="mr-md h-9 min-w-[180px] rounded-[10px] border border-gray-300 bg-white px-4 text-sm text-gray-800 hover:bg-gray-100"
+                className="mr-md h-9 min-w-[180px] rounded-[10px] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent"
                 onClick={() => setExpandedQuestionIndex(expandedQuestionIndex === 'all' ? null : 'all')}
-                leftIcon={<Icon name={expandedQuestionIndex === 'all' ? 'minus' : 'plus'} width={14} />}>
+                leftIcon={<Icon name={expandedQuestionIndex === 'all' ? 'minus' : 'plus'} width={14} />}
+              >
                 {expandedQuestionIndex === 'all' ? 'Collapse' : 'Expand'} questions
               </Button>
               <Button
                 size="sm"
                 className="h-9 rounded-[10px] bg-green-600 px-5 text-sm hover:bg-green-700"
-                onClick={handleRearrangeQuestions}>
+                onClick={handleRearrangeQuestions}
+              >
                 Rearrange Questions
               </Button>
             </>
@@ -141,7 +144,8 @@ export default function QuestionsListPanel({
         list={questions.map((item, idx) => ({ ...item, id: idx + 1, name: item.text }))}
         chosenClass="bg-[var(--dragging-question-bg)]"
         handle=".questionHandle"
-        setList={onQuestionSwap}>
+        setList={onQuestionSwap}
+      >
         {questions.map((item: any, idx) => (
           <QuestionView
             questionNum={idx + 1}

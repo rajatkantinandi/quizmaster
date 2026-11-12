@@ -12,7 +12,7 @@ function ImportQuizzesButton({
   size?: 'sm' | 'default' | 'lg' | 'xl' | 'icon';
   radius?: string;
   className?: string;
-}): JSX.Element {
+}): React.JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
@@ -39,7 +39,8 @@ function ImportQuizzesButton({
         onClick={handleClick}
         className={cn(`bg-lime-700 hover:bg-lime-800`, className)}
         leftIcon={<Icon color="white" width={18} height={18} name="download" />}
-        radius={radius}>
+        radius={radius}
+      >
         Import Quizzes
       </Button>
     </>

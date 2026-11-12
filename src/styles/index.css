@@ -32,6 +32,14 @@
     --radius: 0.5rem;
   }
 
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
   .dark {
     --background: #020817;
     --foreground: #f8fafc;
@@ -84,12 +92,15 @@
   --shadow-color-dark: #00000080;
   --qm-card-bg: #f5f6e6;
   --qm-card-border: #adc3c7;
-  --qm-primary: #014751;
+  --qm-primary-rgb: 1 71 81;
+  --qm-primary: rgb(var(--qm-primary-rgb));
   --input-bg: #e4fafc;
   --checkbox-bg: #c4fceb;
   --default-button-bg: #ffd700;
   --default-button-bg-hover: #ffe30c;
   --primary-button-bg-hover: #016c7b;
+  --primary-button-bg: #014751;
+  --correct-answer-bg: #dcfce7;
   --primary-card-bg: #f5f6e6;
   --secondary-card-bg: #afd0d4;
   --off-white: #f3f3f3;
@@ -140,10 +151,12 @@
   --qm-card-border: #444;
   --input-bg: #2a3a3f;
   --checkbox-bg: #1a3a2a;
-  --qm-primary: #4ecdc4;
+  --qm-primary-rgb: 78 205 196;
   --default-button-bg: #b8a000;
   --default-button-bg-hover: #ccb700;
-  --primary-button-bg-hover: #3a8a94;
+  --primary-button-bg-hover: #23717a;
+  --primary-button-bg: #17616a;
+  --correct-answer-bg: #16432b;
   --primary-card-bg: #2a2a2a;
   --secondary-card-bg: #2a3a3d;
   --off-white: #1a1a1a;
@@ -215,7 +228,6 @@ legend {
 *:hover {
   scrollbar-color: #78787859 #00000000;
 }
-
 
 /* Animations */
 @keyframes slidedown {

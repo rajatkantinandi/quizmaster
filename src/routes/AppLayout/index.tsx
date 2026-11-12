@@ -1,5 +1,4 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import Quizzes from '../Quizzes';
 import ConfigureQuiz from '../ConfigureQuiz';
 import CreateQuiz from '../CreateQuiz';
@@ -20,8 +19,11 @@ import Footer from '../Quizzes/Footer';
 import useVideoInModal from '../../helpers/useVideoInModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/components/providers/theme-provider';
 
 function AppLayout() {
+  const { theme, toggleTheme } = useTheme();
   const { userName, viewType, id } = useParams();
   const { searchQuiz, quizzes, searchQuery, clearSearch } = useStore();
   const showDemoVideo = useVideoInModal({
@@ -53,9 +55,7 @@ function AppLayout() {
 
   return isValidUser ? (
     <>
-      <Helmet>
-        <title>{capitalizeFirstLetter(viewType).replace('-', ' ')} - Quizmaster</title>
-      </Helmet>
+      <title>{`${capitalizeFirstLetter(viewType).replace('-', ' ')} - Quizmaster`}</title>
       <div className="min-h-screen flex flex-col">
         <header className="h-[70px] border-b w-full sticky top-0 z-50 bg-[var(--background)]">
           <div className="flex justify-between items-center h-full px-6">
@@ -89,11 +89,22 @@ function AppLayout() {
               />
             )}
             <div className="flex h-full items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="mr-3 shrink-0"
+                onClick={toggleTheme}
+                aria-label={theme === 'dark' ? 'Use light theme' : 'Use dark theme'}
+                title={theme === 'dark' ? 'Use light theme' : 'Use dark theme'}
+              >
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
               {(quizzes.length > 0 || viewType !== 'my-quizzes') && (
                 <Button
                   onClick={showDemoVideo}
                   className="mr-5 my-auto"
-                  leftIcon={<Icon color="#fff" name="playCircle" width={20} />}>
+                  leftIcon={<Icon color="#fff" name="playCircle" width={20} />}
+                >
                   Watch demo
                 </Button>
               )}
@@ -101,7 +112,8 @@ function AppLayout() {
                 onClick={() => window.open('https://forms.gle/9bTd9ph1JVXKYw3XA', '_blank')}
                 variant="outline"
                 className="my-auto"
-                leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}>
+                leftIcon={<Icon color="var(--qm-primary)" name="feedback" width={20} />}
+              >
                 Share feedback
               </Button>
             </div>

@@ -102,7 +102,7 @@ export default function QuestionPlay({
             </Badge>
           )}
         </div>
-        <div className="mb-3 mt-2 text-black">
+        <div className="mb-3 mt-2 text-foreground">
           <SanitizedHtml>{text}</SanitizedHtml>
         </div>
         {isWithoutOptions ? (

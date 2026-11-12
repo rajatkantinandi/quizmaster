@@ -47,7 +47,7 @@ export default function QuestionsList({
 
   function getQuestionColor(question: IQuestion) {
     if (attemptedQuestionIds.includes(question.questionId)) {
-      return 'var(--off-white)';
+      return '#ffffff';
     } else {
       return getPointsColor(question.points, minQuestionPoint, maxQuestionPoint).color;
     }
@@ -63,12 +63,14 @@ export default function QuestionsList({
       <Accordion
         type="multiple"
         defaultValue={categories.map((x) => `${x.categoryId}`)}
-        className="grid grid-cols-1 justify-start gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        className="grid grid-cols-1 justify-start gap-5 sm:grid-cols-2 xl:grid-cols-3"
+      >
         {categories.map((category) => (
           <AccordionItem
-            className="flex-1 border-0 bg-[#eceef1] px-5 pb-5"
+            className="flex-1 border-0 bg-muted px-5 pb-5"
             key={category.categoryId}
-            value={`${category.categoryId}`}>
+            value={`${category.categoryId}`}
+          >
             <AccordionTrigger>
               <h6 className="text-base font-semibold">{category.categoryName}</h6>
             </AccordionTrigger>
@@ -85,7 +87,8 @@ export default function QuestionsList({
                     }}
                     disabled={!shouldEnableQuestion(question)}
                     variant={selectedQuestion?.questionId === question.questionId ? 'default' : 'light'}
-                    onClick={() => showQuestion(question.questionId, category.categoryId)}>
+                    onClick={() => showQuestion(question.questionId, category.categoryId)}
+                  >
                     <div className="flex justify-between items-center w-full">
                       {isQuestionPointsHidden &&
                       !attemptedQuestionIds.includes(question.questionId) &&
@@ -101,7 +104,8 @@ export default function QuestionsList({
                               backgroundColor: attemptedQuestionIds.includes(question.questionId)
                                 ? 'var(--gray-dark)'
                                 : getPointsColor(question.points, minQuestionPoint, maxQuestionPoint).color,
-                            }}>
+                            }}
+                          >
                             {question.points} PTS
                           </Badge>
                         </div>

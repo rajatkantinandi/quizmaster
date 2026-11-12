@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../useStore';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
-import { Helmet } from 'react-helmet';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -409,10 +408,6 @@ export default function ConfigureQuiz({
 
   return (
     <>
-      <Helmet>
-        <title>Create Quiz</title>
-      </Helmet>
-
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <div className="flex w-full flex-row items-start">
           <div className="max-w-[470px] flex-1">
@@ -427,7 +422,8 @@ export default function ConfigureQuiz({
               className="flex flex-col"
               name="activeCategory"
               value={`${activeCategoryIndex}`}
-              onValueChange={setActiveCategory}>
+              onValueChange={setActiveCategory}
+            >
               {categories.map((item, idx) => (
                 <Card
                   shadow={idx === activeCategoryIndex ? 'sm' : undefined}
@@ -442,7 +438,8 @@ export default function ConfigureQuiz({
                     },
                     'ml-[1px] items-center rounded-r-none',
                   )}
-                  key={item.categoryId || idx}>
+                  key={item.categoryId || idx}
+                >
                   <Radio id={`category-${idx}`} value={`${idx}`} className="self-start mt-4" />
                   <label htmlFor={`category-${idx}`} className="flex flex-1 gap-1 cursor-pointer items-start pt-3">
                     <span className="font-bold mr-md">{idx + 1}.</span>
@@ -461,13 +458,14 @@ export default function ConfigureQuiz({
                           control={control}
                         />
                       ) : (
-                        <p className="text-md font-bold">{item.categoryName}</p>
+                        <p className="text-base font-bold">{item.categoryName}</p>
                       )}
                       {!errors.categories?.[idx]?.categoryName?.message && (
                         <p
                           className={cn('font-bold text-gray-500 text-left text-xs', {
                             'mt-md': idx === activeCategoryIndex,
-                          })}>
+                          })}
+                        >
                           {item.questions.length > 0 && (
                             <span className="mr-sm">
                               {plural(item.questions.length, '%count question', '%count questions')}
@@ -489,7 +487,8 @@ export default function ConfigureQuiz({
                       size="icon"
                       variant="ghost"
                       className="ml-md shrink-0 self-start"
-                      onClick={() => confirmRemoveCategory(idx, item.questions.length > 0)}>
+                      onClick={() => confirmRemoveCategory(idx, item.questions.length > 0)}
+                    >
                       <Icon width={20} name="trash" />
                     </Button>
                   )}
@@ -505,7 +504,8 @@ export default function ConfigureQuiz({
                 append(getEmptyCategory());
               }}
               variant="default"
-              leftIcon={<Icon name="plus" width={18} />}>
+              leftIcon={<Icon name="plus" width={18} />}
+            >
               Add Category
             </Button>
           </div>
@@ -525,8 +525,8 @@ export default function ConfigureQuiz({
             onEditQuestion={openEditQuestionModal}
           />
         </div>
-        <div className="grid grid-cols-24">
-          <div className="col-span-10 col-start-6 py-xl flex items-center gap-5">
+        <div className="flex justify-center">
+          <div className="w-full max-w-2xl py-xl flex items-center gap-5">
             {isPreview && (
               <Button
                 variant="outline"
@@ -540,7 +540,8 @@ export default function ConfigureQuiz({
                     numOfQuestions: categories.reduce((sum, curr) => sum + curr.questions.length, 0),
                   });
                   navigate(`/catalog/${userName}`);
-                }}>
+                }}
+              >
                 Cancel
               </Button>
             )}
@@ -549,7 +550,8 @@ export default function ConfigureQuiz({
               variant="filled"
               size="xl"
               className="w-7/12 rounded-full"
-              leftIcon={<Icon name="done" color="#ffffff" />}>
+              leftIcon={<Icon name="done" color="#ffffff" />}
+            >
               {isPreview ? 'Add to my quizzes' : 'Complete quiz'}
             </Button>
           </div>

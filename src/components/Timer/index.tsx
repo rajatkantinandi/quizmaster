@@ -56,6 +56,9 @@ export default function Timer({
 
   useEffect(() => {
     setRemainingTime(duration);
+    setCircleDasharray(`${timerCircleCircumference}`);
+    setWarning(false);
+    setAlert(false);
   }, [selectedQuestionId, duration]);
 
   function formatTimeLeft(time: number) {
@@ -78,7 +81,7 @@ export default function Timer({
             id="base-timer-path-remaining"
             strokeDasharray={circleDasharray}
             className={cn({
-              'stroke-[7px] stroke-linecap-round [transform:rotate(90deg)] [transform-origin:center] transition-all duration-1000 stroke-current':
+              'stroke-[7px] [stroke-linecap:round] [transform:rotate(90deg)] [transform-origin:center] transition-all duration-1000 stroke-current':
                 true,
               'text-green-500': !alert && !warning,
               'text-yellow-500': warning,
@@ -99,14 +102,14 @@ export default function Timer({
       <Button
         variant="ghost"
         size="icon"
-        className={cn({
-          'opacity-100': !isTimerRunning,
-          'absolute left-3 top-3 rounded-full h-[124px] w-[124px] bg-transparent opacity-0 hover:opacity-100 transition-opacity duration-300':
-            true,
-        })}
+        className={cn(
+          'absolute left-3 top-3 rounded-full h-[124px] w-[124px] bg-transparent transition-opacity duration-300',
+          isTimerRunning ? 'opacity-0 hover:opacity-100 focus-visible:opacity-100' : 'opacity-100',
+        )}
+        aria-label={isTimerRunning ? 'Pause timer' : 'Start timer'}
         onClick={() => setIsTimerRunning(!isTimerRunning)}
       >
-        <Icon color="rgba(0,0,0,0.7)" name={isTimerRunning ? 'pause' : 'play'} width={70} height={70} />
+        <Icon color="currentColor" name={isTimerRunning ? 'pause' : 'play'} width={70} height={70} />
       </Button>
     </div>
   );

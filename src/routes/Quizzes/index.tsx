@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../../useStore';
-import { Helmet } from 'react-helmet';
 import PageLoader from '../../components/PageLoader';
 import QuizSelectorBanner from '../../components/QuizSelectorBanner';
 import NoQuizzes from './NoQuizzes';
@@ -41,9 +40,6 @@ export default function Quizzes({ userName }) {
 
   return (
     <>
-      <Helmet>
-        <title>Quizzes</title>
-      </Helmet>
       {loading ? (
         <PageLoader />
       ) : filteredQuizzes.length === 0 && !rest.searchQuery.trim() ? (

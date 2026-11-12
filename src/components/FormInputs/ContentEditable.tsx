@@ -16,6 +16,7 @@ type Props = {
   label: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  id: string;
 };
 
 export default function ContentEditable({
@@ -26,6 +27,7 @@ export default function ContentEditable({
   size = 'sm',
   className,
   disabled,
+  id,
 }: Props) {
   const editor = useEditor({
     extensions: [
@@ -49,6 +51,14 @@ export default function ContentEditable({
       Iframe,
     ],
     content: value,
+    editable: !disabled,
+    editorProps: {
+      attributes: {
+        role: 'textbox',
+        'aria-multiline': 'true',
+        'aria-labelledby': `${id}-label`,
+      },
+    },
     enableCoreExtensions: true,
     autofocus,
     onUpdate: ({ editor }) => {
@@ -61,10 +71,11 @@ export default function ContentEditable({
     <div
       className={cn('flex-1 relative', className)}
       onFocus={() => setIsFocussed(true)}
-      onBlur={() => setIsFocussed(false)}>
-      <label>{label}</label>
+      onBlur={() => setIsFocussed(false)}
+    >
+      <div id={`${id}-label`}>{label}</div>
       {!!editor && <EditorToolbar editor={editor} isFocussed={isFocussed} />}
-      <EditorContent editor={editor} className={`${size}Editor`} disabled={disabled} />
+      <EditorContent editor={editor} className={`${size}Editor`} />
     </div>
   );
 }

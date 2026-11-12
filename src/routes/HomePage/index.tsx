@@ -1,5 +1,4 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import LoginFormCard from '../../components/LoginFormCard';
 import SignUpFormCard from '../../components/SignUpFormCard';
 import ForgotPassword from '../../components/ForgotPassword';
@@ -28,9 +27,7 @@ export default function HomePage() {
     <CheckAuthAndNavigate />
   ) : (
     <section className="min-h-screen bg-[var(--qm-primary)]">
-      <Helmet>
-        <title>Homepage - Quizmaster</title>
-      </Helmet>
+      <title>Homepage - Quizmaster</title>
       <div className="flex min-h-screen items-center justify-center bg-[var(--qm-primary)] p-4">
         <div className="w-full max-w-md">
           <div className="mb-6 text-center">

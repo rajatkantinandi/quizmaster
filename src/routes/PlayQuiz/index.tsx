@@ -5,7 +5,6 @@ import { Question as IQuestion, QuizInfo, SelectedOptions, Team } from '../../ty
 import Timer from '../../components/Timer';
 import { useStore } from '../../useStore';
 import { defaultGameInfo, TrackingEvent } from '../../constants';
-import { Helmet } from 'react-helmet';
 import Scorecard from './Scorecard';
 import QuestionsList from './QuestionsList';
 import { useNavigate } from 'react-router';
@@ -302,7 +301,8 @@ export default function PlayQuiz({ gameId, userName }) {
           height="700"
           frameBorder="0"
           marginHeight={0}
-          marginWidth={0}>
+          marginWidth={0}
+        >
           Loading…
         </iframe>
       ),
@@ -316,9 +316,6 @@ export default function PlayQuiz({ gameId, userName }) {
     <></>
   ) : (
     <>
-      <Helmet>
-        <title>Play Quiz</title>
-      </Helmet>
       <div className="flex gap-2 mb-xl">
         {quizName && <h2 className="text-2xl font-bold">Play game for {quizName}</h2>}
         <Button onClick={confirmCreateNewGame} variant="outline">
@@ -326,7 +323,7 @@ export default function PlayQuiz({ gameId, userName }) {
         </Button>
       </div>
       {isGameCompleted() ? (
-        <h3 className="relative my-lg rounded-[10px] bg-[var(--qm-primary)] py-3 text-center text-white before:absolute before:z-[-1] before:ml-[-8px] before:mt-[-24px] before:block before:h-[78px] before:w-[calc(100%+16px)] before:rounded-[10px] before:bg-[repeating-linear-gradient(45deg,var(--correct-color)_1%,var(--qm-primary)_3%)] before:content-[''] before:animate-border-roll">
+        <h3 className="relative my-lg rounded-[10px] bg-[var(--qm-primary)] py-3 text-center text-primary-foreground before:absolute before:z-[-1] before:ml-[-8px] before:mt-[-24px] before:block before:h-[78px] before:w-[calc(100%+16px)] before:rounded-[10px] before:bg-[repeating-linear-gradient(45deg,var(--correct-color)_1%,var(--qm-primary)_3%)] before:content-[''] before:animate-border-roll">
           🎉 {getWinnerMessage()}
         </h3>
       ) : (
@@ -338,7 +335,8 @@ export default function PlayQuiz({ gameId, userName }) {
             <Button
               className="!absolute !left-auto !right-[5px] !top-[5px] !h-auto !min-w-0 !border-0 !bg-transparent !p-0"
               variant="outline"
-              onClick={() => setShowExtraQuestionBanner(false)}>
+              onClick={() => setShowExtraQuestionBanner(false)}
+            >
               &#x2715;
             </Button>
           </h3>
@@ -348,7 +346,8 @@ export default function PlayQuiz({ gameId, userName }) {
         <div
           className={cn('flex-1', {
             '[container-type:inline-size] [container-name:panel]': !selectedQuestion,
-          })}>
+          })}
+        >
           {selectedQuestion ? (
             <QuestionPlay
               submitResponse={handleSubmitResponse}
@@ -405,7 +404,8 @@ export default function PlayQuiz({ gameId, userName }) {
                   className="m-lg"
                   variant="default"
                   leftIcon={<Icon name="rating" width={24} height={24} />}
-                  onClick={openRateQuizModal}>
+                  onClick={openRateQuizModal}
+                >
                   Rate this Quiz
                 </Button>
               )}

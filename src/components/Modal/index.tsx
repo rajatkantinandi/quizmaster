@@ -22,12 +22,12 @@ function Modal({ modalProps }: ModalProps) {
     className = '',
     okCallback,
     cancelCallback,
-    size = 'lg',
+    size = 'large',
     isAlert = false,
     doNotShowAgainKey,
     closeOnOkClick = true,
     disableOkButton = false,
-  } = modal || modalProps || {};
+  } = modalProps || modal || {};
 
   function hideModal() {
     showModal(null);
@@ -51,7 +51,7 @@ function Modal({ modalProps }: ModalProps) {
     switch (size) {
       case 'xl':
         return 'max-w-4xl';
-      case 'lg':
+      case 'large':
         return 'max-w-2xl';
       case 'small':
         return 'max-w-sm';
@@ -68,12 +68,11 @@ function Modal({ modalProps }: ModalProps) {
           if (!isAlert) {
             ev.preventDefault();
           }
-        }}>
-        {title && (
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold">{title}</DialogTitle>
-          </DialogHeader>
-        )}
+        }}
+      >
+        <DialogHeader className={title ? undefined : 'sr-only'}>
+          <DialogTitle className="text-lg font-bold">{title || 'Quizmaster'}</DialogTitle>
+        </DialogHeader>
         <div className="max-h-[calc(100vh-250px)] overflow-auto pr-5">
           {body}
           {!!doNotShowAgainKey && (
@@ -112,7 +111,8 @@ function Modal({ modalProps }: ModalProps) {
                   if (closeOnOkClick) {
                     hideModal();
                   }
-                }}>
+                }}
+              >
                 {okText}
               </Button>
             )}

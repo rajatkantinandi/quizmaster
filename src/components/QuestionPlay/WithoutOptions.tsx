@@ -71,7 +71,7 @@ export default function WithoutOptions({
   const getQuestionTextStyles = (isCorrect = false) =>
     isCorrect
       ? {
-          backgroundColor: '#dcfce7',
+          backgroundColor: 'var(--correct-answer-bg)',
           borderRadius: '4px',
         }
       : {};

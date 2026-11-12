@@ -30,13 +30,13 @@ export default function ExpandedView({
   const getQuestionTextStyles = (isCorrect = false) =>
     isCorrect
       ? {
-          backgroundColor: '#dcfce7',
+          backgroundColor: 'var(--correct-answer-bg)',
           borderRadius: '4px',
         }
       : {};
 
   return (
-    <Card className="my-3 border bg-[var(--secondary-card-bg)] p-6 text-black shadow-sm [transform:scaleY(0)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-out]">
+    <Card className="my-3 border bg-[var(--secondary-card-bg)] p-6 text-foreground shadow-sm [transform:scaleY(0)] opacity-0 [transform-origin:50%_0%] animate-[slidedown_0.2s_forwards_ease-out]">
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setExpandedQuestionIndex(null)}>
         <div className="flex items-center gap-3 flex-wrap">
           <h4 className="text-lg font-semibold">Question {questionNum}</h4>
@@ -51,14 +51,15 @@ export default function ExpandedView({
             onClick={(ev) => {
               ev.stopPropagation();
               handleMoveQuestions(question.questionId);
-            }}>
+            }}
+          >
             Move question
           </Button>
           <Button variant="light" color="teal" size="sm" title="Edit" onClick={setActiveQuestion}>
             Edit
           </Button>
           <Button variant="ghost" size="icon" title="Delete" onClick={deleteQuestion}>
-            <Icon name="trash" width={18} color="var(--bg-red-50)" />
+            <Icon name="trash" width={18} color="var(--incorrect-color)" />
           </Button>
           <Button variant="ghost" size="icon">
             <Icon name="caretUp" />
@@ -78,7 +79,8 @@ export default function ExpandedView({
           <li
             className="mb-4 mt-3 rounded-[10px] border-2 border-[var(--border-light)] px-[10px] py-[5px]"
             key={option.optionId}
-            style={getQuestionTextStyles(!!option.text && option.isCorrect)}>
+            style={getQuestionTextStyles(!!option.text && option.isCorrect)}
+          >
             {option.text ? (
               <SanitizedHtml>{option.text}</SanitizedHtml>
             ) : (

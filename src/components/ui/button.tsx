@@ -8,7 +8,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        filled: 'border-transparent bg-primary text-white hover:bg-primary-hover',
+        filled: 'border-transparent bg-[var(--primary-button-bg)] text-white hover:bg-primary-hover',
         default: 'border-transparent bg-default-button text-gray-900 hover:bg-default-button-hover',
         outline: 'bg-transparent text-primary border-primary hover:bg-primary/10',
         light: 'border-transparent bg-transparent text-primary hover:bg-primary/10',
@@ -61,7 +61,11 @@ const buttonVariants = cva(
       { variant: 'outline', color: 'pink', className: 'text-quiz-pink border-quiz-pink hover:bg-pink-50' },
       { variant: 'light', color: 'pink', className: 'text-quiz-pink hover:bg-pink-50 bg-[var(--background)]' },
       { variant: 'ghost', color: 'pink', className: 'text-quiz-pink hover:bg-pink-50' },
-      { variant: 'filled', color: 'teal', className: 'bg-primary hover:bg-primary-hover text-white' },
+      {
+        variant: 'filled',
+        color: 'teal',
+        className: 'bg-[var(--primary-button-bg)] hover:bg-primary-hover text-white',
+      },
       { variant: 'outline', color: 'teal', className: 'text-primary border-primary hover:bg-primary/10' },
       { variant: 'light', color: 'teal', className: 'text-primary hover:bg-primary/10 bg-[var(--background)]' },
       { variant: 'ghost', color: 'teal', className: 'text-primary hover:bg-primary/10' },
@@ -91,7 +95,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, color, className }))}
         ref={ref}
         style={{ ...radiusStyle, ...style }}
-        {...props}>
+        {...props}
+      >
         {leftIcon && <span className="mr-2">{leftIcon}</span>}
         {props.children}
       </button>
