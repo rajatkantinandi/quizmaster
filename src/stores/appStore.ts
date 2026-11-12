@@ -1,4 +1,4 @@
-import { TextInputProps } from '@mantine/core';
+import React from 'react';
 
 export const getAppStore = (set: Function, get: Function) => ({
   modal: null,
@@ -110,7 +110,7 @@ export interface AlertState {
 export interface PromptState {
   title: string;
   initialValue?: string;
-  textInputProps?: TextInputProps;
+  textInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   okText?: string;
   okCallback?: (value: string) => Promise<void> | void;
   className?: string;

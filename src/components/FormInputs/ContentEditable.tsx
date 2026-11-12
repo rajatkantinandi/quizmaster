@@ -6,7 +6,8 @@ import Image from '@tiptap/extension-image';
 import Underline from '@tiptap/extension-underline';
 import Iframe from '../../helpers/TipTapIframe';
 import EditorToolbar from './EditorToolbar';
-import classNames from 'classnames';
+import { richTextClasses } from '@/lib/rich-text';
+import { cn } from '@/lib/utils';
 
 type Props = {
   autofocus?: boolean;
@@ -16,6 +17,15 @@ type Props = {
   label: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  id: string;
+};
+
+const editorMinHeightClasses = {
+  xs: '',
+  sm: 'min-h-[100px]',
+  md: 'min-h-[150px]',
+  lg: 'min-h-[250px]',
+  xl: 'min-h-[350px]',
 };
 
 export default function ContentEditable({
@@ -26,6 +36,7 @@ export default function ContentEditable({
   size = 'sm',
   className,
   disabled,
+  id,
 }: Props) {
   const editor = useEditor({
     extensions: [
@@ -49,6 +60,19 @@ export default function ContentEditable({
       Iframe,
     ],
     content: value,
+    editable: !disabled,
+    editorProps: {
+      attributes: {
+        class: cn(
+          richTextClasses,
+          'block max-h-[400px] overflow-auto bg-input-bg px-[15px] pb-2.5 pt-[50px]',
+          editorMinHeightClasses[size],
+        ),
+        role: 'textbox',
+        'aria-multiline': 'true',
+        'aria-labelledby': `${id}-label`,
+      },
+    },
     enableCoreExtensions: true,
     autofocus,
     onUpdate: ({ editor }) => {
@@ -59,12 +83,13 @@ export default function ContentEditable({
 
   return (
     <div
-      className={classNames('grow relative', className)}
+      className={cn('flex-1 relative', className)}
       onFocus={() => setIsFocussed(true)}
-      onBlur={() => setIsFocussed(false)}>
-      <label>{label}</label>
+      onBlur={() => setIsFocussed(false)}
+    >
+      <div id={`${id}-label`}>{label}</div>
       {!!editor && <EditorToolbar editor={editor} isFocussed={isFocussed} />}
-      <EditorContent editor={editor} className={`${size}Editor`} disabled={disabled} />
+      <EditorContent editor={editor} />
     </div>
   );
 }

@@ -25,7 +25,7 @@ function Icon({
   color = 'var(--qm-primary)',
   className = '',
   ...rest
-}: IconProps): JSX.Element {
+}: IconProps): React.JSX.Element {
   const IconComponent = icons[name];
 
   return <IconComponent width={width} height={height} fill={color} className={className} {...rest} />;

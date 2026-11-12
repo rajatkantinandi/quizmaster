@@ -1,11 +1,12 @@
-import classNames from 'classnames';
+import { richTextClasses } from '@/lib/rich-text';
+import { cn } from '@/lib/utils';
 import React, { useMemo } from 'react';
 import { sanitize } from '../../helpers/dom';
 
 interface Props {
   children: string;
-  Tag?: keyof JSX.IntrinsicElements;
-  allowedTags?: (keyof JSX.IntrinsicElements)[];
+  Tag?: keyof React.JSX.IntrinsicElements;
+  allowedTags?: (keyof React.JSX.IntrinsicElements)[];
   allowedAttributes?: string[];
   className?: string;
 }
@@ -24,14 +25,14 @@ function SanitizedHtml({
   allowedTags,
   className,
   ...rest
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   const sanitizedHtml = useMemo(
     () => sanitize(children, allowedTags, allowedAttributes),
     [children, allowedTags, allowedAttributes],
   );
 
   return (
-    <Tag className={classNames(className, 'html')} dangerouslySetInnerHTML={{ __html: sanitizedHtml }} {...rest} />
+    <Tag className={cn(richTextClasses, className)} dangerouslySetInnerHTML={{ __html: sanitizedHtml }} {...rest} />
   );
 }
 

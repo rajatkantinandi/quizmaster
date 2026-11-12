@@ -54,6 +54,12 @@ cd quizmaster
 npm ci
 ```
 
+- Copy the environment template. It includes the public catalog URL. Backend and analytics keys are optional for local guest use.
+
+```bash
+cp .env.template .env
+```
+
 - Run locally:
 
 ```bash

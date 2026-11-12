@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Divider, Button, Text, Checkbox, Group } from '@mantine/core';
-import {
-  getCommaSeparatedStringWithAndBeforeTheLastItem,
-  getRandomColor,
-  getValidValuesFromColumns,
-} from '../../helpers';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
+import { getCommaSeparatedStringWithAndBeforeTheLastItem, getRandomColor } from '../../helpers/common';
+import { getValidValuesFromColumns } from '../../helpers/textHelpers';
 import { FormTextArea, FormInput } from '../FormInputs';
 import { useForm } from 'react-hook-form';
 import Icon from '../../components/Icon';
-import styles from './styles.module.css';
 import { useStore } from '../../useStore';
 import { Team } from '../../types';
 
@@ -38,7 +36,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
       teamCount: rest.teamCount,
     },
   });
-  const { playerNames, teamCount } = watch();
+  const { teamCount } = watch();
   const teamsForm = useForm({
     defaultValues: {
       teams:
@@ -54,20 +52,22 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
   const teamList = getValidValuesFromColumns(teamsData);
 
   useEffect(() => {
-    if (shouldShowTeams) {
-      setShouldShowTeams(false);
-      setIsEditingTeams(false);
-      disableOkButton();
+    if (rest.players) {
+      enableOkButton();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playerNames, teamCount]);
+  }, []);
 
-  function generateTeams(data) {
-    const { teamCount, playerNames } = data;
-    const count = parseInt(teamCount);
-    const teamsPlayers = new Array<string[]>(count);
+  function resetGeneratedTeams() {
+    setShouldShowTeams(false);
+    setIsEditingTeams(false);
+    disableOkButton();
+  }
 
-    let validPlayerNames = getValidValuesFromColumns(playerNames);
+  function generateTeams(data: { teamCount: number; playerNames: string }) {
+    const count = Number(data.teamCount);
+
+    let validPlayerNames = getValidValuesFromColumns(data.playerNames);
 
     if (validPlayerNames.length < count) {
       showAlert({
@@ -78,6 +78,7 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
       return;
     }
     const minPlayersPerTeam = Math.floor(validPlayerNames.length / count);
+    const teamsPlayers: string[][] = new Array(count);
 
     for (let i = 0; i < teamsPlayers.length; i++) {
       teamsPlayers[i] = [];
@@ -89,7 +90,6 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
         validPlayerNames.splice(playerIndex, 1);
       }
     }
-    // Push remaining players
     for (let i = 0; i < validPlayerNames.length; i++) {
       teamsPlayers[i].push(validPlayerNames[i]);
     }
@@ -103,9 +103,9 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
     enableOkButton();
   }
 
-  function submitTeamNamesForm({ teams }) {
+  function submitTeamNamesForm({ teams: teamsValue }: { teams: string }) {
     createTeams({
-      teams: teams.split('\n').map((name, idx) => ({
+      teams: getValidValuesFromColumns(teamsValue).map((name, idx) => ({
         name,
         players: players[idx],
         avatarColor: getRandomColor(),
@@ -115,16 +115,17 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
     });
   }
 
-  const shouldBeMoreThanOne = (value: number) => value >= 2 || 'Should be more than 1';
+  const shouldBeMoreThanOne = (value: number) =>
+    (Number.isInteger(Number(value)) && Number(value) >= 2) || 'Enter a whole number of at least 2';
   const validateNumberOfTeams = (value: string) =>
-    value.split('\n').length === parseInt(`${teamCount}`) || `Number of teams should not be more than ${teamCount}`;
+    getValidValuesFromColumns(value).length === Number(teamCount) || `Enter exactly ${teamCount} team names`;
 
   return (
     <>
       <form onSubmit={handleSubmit(generateTeams)}>
-        <Text mt="lg" mb="md">
+        <p className="mt-4 mb-4">
           Enter one player name in each line or paste names from a spreadsheet column (Excel, Google sheet, etc.).
-        </Text>
+        </p>
         <FormTextArea
           placeholder="Enter player names"
           rules={{ required: 'Please enter player names' }}
@@ -134,14 +135,17 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
           size="md"
           minRows={7}
           control={control}
+          onChange={resetGeneratedTeams}
         />
-        <Group position="apart" my="xl" py="sm">
-          <Group mb="xl">
-            <Text weight="bolder">Number of teams</Text>
+        <div className="flex justify-between items-center my-6 py-2">
+          <div className="flex items-center gap-2 mb-4">
+            <label htmlFor="teamCount" className="font-bold">
+              Number of teams
+            </label>
             <FormInput
               name="teamCount"
               id="teamCount"
-              className={styles.teamsInput}
+              className="w-[15%]"
               rules={{
                 required: 'Please enter team count',
                 validate: shouldBeMoreThanOne,
@@ -151,31 +155,29 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               size="md"
               min={2}
               control={control}
+              onChange={resetGeneratedTeams}
             />
-          </Group>
-          <Button
-            disabled={isEditingTeams}
-            mb="xl"
-            type="submit"
-            variant="default"
-            leftIcon={<Icon name="team" width={20} />}>
+          </div>
+          <Button className="mb-4" type="submit" variant="default" leftIcon={<Icon name="team" width={20} />}>
             Generate team
           </Button>
-        </Group>
+        </div>
       </form>
       {shouldShowTeams && (
         <>
-          <Checkbox
-            radius="xl"
-            size="md"
-            mb="xl"
-            checked={isEditingTeams}
-            label="Edit team names?"
-            onChange={() => setIsEditingTeams(!isEditingTeams)}
-          />
-          <Text my="xl">
+          <div className="flex items-center gap-2 mb-4">
+            <Checkbox
+              id="edit-teams"
+              checked={isEditingTeams}
+              onCheckedChange={() => setIsEditingTeams(!isEditingTeams)}
+            />
+            <label htmlFor="edit-teams" className="text-sm cursor-pointer">
+              Edit team names?
+            </label>
+          </div>
+          <p className="my-4">
             Edit team names one team per line or paste team names from a spreadsheet column (Excel, Google sheet, etc.).
-          </Text>
+          </p>
           <form onSubmit={teamsForm.handleSubmit(submitTeamNamesForm)}>
             <FormTextArea
               placeholder="Enter team names"
@@ -191,14 +193,14 @@ export default function TeamGenerator({ createTeams, ...rest }: Props) {
               minRows={5}
               control={teamsForm.control}
             />
-            <button className="displayNone" id="teamNameFormSubmit" type="submit">
+            <button className="hidden" id="teamNameFormSubmit" type="submit">
               Submit
             </button>
           </form>
           {teamList.length > 0 && (
             <>
-              <Divider my="xl" />
-              <Text>Teams</Text>
+              <Separator className="my-4" />
+              <p className="font-medium">Teams</p>
               <ol>
                 {getValidValuesFromColumns(teamsData).map((team, idx) => (
                   <li key={idx}>

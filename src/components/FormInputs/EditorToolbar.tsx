@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { ChainedCommands, Editor } from '@tiptap/react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { isValidUrl } from '../../helpers/url';
@@ -146,7 +147,12 @@ export default function EditorToolbar({ editor, isFocussed }: Props) {
 
   return (
     <>
-      <div className="editor-toolbar" style={{ opacity: isFocussed ? 1 : 0.3 }}>
+      <div
+        className={cn(
+          'absolute z-[2] m-px flex w-[calc(100%-4px)] items-stretch overflow-auto bg-[var(--off-white)] p-[5px]',
+          isFocussed ? 'opacity-100' : 'opacity-30',
+        )}
+      >
         {BUTTONS.map((props) => (
           <EditorButton editor={editor} {...props} key={props.title || props.actionName} />
         ))}
@@ -176,7 +182,13 @@ function EditorButton({ editor, children, commandName, actionName, actionParams,
       title={title || actionName}
       onClick={() => (commandName ? (editor.chain().focus()[commandName] as any)(actionParams).run() : onPress?.())}
       disabled={commandName ? !(editor.can().chain().focus() as any)[commandName](actionParams).run() : false}
-      className={actionName && editor.isActive(actionName, actionParams) ? 'active' : ''}>
+      className={cn(
+        'ml-0.5 min-w-5 shrink-0 rounded-[5px] border border-[var(--border-gray)] bg-[var(--off-white)] px-[5px] py-0.5 text-primary disabled:bg-[var(--border-gray)] disabled:opacity-60',
+        actionName &&
+          editor.isActive(actionName, actionParams) &&
+          'bg-[var(--gray-dark)] text-[var(--off-white)] [&_svg]:fill-[var(--off-white)]',
+      )}
+    >
       {children}
     </button>
   );

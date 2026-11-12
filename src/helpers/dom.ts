@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import type { JSX } from 'react';
 
 export const sanitize = (
   dirty?: string | null,

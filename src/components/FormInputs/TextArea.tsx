@@ -1,19 +1,20 @@
-import { Text, Textarea, TextareaProps } from '@mantine/core';
-import classNames from 'classnames';
-import React from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import React, { useId } from 'react';
 import { Control, Controller, UseControllerProps } from 'react-hook-form';
 import ContentEditable from './ContentEditable';
 
-type Props = TextareaProps & {
-  rules: UseControllerProps['rules'];
-  control: Control<any, any>;
-  name: string;
+type Props = {
+  rules?: UseControllerProps['rules'];
+  control?: Control<any, any>;
+  name?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   autoFocus?: boolean;
   label?: React.ReactNode;
   className?: string;
   disabled?: boolean;
   isRichText?: boolean;
+  [key: string]: any;
 };
 
 export default function FormTextArea({
@@ -26,17 +27,24 @@ export default function FormTextArea({
   className,
   disabled,
   isRichText,
+  id,
+  minRows,
+  variant,
+  onChange: onChangeProp,
   ...rest
 }: Props) {
+  const generatedId = useId();
+  const inputId = id || generatedId;
   return (
     <Controller
-      name={name}
+      name={name || ''}
       control={control}
       rules={rules}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className={classNames('grow', className)}>
+      render={({ field: { onChange, onBlur, value, ref }, fieldState: { error } }) => (
+        <div className={cn('flex-1', className)}>
           {isRichText ? (
             <ContentEditable
+              id={inputId}
               onChange={onChange}
               value={value}
               label={label}
@@ -45,17 +53,39 @@ export default function FormTextArea({
               disabled={disabled}
             />
           ) : (
-            <Textarea
-              onChange={onChange}
-              label={label}
-              value={value}
-              size={size}
-              autoFocus={autoFocus}
-              disabled={disabled}
-              {...rest}
-            />
+            <>
+              {label && (
+                <label htmlFor={inputId} className="text-sm font-medium mb-1 block">
+                  {label}
+                </label>
+              )}
+              <Textarea
+                {...rest}
+                id={inputId}
+                name={name}
+                ref={ref}
+                onBlur={onBlur}
+                onChange={(event) => {
+                  onChange(event);
+                  onChangeProp?.(event);
+                }}
+                value={value ?? ''}
+                rows={minRows}
+                aria-invalid={!!error}
+                aria-describedby={error ? `${inputId}-error` : undefined}
+                autoFocus={autoFocus}
+                disabled={disabled}
+              />
+            </>
           )}
-          {error && !!error.message && <Text className="errorText">⚠ {error.message}</Text>}
+          {error && !!error.message && (
+            <p
+              id={`${inputId}-error`}
+              className="mt-1 rounded-b-[10px] bg-background px-2.5 py-[5px] text-sm text-incorrect-color"
+            >
+              {error.message}
+            </p>
+          )}
         </div>
       )}
     />

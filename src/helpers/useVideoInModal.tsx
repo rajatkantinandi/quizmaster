@@ -24,7 +24,6 @@ export default function useVideoInModal({ videoEmbedUrl, videoTitle }: Props) {
       ),
       okText: '',
       cancelText: '',
-      size: '70%',
     });
   };
 

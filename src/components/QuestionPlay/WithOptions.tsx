@@ -1,23 +1,18 @@
 import React from 'react';
-import { Title, Button, Checkbox, Group, createStyles } from '@mantine/core';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 import { Option as IOption } from '../../types';
 import SanitizedHtml from '../SanitizedHtml';
 
 interface Props {
-  setSelectedChoices: Function;
+  setSelectedChoices: (choices: number[]) => void;
   selectedOptionIds: number[] | null;
   options: IOption[];
   selectedChoices: number[] | null;
   isAttempted: boolean;
-  isTimerRunning: Boolean;
+  isTimerRunning: boolean;
 }
-
-const useStyles = createStyles((theme) => ({
-  input: {
-    backgroundColor: 'rgb(255, 198, 198)',
-    borderColor: theme.colors.red,
-  },
-}));
 
 export default function WithOptions({
   options,
@@ -27,80 +22,67 @@ export default function WithOptions({
   isAttempted,
   isTimerRunning,
 }: Props) {
-  const { classes } = useStyles();
-
-  function getCheckboxColor(option) {
-    if (selectedOptionIds && option.isCorrect && selectedOptionIds.includes(option.optionId)) {
-      return 'green';
-    } else if (
-      selectedOptionIds &&
-      ((!option.isCorrect && selectedOptionIds.includes(option.optionId)) ||
-        (option.isCorrect && !selectedOptionIds.includes(option.optionId)))
-    ) {
-      return 'red';
-    } else {
-      return '';
+  function getChoiceClass(option: IOption) {
+    if (!isAttempted || !selectedOptionIds) return '';
+    if (selectedOptionIds.includes(option.optionId)) {
+      return option.isCorrect
+        ? 'data-[state=checked]:bg-green-700 data-[state=checked]:border-green-700 data-[state=checked]:text-white'
+        : 'data-[state=checked]:bg-red-700 data-[state=checked]:border-red-700 data-[state=checked]:text-white';
     }
+    return option.isCorrect ? 'bg-red-200 border-red-500 dark:bg-red-950' : '';
   }
 
   return (
     <>
-      <Group align="flex-start">
-        {isAttempted && (
-          <Checkbox.Group
-            value={options.filter((x) => x.isCorrect).map((x) => x.optionId.toString())}
-            orientation="vertical"
-            label={<Title order={6}>ANSWER</Title>}
-            size="md"
-            my="lg">
-            {options.map((x, idx) =>
-              x.isCorrect ? (
-                <Checkbox
-                  value={x.optionId.toString()}
-                  key={x.optionId}
-                  checked
-                  color="green"
-                  className="justifyCenter"
-                  style={{ pointerEvents: 'none' }}
-                  radius="xl"
-                  tabIndex={-1}
-                  size="lg"
-                />
-              ) : (
-                <div style={{ width: '24px', height: '24px' }} key={`empty_${idx}`}></div>
-              ),
-            )}
-          </Checkbox.Group>
+      <div
+        className={cn(
+          'grid items-start gap-x-4 gap-y-2',
+          isAttempted ? 'grid-cols-[auto_auto_minmax(0,1fr)]' : 'grid-cols-[auto_minmax(0,1fr)]',
         )}
-        <Checkbox.Group
-          value={selectedChoices ? selectedChoices.map((x) => x.toString()) : undefined}
-          orientation="vertical"
-          label={<Title order={6}>{isAttempted ? 'ME' : 'OPTIONS'}</Title>}
-          size="md"
-          my="lg"
-          onChange={(value) => setSelectedChoices(value.map((x) => parseInt(x)))}>
-          {options.map((option) => (
+      >
+        {isAttempted && <h6 className="mb-3 mt-4 text-base font-semibold">ANSWER</h6>}
+        <h6 className="mb-3 mt-4 text-base font-semibold">{isAttempted ? 'ME' : 'OPTIONS'}</h6>
+        <span />
+        {options.map((option, index) => (
+          <React.Fragment key={option.optionId}>
+            {isAttempted && (
+              <div className="flex justify-center py-0.5">
+                {option.isCorrect && (
+                  <Checkbox
+                    checked
+                    aria-label={`Correct answer ${index + 1}`}
+                    className="pointer-events-none data-[state=checked]:bg-green-700 data-[state=checked]:border-green-700 data-[state=checked]:text-white"
+                    tabIndex={-1}
+                  />
+                )}
+              </div>
+            )}
             <Checkbox
-              label={<SanitizedHtml>{option.text}</SanitizedHtml>}
-              color={getCheckboxColor(option)}
-              value={option.optionId.toString()}
-              classNames={{
-                input:
-                  selectedOptionIds && option.isCorrect && !selectedOptionIds.includes(option.optionId)
-                    ? classes.input
-                    : '',
+              id={`option-${option.optionId}`}
+              checked={selectedChoices?.includes(option.optionId) ?? false}
+              onCheckedChange={(checked) => {
+                setSelectedChoices(
+                  checked
+                    ? [...(selectedChoices || []), option.optionId]
+                    : (selectedChoices || []).filter((id) => id !== option.optionId),
+                );
               }}
-              tabIndex={isAttempted || !isTimerRunning ? -1 : undefined}
-              style={isAttempted || !isTimerRunning ? { pointerEvents: 'none' } : {}}
-              radius="xl"
-              size="lg"
-              key={option.optionId}
+              disabled={isAttempted || !isTimerRunning}
+              className={cn('my-0.5', getChoiceClass(option))}
             />
-          ))}
-        </Checkbox.Group>
-      </Group>
+            <label htmlFor={`option-${option.optionId}`} className="cursor-pointer">
+              <SanitizedHtml>{option.text}</SanitizedHtml>
+            </label>
+          </React.Fragment>
+        ))}
+      </div>
       {!isAttempted && isTimerRunning && (
-        <Button color="green" onClick={() => document.getElementById('btnSubmitResponse')?.click()}>
+        <Button
+          variant="filled"
+          color="green"
+          className="mt-5"
+          onClick={() => document.getElementById('btnSubmitResponse')?.click()}
+        >
           Submit
         </Button>
       )}

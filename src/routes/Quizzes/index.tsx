@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useStore } from '../../useStore';
-import { Helmet } from 'react-helmet';
-import { Group, Text } from '@mantine/core';
 import PageLoader from '../../components/PageLoader';
 import QuizSelectorBanner from '../../components/QuizSelectorBanner';
 import NoQuizzes from './NoQuizzes';
@@ -42,9 +40,6 @@ export default function Quizzes({ userName }) {
 
   return (
     <>
-      <Helmet>
-        <title>Quizzes</title>
-      </Helmet>
       {loading ? (
         <PageLoader />
       ) : filteredQuizzes.length === 0 && !rest.searchQuery.trim() ? (
@@ -53,7 +48,7 @@ export default function Quizzes({ userName }) {
         <>
           <QuizSelectorBanner {...quizzesSelector} />
           <ActionBar quizzes={filteredQuizzes} />
-          <Group>
+          <div className="flex flex-wrap gap-2">
             {filteredQuizzes.map((quiz, index) => {
               const { quizId, categories, createDate, name, isDraft, isPublished, isAddedFromCatalog } = quiz;
 
@@ -76,15 +71,12 @@ export default function Quizzes({ userName }) {
                 />
               );
             })}
-            {/* No search results */}
             {filteredQuizzes.length === 0 && (
-              <div className="ml-xl mt-xl">
-                <Text color="gray" size="xl" mb="sm">
-                  No search results found
-                </Text>
+              <div className="ml-5 mt-5">
+                <p className="text-gray-500 text-xl mb-0.5">No search results found</p>
               </div>
             )}
-          </Group>
+          </div>
           <CreateQuizButton userName={userName} isFloating />
         </>
       )}

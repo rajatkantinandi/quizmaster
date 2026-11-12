@@ -1,8 +1,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
-import { Button, Text } from '@mantine/core';
-import classNames from 'classnames';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = false, handleFormSubmit }) {
   const { control, handleSubmit } = useForm({ defaultValues: { name } });
@@ -16,21 +16,12 @@ export default function AddOrUpdateQuizName({ name = '', hideSubmitButton = fals
         type="text"
         placeholder="Please enter a name for the quiz"
         variant="filled"
-        label={
-          <Text mb="xs" weight="bold">
-            Enter quiz name
-          </Text>
-        }
-        radius="md"
-        size="md"
+        label={<div className="mb-2 font-bold">Enter quiz name</div>}
       />
       <Button
         id="btnUpdateQuizNameForm"
-        className={classNames({ displayNone: hideSubmitButton })}
-        mt="xl"
-        radius="xl"
-        size="md"
-        fullWidth
+        className={cn({ hidden: hideSubmitButton }, 'mt-6 w-full rounded-full')}
+        size="lg"
         type="submit"
         variant="filled">
         Continue

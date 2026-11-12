@@ -1,62 +1,86 @@
-import { Text, TextInput, TextInputProps } from '@mantine/core';
-import classNames from 'classnames';
-import React, { forwardRef } from 'react';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import React, { useId } from 'react';
 import { Control, Controller, UseControllerProps } from 'react-hook-form';
 
-type Props = TextInputProps & {
-  rules: UseControllerProps['rules'];
-  control: Control<any, any>;
-  name: string;
+type Props = {
+  rules?: UseControllerProps['rules'];
+  control?: Control<any, any>;
+  name?: string;
   autoFocus?: boolean;
   label?: React.ReactNode;
   className?: string;
   disabled?: boolean;
   isRichText?: boolean;
-  ref?: React.ForwardedRef<HTMLInputElement>;
+  ref?: React.Ref<HTMLInputElement>;
+  [key: string]: any;
 };
 
-function Input(
-  {
-    control,
-    name,
-    rules,
-    label,
-    autoFocus = false,
-    size,
-    className,
-    disabled,
-    isRichText,
-    onChange: onChangeProp,
-    ...rest
-  }: Props,
-  ref,
-) {
+export default function FormInput({
+  control,
+  name,
+  rules,
+  label,
+  autoFocus = false,
+  className,
+  disabled,
+  isRichText,
+  id,
+  ref: inputRef,
+  variant,
+  size,
+  radius,
+  onChange: onChangeProp,
+  ...rest
+}: Props) {
+  const generatedId = useId();
+  const inputId = id || generatedId;
   return (
     <Controller
-      name={name}
+      name={name || ''}
       control={control}
       rules={rules}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className={classNames('grow', className)}>
-          <TextInput
-            onChange={(ev) => {
+      render={({ field: { onChange, onBlur, value, ref }, fieldState: { error } }) => (
+        <div className={cn('flex-1', className)}>
+          {label && (
+            <label htmlFor={inputId} className="text-sm font-medium mb-1 block">
+              {label}
+            </label>
+          )}
+          <Input
+            {...rest}
+            id={inputId}
+            name={name}
+            ref={(element) => {
+              ref(element);
+              if (typeof inputRef === 'function') {
+                inputRef(element);
+              } else if (inputRef) {
+                inputRef.current = element;
+              }
+            }}
+            onBlur={onBlur}
+            size={typeof size === 'number' ? size : undefined}
+            aria-invalid={!!error}
+            aria-describedby={error ? `${inputId}-error` : undefined}
+            onChange={(ev: any) => {
               onChangeProp?.(ev);
-
               onChange(ev);
             }}
-            label={label}
-            value={value || ''}
-            size={size}
+            value={value ?? ''}
             autoFocus={autoFocus}
             disabled={disabled}
-            ref={ref}
-            {...rest}
           />
-          {error && !!error.message && <Text className="errorText">⚠ {error.message}</Text>}
+          {error && !!error.message && (
+            <p
+              id={`${inputId}-error`}
+              className="mt-1 rounded-b-[10px] bg-background px-2.5 py-[5px] text-sm text-incorrect-color"
+            >
+              {error.message}
+            </p>
+          )}
         </div>
       )}
     />
   );
 }
-
-export default forwardRef(Input) as React.FunctionComponent<Props>;

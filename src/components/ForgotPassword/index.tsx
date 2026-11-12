@@ -2,9 +2,9 @@ import React from 'react';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues } from 'react-hook-form';
 import { FormInput } from '../FormInputs';
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { Card, Button, Title } from '@mantine/core';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function Login() {
   const { sendForgotPasswordLink, showAlert } = useStore();
@@ -20,13 +20,8 @@ export default function Login() {
   }
 
   return (
-    <Card shadow="xs" p="lg" radius="xs" withBorder className="primaryCard">
-      <Helmet>
-        <title>Forgot password</title>
-      </Helmet>
-      <Title align="center" order={4}>
-        Forgot Password?
-      </Title>
+    <Card className="rounded-lg border bg-[var(--primary-card-bg)] p-6 shadow-xs">
+      <h4 className="text-center text-lg font-semibold mb-4">Forgot Password?</h4>
       <form onSubmit={handleSubmit(handleForgotPassword)}>
         <FormInput
           name="emailId"
@@ -37,11 +32,11 @@ export default function Login() {
           type="email"
           autoFocus
         />
-        <Button mt="xl" size="md" type="submit" fullWidth variant="filled">
+        <Button size="lg" className="mt-6 w-full" type="submit" variant="filled">
           Email me a reset link
         </Button>
       </form>
-      <div className="mt-lg textAlignCenter">
+      <div className="mt-4 text-center">
         Remember your password? <Link to="/login">Log in</Link>
       </div>
     </Card>
