@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container, Select } from '@mantine/core';
+import {
+  Title,
+  Divider,
+  Button,
+  ActionIcon,
+  Text,
+  Checkbox,
+  Grid,
+  Group,
+  Container,
+  Select,
+  Alert,
+} from '@mantine/core';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
@@ -345,12 +357,33 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
           </form>
         </Grid.Col>
       </div>
-      <Grid.Col span={6} offset={3} mt="md">
+      <Grid.Col lg={6} md={8} sm={10} px="lg" mx="lg" mt="md">
         {numOfQuestions !== null && teams.length > numOfQuestions && (
-          <Text role="alert" mb="md">
+          <Alert
+            title="Not enough questions"
+            color="blue"
+            variant="light"
+            radius="md"
+            p="md"
+            mb="md"
+            className={styles.questionCountAlert}
+            icon={
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 11v6" />
+                <circle cx="12" cy="7" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            }>
             This quiz has fewer questions ({numOfQuestions}) than teams ({teams.length}). Add questions or use fewer
             teams so each team can answer the same number of questions.
-          </Text>
+          </Alert>
         )}
         <Button
           onClick={submitGameForm}
