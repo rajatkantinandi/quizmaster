@@ -72,6 +72,9 @@ module.exports = {
         'quiz-card': '10px',
       },
       keyframes: {
+        slidedown: {
+          to: { transform: 'scaleY(1)', opacity: '1' },
+        },
         'accordion-down': {
           from: { height: '0' },
           to: { height: 'var(--radix-accordion-content-height)' },

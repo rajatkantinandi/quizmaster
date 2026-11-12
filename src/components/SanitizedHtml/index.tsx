@@ -1,3 +1,4 @@
+import { richTextClasses } from '@/lib/rich-text';
 import { cn } from '@/lib/utils';
 import React, { useMemo } from 'react';
 import { sanitize } from '../../helpers/dom';
@@ -30,7 +31,9 @@ function SanitizedHtml({
     [children, allowedTags, allowedAttributes],
   );
 
-  return <Tag className={cn(className, 'html')} dangerouslySetInnerHTML={{ __html: sanitizedHtml }} {...rest} />;
+  return (
+    <Tag className={cn(richTextClasses, className)} dangerouslySetInnerHTML={{ __html: sanitizedHtml }} {...rest} />
+  );
 }
 
 export default SanitizedHtml;

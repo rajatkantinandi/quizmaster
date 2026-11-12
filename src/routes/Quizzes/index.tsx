@@ -72,8 +72,8 @@ export default function Quizzes({ userName }) {
               );
             })}
             {filteredQuizzes.length === 0 && (
-              <div className="ml-xl mt-xl">
-                <p className="text-gray-500 text-xl mb-sm">No search results found</p>
+              <div className="ml-5 mt-5">
+                <p className="text-gray-500 text-xl mb-0.5">No search results found</p>
               </div>
             )}
           </div>

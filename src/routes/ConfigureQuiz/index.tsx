@@ -411,7 +411,7 @@ export default function ConfigureQuiz({
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <div className="flex w-full flex-row items-start">
           <div className="max-w-[470px] flex-1">
-            <div className="flex items-center pb-lg mb-xl">
+            <div className="flex items-center pb-2.5 mb-5">
               <h2 className="text-2xl font-bold">{quizName}</h2>
               <Button size="icon" variant="ghost" className="ml-2" onClick={changeQuizName}>
                 <Icon name="pencil" width={20} />
@@ -442,7 +442,7 @@ export default function ConfigureQuiz({
                 >
                   <Radio id={`category-${idx}`} value={`${idx}`} className="self-start mt-4" />
                   <label htmlFor={`category-${idx}`} className="flex flex-1 gap-1 cursor-pointer items-start pt-3">
-                    <span className="font-bold mr-md">{idx + 1}.</span>
+                    <span className="font-bold mr-[5px]">{idx + 1}.</span>
                     <div className="flex flex-col flex-1 gap-1">
                       {idx === activeCategoryIndex ? (
                         <FormInput
@@ -463,18 +463,18 @@ export default function ConfigureQuiz({
                       {!errors.categories?.[idx]?.categoryName?.message && (
                         <p
                           className={cn('font-bold text-gray-500 text-left text-xs', {
-                            'mt-md': idx === activeCategoryIndex,
+                            'mt-[5px]': idx === activeCategoryIndex,
                           })}
                         >
                           {item.questions.length > 0 && (
-                            <span className="mr-sm">
+                            <span className="mr-0.5">
                               {plural(item.questions.length, '%count question', '%count questions')}
                             </span>
                           )}
                           {(item.questions.length === 0 ||
                             item.questions.some((question) => !isValidQuestion(question))) &&
                             idx !== activeCategoryIndex && (
-                              <Badge variant="destructive" className="mt-sm">
+                              <Badge variant="destructive" className="mt-0.5">
                                 Incomplete
                               </Badge>
                             )}
@@ -486,7 +486,7 @@ export default function ConfigureQuiz({
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="ml-md shrink-0 self-start"
+                      className="ml-[5px] shrink-0 self-start"
                       onClick={() => confirmRemoveCategory(idx, item.questions.length > 0)}
                     >
                       <Icon width={20} name="trash" />
@@ -496,7 +496,7 @@ export default function ConfigureQuiz({
               ))}
             </RadioGroup>
             <Button
-              className="mt-xl rounded-xl"
+              className="mt-5 rounded-xl"
               onClick={() => {
                 setActiveCategoryIndex(categories.length);
                 setActiveQuestionIndex(null);
@@ -526,7 +526,7 @@ export default function ConfigureQuiz({
           />
         </div>
         <div className="flex justify-center">
-          <div className="w-full max-w-2xl py-xl flex items-center gap-5">
+          <div className="w-full max-w-2xl py-5 flex items-center gap-5">
             {isPreview && (
               <Button
                 variant="outline"

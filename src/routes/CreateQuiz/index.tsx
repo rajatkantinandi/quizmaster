@@ -22,8 +22,8 @@ export default function ConfigureQuiz({ userName = 'guest' }) {
 
   return (
     <>
-      <div className="grid grid-cols-12 items-center pt-xl">
-        <div className="col-span-4 col-start-5 pt-xl mt-xl">
+      <div className="grid grid-cols-12 items-center pt-5">
+        <div className="col-span-4 col-start-5 pt-5 mt-5">
           <AddOrUpdateQuizName handleFormSubmit={handleAddQuizName} />
         </div>
       </div>

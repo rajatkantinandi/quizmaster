@@ -149,11 +149,11 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
   return (
     <div className="w-full px-6 pb-36 pt-4">
       <div className="w-full max-w-[980px]">
-        <h2 className="mb-xl flex items-end pb-lg text-2xl font-bold">Configure game for {quizName}</h2>
+        <h2 className="mb-5 flex items-end pb-2.5 text-2xl font-bold">Configure game for {quizName}</h2>
         <form onSubmit={handleSubmit(handleGameConfig)} className="flex flex-col max-w-[860px] gap-4">
           <h4 className="text-lg font-semibold">Team names</h4>
           {fields.map((team, idx) => (
-            <div className="relative mb-md flex flex-1 items-center gap-4" key={team.id}>
+            <div className="relative mb-[5px] flex flex-1 items-center gap-4" key={team.id}>
               <span className="max-w-[25px] font-bold">{idx + 1}.</span>
               <FormInput
                 name={`teams.${idx}.name`}
@@ -181,7 +181,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               )}
             </div>
           ))}
-          <div className="my-xl max-w-[860px] flex flex-col items-center">
+          <div className="my-5 max-w-[860px] flex flex-col items-center">
             {mode !== 'automatic' && (
               <>
                 <Button
@@ -192,8 +192,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                 >
                   Add team
                 </Button>
-                <Separator className="mt-xl" />
-                <p className="text-center font-bold text-lg mb-lg">OR</p>
+                <Separator className="mt-5" />
+                <p className="text-center font-bold text-lg mb-2.5">OR</p>
               </>
             )}
             <Button
@@ -205,8 +205,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               Random team generator
             </Button>
           </div>
-          <h4 className="text-lg font-semibold pt-xl mb-sm">Points</h4>
-          <div className="flex items-center gap-2 mb-xl">
+          <h4 className="text-lg font-semibold pt-5 mb-0.5">Points</h4>
+          <div className="flex items-center gap-2 mb-5">
             <Checkbox
               id="isQuestionPointsHidden"
               checked={isQuestionPointsHidden}
@@ -216,7 +216,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
             />
             <label htmlFor="isQuestionPointsHidden">Hide points until the question is revealed</label>
           </div>
-          <div className="mb-xl flex items-center justify-between gap-4">
+          <div className="mb-5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Checkbox
                 id="negativePointsMultiplier"
@@ -252,8 +252,8 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
               </Select>
             </div>
           </div>
-          <h4 className="text-lg font-semibold pt-xl mb-sm">Time limits</h4>
-          <div className="mb-xl flex items-center justify-between gap-4">
+          <h4 className="text-lg font-semibold pt-5 mb-0.5">Time limits</h4>
+          <div className="mb-5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Checkbox
                 id="timeLimit"

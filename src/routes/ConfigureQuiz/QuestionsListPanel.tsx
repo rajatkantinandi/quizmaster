@@ -101,7 +101,7 @@ export default function QuestionsListPanel({
 
   return (
     <Card className="h-[calc(100vh-180px)] w-full max-w-[1300px] flex-1 overflow-x-hidden overflow-y-scroll bg-[var(--primary-card-bg)] px-6 py-5 text-foreground">
-      <div className="mb-md flex items-center justify-between">
+      <div className="mb-[5px] flex items-center justify-between">
         <h4 className="text-lg font-semibold">{activeCategoryName || 'Unnamed Category'}</h4>
         <div className="flex items-center">
           {rearrangeMode ? (
@@ -116,7 +116,7 @@ export default function QuestionsListPanel({
             <>
               <Button
                 size="sm"
-                className="mr-md h-9 min-w-[180px] rounded-[10px] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent"
+                className="mr-[5px] h-9 min-w-[180px] rounded-[10px] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent"
                 onClick={() => setExpandedQuestionIndex(expandedQuestionIndex === 'all' ? null : 'all')}
                 leftIcon={<Icon name={expandedQuestionIndex === 'all' ? 'minus' : 'plus'} width={14} />}
               >
@@ -134,7 +134,7 @@ export default function QuestionsListPanel({
         </div>
       </div>
       {rearrangeMode && (
-        <p className="mb-md">
+        <p className="mb-[5px]">
           Drag the questions using the drag handle on the right corner of each question to rearrange them. Click the
           "Done" button above, after rearranging them.
         </p>
@@ -165,7 +165,7 @@ export default function QuestionsListPanel({
         ))}
       </ReactSortable>
       {!rearrangeMode && (
-        <Button className="mt-xl" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
+        <Button className="mt-5" onClick={addQuestion} variant="default" leftIcon={<Icon name="plus" width={18} />}>
           Add Question
         </Button>
       )}

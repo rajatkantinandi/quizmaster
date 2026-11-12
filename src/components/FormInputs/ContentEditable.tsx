@@ -6,6 +6,7 @@ import Image from '@tiptap/extension-image';
 import Underline from '@tiptap/extension-underline';
 import Iframe from '../../helpers/TipTapIframe';
 import EditorToolbar from './EditorToolbar';
+import { richTextClasses } from '@/lib/rich-text';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -17,6 +18,14 @@ type Props = {
   className?: string;
   disabled?: boolean;
   id: string;
+};
+
+const editorMinHeightClasses = {
+  xs: '',
+  sm: 'min-h-[100px]',
+  md: 'min-h-[150px]',
+  lg: 'min-h-[250px]',
+  xl: 'min-h-[350px]',
 };
 
 export default function ContentEditable({
@@ -54,6 +63,11 @@ export default function ContentEditable({
     editable: !disabled,
     editorProps: {
       attributes: {
+        class: cn(
+          richTextClasses,
+          'block max-h-[400px] overflow-auto bg-input-bg px-[15px] pb-2.5 pt-[50px]',
+          editorMinHeightClasses[size],
+        ),
         role: 'textbox',
         'aria-multiline': 'true',
         'aria-labelledby': `${id}-label`,
@@ -75,7 +89,7 @@ export default function ContentEditable({
     >
       <div id={`${id}-label`}>{label}</div>
       {!!editor && <EditorToolbar editor={editor} isFocussed={isFocussed} />}
-      <EditorContent editor={editor} className={`${size}Editor`} />
+      <EditorContent editor={editor} />
     </div>
   );
 }

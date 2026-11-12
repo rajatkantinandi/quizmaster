@@ -72,7 +72,10 @@ export default function FormInput({
             disabled={disabled}
           />
           {error && !!error.message && (
-            <p id={`${inputId}-error`} className="errorText text-red-500 text-sm mt-1">
+            <p
+              id={`${inputId}-error`}
+              className="mt-1 rounded-b-[10px] bg-background px-2.5 py-[5px] text-sm text-incorrect-color"
+            >
               {error.message}
             </p>
           )}

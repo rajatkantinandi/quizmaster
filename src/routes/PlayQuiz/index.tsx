@@ -316,19 +316,19 @@ export default function PlayQuiz({ gameId, userName }) {
     <></>
   ) : (
     <>
-      <div className="flex gap-2 mb-xl">
+      <div className="flex gap-2 mb-5">
         {quizName && <h2 className="text-2xl font-bold">Play game for {quizName}</h2>}
         <Button onClick={confirmCreateNewGame} variant="outline">
           Start a new game
         </Button>
       </div>
       {isGameCompleted() ? (
-        <h3 className="relative my-lg rounded-[10px] bg-[var(--qm-primary)] py-3 text-center text-primary-foreground before:absolute before:z-[-1] before:ml-[-8px] before:mt-[-24px] before:block before:h-[78px] before:w-[calc(100%+16px)] before:rounded-[10px] before:bg-[repeating-linear-gradient(45deg,var(--correct-color)_1%,var(--qm-primary)_3%)] before:content-[''] before:animate-border-roll">
+        <h3 className="relative my-2.5 rounded-[10px] bg-[var(--qm-primary)] py-3 text-center text-primary-foreground before:absolute before:z-[-1] before:ml-[-8px] before:mt-[-24px] before:block before:h-[78px] before:w-[calc(100%+16px)] before:rounded-[10px] before:bg-[repeating-linear-gradient(45deg,var(--correct-color)_1%,var(--qm-primary)_3%)] before:content-[''] before:animate-border-roll">
           🎉 {getWinnerMessage()}
         </h3>
       ) : (
         showExtraQuestionBanner && (
-          <h3 className="relative my-md rounded-[10px] bg-[var(--default-button-bg)] py-3 text-center text-base">
+          <h3 className="relative my-[5px] rounded-[10px] bg-[var(--default-button-bg)] py-3 text-center text-base">
             Note: There are {allQuestions.length} questions but {gameInfo.teams.length} teams. So, the game will
             complete when each team answers equal number of questions with {allQuestions.length % gameInfo.teams.length}{' '}
             questions remaining.
@@ -368,7 +368,7 @@ export default function PlayQuiz({ gameId, userName }) {
           ) : (
             <>
               {!winnerIdsCsv && attemptedQuestionIds.length === 0 && !isGameStarted && (
-                <div className="my-xl text-center">
+                <div className="my-5 text-center">
                   <Button size="lg" onClick={startGame}>
                     Start Game
                   </Button>
@@ -391,11 +391,11 @@ export default function PlayQuiz({ gameId, userName }) {
           {isGameCompleted() && (
             <div className="flex justify-center">
               {!!selectedQuestion && (
-                <Button size="lg" className="my-lg mr-md" variant="outline" onClick={() => setSelectedQuestion(null)}>
+                <Button size="lg" className="my-2.5 mr-[5px]" variant="outline" onClick={() => setSelectedQuestion(null)}>
                   Show question list
                 </Button>
               )}
-              <Button size="lg" className="my-lg" onClick={() => navigate(`/my-quizzes/${userName}`)}>
+              <Button size="lg" className="my-2.5" onClick={() => navigate(`/my-quizzes/${userName}`)}>
                 Go to home
               </Button>
               {isAddedFromCatalog && (

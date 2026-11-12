@@ -26,7 +26,7 @@ export default function NoQuizzes({ userName }: { userName: string }) {
         <p className="my-4 text-[20px] text-[var(--gray-dark)]">
           It is ideal for quizmasters looking to customise and host their quizzes.
         </p>
-        <div className="flex justify-center gap-[50px] mt-xl">
+        <div className="flex justify-center gap-[50px] mt-5">
           <CreateQuizButton userName={userName} />
           <Button
             size="lg"

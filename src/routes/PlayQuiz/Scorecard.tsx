@@ -7,7 +7,7 @@ import { Team } from '../../types';
 export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
   return (
     <div>
-      <div className="flex justify-between items-center mt-xl pt-xl px-2">
+      <div className="flex justify-between items-center mt-5 pt-5 px-2">
         <h4 className="text-lg font-semibold">Team</h4>
         <h4 className="text-lg font-semibold">Score</h4>
       </div>
@@ -45,7 +45,7 @@ export default function Scorecard({ teams, currentTeamId, winnerIdsCsv }) {
         teams.map((t: Team) => (
           <div
             key={t.teamId}
-            className={cn('flex justify-between items-center my-lg mx-xl bg-background rounded-lg py-2 px-3', {
+            className={cn('flex justify-between items-center my-2.5 mx-5 bg-background rounded-lg py-2 px-3', {
               'flex-nowrap bg-[rgb(34,139,230)] text-white': t.teamId === currentTeamId,
             })}
           >
