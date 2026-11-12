@@ -34,3 +34,7 @@
   max-height: calc(100vh - 170px);
   overflow: auto;
 }
+
+.questionCountAlert {
+  border: 1px solid #74c0fc;
+}

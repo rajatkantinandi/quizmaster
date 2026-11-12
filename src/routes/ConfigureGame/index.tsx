@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Title, Divider, Button, ActionIcon, Text, Checkbox, Grid, Group, Container, Select } from '@mantine/core';
+import {
+  Title,
+  Divider,
+  Button,
+  ActionIcon,
+  Text,
+  Checkbox,
+  Grid,
+  Group,
+  Container,
+  Select,
+  Alert,
+} from '@mantine/core';
 import { useStore } from '../../useStore';
 import { useForm, FieldValues, useFieldArray } from 'react-hook-form';
 import { FormInput } from '../../components/FormInputs';
@@ -43,7 +55,7 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
   });
   const [quizName, setQuizName] = useState('');
   const [numOfCategories, setNumOfCategories] = useState(0);
-  const [numOfQuestions, setNumOfQuestions] = useState(0);
+  const [numOfQuestions, setNumOfQuestions] = useState<number | null>(null);
   const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier, mode, players } =
     watch();
   const { getQuiz, addGame, showModal } = useStore();
@@ -57,6 +69,10 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
   }, [getQuiz, quizId]);
 
   async function handleGameConfig(data: FieldValues) {
+    if (numOfQuestions === null || data.teams.length > numOfQuestions) {
+      return;
+    }
+
     if (quizId) {
       const { teams, timeLimit, selectionTimeLimit, isQuestionPointsHidden, negativePointsMultiplier } = data;
       const { gameId } = await addGame({
@@ -179,7 +195,11 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
                   </Text>
                 )}
                 {fields.length > 2 ? (
-                  <ActionIcon variant="transparent" className={styles.teamInputCount} onClick={() => remove(idx)}>
+                  <ActionIcon
+                    aria-label={`Remove team ${idx + 1}`}
+                    variant="transparent"
+                    className={styles.teamInputCount}
+                    onClick={() => remove(idx)}>
                     <Icon width={20} name="trash" />
                   </ActionIcon>
                 ) : (
@@ -337,9 +357,37 @@ export default function ConfigureGame({ quizId, userName = 'guest' }) {
           </form>
         </Grid.Col>
       </div>
-      <Grid.Col span={6} offset={3} mt="md">
+      <Grid.Col lg={6} md={8} sm={10} px="lg" mx="lg" mt="md">
+        {numOfQuestions !== null && teams.length > numOfQuestions && (
+          <Alert
+            title="Not enough questions"
+            color="blue"
+            variant="light"
+            radius="md"
+            p="md"
+            mb="md"
+            className={styles.questionCountAlert}
+            icon={
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 11v6" />
+                <circle cx="12" cy="7" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            }>
+            This quiz has fewer questions ({numOfQuestions}) than teams ({teams.length}). Add questions or use fewer
+            teams so each team can answer the same number of questions.
+          </Alert>
+        )}
         <Button
           onClick={submitGameForm}
+          disabled={numOfQuestions === null || teams.length > numOfQuestions}
           variant="gradient"
           size="lg"
           fullWidth
